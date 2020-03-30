@@ -13,10 +13,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    env:
+        CI: true
+        working-directory: ./client
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x]
+        node-version: [10.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -24,14 +28,13 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: cd client
     - run: npm ci
+      working-directory: ${{ env.working.directory }}
     - run: npm run build --if-present
+      working-directory: ${{ env.working.directory }}
 #    - run: npm test
     - name: Archive production artifacts
       uses: actions/upload-artifact@v1
       with:
         name: dist
         path: client/dist
-      env:
-        CI: true
