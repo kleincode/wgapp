@@ -32,6 +32,6 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: dist
-        path: dist
+        path: client/dist
       env:
         CI: true
