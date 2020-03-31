@@ -1,95 +1,86 @@
 <template>
   <div class="md-layout md-gutter md-alignment-center-center fill-view">
-    <div
-      class="md-layout-item md-small-size-90 md-medium-size-60 md-large-size-40 md-xlarge-size-30"
-      md-elevation="4"
-    >
-      <md-card>
-        <md-card-header>
-          <div class="md-title">{{ registerMode ? "Register" : "Login" }}</div>
-        </md-card-header>
-        <md-card-content>
-          <transition-group name="fade">
-            <md-field
-              v-show="registerMode"
-              key="field-firstname"
-              :class="{ 'md-invalid': this.showErrors && !this.firstname }"
-            >
-              <label>First name</label>
-              <md-input v-model="firstname" required></md-input>
-              <span class="md-error">Required field!</span>
-            </md-field>
-            <md-field
-              v-show="registerMode"
-              key="field-lastname"
-              :class="{ 'md-invalid': this.showErrors && !this.lastname }"
-            >
-              <label>Last name</label>
-              <md-input v-model="lastname" required></md-input>
-              <span class="md-error">Required field!</span>
-            </md-field>
-            <md-field
-              key="field-email"
-              :class="{ 'md-invalid': this.showErrors && !this.email }"
-            >
-              <label>E-mail</label>
-              <md-input v-model="email" required></md-input>
-              <span class="md-error">Required field!</span>
-            </md-field>
-            <md-field
-              key="field-password"
-              :class="{ 'md-invalid': this.showErrors && !this.password }"
-            >
-              <label>Password</label>
-              <md-input v-model="password" type="password" required></md-input>
-              <span class="md-error">Required field!</span>
-            </md-field>
-            <md-field
-              v-show="registerMode"
-              key="field-password-repeat"
-              :class="{ 'md-invalid': this.showErrors && !this.repeatPassword }"
-            >
-              <label>Repeat password</label>
-              <md-input
-                v-model="repeatPassword"
-                type="password"
-                required
-              ></md-input>
-              <span class="md-error">Required field!</span>
-            </md-field>
-          </transition-group>
-          <md-button
-            class="md-dense md-raised md-primary"
-            @click="registerMode ? register() : login()"
-            :disabled="loading"
-            >{{ registerMode ? "Register" : "Login" }}</md-button
-          >
-        </md-card-content>
-        <md-tabs md-alignment="centered" @md-changed="registerModeChange">
-          <md-tab
-            id="tab-login"
-            md-label="Login"
-            class="tab-fill-width"
-          ></md-tab>
-          <md-tab
-            id="tab-register"
-            md-label="Register"
-            class="tab-fill-width"
-          ></md-tab>
-        </md-tabs>
-      </md-card>
-    </div>
-    <md-snackbar
-      md-position="center"
-      :md-duration="4000"
-      :md-active.sync="showSnackbar"
-      md-persistant
-    >
+    <v-container class="fill-height" fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12" sm="8" md="4">
+          <v-card class="elevation-12">
+            <v-toolbar color="primary" dark flat>
+              <v-toolbar-title>Welcome!</v-toolbar-title>
+              <template v-slot:extension>
+                <v-tabs centered v-model="registerMode" color="white">
+                  <v-tab>Login</v-tab>
+                  <v-tab>Register</v-tab>
+                </v-tabs>
+              </template>
+            </v-toolbar>
+            <v-form @submit.prevent="registerMode ? register() : login()" lazy-validation v-model="formValid" ref="form">
+              <v-card-text>
+                <v-text-field
+                  label="E-Mail"
+                  v-model="email"
+                  prepend-icon="person"
+                  type="text"
+                  outlined
+                  :rules="validating && emailRules"
+                />
+                <v-expand-transition>
+                  <v-text-field
+                    label="First name"
+                    prepend-icon="text_format"
+                    v-model="firstname"
+                    type="text"
+                    outlined
+                    :rules="validating && !!registerMode && standardFieldRules"
+                    v-if="registerMode"
+                  />
+                </v-expand-transition>
+                <v-expand-transition>
+                  <v-text-field
+                    label="Last name"
+                    prepend-icon="text_format"
+                    v-model="lastname"
+                    type="text"
+                    outlined
+                    :rules="validating && !!registerMode && standardFieldRules"
+                    v-if="registerMode"
+                  />
+                </v-expand-transition>
+                <v-text-field
+                  label="Password"
+                  v-model="password"
+                  prepend-icon="lock"
+                  type="password"
+                  :rules="validating && passwordRules"
+                  outlined
+                />
+                <v-expand-transition>
+                  <v-text-field
+                    label="Repeat password"
+                    v-model="repeatPassword"
+                    prepend-icon="replay"
+                    type="password"
+                    :rules="validating && !!registerMode && standardFieldRules"
+                    outlined
+                    v-if="registerMode"
+                  />
+                </v-expand-transition>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" type="submit" :disabled="!formValid">
+                  <v-icon left>arrow_forward</v-icon>
+                  {{ registerMode ? "Register" : "Login" }}
+                </v-btn>
+              </v-card-actions>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-snackbar :timeout="4000" v-model="showSnackbar">
       <span>{{ snackbarMessage }}</span>
-      <md-button class="md-accent" @click="showSnackbar = false"
-        >Close</md-button
-      >
-    </md-snackbar>
+      <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -106,12 +97,21 @@ export default {
     loading: false,
     showSnackbar: false,
     snackbarMessage: "Loading...",
-    showErrors: false
+    standardFieldRules: [
+      v => !!v || "This field is required!"
+    ],
+    emailRules: [
+      v => !!v || 'E-mail is required!',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid!',
+    ],
+    passwordRules: [
+      v => !!v || 'Password is required!',
+      v => (v && v.length >= 8) || 'Password must be at least 8 characters.',
+    ],
+    formValid: null,
+    validating: false
   }),
   methods: {
-    registerModeChange(tab) {
-      this.registerMode = tab === "tab-register";
-    },
     alertSnackbar(msg) {
       if (this.showSnackbar) {
         this.showSnackbar = false;
@@ -121,14 +121,13 @@ export default {
         this.showSnackbar = true;
       }
     },
+    validate() {
+      this.validating = true;
+      this.$refs.form.validate();
+    },
     register() {
-      if (
-        !this.firstname ||
-        !this.lastname ||
-        !this.email ||
-        !this.password ||
-        !this.repeatPassword
-      ) {
+      this.validate();
+      if (!this.formValid) {
         this.showErrors = true;
         this.alertSnackbar("Please check your input.");
         return;
@@ -166,7 +165,8 @@ export default {
         });
     },
     login() {
-      if (!this.email || !this.password) {
+      this.validate();
+      if (!this.formValid) {
         this.showErrors = true;
         this.alertSnackbar("Please check your input.");
         return;
@@ -202,24 +202,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.fill-view {
-  min-height: 100%;
-  width: 100%;
-}
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.2s ease-out;
-}
-.fade-enter,
-.fade-leave-to {
-  min-height: 0;
-  height: 0;
-  padding-top: 0;
-  transform: scaleY(0);
-}
-.tab-fill-width {
-  min-width: 40% !important;
-}
-</style>
