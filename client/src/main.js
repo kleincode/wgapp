@@ -19,6 +19,7 @@ import {
   MdMenu,
   MdRipple,
   MdSnackbar,
+  MdSteppers,
   MdTabs,
   MdTable,
   MdToolbar
@@ -37,6 +38,7 @@ Vue.use(MdList);
 Vue.use(MdMenu);
 Vue.use(MdRipple);
 Vue.use(MdSnackbar);
+Vue.use(MdSteppers);
 Vue.use(MdTable);
 Vue.use(MdTabs);
 Vue.use(MdToolbar);
