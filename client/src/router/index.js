@@ -23,6 +23,18 @@ const routes = [
       import(/* webpackChunkName: "finances" */ "../views/Finances.vue")
   },
   {
+    path: "/tasks",
+    name: "Tasks",
+    component: () =>
+      import(/* webpackChunkName: "tasks" */ "../views/Tasks.vue")
+  },
+  {
+    path: "/tasks/edit",
+    name: "Edit Task",
+    component: () =>
+      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+  },
+  {
     path: "/settings",
     name: "Settings",
     component: () =>

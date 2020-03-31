@@ -9,16 +9,22 @@ import "vue-material/dist/theme/default-dark.css";
 import {
   MdApp,
   MdAvatar,
+  MdBadge,
   MdButton,
   MdCard,
+  MdChips,
   MdContent,
+  MdDivider,
   MdDrawer,
+  MdEmptyState,
   MdField,
   MdIcon,
   MdList,
   MdMenu,
+  MdRadio,
   MdRipple,
   MdSnackbar,
+  MdSwitch,
   MdSteppers,
   MdTabs,
   MdTable,
@@ -29,15 +35,21 @@ Vue.config.productionTip = false;
 Vue.use(MdApp);
 Vue.use(MdAvatar);
 Vue.use(MdButton);
+Vue.use(MdBadge);
 Vue.use(MdCard);
+Vue.use(MdChips);
 Vue.use(MdContent);
+Vue.use(MdDivider);
+Vue.use(MdEmptyState)
 Vue.use(MdDrawer);
 Vue.use(MdField);
 Vue.use(MdIcon);
 Vue.use(MdList);
 Vue.use(MdMenu);
+Vue.use(MdRadio);
 Vue.use(MdRipple);
 Vue.use(MdSnackbar);
+Vue.use(MdSwitch);
 Vue.use(MdSteppers);
 Vue.use(MdTable);
 Vue.use(MdTabs);
