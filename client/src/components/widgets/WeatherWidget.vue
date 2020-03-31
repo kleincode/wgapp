@@ -2,7 +2,9 @@
   <Widget title="Weather">
     <span class="md-display-3">{{ temperature }}</span>
     <span class="md-display-1" style="vertical-align: top;"> °C</span>
-    <div class="md-subheading">{{ condition }} | Last update: {{ lastUpdate }}</div>
+    <div class="md-subheading">
+      {{ condition }} | Last update: {{ lastUpdate }}
+    </div>
   </Widget>
 </template>
 
@@ -21,17 +23,23 @@ export default {
   }),
   methods: {
     update() {
-      fetch("https://api.openweathermap.org/data/2.5/weather?zip=07745,de&appid=2384b68bf977a346118c65ada1b0bd93", {
-        method: "GET",
-        cache: "no-cache"
-      })
-      .then(res => res.json())
-      .then(resjson => {
-        let time = new Date();
-        this.temperature = Math.round(resjson.main.temp - 273.15);
-        this.condition = resjson.weather[0].main;
-        this.lastUpdate = ("0" + time.getHours()).slice(-2) + ":" + ("0" + time.getMinutes()).slice(-2)
-      });
+      fetch(
+        "https://api.openweathermap.org/data/2.5/weather?zip=07745,de&appid=2384b68bf977a346118c65ada1b0bd93",
+        {
+          method: "GET",
+          cache: "no-cache"
+        }
+      )
+        .then(res => res.json())
+        .then(resjson => {
+          let time = new Date();
+          this.temperature = Math.round(resjson.main.temp - 273.15);
+          this.condition = resjson.weather[0].main;
+          this.lastUpdate =
+            ("0" + time.getHours()).slice(-2) +
+            ":" +
+            ("0" + time.getMinutes()).slice(-2);
+        });
     }
   },
   mounted() {

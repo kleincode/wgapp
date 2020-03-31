@@ -9,11 +9,19 @@
           <form @submit.prevent="formSubmit" :auto-complete="false">
             <md-field>
               <label>Household ID</label>
-              <md-input v-model="householdId" required :maxlength="32"></md-input>
+              <md-input
+                v-model="householdId"
+                required
+                :maxlength="32"
+              ></md-input>
             </md-field>
             <md-field>
               <label>Security Code</label>
-              <md-input v-model="securityCode" required :maxlength="6"></md-input>
+              <md-input
+                v-model="securityCode"
+                required
+                :maxlength="6"
+              ></md-input>
             </md-field>
             <md-button class="md-raised md-primary" type="submit">
               Check
@@ -25,7 +33,6 @@
   </div>
 </template>
 <script>
-
 export default {
   name: "AddHousehold",
   data: () => ({
@@ -33,9 +40,9 @@ export default {
     securityCode: ""
   }),
   methods: {
-      formSubmit() {
-        alert("form submitted");
-      }
+    formSubmit() {
+      alert("form submitted");
+    }
   },
   mounted() {
     this.householdId = this.$route.query.h || "";

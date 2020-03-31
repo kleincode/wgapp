@@ -25,6 +25,10 @@ import {
   MdToolbar
 } from "vue-material/dist/components";
 
+import vuetify from "./plugins/vuetify";
+import "roboto-fontface/css/roboto/roboto-fontface.css";
+import "@mdi/font/css/materialdesignicons.css";
+
 Vue.config.productionTip = false;
 Vue.use(MdApp);
 Vue.use(MdAvatar);
@@ -46,5 +50,6 @@ Vue.use(MdToolbar);
 new Vue({
   router,
   store,
+  vuetify,
   render: h => h(App)
 }).$mount("#app");

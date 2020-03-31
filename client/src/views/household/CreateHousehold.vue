@@ -13,13 +13,18 @@
               :md-editable="false"
               :md-done.sync="first"
             >
-              <p>Please give your household a sweet little name. You will be able to change it later.</p>
+              <p>
+                Please give your household a sweet little name. You will be able
+                to change it later.
+              </p>
               <form @submit.prevent="submitStep(0)" :auto-complete="false">
                 <md-field>
                   <label>Household name</label>
                   <md-input v-model="householdName" required></md-input>
                 </md-field>
-                <md-button class="md-raised md-primary" type="submit">Continue</md-button>
+                <md-button class="md-raised md-primary" type="submit"
+                  >Continue</md-button
+                >
               </form>
             </md-step>
 
@@ -29,17 +34,56 @@
               :md-editable="false"
               :md-done.sync="second"
             >
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <md-button class="md-raised md-primary" @click="submitStep(1)">Continue</md-button>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestias doloribus eveniet quaerat modi cumque quos sed,
+                temporibus nemo eius amet aliquid, illo minus blanditiis
+                tempore, dolores voluptas dolore placeat nulla.
+              </p>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestias doloribus eveniet quaerat modi cumque quos sed,
+                temporibus nemo eius amet aliquid, illo minus blanditiis
+                tempore, dolores voluptas dolore placeat nulla.
+              </p>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestias doloribus eveniet quaerat modi cumque quos sed,
+                temporibus nemo eius amet aliquid, illo minus blanditiis
+                tempore, dolores voluptas dolore placeat nulla.
+              </p>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestias doloribus eveniet quaerat modi cumque quos sed,
+                temporibus nemo eius amet aliquid, illo minus blanditiis
+                tempore, dolores voluptas dolore placeat nulla.
+              </p>
+              <md-button class="md-raised md-primary" @click="submitStep(1)"
+                >Continue</md-button
+              >
             </md-step>
 
-            <md-step id="third" md-label="Third Step" :md-editable="false" :md-done.sync="third">
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <md-button class="md-raised md-primary" @click="submitStep(2)">Done</md-button>
+            <md-step
+              id="third"
+              md-label="Third Step"
+              :md-editable="false"
+              :md-done.sync="third"
+            >
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestias doloribus eveniet quaerat modi cumque quos sed,
+                temporibus nemo eius amet aliquid, illo minus blanditiis
+                tempore, dolores voluptas dolore placeat nulla.
+              </p>
+              <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Molestias doloribus eveniet quaerat modi cumque quos sed,
+                temporibus nemo eius amet aliquid, illo minus blanditiis
+                tempore, dolores voluptas dolore placeat nulla.
+              </p>
+              <md-button class="md-raised md-primary" @click="submitStep(2)"
+                >Done</md-button
+              >
             </md-step>
           </md-steppers>
         </md-card-content>
@@ -59,7 +103,7 @@ export default {
   }),
   methods: {
     submitStep(index) {
-      switch(index) {
+      switch (index) {
         case 0:
           this.first = true;
           this.active = "second";
