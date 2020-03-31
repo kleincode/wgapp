@@ -1,113 +1,62 @@
 <template>
-  <div class="page-container">
-    <md-app md-mode="fixed" id="outer-app">
-      <md-app-toolbar class="md-dense md-primary">
-        <div class="md-toolbar-row">
-          <md-button
-            class="md-icon-button hide-small-and-up"
-            @click="toggleMenu"
-          >
-            <md-icon>menu</md-icon>
-          </md-button>
+  <v-app>
+    <v-navigation-drawer app clipped v-model="menuVisible">
+      <v-list dense nav>
+        <v-list-item two-line class="px-0">
+          <v-list-item-avatar>
+            <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="title">WG App</v-list-item-title>
+            <v-list-item-subtitle>Navigation</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item v-for="item in menuContents" :key="item.name" link :to="item.path">
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
 
-          <span class="md-title">WG App</span>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.name }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block color="red lighten-2">Logout</v-btn>
         </div>
-      </md-app-toolbar>
+      </template>
+    </v-navigation-drawer>
 
-      <!-- Drawer for mobile devices -->
-      <md-app-drawer
-        :md-active.sync="menuVisible"
-        md-permanent="full"
-        class="app-drawer hide-small-and-up"
-      >
-        <md-list>
-          <md-list-item @click="toggleMenu">
-            <md-icon>{{
-              menuVisible ? "keyboard_arrow_left" : "keyboard_arrow_right"
-            }}</md-icon>
-            <span class="md-list-item-text">Navigation</span>
-          </md-list-item>
-          <md-list-item
-            v-for="(item, i) in menuContents"
-            :key="'menu-content' + i"
-            :to="item.path"
-            @click="menuVisible = false"
-          >
-            <md-icon>{{ item.icon }}</md-icon>
-            <span class="md-list-item-text">{{ item.name }}</span>
-          </md-list-item>
-        </md-list>
-      </md-app-drawer>
+    <v-app-bar app color="primary" class="white--text" clipped-left>
+      <v-app-bar-nav-icon @click="menuVisible = !menuVisible" color="white"></v-app-bar-nav-icon>
+      <v-toolbar-title>WG App</v-toolbar-title>
+    </v-app-bar>
 
-      <md-app-content class="outer-app-content">
-        <md-app mf-mode="fixed" style="min-height: 100%;" id="inner-app">
-          <!-- Drawer for larger (desktop) devices -->
-          <md-app-drawer
-            :md-active.sync="menuVisible"
-            md-permanent="full"
-            md-persistent="mini"
-            class="app-drawer md-xsmall-hide"
-          >
-            <md-list>
-              <md-list-item @click="toggleMenu">
-                <md-icon>{{
-                  menuVisible ? "keyboard_arrow_left" : "keyboard_arrow_right"
-                }}</md-icon>
-                <span class="md-list-item-text">Navigation</span>
-              </md-list-item>
-              <md-list-item
-                v-for="(item, i) in menuContents"
-                :key="'menu-content' + i"
-                :to="item.path"
-              >
-                <md-icon>{{ item.icon }}</md-icon>
-                <span class="md-list-item-text">{{ item.name }}</span>
-              </md-list-item>
-            </md-list>
-          </md-app-drawer>
+    <!-- Sizes your content based upon application components -->
+    <v-content>
+      <!-- Provides the application the proper gutter -->
+      <v-container fluid>
+        <!-- If using vue-router -->
+        <router-view></router-view>
+      </v-container>
+    </v-content>
 
-          <md-app-content>
-            <router-view></router-view>
-          </md-app-content>
-        </md-app>
-      </md-app-content>
-    </md-app>
-  </div>
+    <v-footer app inset class="text-center">
+      <div style="width: 100%;">Made in self-isolation -- 2020</div>
+    </v-footer>
+  </v-app>
 </template>
 
 <style lang="scss">
-#outer-app {
-  min-height: 100vh;
-}
-
-.outer-app-content {
-  padding: 0 !important;
-}
-
-.md-drawer.app-drawer {
-  width: 220px;
-}
-
-#inner-app .md-app-scroller {
-  padding-left: 0 !important;
-}
-
-@media (min-width: 600px) {
-  .hide-small-and-up {
-    display: none !important;
-  }
-}
-
-.md-list .router-link-active i.md-icon {
-  color: var(--md-theme-default-primary-on-background, #448aff);
-}
 </style>
 
 <script>
 export default {
   name: "App",
   data: () => ({
-    menuVisible: false,
+    menuVisible: null,
     menuContents: [
       {
         name: "Dashboard",
