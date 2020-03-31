@@ -1,4 +1,7 @@
-WGApp. Work in Progress.
+# WGApp
+![Client](https://github.com/kleincode/wgapp/workflows/Build%20client/badge.svg)
+
+Work in Progress.
 
 ## Project setup
 ```
