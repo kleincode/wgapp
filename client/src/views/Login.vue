@@ -67,7 +67,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" type="submit" :disabled="!formValid">
+                <v-btn color="primary" type="submit" :disabled="!formValid" :loading="loading">
                   <v-icon left>arrow_forward</v-icon>
                   {{ registerMode ? "Register" : "Login" }}
                 </v-btn>
