@@ -25,6 +25,7 @@ import {
   MdRipple,
   MdSnackbar,
   MdSwitch,
+  MdSteppers,
   MdTabs,
   MdTable,
   MdToolbar
@@ -49,6 +50,7 @@ Vue.use(MdRadio);
 Vue.use(MdRipple);
 Vue.use(MdSnackbar);
 Vue.use(MdSwitch);
+Vue.use(MdSteppers);
 Vue.use(MdTable);
 Vue.use(MdTabs);
 Vue.use(MdToolbar);
