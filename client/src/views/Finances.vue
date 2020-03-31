@@ -71,25 +71,25 @@ export default {
       {
         text: "Expense",
         align: "start",
-        value: "expense"
+        value: "description"
       },
-      { text: "Member", value: "member" },
+      { text: "Member", value: "uid" },
       { text: "Date", value: "date" },
       { text: "Amount", value: "amount" },
       { text: "Actions", value: "actions" }
     ],
     tableOptions: {},
     tableTotalItems: 2,
-    tableLoading: true,
+    tableLoading: null,
     expenses: [
       {
-        expense: "Tiefkühlpizzaaa!",
+        description: "Tiefkühlpizzaaa!",
         member: "Felix Kleinsteuber",
         date: 1585475790,
         amount: 164
       },
       {
-        expense: "Einkauf",
+        description: "Einkauf",
         member: "Max Mustermann",
         date: 1585375790,
         amount: 2354
@@ -97,14 +97,63 @@ export default {
     ]
   }),
   methods: {
+    updateTable() {
+      this.tableLoading = true;
+      this.loadData().then(res => {
+        this.expenses = res.data;
+        this.tableTotalItems = res.totalCount;
+        this.tableLoading = false;
+      });
+    },
+    loadData() {
+      return new Promise((resolve, reject) => {
+        fetch(
+          `/_/fetchfinances?p=${this.tableOptions.page-1}&ps=${this.tableOptions.itemsPerPage}` +
+            (this.tableOptions.search
+              ? "&q=" + encodeURI(this.tableOptions.search)
+              : ""),
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json"
+            }
+          }
+        )
+          .then(res => res.json())
+          .then(res => {
+            if (res.success) {
+              resolve({
+                data: res.data,
+                page: res.page,
+                totalCount: res.entries,
+                memberTotals: res.totals
+              });
+            } else {
+              console.log("Error while fetching finances table.", res.message);
+              reject(res.message);
+            }
+          });
+      });
+    },
     editItem(item) {
-      alert("editing " + item.expense)
+      alert("editing " + item.expense);
     },
     deleteItem(item) {
-      alert("deleting " + item.expense)
+      alert("deleting " + item.expense);
       let index = this.expenses.find(el => el.id === item.id);
       this.expenses.splice(index, 1);
     }
+  },
+  watch: {
+    tableOptions: {
+      handler() {
+        this.updateTable();
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.updateTable();
   }
 };
 </script>
