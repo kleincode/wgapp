@@ -1,54 +1,81 @@
 <template>
-  <div>
-    <div class="md-layout md-gutter md-alignment-top-center">
-      <md-card class="tasks-card">
-        <md-card-header>
-          <div class="md-title div-flex">
-            <div class="md-layout md-gutter">
-              <div class="md-layout-item">Tasks</div>
-              <div class="md-layout-item md-size-15">
-                <md-button class="md-icon-button md-raised md-primary" style="float: right; margin-right: 2em">
-                  <md-icon>add</md-icon>
-                </md-button>
-              </div>
-            </div>
-          </div>
-        </md-card-header>
-        <md-card-content>
-          <div class="md-layout md-gutter md-alignment-top-center fill-width">
-            <md-list class="md-triple-line">
-              <md-empty-state
-                v-if="tasks.length == 0"
-                md-icon="feedback"
-                md-label="Create your first task"
-                md-description="Click on the add button to create your first task. You can change various options for each task."
-              ></md-empty-state>
-              <div v-for="(task,i) in tasks" :key="'task-' + i">
-                <md-list-item>
-                  <md-avatar class="md-large">
-                    <md-icon class="md-size-3x">{{task.icon}}</md-icon>
-                  </md-avatar>
-                  <div class="md-list-item-text div-block">
-                    <span>{{task.name}}</span>
-                    <md-chip
-                      :class="task.missed ? 'md-accent' : 'md-primary'"
-                      class="normal-chip"
-                    >{{task.due}}</md-chip>
-                    <br />
-                    <span>- {{task.assigned}}</span>
-                  </div>
-                  <md-button class="md-icon-button md-list-action">
-                    <md-icon>edit</md-icon>
-                  </md-button>
-                </md-list-item>
-                <md-divider class="md-inset"></md-divider>
-              </div>
-            </md-list>
-          </div>
-        </md-card-content>
-      </md-card>
-    </div>
-  </div>
+  <v-container fluid>
+    <h1 class="display-2 pl-12 pb-6">Tasks</h1>
+    <v-row>
+      <v-col cols="12" md="6" lg="4">
+        <v-card outlined class="text-center">
+          <h2 class="title pt-8 pb-12">Today's Tasks:</h2>
+          <v-card raised class="main-task text-center primary">
+            <div class="overline">DUE TODAY</div>
+            <v-icon style="font-size: 10em" x-large>bathtub</v-icon>
+            <div class="font-regular pt-4 display-1">Bad putzen</div>
+            <div class="caption pt-2">14:00</div>
+            <v-divider class="mt-4 mb-4"></v-divider>
+            <v-chip>
+              <v-avatar left>
+                <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+              </v-avatar>Matti Frind
+            </v-chip>
+          </v-card>
+          <v-divider class="mt-4 mb-4"></v-divider>
+          <div class="overline">other:</div>
+          <v-list avatar class="text-left pl-4">
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon>rowing</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Saugen</v-list-item-title>
+                <v-list-item-subtitle><div class="overline">17:00</div></v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon>delete</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>Müll rausbringen</v-list-item-title>
+                <v-list-item-subtitle><div class="overline">18:00</div></v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="8">
+        <v-card outlined>
+          <h2 class="title pl-8 pt-4">All Tasks:</h2>
+          <v-list>
+            <v-list-item
+              v-for="(task,i) in tasks"
+              :key="'task-' + i"
+              :class="task.missed ? 'red': ''"
+            >
+              <v-list-item-avatar>
+                <v-icon>{{task.icon}}</v-icon>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title v-text="task.name" class="pb-2"></v-list-item-title>
+                <v-list-item-subtitle>
+                  <v-chip>
+                    <v-avatar left>
+                      <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                    </v-avatar>
+                    {{task.assigned}}
+                  </v-chip>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-hover><v-btn icon><v-icon>check</v-icon></v-btn></v-hover>
+                <v-hover><v-btn icon><v-icon>edit</v-icon></v-btn></v-hover>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 export default {
@@ -89,43 +116,18 @@ export default {
 .fill-width {
   width: 100%;
 }
-.flex-item {
-  display: flex;
-  & > .pushleft {
-    margin: 0 auto 0 0;
-  }
-}
-.md-list {
-  width: 98%;
-  max-width: 98%;
-  display: inline-block;
-  vertical-align: top;
+
+.fill-height {
+  height: 100%;
 }
 
-.div-flex {
-  display: flex;
-}
-
-.div-block {
+.main-task {
+  max-width: 70%;
+  padding: 2em;
+  margin: 2em;
+  margin-bottom: 4em;
   display: block;
-}
-
-.normal-chip {
-  width: auto;
-  height: auto;
-  line-height: 1.7em;
-  margin-left: 1em;
-}
-
-.md-layout-item {
-  height: 40px;
-
-  &:after {
-    width: 100%;
-    height: 100%;
-    display: block;
-    background: md-get-palette-color(green, 200);
-    content: " ";
-  }
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
