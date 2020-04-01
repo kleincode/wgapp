@@ -19,7 +19,7 @@
                 <div class="font-regular pt-4 display-1">
                   {{tasks[0].name}}
                   <v-btn icon>
-                    <v-icon x-large>check</v-icon>
+                    <v-icon x-large>check_box_outline_blank</v-icon>
                   </v-btn>
                 </div>
                 <div class="caption pt-2">{{tasks[0].time}}</div>
@@ -69,7 +69,7 @@
                 </v-list-item-content>
                 <v-list-item-icon>
                   <v-btn icon>
-                    <v-icon>check</v-icon>
+                    <v-icon>check_box_outline_blank</v-icon>
                   </v-btn>
                 </v-list-item-icon>
               </v-list-item>
@@ -133,7 +133,7 @@
               <v-list-item-icon>
                 <v-hover>
                   <v-btn icon>
-                    <v-icon>check</v-icon>
+                    <v-icon>check_box_outline_blank</v-icon>
                   </v-btn>
                 </v-hover>
                 <v-hover>
@@ -163,7 +163,6 @@ export default {
         assigned: "Felix",
         day: "Today",
         time: "14:00",
-        due: "yesterday",
         missed: false,
         icon: "bathtub"
       },

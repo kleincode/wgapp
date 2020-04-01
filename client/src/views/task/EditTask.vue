@@ -87,10 +87,10 @@
             <v-select v-model="chosenDays" :items="days" chips label="Repeat on" multiple outlined></v-select>
           </v-col>
           <v-col cols="12" lg="4" md="6">
-            <v-text-field type="number" v-model="repetition" label="Repeat every" required outlined></v-text-field>
+            <v-text-field type="number" v-model="repetitionEvery" label="Repeat every" required outlined></v-text-field>
           </v-col>
           <v-col cols="12" lg="4" md="6">
-            <v-select :items="repetition_units" label="Repetition unit" outlined></v-select>
+            <v-select :items="repetitionUnits" label="Repetition unit" outlined></v-select>
           </v-col>
           <v-col cols="12" style="text-align: right">
             <v-btn large color="primary" class="mr-4">save</v-btn>
@@ -121,10 +121,10 @@ export default {
     chosenDays: ["Friday"],
     time: null,
     reminder: false,
-    repetition: "",
-    repetition_unit: "",
-    repetition_units: ["Weeks", "Months"],
-    members: ["Felix", "Matti", "Tom"],
+    repetitionEvery: "",
+    repetitionUnit: "",
+    repetitionUnits: ["Weeks", "Months"],
+    assignedMember: ["Felix", "Matti", "Tom"],
 
     startDateMenu: false,
     startTimeMenu: false
