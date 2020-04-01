@@ -1,7 +1,7 @@
 <template>
   <Widget title="Clock">
-    <div class="md-display-3">{{ time }}</div>
-    <div class="md-subheading">{{ date }}</div>
+    <div class="display-3">{{ time }}</div>
+    <div class="overline">{{ date }}</div>
   </Widget>
 </template>
 
