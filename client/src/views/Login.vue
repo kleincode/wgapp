@@ -50,7 +50,7 @@
                   v-model="password"
                   prepend-icon="lock"
                   type="password"
-                  :rules="validating ? passwordRules : []"
+                  :rules="(validating && !!registerMode) ? passwordRules : []"
                   outlined
                 />
                 <v-expand-transition>
@@ -97,16 +97,14 @@ export default {
     loading: false,
     showSnackbar: false,
     snackbarMessage: "Loading...",
-    standardFieldRules: [
-      v => !!v || "This field is required!"
-    ],
+    standardFieldRules: [v => !!v || "This field is required!"],
     emailRules: [
-      v => !!v || 'E-mail is required!',
-      v => /.+@.+\..+/.test(v) || 'E-mail must be valid!',
+      v => !!v || "E-mail is required!",
+      v => /.+@.+\..+/.test(v) || "E-mail must be valid!"
     ],
     passwordRules: [
-      v => !!v || 'Password is required!',
-      v => (v && v.length >= 8) || 'Password must be at least 8 characters.',
+      v => !!v || "Password is required!",
+      v => (v && v.length >= 8) || "Password must be at least 8 characters."
     ],
     formValid: null,
     validating: false
@@ -124,7 +122,7 @@ export default {
     async validate() {
       this.validating = true;
       this.$refs.form.validate();
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
       this.formValid = this.$refs.form.validate();
     },
     async register() {
@@ -139,31 +137,23 @@ export default {
         return;
       }
       this.loading = true;
-      fetch("/_/register", {
-        method: "POST",
-        body: JSON.stringify({
+      try {
+        const { data } = await this.$http.post("/_/register", {
           email: this.email,
           password: this.password,
           firstname: this.firstname,
           lastname: this.lastname
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-        .then(res => res.json())
-        .then(resjson => {
-          if (resjson.success) {
-            this.alertSnackbar(resjson.message);
-            this.login();
-          } else this.alertSnackbar(resjson.message);
-          this.loading = false;
-        })
-        .catch(err => {
-          console.error(err);
-          this.alertSnackbar("Error logging in. Please try again.");
-          this.loading = false;
         });
+        if (data.success) {
+          this.alertSnackbar(data.message);
+          this.login();
+        } else this.alertSnackbar(data.message);
+        this.loading = false;
+      } catch (err) {
+        console.error(err);
+        this.alertSnackbar("Error logging in. Please try again.");
+        this.loading = false;
+      }
     },
     async login() {
       await this.validate();
@@ -172,32 +162,23 @@ export default {
         return;
       }
       this.loading = true;
-      fetch("/_/login", {
-        method: "POST",
-        body: JSON.stringify({
+      try {
+        const { data } = await this.$http.post("/_/login", {
           email: this.email,
           password: this.password
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-        .then(res => res.json())
-        .then(resjson => {
-          if (resjson.success) {
-            this.loading = false;
-            this.$store.commit("login_success", resjson.email);
-            if (this.$route.params && this.$route.params.redirect)
-              this.$router.push(this.$route.params.redirect);
-            else this.$router.push(resjson.redirect || "/");
-          } else this.alertSnackbar(resjson.message);
-          this.loading = false;
-        })
-        .catch(err => {
-          console.error(err);
-          this.alertSnackbar("Error logging in. Please try again.");
-          this.loading = false;
         });
+        if (data.success) {
+          this.loading = false;
+          this.$store.commit("login_success", data.email);
+          if (this.$route.params && this.$route.params.redirect)
+            this.$router.push(this.$route.params.redirect);
+          else this.$router.push(data.redirect || "/");
+        } else this.alertSnackbar(data.message);
+      } catch (err) {
+        console.error(err);
+        this.alertSnackbar("Error logging in. Please try again.");
+        this.loading = false;
+      }
     }
   }
 };

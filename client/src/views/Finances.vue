@@ -100,40 +100,31 @@ export default {
     updateTable() {
       this.tableLoading = true;
       this.loadData().then(res => {
-        this.expenses = res.data;
-        this.tableTotalItems = res.totalCount;
+        if(res.success) {
+          this.expenses = res.data;
+          this.tableTotalItems = res.totalCount;
+        } else alert(res.message);
+        this.tableLoading = false;
+      }).catch(err => {
+        console.log("Error while fetching finances table.", err);
         this.tableLoading = false;
       });
     },
-    loadData() {
-      return new Promise((resolve, reject) => {
-        fetch(
-          `/_/fetchfinances?p=${this.tableOptions.page-1}&ps=${this.tableOptions.itemsPerPage}` +
-            (this.tableOptions.search
-              ? "&q=" + encodeURI(this.tableOptions.search)
-              : ""),
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json"
-            }
-          }
-        )
-          .then(res => res.json())
-          .then(res => {
-            if (res.success) {
-              resolve({
-                data: res.data,
-                page: res.page,
-                totalCount: res.entries,
-                memberTotals: res.totals
-              });
-            } else {
-              console.log("Error while fetching finances table.", res.message);
-              reject(res.message);
-            }
-          });
+    async loadData() {
+      const { data } = await this.$http.get("/_/fetchfinances", {
+        p: this.tableOptions.page - 1,
+        ps: this.tableOptions.itemsPerPage
       });
+
+      if (data.success) {
+        return {
+          success: true,
+          data: data.data,
+          page: data.page,
+          totalCount: data.entries,
+          memberTotals: data.totals
+        };
+      } else return { success: false, message: data.message };
     },
     editItem(item) {
       alert("editing " + item.expense);
@@ -151,9 +142,6 @@ export default {
       },
       deep: true
     }
-  },
-  mounted() {
-    this.updateTable();
   }
 };
 </script>
