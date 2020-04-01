@@ -1,8 +1,8 @@
 <template>
   <Widget title="Weather">
-    <span class="md-display-3">{{ temperature }}</span>
-    <span class="md-display-1" style="vertical-align: top;"> °C</span>
-    <div class="md-subheading">
+    <span class="display-3">{{ temperature }}</span>
+    <span class="display-1" style="vertical-align: top;"> °C</span>
+    <div class="overline">
       {{ condition }} | Last update: {{ lastUpdate }}
     </div>
   </Widget>

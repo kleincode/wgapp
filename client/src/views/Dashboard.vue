@@ -1,21 +1,17 @@
 <template>
-  <div class="md-layout md-gutter md-alignment-center">
-    <div
-      class="md-layout-item md-xlarge-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100"
-    >
-      <ClockWidget />
-    </div>
-    <div
-      class="md-layout-item md-xlarge-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100"
-    >
-      <WeatherWidget />
-    </div>
-    <div
-      class="md-layout-item md-xlarge-size-25 md-medium-size-33 md-small-size-50 md-xsmall-size-100"
-    >
-      <TasksWidget />
-    </div>
-  </div>
+  <v-container>
+    <v-row align="stretch" justify="center">
+      <v-col cols="12" md="6" lg="4" xl="3" class="widget-col">
+        <ClockWidget />
+      </v-col>
+      <v-col cols="12" md="6" lg="4" xl="3" class="widget-col">
+        <WeatherWidget />
+      </v-col>
+      <v-col cols="12" md="6" lg="4" xl="3" class="widget-col">
+        <TasksWidget />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
