@@ -13,7 +13,7 @@
                 </v-tabs>
               </template>
             </v-toolbar>
-            <v-form @submit.prevent="registerMode ? register() : login()" lazy-validation v-model="formValid" ref="form">
+            <v-form @submit.prevent="registerMode ? register() : login()" ref="form">
               <v-card-text>
                 <v-text-field
                   label="E-Mail"
@@ -21,7 +21,7 @@
                   prepend-icon="person"
                   type="text"
                   outlined
-                  :rules="validating && emailRules"
+                  :rules="validating ? emailRules : []"
                 />
                 <v-expand-transition>
                   <v-text-field
@@ -30,7 +30,7 @@
                     v-model="firstname"
                     type="text"
                     outlined
-                    :rules="validating && !!registerMode && standardFieldRules"
+                    :rules="(validating && !!registerMode) ? standardFieldRules : []"
                     v-if="registerMode"
                   />
                 </v-expand-transition>
@@ -41,7 +41,7 @@
                     v-model="lastname"
                     type="text"
                     outlined
-                    :rules="validating && !!registerMode && standardFieldRules"
+                    :rules="(validating && !!registerMode) ? standardFieldRules : []"
                     v-if="registerMode"
                   />
                 </v-expand-transition>
@@ -50,7 +50,7 @@
                   v-model="password"
                   prepend-icon="lock"
                   type="password"
-                  :rules="validating && passwordRules"
+                  :rules="validating ? passwordRules : []"
                   outlined
                 />
                 <v-expand-transition>
@@ -59,7 +59,7 @@
                     v-model="repeatPassword"
                     prepend-icon="replay"
                     type="password"
-                    :rules="validating && !!registerMode && standardFieldRules"
+                    :rules="(validating && !!registerMode) ? standardFieldRules : []"
                     outlined
                     v-if="registerMode"
                   />
@@ -67,7 +67,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" type="submit" :disabled="!formValid" :loading="loading">
+                <v-btn color="primary" type="submit" :loading="loading">
                   <v-icon left>arrow_forward</v-icon>
                   {{ registerMode ? "Register" : "Login" }}
                 </v-btn>
@@ -121,14 +121,15 @@ export default {
         this.showSnackbar = true;
       }
     },
-    validate() {
+    async validate() {
       this.validating = true;
       this.$refs.form.validate();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      this.formValid = this.$refs.form.validate();
     },
-    register() {
-      this.validate();
+    async register() {
+      await this.validate();
       if (!this.formValid) {
-        this.showErrors = true;
         this.alertSnackbar("Please check your input.");
         return;
       } else if (this.password !== this.repeatPassword) {
@@ -164,10 +165,9 @@ export default {
           this.loading = false;
         });
     },
-    login() {
-      this.validate();
+    async login() {
+      await this.validate();
       if (!this.formValid) {
-        this.showErrors = true;
         this.alertSnackbar("Please check your input.");
         return;
       }
