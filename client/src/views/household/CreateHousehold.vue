@@ -1,76 +1,136 @@
 <template>
-  <div>
-    <div class="md-layout md-gutter md-alignment-top-center">
-      <md-card class="view-card">
-        <md-card-header>
-          <div class="md-title">Create household</div>
-        </md-card-header>
-        <md-card-content>
-          <md-steppers :md-active-step.sync="active" md-vertical md-linear>
-            <md-step
-              id="first"
-              md-label="Create new household"
-              :md-editable="false"
-              :md-done.sync="first"
-            >
-              <p>Please give your household a sweet little name. You will be able to change it later.</p>
-              <form @submit.prevent="submitStep(0)" :auto-complete="false">
-                <md-field>
-                  <label>Household name</label>
-                  <md-input v-model="householdName" required></md-input>
-                </md-field>
-                <md-button class="md-raised md-primary" type="submit">Continue</md-button>
-              </form>
-            </md-step>
+  <div class="md-layout md-gutter md-alignment-center-center fill-view">
+    <v-container class="fill-height" fluid>
+      <v-row align="center" justify="center">
+        <v-col cols="12" sm="8" md="6" xl="5">
+          <v-card class="elevation-12">
+            <v-toolbar color="primary" dark flat>
+              <v-toolbar-title>New household</v-toolbar-title>
+            </v-toolbar>
+            <v-stepper v-model="stepperProgress" vertical>
+              <v-stepper-step :complete="stepperProgress > 1" step="1">Create new household</v-stepper-step>
 
-            <md-step
-              id="second"
-              md-label="Second Step"
-              :md-editable="false"
-              :md-done.sync="second"
-            >
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <md-button class="md-raised md-primary" @click="submitStep(1)">Continue</md-button>
-            </md-step>
+              <v-stepper-content step="1">
+                <p>Give your household a sweet little name. Don't worry, you will be able to change it later.</p>
+                <v-form v-model="step1Valid" @submit.prevent="step1Submit">
+                  <v-text-field
+                    label="Household name"
+                    outlined
+                    v-model="householdName"
+                    counter="64"
+                    :rules="householdNameRules"
+                  ></v-text-field>
+                  <v-btn color="primary" type="submit">Continue</v-btn>
+                </v-form>
+              </v-stepper-content>
 
-            <md-step id="third" md-label="Third Step" :md-editable="false" :md-done.sync="third">
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias doloribus eveniet quaerat modi cumque quos sed, temporibus nemo eius amet aliquid, illo minus blanditiis tempore, dolores voluptas dolore placeat nulla.</p>
-              <md-button class="md-raised md-primary" @click="submitStep(2)">Done</md-button>
-            </md-step>
-          </md-steppers>
-        </md-card-content>
-      </md-card>
-    </div>
+              <v-stepper-step :complete="stepperProgress > 2" step="2">Configure household</v-stepper-step>
+
+              <v-stepper-content step="2">
+                <v-form v-model="step2Valid" @submit.prevent="step2Submit">
+                  <v-select outlined v-model="householdType" :items="householdTypes" item-text="description" item-value="id" label="Household type" class="mt-2"></v-select>
+                  <v-btn color="primary" type="submit">Continue</v-btn>
+                  <v-btn text class="ml-2" @click.prevent="cancel">Cancel</v-btn>
+                </v-form>
+              </v-stepper-content>
+
+              <v-stepper-step
+                :complete="stepperProgress > 3"
+                step="3"
+              >Invite members</v-stepper-step>
+
+              <v-stepper-content step="3">
+                <p>It feels so lonely without some roommates. Invite them via the link below.</p>
+                <v-text-field v-model="householdLink" readonly append-icon="assignment" @click:append="copyAddLink" ref="addLink" outlined></v-text-field>
+                <v-btn color="primary" @click.prevent="step3Submit">Next</v-btn>
+                <v-btn text class="ml-2" @click.prevent="cancel">Cancel</v-btn>
+              </v-stepper-content>
+
+              <v-stepper-step
+                :complete="stepperProgress > 4"
+                step="4"
+              >Finish</v-stepper-step>
+
+              <v-stepper-content step="4">
+                <p>Congratulations, your new household has been setup successfully. Continue to check out your dashboard.</p>
+                <v-btn color="primary" @click="finish"> <v-icon left>dashboard</v-icon> Go to dashboard</v-btn>
+              </v-stepper-content>
+
+            </v-stepper>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-snackbar :timeout="4000" v-model="showSnackbar">
+      <span>{{ snackbarMessage }}</span>
+      <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
+    </v-snackbar>
   </div>
 </template>
 <script>
 export default {
   name: "CreateHousehold",
   data: () => ({
-    active: "first",
-    first: false,
-    second: false,
-    third: false,
-    householdName: "My household"
+    stepperProgress: 1,
+    householdName: "My household",
+    householdNameRules: [
+      v => !!v || "Please provide a name!",
+      v => (v && v.length <= 64) || "Name is too long!"
+    ],
+    step1Valid: null,
+    step2Valid: null,
+    showSnackbar: false,
+    snackbarMessage: "Loading...",
+    householdType: 0,
+    householdTypes: [
+      {
+        id: 0,
+        description: "Shared apartment"
+      },
+      {
+        id: 1,
+        description: "Couple"
+      },
+      {
+        id: 2,
+        description: "Family"
+      }
+    ],
+    householdLink: "https://usw"
   }),
   methods: {
-    submitStep(index) {
-      switch(index) {
-        case 0:
-          this.first = true;
-          this.active = "second";
-          break;
-        case 1:
-          this.second = true;
-          this.active = "third";
-          break;
-        case 2:
-          this.third = true;
+    alertSnackbar(msg) {
+      if (this.showSnackbar) {
+        this.showSnackbar = false;
+        setTimeout(() => this.alertSnackbar(msg), 500);
+      } else {
+        this.snackbarMessage = msg;
+        this.showSnackbar = true;
       }
+    },
+    step1Submit() {
+      if (this.step1Valid) this.stepperProgress = 2;
+      else this.alertSnackbar("Please check your input.");
+    },
+    step2Submit() {
+      this.stepperProgress = 3;
+    },
+    step3Submit() {
+      this.stepperProgress = 4;
+    },
+    copyAddLink(event) {
+      console.log(this.$refs.addLink.$refs.input);
+      this.$refs.addLink.$refs.input.select();
+      document.execCommand("copy");
+      event.target.focus();
+      this.alertSnackbar("Copied to clipboard. Happy pasting! :)");
+    },
+    finish() {
+      this.$router.push({name: "Dashboard"});
+    },
+    cancel() {
+      this.householdName = "My household";
+      this.stepperProgress = 1;
     }
   }
 };

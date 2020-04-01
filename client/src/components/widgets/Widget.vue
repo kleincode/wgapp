@@ -1,14 +1,10 @@
 <template>
-  <md-card md-with-hover class="md-transparent">
-    <md-ripple>
-      <md-card-header>
-        <div class="md-subhead">{{ title }}</div>
-      </md-card-header>
-      <md-card-content>
+  <v-card outlined class="widget-card">
+      <v-card-title>{{ title }} </v-card-title>
+      <v-card-text>
         <slot></slot>
-      </md-card-content>
-    </md-ripple>
-  </md-card>
+      </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -19,3 +15,10 @@ export default {
   }
 };
 </script>
+
+<style lang="scss" scoped>
+.widget-card {
+  width: 100%;
+  height: 100%;
+}
+</style>

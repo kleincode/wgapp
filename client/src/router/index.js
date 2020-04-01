@@ -49,13 +49,17 @@ const routes = [
     path: "/household/add",
     name: "Add Household",
     component: () =>
-      import(/* webpackChunkName: "addhousehold" */ "../views/household/AddHousehold.vue")
+      import(
+        /* webpackChunkName: "addhousehold" */ "../views/household/AddHousehold.vue"
+      )
   },
   {
     path: "/household/create",
     name: "Create Household",
     component: () =>
-      import(/* webpackChunkName: "createhousehold" */ "../views/household/CreateHousehold.vue")
+      import(
+        /* webpackChunkName: "createhousehold" */ "../views/household/CreateHousehold.vue"
+      )
   }
 ];
 

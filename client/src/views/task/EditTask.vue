@@ -1,78 +1,105 @@
 <template>
-  <div>
-    <div class="md-layout md-gutter md-alignment-top-center">
-      <md-card class="editTask-card">
-        <md-card-header>
-          <div class="div-flex md-title">Edit Task - {{name}}</div>
-        </md-card-header>
-        <md-card-content>
-          <div class="md-layout md-gutter md-alignment-top-center fill-width">
-            <div class="md-layout-item">
-              <md-field>
-                <label>Name</label>
-                <md-input v-model="name"></md-input>
-              </md-field>
-              <div class="md-subheading">Member mode</div>
-              <div class="md-layout md-gutter md-alignment-center-left fill-width">
-                <div class="md-layout-item">
-                  <md-radio class="md-primary" v-model="iterating" :value="true">Single</md-radio>
-                </div>
-                <div class="md-layout-item">
-                  <md-field>
-                    <label for="member">Choose Member</label>
-                    <md-select v-model="member" name="member" id="member" :disabled="!iterating">
-                      <md-option value="felix">Felix</md-option>
-                      <md-option value="matti">Matti</md-option>
-                    </md-select>
-                  </md-field>
-                </div>
-              </div>
-              <md-radio class="md-primary" v-model="iterating" :value="false">Iterating</md-radio>
-            </div>
-            <div class="md-layout-item md-size-30" style="text-align: center;">
-              <md-icon class="md-size-4x">bathtub</md-icon>
-              <br />
-              <md-button>Change icon</md-button>
-            </div>
-          </div>
-          <div class="md-subheading" style="margin-top: 1em">Repetition</div>
-          <div>
-            <md-switch class="md-primary" v-model="days" value="monday">Monday</md-switch>
-            <md-switch class="md-primary" v-model="days" value="tuesday">Tuesday</md-switch>
-            <md-switch class="md-primary" v-model="days" value="wednesday">Wednesday</md-switch>
-            <md-switch class="md-primary" v-model="days" value="thursday">Thursday</md-switch>
-            <md-switch class="md-primary" v-model="days" value="friday">Friday</md-switch>
-            <md-switch class="md-primary" v-model="days" value="saturday">Saturday</md-switch>
-            <md-switch class="md-primary" v-model="days" value="sunday">Sunday</md-switch>
-          </div>
-          <md-field>
-            <label>Time</label>
-            <md-input v-model="time"></md-input>
-          </md-field>
-          <div class="md-layout div-flex" style="display:flex; align-items: center">
-            <div class="md-layout-item md-size-15">
-              <p>Repeat every:</p>
-            </div>
-            <div class="md-layout-item" style="margin: 0em 1em 0em 1em">
-              <md-field md-inline>
-                <label>Repetition count</label>
-                <md-input v-model="repetition"></md-input>
-              </md-field>
-            </div>
-            <div class="md-layout-item">
-              <md-field>
-                <label for="repetition_unit">Repetition unit</label>
-                <md-select v-model="repetition_unit" name="repetition_unit" id="repetition_unit">
-                  <md-option value="weeks">Weeks</md-option>
-                  <md-option value="months">Months</md-option>
-                </md-select>
-              </md-field>
-            </div>
-          </div>
-        </md-card-content>
-      </md-card>
-    </div>
-  </div>
+  <v-container fluid>
+    <h1 class="display-2 pb-6">Edit task - "{{name}}"</h1>
+    <v-card outlined>
+      <div class="container">
+        <v-row>
+          <v-col cols="12" md="8" lg="8">
+            <v-text-field v-model="name" :counter="128" label="Name" required outlined></v-text-field>
+            <div class="title">Member mode</div>
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-radio-group v-model="iterating">
+                  <v-radio :key="0" :label="'Single'" :value="false"></v-radio>
+                  <v-radio :key="1" :label="'Iterating'" :value="true"></v-radio>
+                </v-radio-group>
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-select :items="members" label="Assigned to" outlined :disabled="iterating"></v-select>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="12" md="4" lg="4" style="text-align: center">
+            <v-icon style="font-size: 12em">bathtub</v-icon>
+            <br />
+            <v-btn text>Change Icon</v-btn>
+          </v-col>
+        </v-row>
+        <div class="title">Time & Date</div>
+        <v-row>
+          <v-col cols="12" lg="4" md="6">
+            <v-menu
+              v-model="startDateMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="date"
+                  label="Choose your start day"
+                  prepend-icon="event"
+                  readonly
+                  v-on="on"
+                  outlined
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="date" @input="startDateMenu = false"></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="12" lg="4" md="6">
+            <v-menu
+              ref="menu"
+              v-model="startTimeMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              :return-value.sync="time"
+              transition="scale-transition"
+              offset-y
+              max-width="290px"
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="time"
+                  label="Choose you task time"
+                  prepend-icon="access_time"
+                  readonly
+                  v-on="on"
+                  outlined
+                ></v-text-field>
+              </template>
+              <v-time-picker
+                v-if="startTimeMenu"
+                v-model="time"
+                format="24hr"
+                full-width
+                @click:minute="$refs.menu.save(time)"
+              ></v-time-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="12" lg="4" md="6">
+            <v-switch v-model="reminder" label="Toggle Reminder"></v-switch>
+          </v-col>
+          <v-col cols="12" lg="4" md="6">
+            <v-select v-model="chosenDays" :items="days" chips label="Repeat on" multiple outlined></v-select>
+          </v-col>
+          <v-col cols="12" lg="4" md="6">
+            <v-text-field type="number" v-model="repetition" label="Repeat every" required outlined></v-text-field>
+          </v-col>
+          <v-col cols="12" lg="4" md="6">
+            <v-select :items="repetition_units" label="Repetition unit" outlined></v-select>
+          </v-col>
+          <v-col cols="12" style="text-align: right">
+            <v-btn large color="primary" class="mr-4">save</v-btn>
+            <v-btn large>cancel</v-btn>
+          </v-col>
+        </v-row>
+      </div>
+    </v-card>
+  </v-container>
 </template>
 <script>
 export default {
@@ -80,25 +107,29 @@ export default {
   data: () => ({
     name: "Bad putzen",
     iterating: true,
-    member: "none",
-    days: [],
-    time: "",
+    selectedMember: "none",
+    date: new Date().toISOString().substr(0, 10),
+    days: [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    chosenDays: ["Friday"],
+    time: null,
+    reminder: false,
     repetition: "",
-    repetition_unit: ""
+    repetition_unit: "",
+    repetition_units: ["Weeks", "Months"],
+    members: ["Felix", "Matti", "Tom"],
+
+    startDateMenu: false,
+    startTimeMenu: false
   })
 };
 </script>
 <style lang="scss" scoped>
-.editTask-card {
-  min-width: 50%;
-  max-width: 90%;
-  width: 700px;
-}
-.fill-width {
-  width: 100%;
-}
-
-.div-flex {
-  display: flex;
-}
 </style>

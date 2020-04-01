@@ -8,14 +8,17 @@ module.exports = (req, res) => {
 
     if(req.user.hid) {
         const page = Math.max(parseInt(req.query.p) || 0, 0),
-            pageSize = Math.max(Math.min(parseInt(req.query.ps) || 100, 100), 0),
+            pageSize = Math.max(Math.min(parseInt(req.query.ps) || 100, 100), 0) || 100,
             offset = pageSize * page;
-        mysql_conn.query(`
-            SELECT finances.id AS 'fid', description, amount, uid FROM finances WHERE hid = ?` + (req.query.q ? ` AND description LIKE ?` : "") + ` LIMIT ?, ?`, req.query.q ? [req.user.hid, "%" + req.query.q + "%", offset, pageSize] : [req.user.hid, offset, pageSize], (err, res2) => {
+        
+        const mainQuery = ` FROM finances WHERE hid = ?` + (req.query.q ? ` AND description LIKE ?` : ""),
+            queryParams = req.query.q ? [req.user.hid, "%" + req.query.q + "%"] : [req.user.hid];
+        
+        mysql_conn.query(`SELECT finances.id AS 'fid', description, amount, uid` + mainQuery + ` LIMIT ?, ?`, [...queryParams, offset, pageSize], (err, res2) => {
             if(err) {
                 res.status(500).send({success: false, message: "Error while fetching finances from database."}).end();
                 console.log(err);
-            } else mysql_conn.query("SELECT COUNT(*) AS 'entries' FROM finances WHERE hid = ?", [req.user.hid], (err, res3) => {
+            } else mysql_conn.query("SELECT COUNT(*) AS 'entries'" + mainQuery, queryParams, (err, res3) => {
                 if(err) {
                     res.status(500).send({success: false, message: "Error while fetching finances from database."}).end();
                     console.log(err);
