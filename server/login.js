@@ -27,8 +27,8 @@ module.exports = (req, res) => {
                     } else if(!res3) {
                         res.status(401).json({success: false, message: "The given combination of email and password is incorrect."}).end();
                     } else {
-                        const token = jwt.sign({ uid, email, firstname, lastname, hid }, jwt_secret, { expiresIn: "1h" });
-                        res.cookie("wgali", token, { httpOnly: true }).status(200).send({success: true, message: "You were successfully logged in.", email: email}).end();
+                        const token = jwt.sign({ uid, email, firstname, lastname, hid }, jwt_secret);
+                        res.status(200).send({success: true, message: "You were successfully logged in.", email, token}).end();
                     }
                 });
             }

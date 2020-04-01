@@ -1,65 +1,74 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import axios from "axios";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+let store = new Vuex.Store({
   state: {
-    userAuthorized: false,
-    userChecked: false,
-    userEmail: "",
-    userFirstName: "",
-    userLastName: ""
+    userToken: localStorage.getItem("auth_token"),
+    userEmail: localStorage.getItem("user_email"),
+    userFirstName: localStorage.getItem("user_firstname"),
+    userLastName: localStorage.getItem("user_lastname"),
   },
   mutations: {
-    login_success(state, email) {
-      state.userAuthorized = true;
+    login_success(state, [email, token]) {
       state.userEmail = email;
+      state.userToken = token;
+      localStorage.setItem("auth_token", token);
     },
     update_user(state, [email, firstname, lastname]) {
       state.userEmail = email;
       state.userFirstName = firstname;
       state.userLastName = lastname;
-      state.userChecked = true;
-      state.userAuthorized = true;
     },
     logout(state) {
-      state.userAuthorized = false;
-      state.userChecked = true;
+      state.userToken = "";
       state.userEmail = "";
       state.userFirstName = "";
       state.userLastName = "";
     }
   },
   actions: {
-    authorize({ commit }) {
-      return new Promise(resolve => {
-        fetch("/_/user")
-          .then(res => res.json())
-          .then(resjson => {
-            if (resjson.success)
-              commit("update_user", [
-                resjson.email,
-                resjson.firstname,
-                resjson.lastname
-              ]);
-            else commit("logout");
-            resolve();
-          })
-          .catch(err => {
-            //User not authorized
-            console.err("Error while authorizing user", err);
-            commit("logout");
-            resolve();
-          });
+    async authorize({ commit }) {
+      try {
+        const { data } = await axios({
+          url: "/_/user",
+          method: "GET"
+        });
+        if (data.success)
+          commit("update_user", [
+            data.email,
+            data.firstname,
+            data.lastname
+          ]);
+        else commit("logout");
+      } catch (err) {
+        console.err("Error while authorizing user", err);
+        commit("logout");
+      }
+    },
+    async login({ commit }, userData) {
+      const { data } = await axios({
+        url: "/_/login",
+        method: "POST",
+        data: userData
       });
+      if (data.success) commit("login_success", [data.email, data.token]);
+      else throw data.message;
+      return data.redirect || "";
+    },
+    logout({ commit }) {
+      commit("logout");
+      localStorage.removeItem("auth_token");
+      //x-access-token header needs to be removed elsewhere!
     }
   },
   getters: {
-    getAuthorized(state) {
-      if (!state.userChecked) return "unchecked";
-      else if (state.userAuthorized) return "authorized";
-      else return "unauthorized";
+    isAuthorized(state) {
+      return !!state.userToken;
     }
   }
 });
+
+export default store;

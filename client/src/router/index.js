@@ -69,25 +69,12 @@ const router = new VueRouter({
   routes
 });
 
+//Authorization
 router.beforeEach((to, from, next) => {
-  if (to.name != "Login") {
-    switch (store.getters.getAuthorized) {
-      case "unauthorized":
-        next({ name: "Login", params: { redirect: to } });
-        break;
-      case "authorized":
-        next();
-        break;
-      default:
-        //unchecked
-        store.dispatch("authorize").then(() => {
-          if (store.getters.getAuthorized == "authorized") next();
-          //authorized
-          else next({ name: "Login", params: { redirect: to } }); //login page
-        });
-        break;
-    }
-  } else next();
+  if (to.name != "Login" && !store.getters.isAuthorized)
+      next({ name: "Login", params: { redirect: to } });
+  else
+      next();
 });
 
 export default router;
