@@ -41,10 +41,11 @@
           <v-card-title>
             Expenses
             <v-spacer></v-spacer>
-            <add-expense-dialog
-              v-model="newExpense"
+            <edit-expense-dialog
+              v-model="editExpense"
               @committed="updateTable"
-            ></add-expense-dialog>
+              ref="editDialog"
+            ></edit-expense-dialog>
           </v-card-title>
           <v-data-table
             :headers="tableHeaders"
@@ -66,12 +67,12 @@
   </v-container>
 </template>
 <script>
-import AddExpenseDialog from "@/components/dialogs/AddExpenseDialog.vue";
+import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 
 export default {
   name: "Finances",
   components: {
-    AddExpenseDialog
+    EditExpenseDialog
   },
   data: () => ({
     members: [
@@ -122,7 +123,7 @@ export default {
         amount: 2354
       }
     ],
-    newExpense: {
+    editExpense: {
       description: "",
       amount: 0
     }
@@ -160,12 +161,10 @@ export default {
       } else return { success: false, message: data.message };
     },
     editItem(item) {
-      alert("editing " + item.expense);
+      this.$refs.editDialog.startEdit(item);
     },
     deleteItem(item) {
-      alert("deleting " + item.expense);
-      let index = this.expenses.find(el => el.id === item.id);
-      this.expenses.splice(index, 1);
+      alert("delete " + item.description);
     }
   },
   watch: {

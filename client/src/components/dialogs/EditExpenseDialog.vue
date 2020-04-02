@@ -1,14 +1,12 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" dark text class="mb-2" v-on="on"
-        >New Expense</v-btn
-      >
+      <v-btn color="primary" dark text class="mb-2" v-on="on">New expense</v-btn>
     </template>
     <v-form v-model="formValid" @submit.prevent="save" ref="form">
       <v-card :loading="loading">
         <v-card-title>
-          <span class="headline">New expense</span>
+          <span class="headline">{{ editMode ? "Edit expense" : "New expense" }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -46,9 +44,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="reset">Cancel</v-btn>
-          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid"
-            >Save</v-btn
-          >
+          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -57,7 +53,7 @@
 
 <script>
 export default {
-  name: "AddExpenseDialog",
+  name: "EditExpenseDialog",
   props: {
     value: {
       type: Object,
@@ -85,16 +81,26 @@ export default {
         else return true;
       }
     ],
-    loading: false
+    loading: false,
+    editMode: false,
+    editId: null
   }),
   methods: {
     updateValue(val) {
       this.$emit("input", val || this.value);
     },
-    async commitExpense(expenseData) {
+    async commitNewExpense(expenseData) {
       const { data } = await this.$http.post("/_/addexpense", {
         description: expenseData.description,
         amount: Math.round(parseFloat(expenseData.amount) * 100)
+      });
+      return data;
+    },
+    async commitEditExpense(expenseData) {
+      const { data } = await this.$http.post("/_/editexpense", {
+        description: expenseData.description,
+        amount: Math.round(parseFloat(expenseData.amount) * 100),
+        id: expenseData.fid
       });
       return data;
     },
@@ -102,10 +108,10 @@ export default {
       if (!this.formValid) return;
       this.loading = true;
       try {
-        let data = await this.commitExpense(this.value);
+        let data = await (this.editMode ? this.commitEditExpense : this.commitNewExpense)(this.value);
         this.loading = false;
         if (data.success) {
-          this.$store.dispatch("showSnackbar", "Expense added successfully.");
+          this.$store.dispatch("showSnackbar", this.editMode ? "Expense updated successfully." : "Expense added successfully.");
           this.$emit("committed");
           this.reset();
         } else this.$store.dispatch("showSnackbar", data.message);
@@ -125,6 +131,16 @@ export default {
         amount: 0
       });
       this.$refs.form.resetValidation();
+      this.editMode = false;
+    },
+    startEdit(itemData) {
+      this.editMode = true;
+      this.updateValue({
+        description: itemData.description,
+        fid: itemData.fid,
+        amount: (itemData.amount / 100).toString()
+      });
+      this.dialogShown = true;
     }
   }
 };
