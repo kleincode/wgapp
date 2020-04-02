@@ -173,11 +173,12 @@ export default {
             this.tasks.push({
               name: element.name,
               assigned: element.assignedMember,
-              day: this.computeNextDueDay(
+              day: this.formatDateString(this.computeNextDueDay(
                 correctedStartDate,
                 element.repetitionDays,
-                element.repetitionUnit
-              ),
+                element.repetitionUnit,
+                element.repetitionEvery
+              )),
               time: element.time.substr(0, 5),
               missed: false,
               icon: icons[element.icon]
@@ -189,7 +190,7 @@ export default {
       }
     },
 
-    computeNextDueDay(startDate, repetitionDays, repetitionUnit) {
+    computeNextDueDay(startDate, repetitionDays, repetitionUnit, repetitionEvery) {
       let repDayInts = repetitionDays.map(day => this.mapWeekdayToInt(day));
       let curDate = new Date();
       if (curDate < startDate) {
@@ -201,7 +202,7 @@ export default {
         let prevTempDate;
         while (curDate > tempDate) {
           prevTempDate = new Date(tempDate);
-          tempDate.setMonth(tempDate.getMonth() + 1);
+          tempDate.setMonth(tempDate.getMonth() + repetitionEvery);
         }
         console.log("month - old prevTempDate: " + prevTempDate);
         let day = prevTempDate.getDay();
@@ -219,7 +220,7 @@ export default {
         let prevTempDate;
         while (curDate > tempDate) {
           prevTempDate = new Date(tempDate);
-          tempDate.setDate(tempDate.getDate() + 7);
+          tempDate.setDate(tempDate.getDate() + 7 * repetitionEvery);
         }
         return this.computeNextDueInWeek(repDayInts, prevTempDate);
       }
@@ -268,6 +269,18 @@ export default {
       }
     },
 
+    formatDateString(date) {
+      let curDate = new Date();
+      if (date.getDate() == curDate.getDate() && date.getMonth() == curDate.getMonth() && date.getYear() == curDate.getYear()) {
+        return "Today";
+      } 
+      curDate.setDate(curDate.getDate() + 1);
+      if (date.getDate() == curDate.getDate() && date.getMonth() == curDate.getMonth() && date.getYear() == curDate.getYear()) {
+        return "Tomorrow";
+      }
+      return  this.mapIntoToWeekday(date.getDay()) + ", " + date.getDate() + ". " + date.getMonth();
+    },
+
     mapWeekdayToInt(repetitionDay) {
       switch (repetitionDay) {
         case "monday":
@@ -284,6 +297,25 @@ export default {
           return 6;
         case "sunday":
           return 0;
+      }
+    },
+
+    mapIntoToWeekday(day) {
+      switch (day) {
+        case 1:
+          return "Monday";
+        case 2:
+          return "Tuesday";
+        case 3:
+          return "Thursday";
+        case 4:
+          return "Wednesday";
+        case 5:
+          return "Friday";
+        case 6:
+          return "Saturday";
+        case 0:
+          return "Sunday";
       }
     }
   },
