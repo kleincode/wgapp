@@ -15,7 +15,7 @@ import VueAxios from "vue-axios";
 
 Vue.config.productionTip = false;
 
-Vue.use(VueAxios, axios)
+Vue.use(VueAxios, axios);
 
 //Authorization: load token and refresh user data on startup
 const token = localStorage.getItem("auth_token");
@@ -25,14 +25,17 @@ if (token) {
 }
 
 //Authorization: forward to login page if 401 (unauthorized)
-axios.interceptors.response.use(res => res, err => {
-  if (err.response.status === 401) {
-    store.dispatch("logout");
-    router.push({ name: "Login" });
-    alert("Authentication error: Please enter your credentials.");
+axios.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response.status === 401) {
+      store.dispatch("logout");
+      router.push({ name: "Login" });
+      alert("Authentication error: Please enter your credentials.");
+    }
+    return err;
   }
-  return err;
-});
+);
 
 new Vue({
   router,

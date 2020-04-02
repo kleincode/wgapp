@@ -46,11 +46,7 @@ let store = new Vuex.Store({
           method: "GET"
         });
         if (data.success)
-          commit("update_user", [
-            data.email,
-            data.firstname,
-            data.lastname
-          ]);
+          commit("update_user", [data.email, data.firstname, data.lastname]);
         else commit("logout");
       } catch (err) {
         console.err("Error while authorizing user", err);
@@ -72,7 +68,7 @@ let store = new Vuex.Store({
       localStorage.removeItem("auth_token");
       //x-access-token header needs to be removed elsewhere!
     },
-    showSnackbar({commit}, message) {
+    showSnackbar({ commit }, message) {
       commit("show_snackbar", message);
     }
   },

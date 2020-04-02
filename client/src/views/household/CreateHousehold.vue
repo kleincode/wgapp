@@ -8,10 +8,15 @@
               <v-toolbar-title>New household</v-toolbar-title>
             </v-toolbar>
             <v-stepper v-model="stepperProgress" vertical>
-              <v-stepper-step :complete="stepperProgress > 1" step="1">Create new household</v-stepper-step>
+              <v-stepper-step :complete="stepperProgress > 1" step="1"
+                >Create new household</v-stepper-step
+              >
 
               <v-stepper-content step="1">
-                <p>Give your household a sweet little name. Don't worry, you will be able to change it later.</p>
+                <p>
+                  Give your household a sweet little name. Don't worry, you will
+                  be able to change it later.
+                </p>
                 <v-form v-model="step1Valid" @submit.prevent="step1Submit">
                   <v-text-field
                     label="Household name"
@@ -24,38 +29,62 @@
                 </v-form>
               </v-stepper-content>
 
-              <v-stepper-step :complete="stepperProgress > 2" step="2">Configure household</v-stepper-step>
+              <v-stepper-step :complete="stepperProgress > 2" step="2"
+                >Configure household</v-stepper-step
+              >
 
               <v-stepper-content step="2">
                 <v-form v-model="step2Valid" @submit.prevent="step2Submit">
-                  <v-select outlined v-model="householdType" :items="householdTypes" item-text="description" item-value="id" label="Household type" class="mt-2"></v-select>
+                  <v-select
+                    outlined
+                    v-model="householdType"
+                    :items="householdTypes"
+                    item-text="description"
+                    item-value="id"
+                    label="Household type"
+                    class="mt-2"
+                  ></v-select>
                   <v-btn color="primary" type="submit">Continue</v-btn>
-                  <v-btn text class="ml-2" @click.prevent="cancel">Cancel</v-btn>
+                  <v-btn text class="ml-2" @click.prevent="cancel"
+                    >Cancel</v-btn
+                  >
                 </v-form>
               </v-stepper-content>
 
-              <v-stepper-step
-                :complete="stepperProgress > 3"
-                step="3"
-              >Invite members</v-stepper-step>
+              <v-stepper-step :complete="stepperProgress > 3" step="3"
+                >Invite members</v-stepper-step
+              >
 
               <v-stepper-content step="3">
-                <p>It feels so lonely without some roommates. Invite them via the link below.</p>
-                <v-text-field v-model="householdLink" readonly append-icon="assignment" @click:append="copyAddLink" ref="addLink" outlined></v-text-field>
+                <p>
+                  It feels so lonely without some roommates. Invite them via the
+                  link below.
+                </p>
+                <v-text-field
+                  v-model="householdLink"
+                  readonly
+                  append-icon="assignment"
+                  @click:append="copyAddLink"
+                  ref="addLink"
+                  outlined
+                ></v-text-field>
                 <v-btn color="primary" @click.prevent="step3Submit">Next</v-btn>
                 <v-btn text class="ml-2" @click.prevent="cancel">Cancel</v-btn>
               </v-stepper-content>
 
-              <v-stepper-step
-                :complete="stepperProgress > 4"
-                step="4"
-              >Finish</v-stepper-step>
+              <v-stepper-step :complete="stepperProgress > 4" step="4"
+                >Finish</v-stepper-step
+              >
 
               <v-stepper-content step="4">
-                <p>Congratulations, your new household has been setup successfully. Continue to check out your dashboard.</p>
-                <v-btn color="primary" @click="finish"> <v-icon left>dashboard</v-icon> Go to dashboard</v-btn>
+                <p>
+                  Congratulations, your new household has been setup
+                  successfully. Continue to check out your dashboard.
+                </p>
+                <v-btn color="primary" @click="finish">
+                  <v-icon left>dashboard</v-icon> Go to dashboard</v-btn
+                >
               </v-stepper-content>
-
             </v-stepper>
           </v-card>
         </v-col>
@@ -126,7 +155,7 @@ export default {
       this.alertSnackbar("Copied to clipboard. Happy pasting! :)");
     },
     finish() {
-      this.$router.push({name: "Dashboard"});
+      this.$router.push({ name: "Dashboard" });
     },
     cancel() {
       this.householdName = "My household";
@@ -134,7 +163,7 @@ export default {
     }
   },
   mounted() {
-    this.householdName = this.$store.state.userFirstName + "'s household"
+    this.householdName = this.$store.state.userFirstName + "'s household";
   }
 };
 </script>

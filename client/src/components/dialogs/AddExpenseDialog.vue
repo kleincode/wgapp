@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" dark text class="mb-2" v-on="on">New Expense</v-btn>
+      <v-btn color="primary" dark text class="mb-2" v-on="on"
+        >New Expense</v-btn
+      >
     </template>
     <v-form v-model="formValid" @submit.prevent="save" ref="form">
       <v-card :loading="loading">
@@ -44,7 +46,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="reset">Cancel</v-btn>
-          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid">Save</v-btn>
+          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-form>
@@ -74,9 +78,10 @@ export default {
       v => !!v || "Please provide an amount!",
       v => {
         let num = parseFloat(v);
-        if(isNaN(num)) return "Please provide a valid amount.";
-        else if(num < 0) return "Negative amounts are not permitted";
-        else if(Math.abs(num) < 0.01) return "Please provide a non-zero number.";
+        if (isNaN(num)) return "Please provide a valid amount.";
+        else if (num < 0) return "Negative amounts are not permitted";
+        else if (Math.abs(num) < 0.01)
+          return "Please provide a non-zero number.";
         else return true;
       }
     ],
@@ -94,22 +99,24 @@ export default {
       return data;
     },
     async save() {
-      if(!this.formValid) return;
+      if (!this.formValid) return;
       this.loading = true;
       try {
         let data = await this.commitExpense(this.value);
         this.loading = false;
-        if(data.success) {
+        if (data.success) {
           this.$store.dispatch("showSnackbar", "Expense added successfully.");
           this.$emit("committed");
           this.reset();
         } else this.$store.dispatch("showSnackbar", data.message);
-      } catch(err) {
+      } catch (err) {
         this.loading = false;
-        this.$store.dispatch("showSnackbar", "Communication error. Please try again later.");
+        this.$store.dispatch(
+          "showSnackbar",
+          "Communication error. Please try again later."
+        );
         console.error(err);
       }
-      
     },
     reset() {
       this.dialogShown = false;

@@ -4,15 +4,32 @@
       <v-list dense nav>
         <v-list-item two-line class="px-0">
           <v-list-item-avatar color="primary">
-            <span class="white--text title">{{ !!userFirstName ? userFirstName.substring(0,1).toUpperCase() : "" }}{{ !!userFirstName ? userLastName.substring(0,1).toUpperCase() : "" }}</span>
+            <span class="white--text title"
+              >{{
+                !!userFirstName
+                  ? userFirstName.substring(0, 1).toUpperCase()
+                  : ""
+              }}{{
+                !!userFirstName
+                  ? userLastName.substring(0, 1).toUpperCase()
+                  : ""
+              }}</span
+            >
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title class="title">{{ userFirstName }} {{ userLastName }}</v-list-item-title>
+            <v-list-item-title class="title"
+              >{{ userFirstName }} {{ userLastName }}</v-list-item-title
+            >
             <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item v-for="item in menuContents" :key="item.name" link :to="item.path">
+        <v-list-item
+          v-for="item in menuContents"
+          :key="item.name"
+          link
+          :to="item.path"
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -30,7 +47,10 @@
     </v-navigation-drawer>
 
     <v-app-bar app color="primary" class="white--text" clipped-left>
-      <v-app-bar-nav-icon @click="menuVisible = !menuVisible" color="white"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        @click="menuVisible = !menuVisible"
+        color="white"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title>WG App</v-toolbar-title>
     </v-app-bar>
 
@@ -53,8 +73,7 @@
   </v-app>
 </template>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
 
 <script>
 import { mapState } from "vuex";
@@ -114,7 +133,7 @@ export default {
     logout() {
       this.$store.dispatch("logout");
       delete this.$http.defaults.headers.common["x-access-token"];
-      this.$router.push({name: "Login"});
+      this.$router.push({ name: "Login" });
     }
   }
 };

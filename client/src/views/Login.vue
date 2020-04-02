@@ -13,7 +13,10 @@
                 </v-tabs>
               </template>
             </v-toolbar>
-            <v-form @submit.prevent="registerMode ? register() : login()" ref="form">
+            <v-form
+              @submit.prevent="registerMode ? register() : login()"
+              ref="form"
+            >
               <v-card-text>
                 <v-text-field
                   label="E-Mail"
@@ -30,7 +33,9 @@
                     v-model="firstname"
                     type="text"
                     outlined
-                    :rules="(validating && !!registerMode) ? standardFieldRules : []"
+                    :rules="
+                      validating && !!registerMode ? standardFieldRules : []
+                    "
                     v-if="registerMode"
                   />
                 </v-expand-transition>
@@ -41,7 +46,9 @@
                     v-model="lastname"
                     type="text"
                     outlined
-                    :rules="(validating && !!registerMode) ? standardFieldRules : []"
+                    :rules="
+                      validating && !!registerMode ? standardFieldRules : []
+                    "
                     v-if="registerMode"
                   />
                 </v-expand-transition>
@@ -50,7 +57,7 @@
                   v-model="password"
                   prepend-icon="lock"
                   type="password"
-                  :rules="(validating && !!registerMode) ? passwordRules : []"
+                  :rules="validating && !!registerMode ? passwordRules : []"
                   outlined
                 />
                 <v-expand-transition>
@@ -59,7 +66,9 @@
                     v-model="repeatPassword"
                     prepend-icon="replay"
                     type="password"
-                    :rules="(validating && !!registerMode) ? standardFieldRules : []"
+                    :rules="
+                      validating && !!registerMode ? standardFieldRules : []
+                    "
                     outlined
                     v-if="registerMode"
                   />
@@ -167,7 +176,9 @@ export default {
           email: this.email,
           password: this.password
         });
-        this.$http.defaults.headers.common["x-access-token"] = this.$store.state.userToken;
+        this.$http.defaults.headers.common[
+          "x-access-token"
+        ] = this.$store.state.userToken;
         this.loading = false;
         this.$store.dispatch("authorize");
         if (this.$route.params && this.$route.params.redirect)
