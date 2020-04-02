@@ -132,6 +132,9 @@ export default {
       this.householdName = "My household";
       this.stepperProgress = 1;
     }
+  },
+  mounted() {
+    this.householdName = this.$store.state.userFirstName + "'s household"
   }
 };
 </script>

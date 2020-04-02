@@ -3,12 +3,12 @@
     <v-navigation-drawer app clipped v-model="menuVisible">
       <v-list dense nav>
         <v-list-item two-line class="px-0">
-          <v-list-item-avatar>
-            <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+          <v-list-item-avatar color="primary">
+            <span class="white--text title">{{ !!userFirstName ? userFirstName.substring(0,1).toUpperCase() : "" }}{{ !!userFirstName ? userLastName.substring(0,1).toUpperCase() : "" }}</span>
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title class="title">WG App</v-list-item-title>
-            <v-list-item-subtitle>Navigation</v-list-item-subtitle>
+            <v-list-item-title class="title">{{ userFirstName }} {{ userLastName }}</v-list-item-title>
+            <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
@@ -53,6 +53,8 @@
 </style>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "App",
   data: () => ({
@@ -85,6 +87,13 @@ export default {
       }
     ]
   }),
+  computed: {
+    ...mapState([
+      "userEmail",
+      "userFirstName",
+      "userLastName"
+    ])
+  },
   methods: {
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
