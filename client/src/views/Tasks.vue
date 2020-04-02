@@ -12,29 +12,37 @@
                   raised
                   class="main-task text-center"
                   v-if="tasks.length > 0"
-                  :class="tasks[0].missed ? 'red': 'primary'"
+                  :class="tasks[0].missed ? 'red' : 'primary'"
                 >
                   <div class="overline">DUE TODAY</div>
-                  <v-icon style="font-size: 10em" x-large>{{tasks[0].icon}}</v-icon>
+                  <v-icon style="font-size: 10em" x-large>{{
+                    tasks[0].icon
+                  }}</v-icon>
                   <div class="font-regular pt-4 display-1">
-                    {{tasks[0].name}}
+                    {{ tasks[0].name }}
                     <v-btn icon>
                       <v-icon x-large>check_box_outline_blank</v-icon>
                     </v-btn>
                   </div>
-                  <div class="caption pt-2">{{tasks[0].time}}</div>
+                  <div class="caption pt-2">{{ tasks[0].time }}</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
                   <v-chip>
                     <v-avatar left>
-                      <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                      <img
+                        src="https://randomuser.me/api/portraits/men/81.jpg"
+                      />
                     </v-avatar>
-                    {{tasks[0].assigned}}
+                    {{ tasks[0].assigned }}
                   </v-chip>
                 </v-card>
                 <v-card raised class="main-task text-center secondary" v-else>
                   <div class="overline text--disabled">DUE TODAY</div>
-                  <v-icon class="text--disabled" style="font-size: 10em" x-large>bathtub</v-icon>
-                  <div class="font-regular pt-4 display-1 text--disabled">Nothing to do</div>
+                  <v-icon class="text--disabled" style="font-size: 10em" x-large
+                    >bathtub</v-icon
+                  >
+                  <div class="font-regular pt-4 display-1 text--disabled">
+                    Nothing to do
+                  </div>
                   <div class="caption pt-2 text--disabled">--:--</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
                   <v-chip style="width: 30%">
@@ -49,21 +57,26 @@
           <div class="overline">other:</div>
           <v-list avatar class="text-left pl-4">
             <div v-if="tasks.length > 1">
-              <v-list-item v-for="(task,i) in tasks.slice(1, tasks.length)" :key="'task-' + i">
+              <v-list-item
+                v-for="(task, i) in tasks.slice(1, tasks.length)"
+                :key="'task-' + i"
+              >
                 <v-list-item-avatar>
-                  <v-icon>{{task.icon}}</v-icon>
+                  <v-icon>{{ task.icon }}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title class="task-entry">
-                    {{task.name}}
-                    <div class="overline pl-2 pt-1">- {{task.time}}</div>
+                    {{ task.name }}
+                    <div class="overline pl-2 pt-1">- {{ task.time }}</div>
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     <v-chip small>
                       <v-avatar style="max-height: 80%; max-width: 90%" left>
-                        <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                        <img
+                          src="https://randomuser.me/api/portraits/men/81.jpg"
+                        />
                       </v-avatar>
-                      {{task.assigned}}
+                      {{ task.assigned }}
                     </v-chip>
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -79,7 +92,9 @@
                 <v-icon class="text--disabled">hourglass_empty</v-icon>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title class="text--disabled">Nothing to do</v-list-item-title>
+                <v-list-item-title class="text--disabled"
+                  >Nothing to do</v-list-item-title
+                >
                 <v-list-item-subtitle>
                   <div class="overline text--disabled">--:--</div>
                 </v-list-item-subtitle>
@@ -100,32 +115,36 @@
               <h2 class="title pl-8 pt-4">All Tasks:</h2>
             </v-col>
             <v-col class="text-right pt-5 pr-8" cols="3" md="2" lg="2">
-              <v-btn fab class="mx-2 primary" :to="{name: 'AddTask'}">
+              <v-btn fab class="mx-2 primary" :to="{ name: 'AddTask' }">
                 <v-icon>add</v-icon>
               </v-btn>
             </v-col>
           </v-row>
           <v-list v-if="tasks.length > 0">
             <v-list-item
-              v-for="(task,i) in tasks"
+              v-for="(task, i) in tasks"
               :key="'task-' + i"
-              :class="task.missed ? 'red': ''"
+              :class="task.missed ? 'red' : ''"
             >
               <v-list-item-avatar>
-                <v-icon>{{task.icon}}</v-icon>
+                <v-icon>{{ task.icon }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content>
                 <v-list-item-title class="pb-2 task-entry">
-                  {{task.name}}
-                  <div class="overline pl-2 pt-1">- {{task.day}}, {{task.time}}</div>
+                  {{ task.name }}
+                  <div class="overline pl-2 pt-1">
+                    - {{ task.day }}, {{ task.time }}
+                  </div>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   <v-chip>
                     <v-avatar left>
-                      <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                      <img
+                        src="https://randomuser.me/api/portraits/men/81.jpg"
+                      />
                     </v-avatar>
-                    {{task.assigned}}
+                    {{ task.assigned }}
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -137,15 +156,21 @@
                   </v-btn>
                 </v-hover>
                 <v-hover>
-                  <v-btn icon :to="{name: 'EditTask', params: {id: 1}}">
+                  <v-btn icon :to="{ name: 'EditTask', params: { id: 1 } }">
                     <v-icon>edit</v-icon>
                   </v-btn>
                 </v-hover>
               </v-list-item-icon>
             </v-list-item>
           </v-list>
-          <div style="text-align: center" class="text--disabled pb-12 pt-8" v-else>
-            <v-icon style="font-size: 10em" class="text--disabled">hourglass_empty</v-icon>
+          <div
+            style="text-align: center"
+            class="text--disabled pb-12 pt-8"
+            v-else
+          >
+            <v-icon style="font-size: 10em" class="text--disabled"
+              >hourglass_empty</v-icon
+            >
             <br />No tasks added yet
           </div>
         </v-card>
@@ -238,7 +263,7 @@ export default {
               min = repDayInts[i];
             }
           } else {
-              min = 7;
+            min = 7;
           }
         }
         console.log("min: " + min);
@@ -250,8 +275,8 @@ export default {
         }
         if (min == 8) {
           console.log("date: " + prevTempDate);
-          console.log("shift to next week by: " + ((6 - day) + 2));
-          prevTempDate.setDate(prevTempDate.getDate() + ((6 - day) + 2));
+          console.log("shift to next week by: " + (6 - day + 2));
+          prevTempDate.setDate(prevTempDate.getDate() + (6 - day + 2));
           console.log("new date: " + prevTempDate);
           return this.computeNextDueInWeek(repDayInts, prevTempDate);
         }

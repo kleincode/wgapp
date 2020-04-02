@@ -1,22 +1,37 @@
 <template>
   <v-container fluid>
-    <h1 v-if="editMode" class="display-2 pb-6">Edit task - "{{name}}"</h1>
-    <h1 v-if="!editMode" class="display-2 pb-6">Add task - "{{name}}"</h1>
+    <h1 v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</h1>
+    <h1 v-if="!editMode" class="display-2 pb-6">Add task - "{{ name }}"</h1>
     <v-card outlined>
       <div class="container">
         <v-row>
           <v-col cols="12" md="8" lg="8">
-            <v-text-field v-model="name" :counter="128" label="Name" required outlined></v-text-field>
+            <v-text-field
+              v-model="name"
+              :counter="128"
+              label="Name"
+              required
+              outlined
+            ></v-text-field>
             <div class="title">Member mode</div>
             <v-row>
               <v-col cols="12" md="6">
                 <v-radio-group v-model="iterating">
                   <v-radio :key="0" :label="'Single'" :value="false"></v-radio>
-                  <v-radio :key="1" :label="'Iterating'" :value="true"></v-radio>
+                  <v-radio
+                    :key="1"
+                    :label="'Iterating'"
+                    :value="true"
+                  ></v-radio>
                 </v-radio-group>
               </v-col>
               <v-col cols="12" md="4">
-                <v-select :items="members" label="Assigned to" outlined :disabled="iterating"></v-select>
+                <v-select
+                  :items="members"
+                  label="Assigned to"
+                  outlined
+                  :disabled="iterating"
+                ></v-select>
               </v-col>
             </v-row>
           </v-col>
@@ -47,7 +62,10 @@
                   outlined
                 ></v-text-field>
               </template>
-              <v-date-picker v-model="date" @input="startDateMenu = false"></v-date-picker>
+              <v-date-picker
+                v-model="date"
+                @input="startDateMenu = false"
+              ></v-date-picker>
             </v-menu>
           </v-col>
           <v-col cols="12" lg="4" md="6">
@@ -85,13 +103,30 @@
             <v-switch v-model="reminder" label="Toggle Reminder"></v-switch>
           </v-col>
           <v-col cols="12" lg="4" md="6">
-            <v-select v-model="chosenDays" :items="days" chips label="Repeat on" multiple outlined></v-select>
+            <v-select
+              v-model="chosenDays"
+              :items="days"
+              chips
+              label="Repeat on"
+              multiple
+              outlined
+            ></v-select>
           </v-col>
           <v-col cols="12" lg="4" md="6">
-            <v-text-field type="number" v-model="repetitionEvery" label="Repeat every" required outlined></v-text-field>
+            <v-text-field
+              type="number"
+              v-model="repetitionEvery"
+              label="Repeat every"
+              required
+              outlined
+            ></v-text-field>
           </v-col>
           <v-col cols="12" lg="4" md="6">
-            <v-select :items="repetitionUnits" label="Repetition unit" outlined></v-select>
+            <v-select
+              :items="repetitionUnits"
+              label="Repetition unit"
+              outlined
+            ></v-select>
           </v-col>
           <v-col cols="12" style="text-align: right">
             <v-btn large color="primary" class="mr-4">save</v-btn>
@@ -103,8 +138,6 @@
   </v-container>
 </template>
 <script>
-
-
 export default {
   name: "EditTask",
   data: () => ({
@@ -134,14 +167,11 @@ export default {
     startDateMenu: false,
     startTimeMenu: false
   }),
-  methods: {
-
-  },
+  methods: {},
   mounted() {
     this.id = this.$route.params.id;
     this.editMode = !!this.$route.params.id;
   }
 };
 </script>
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
