@@ -64,15 +64,20 @@
         </v-card>
       </v-col>
     </v-row>
+    <confirm-dialog v-model="deleteDialogVisible" @positive="deleteConfirm" @negative="deleteDialogVisible = false" :loading="deleteDialogLoading">
+      Are you sure you want to delete "{{ deleteDescription }}"?
+    </confirm-dialog>
   </v-container>
 </template>
 <script>
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 
 export default {
   name: "Finances",
   components: {
-    EditExpenseDialog
+    EditExpenseDialog,
+    ConfirmDialog
   },
   data: () => ({
     members: [
@@ -126,7 +131,11 @@ export default {
     editExpense: {
       description: "",
       amount: 0
-    }
+    },
+    deleteDialogVisible: false,
+    deleteId: -1,
+    deleteDescription: "",
+    deleteDialogLoading: false
   }),
   methods: {
     updateTable() {
@@ -160,11 +169,44 @@ export default {
         };
       } else return { success: false, message: data.message };
     },
+    async commitDelete(fid) {
+      const { data } = await this.$http.post("/_/delexpense", {
+        id: fid
+      });
+      return data;
+    },
     editItem(item) {
       this.$refs.editDialog.startEdit(item);
     },
     deleteItem(item) {
-      alert("delete " + item.description);
+      this.deleteId = item.fid;
+      this.deleteDescription = item.description;
+      this.deleteDialogVisible = true;
+    },
+    async deleteConfirm() {
+      this.deleteDialogLoading = true;
+      try {
+        let data = await this.commitDelete(this.deleteId);
+        this.deleteDialogLoading = false;
+        if(data.success) {
+          this.deleteDialogVisible = false;
+          this.$store.dispatch(
+            "showSnackbar",
+            "Item deleted."
+          );
+          this.updateTable();
+        } else this.$store.dispatch(
+            "showSnackbar",
+            data.message
+          );
+      } catch(err) {
+        this.deleteDialogLoading = false;
+        this.$store.dispatch(
+          "showSnackbar",
+          "Communication error. Please try again later."
+        );
+        console.error(err);
+      }
     }
   },
   watch: {
