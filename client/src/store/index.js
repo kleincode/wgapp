@@ -10,6 +10,8 @@ let store = new Vuex.Store({
     userEmail: localStorage.getItem("user_email"),
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
+    snackbarShow: false,
+    snackbarMessage: ""
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -27,6 +29,13 @@ let store = new Vuex.Store({
       state.userEmail = "";
       state.userFirstName = "";
       state.userLastName = "";
+    },
+    show_snackbar(state, message) {
+      state.snackbarMessage = message;
+      state.snackbarShow = true;
+    },
+    update_snackbar(state, visible) {
+      state.snackbarShow = visible;
     }
   },
   actions: {
@@ -62,6 +71,9 @@ let store = new Vuex.Store({
       commit("logout");
       localStorage.removeItem("auth_token");
       //x-access-token header needs to be removed elsewhere!
+    },
+    showSnackbar({commit}, message) {
+      commit("show_snackbar", message);
     }
   },
   getters: {

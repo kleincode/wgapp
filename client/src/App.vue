@@ -46,6 +46,10 @@
     <v-footer app inset class="text-center">
       <div style="width: 100%;">Made in self-isolation -- 2020</div>
     </v-footer>
+    <v-snackbar :timeout="4000" v-model="snackbarShow">
+      <span>{{ snackbarMessage }}</span>
+      <v-btn text small color="red" @click="snackbarShow = false">Close</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -88,10 +92,19 @@ export default {
     ]
   }),
   computed: {
+    snackbarShow: {
+      get() {
+        return this.$store.state.snackbarShow;
+      },
+      set(value) {
+        this.$store.commit("update_snackbar", value);
+      }
+    },
     ...mapState([
       "userEmail",
       "userFirstName",
-      "userLastName"
+      "userLastName",
+      "snackbarMessage"
     ])
   },
   methods: {

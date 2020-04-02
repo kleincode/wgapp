@@ -25,7 +25,11 @@
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <v-card>
-          <v-card-title>Expenses</v-card-title>
+          <v-card-title>
+            Expenses
+            <v-spacer></v-spacer>
+            <add-expense-dialog v-model="newExpense" @committed="updateTable"></add-expense-dialog>
+          </v-card-title>
           <v-data-table
             :headers="tableHeaders"
             :items="expenses"
@@ -44,8 +48,13 @@
   </v-container>
 </template>
 <script>
+import AddExpenseDialog from "@/components/dialogs/AddExpenseDialog.vue";
+
 export default {
   name: "Finances",
+  components: {
+    AddExpenseDialog
+  },
   data: () => ({
     members: [
       {
@@ -94,7 +103,11 @@ export default {
         date: 1585375790,
         amount: 2354
       }
-    ]
+    ],
+    newExpense: {
+      description: "",
+      amount: 0
+    }
   }),
   methods: {
     updateTable() {
