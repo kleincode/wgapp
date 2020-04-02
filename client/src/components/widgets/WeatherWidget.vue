@@ -2,9 +2,7 @@
   <Widget title="Weather">
     <span class="display-3">{{ temperature }}</span>
     <span class="display-1" style="vertical-align: top;"> °C</span>
-    <div class="overline">
-      {{ condition }} | Last update: {{ lastUpdate }}
-    </div>
+    <div class="overline">{{ condition }} | Last update: {{ lastUpdate }}</div>
   </Widget>
 </template>
 

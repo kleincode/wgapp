@@ -8,15 +8,28 @@
             <!-- TODO: enable member filtering -->
             <v-subheader>Members</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item three-line v-for="(member, i) in members" :key="'finmem-' + i">
+              <v-list-item
+                three-line
+                v-for="(member, i) in members"
+                :key="'finmem-' + i"
+              >
                 <v-list-item-avatar size="48" color="teal" left>
-                  <span
-                    class="white--text headline"
-                  >{{ member.firstname.substr(0,1).toUpperCase() }}{{ member.lastname.substr(0,1).toUpperCase() }}</span>
+                  <span class="white--text headline"
+                    >{{ member.firstname.substr(0, 1).toUpperCase()
+                    }}{{ member.lastname.substr(0, 1).toUpperCase() }}</span
+                  >
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title>{{ member.firstname }} {{ member.lastname }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ Math.floor(member.sum / 100) }},{{ member.sum % 100 }} €</v-list-item-subtitle>
+                  <v-list-item-title
+                    >{{ member.firstname }}
+                    {{ member.lastname }}</v-list-item-title
+                  >
+                  <v-list-item-subtitle
+                    >{{ Math.floor(member.sum / 100) }},{{
+                      member.sum % 100
+                    }}
+                    €</v-list-item-subtitle
+                  >
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -34,7 +47,9 @@
             :loading="tableLoading"
           >
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+              <v-icon small class="mr-2" @click="editItem(item)"
+                >mdi-pencil</v-icon
+              >
               <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
           </v-data-table>
@@ -99,16 +114,18 @@ export default {
   methods: {
     updateTable() {
       this.tableLoading = true;
-      this.loadData().then(res => {
-        if(res.success) {
-          this.expenses = res.data;
-          this.tableTotalItems = res.totalCount;
-        } else alert(res.message);
-        this.tableLoading = false;
-      }).catch(err => {
-        console.log("Error while fetching finances table.", err);
-        this.tableLoading = false;
-      });
+      this.loadData()
+        .then(res => {
+          if (res.success) {
+            this.expenses = res.data;
+            this.tableTotalItems = res.totalCount;
+          } else alert(res.message);
+          this.tableLoading = false;
+        })
+        .catch(err => {
+          console.log("Error while fetching finances table.", err);
+          this.tableLoading = false;
+        });
     },
     async loadData() {
       const { data } = await this.$http.get("/_/fetchfinances", {

@@ -12,7 +12,12 @@
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
-        <v-list-item v-for="item in menuContents" :key="item.name" link :to="item.path">
+        <v-list-item
+          v-for="item in menuContents"
+          :key="item.name"
+          link
+          :to="item.path"
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -30,7 +35,10 @@
     </v-navigation-drawer>
 
     <v-app-bar app color="primary" class="white--text" clipped-left>
-      <v-app-bar-nav-icon @click="menuVisible = !menuVisible" color="white"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        @click="menuVisible = !menuVisible"
+        color="white"
+      ></v-app-bar-nav-icon>
       <v-toolbar-title>WG App</v-toolbar-title>
     </v-app-bar>
 
@@ -49,8 +57,7 @@
   </v-app>
 </template>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>
 
 <script>
 export default {

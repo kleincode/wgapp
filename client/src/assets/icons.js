@@ -1,5 +1,1 @@
-export default [
-    "bathtub",
-    "rowing",
-    "delete"
-];
+export default ["bathtub", "rowing", "delete"];
