@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
-    <h1 class="display-2 pb-6">Edit task - "{{name}}"</h1>
+    <h1 v-if="editMode" class="display-2 pb-6">Edit task - "{{name}}"</h1>
+    <h1 v-if="!editMode" class="display-2 pb-6">Add task - "{{name}}"</h1>
     <v-card outlined>
       <div class="container">
         <v-row>
@@ -102,9 +103,13 @@
   </v-container>
 </template>
 <script>
+
+
 export default {
   name: "EditTask",
   data: () => ({
+    editMode: false,
+    id: -1,
     name: "Bad putzen",
     iterating: true,
     selectedMember: "none",
@@ -128,7 +133,14 @@ export default {
 
     startDateMenu: false,
     startTimeMenu: false
-  })
+  }),
+  methods: {
+
+  },
+  mounted() {
+    this.id = this.$route.params.id;
+    this.editMode = !!this.$route.params.id;
+  }
 };
 </script>
 <style lang="scss" scoped>

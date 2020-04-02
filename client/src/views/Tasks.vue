@@ -6,43 +6,43 @@
         <v-card outlined class="text-center">
           <h2 class="title pt-8 pb-12">Today's Tasks:</h2>
           <div class="container">
-          <v-row justify="center">
-            <v-col cols="12" md="10">
-              <v-card
-                raised
-                class="main-task text-center"
-                v-if="tasks.length > 0"
-                :class="tasks[0].missed ? 'red': 'primary'"
-              >
-                <div class="overline">DUE TODAY</div>
-                <v-icon style="font-size: 10em" x-large>{{tasks[0].icon}}</v-icon>
-                <div class="font-regular pt-4 display-1">
-                  {{tasks[0].name}}
-                  <v-btn icon>
-                    <v-icon x-large>check_box_outline_blank</v-icon>
-                  </v-btn>
-                </div>
-                <div class="caption pt-2">{{tasks[0].time}}</div>
-                <v-divider class="mt-4 mb-4"></v-divider>
-                <v-chip>
-                  <v-avatar left>
-                    <img src="https://randomuser.me/api/portraits/men/81.jpg" />
-                  </v-avatar>
-                  {{tasks[0].assigned}}
-                </v-chip>
-              </v-card>
-              <v-card raised class="main-task text-center secondary" v-else>
-                <div class="overline text--disabled">DUE TODAY</div>
-                <v-icon class="text--disabled" style="font-size: 10em" x-large>bathtub</v-icon>
-                <div class="font-regular pt-4 display-1 text--disabled">Nothing to do</div>
-                <div class="caption pt-2 text--disabled">--:--</div>
-                <v-divider class="mt-4 mb-4"></v-divider>
-                <v-chip style="width: 30%">
-                  <v-avatar left></v-avatar>
-                </v-chip>
-              </v-card>
-            </v-col>
-          </v-row>
+            <v-row justify="center">
+              <v-col cols="12" md="10">
+                <v-card
+                  raised
+                  class="main-task text-center"
+                  v-if="tasks.length > 0"
+                  :class="tasks[0].missed ? 'red': 'primary'"
+                >
+                  <div class="overline">DUE TODAY</div>
+                  <v-icon style="font-size: 10em" x-large>{{tasks[0].icon}}</v-icon>
+                  <div class="font-regular pt-4 display-1">
+                    {{tasks[0].name}}
+                    <v-btn icon>
+                      <v-icon x-large>check_box_outline_blank</v-icon>
+                    </v-btn>
+                  </div>
+                  <div class="caption pt-2">{{tasks[0].time}}</div>
+                  <v-divider class="mt-4 mb-4"></v-divider>
+                  <v-chip>
+                    <v-avatar left>
+                      <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                    </v-avatar>
+                    {{tasks[0].assigned}}
+                  </v-chip>
+                </v-card>
+                <v-card raised class="main-task text-center secondary" v-else>
+                  <div class="overline text--disabled">DUE TODAY</div>
+                  <v-icon class="text--disabled" style="font-size: 10em" x-large>bathtub</v-icon>
+                  <div class="font-regular pt-4 display-1 text--disabled">Nothing to do</div>
+                  <div class="caption pt-2 text--disabled">--:--</div>
+                  <v-divider class="mt-4 mb-4"></v-divider>
+                  <v-chip style="width: 30%">
+                    <v-avatar left></v-avatar>
+                  </v-chip>
+                </v-card>
+              </v-col>
+            </v-row>
           </div>
 
           <v-divider class="mt-4 mb-4"></v-divider>
@@ -100,7 +100,7 @@
               <h2 class="title pl-8 pt-4">All Tasks:</h2>
             </v-col>
             <v-col class="text-right pt-5 pr-8" cols="3" md="2" lg="2">
-              <v-btn fab class="mx-2 primary">
+              <v-btn fab class="mx-2 primary" :to="{name: 'AddTask'}">
                 <v-icon>add</v-icon>
               </v-btn>
             </v-col>
@@ -137,7 +137,7 @@
                   </v-btn>
                 </v-hover>
                 <v-hover>
-                  <v-btn icon>
+                  <v-btn icon :to="{name: 'EditTask', params: {id: 1}}">
                     <v-icon>edit</v-icon>
                   </v-btn>
                 </v-hover>
@@ -154,44 +154,143 @@
   </v-container>
 </template>
 <script>
+import icons from "@/assets/icons.js";
+
 export default {
   name: "Tasks",
   data: () => ({
-    tasks: [
-      {
-        name: "Bad putzen",
-        assigned: "Felix",
-        day: "Today",
-        time: "14:00",
-        missed: false,
-        icon: "bathtub"
-      },
-      {
-        name: "Müll rausbringen",
-        assigned: "Felix",
-        day: "Today",
-        time: "17:00",
-        missed: false,
-        icon: "delete"
-      },
-      {
-        name: "Saugen",
-        assigned: "Felix",
-        day: "Tomorrow",
-        time: "18:00",
-        missed: false,
-        icon: "rowing"
-      },
-      {
-        name: "Aufräumen",
-        assigned: "Felix",
-        day: "in 2 days",
-        time: "12:00",
-        missed: false,
-        icon: "rowing"
+    tasks: []
+  }),
+
+  methods: {
+    async fetchTasks() {
+      try {
+        const { data } = await this.$http.get("/_/fetchtasks");
+        if (data.success) {
+          data.data.forEach(element => {
+            let correctedStartDate = new Date(element.startDate.substr(0, 19));
+            correctedStartDate.setHours(correctedStartDate.getHours() + 2);
+            this.tasks.push({
+              name: element.name,
+              assigned: element.assignedMember,
+              day: this.computeNextDueDay(
+                correctedStartDate,
+                element.repetitionDays,
+                element.repetitionUnit
+              ),
+              time: element.time.substr(0, 5),
+              missed: false,
+              icon: icons[element.icon]
+            });
+          });
+        }
+      } catch (err) {
+        console.error(err);
       }
-    ]
-  })
+    },
+
+    computeNextDueDay(startDate, repetitionDays, repetitionUnit) {
+      let repDayInts = repetitionDays.map(day => this.mapWeekdayToInt(day));
+      let curDate = new Date();
+      if (curDate < startDate) {
+        console.log("in the future");
+        return this.computeNextDueInWeek(repDayInts, startDate);
+      } else if (repetitionUnit) {
+        //month
+        let tempDate = new Date(startDate);
+        let prevTempDate;
+        while (curDate > tempDate) {
+          prevTempDate = new Date(tempDate);
+          tempDate.setMonth(tempDate.getMonth() + 1);
+        }
+        console.log("month - old prevTempDate: " + prevTempDate);
+        let day = prevTempDate.getDay();
+        if (prevTempDate.getDate() + (6 - day) < curDate) {
+          console.log("month - Skip month");
+          prevTempDate.setMonth(prevTempDate.getMonth() + 1);
+          day = prevTempDate.getDay();
+        }
+        console.log("month - prevTempDate: " + prevTempDate);
+        console.log("month - day: " + day);
+        return this.computeNextDueInWeek(repDayInts, prevTempDate);
+      } else {
+        //week
+        let tempDate = new Date(startDate);
+        let prevTempDate;
+        while (curDate > tempDate) {
+          prevTempDate = new Date(tempDate);
+          tempDate.setDate(tempDate.getDate() + 7);
+        }
+        return this.computeNextDueInWeek(repDayInts, prevTempDate);
+      }
+    },
+
+    computeNextDueInWeek(repDayInts, prevTempDate) {
+      let day = prevTempDate.getDay();
+      console.log("day: " + day);
+      if (day > 0) {
+        let min = 8;
+        for (let i = 0; i < repDayInts.length; i++) {
+          console.log("repDay[" + i + "]: " + repDayInts[i]);
+          if (repDayInts[i] != 0) {
+            if (repDayInts[i] >= day && repDayInts[i] < min) {
+              min = repDayInts[i];
+            }
+          } else {
+              min = 7;
+          }
+        }
+        console.log("min: " + min);
+        if (min == 7) {
+          prevTempDate.setDate(
+            prevTempDate.getDate() + (6 - prevTempDate.getDay() + 1)
+          );
+          return prevTempDate;
+        }
+        if (min == 8) {
+          console.log("date: " + prevTempDate);
+          console.log("shift to next week by: " + ((6 - day) + 2));
+          prevTempDate.setDate(prevTempDate.getDate() + ((6 - day) + 2));
+          console.log("new date: " + prevTempDate);
+          return this.computeNextDueInWeek(repDayInts, prevTempDate);
+        }
+        prevTempDate.setDate(
+          prevTempDate.getDate() + (min - prevTempDate.getDay())
+        );
+        return prevTempDate;
+      } else {
+        if (repDayInts.includes(0)) {
+          return prevTempDate;
+        } else {
+          prevTempDate.setDate(prevTempDate.getDate() + 1);
+          return this.computeNextDueInWeek(repDayInts, prevTempDate);
+        }
+      }
+    },
+
+    mapWeekdayToInt(repetitionDay) {
+      switch (repetitionDay) {
+        case "monday":
+          return 1;
+        case "tuesday":
+          return 2;
+        case "thursday":
+          return 3;
+        case "wednesday":
+          return 4;
+        case "friday":
+          return 5;
+        case "saturday":
+          return 6;
+        case "sunday":
+          return 0;
+      }
+    }
+  },
+
+  mounted() {
+    this.fetchTasks();
+  }
 };
 </script>
 <style lang="scss" scoped>
