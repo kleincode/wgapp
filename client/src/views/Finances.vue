@@ -8,23 +8,18 @@
             <!-- TODO: enable member filtering -->
             <v-subheader>Members</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item three-line v-for="(member, i) in members" :key="'finmem-' + i">
+              <v-list-item three-line v-for="member in memberTotals" :key="'finmem-' + member.id">
                 <v-list-item-avatar size="48" color="teal" left>
                   <span class="white--text headline">
-                    {{ member.firstname.substr(0, 1).toUpperCase()
-                    }}{{ member.lastname.substr(0, 1).toUpperCase() }}
+                    {{ getUserInitials(member.id) }}
                   </span>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{ member.firstname }}
-                    {{ member.lastname }}
+                    {{ getUserName(member.id) }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{ Math.floor(member.sum / 100) }},{{
-                    member.sum % 100
-                    }}
-                    €
+                    {{ (member.total / 100).toFixed(2) }} €
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
@@ -84,26 +79,7 @@ export default {
     ConfirmDialog
   },
   data: () => ({
-    members: [
-      {
-        id: 0,
-        firstname: "Max",
-        lastname: "Mustermann",
-        sum: 13452
-      },
-      {
-        id: 1,
-        firstname: "Gundula",
-        lastname: "Gause",
-        sum: 245
-      },
-      {
-        id: 2,
-        firstname: "Claus",
-        lastname: "Kleber",
-        sum: 1614
-      }
-    ],
+    memberTotals: [],
     tableHeaders: [
       {
         text: "Expense",
@@ -144,7 +120,8 @@ export default {
   }),
   computed: {
     ...mapGetters([
-      "getUserName"
+      "getUserName",
+      "getUserInitials"
     ])
   },
   methods: {
@@ -156,6 +133,8 @@ export default {
             this.unixTimestamp = Math.floor(Date.now() / 1000);
             this.expenses = res.data;
             this.tableTotalItems = res.totalCount;
+            this.memberTotals = Object.entries(res.memberTotals)
+              .map(([id, total]) => ({ id, total }));
           } else alert(res.message);
           this.tableLoading = false;
         })

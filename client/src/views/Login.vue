@@ -181,6 +181,7 @@ export default {
         ] = this.$store.state.userToken;
         this.loading = false;
         this.$store.dispatch("authorize");
+        this.$store.dispatch("fetchHouseholdUsers");
         if (this.$route.params && this.$route.params.redirect)
           this.$router.push(this.$route.params.redirect);
         else this.$router.push(redirectTo || "/");

@@ -88,6 +88,9 @@ let store = new Vuex.Store({
     logout({ commit }) {
       commit("logout");
       localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_email");
+      localStorage.removeItem("user_firstname");
+      localStorage.removeItem("user_lastname");
       //x-access-token header needs to be removed elsewhere!
     },
     showSnackbar({ commit }, message) {
@@ -100,8 +103,20 @@ let store = new Vuex.Store({
     },
     getUserName: (state) => (uid) => {
       let user = state.householdUsers[uid];
-      if(user) return (user.firstname || "?") + " " + (user.lastname || "?");
-      else return "Unknown user";
+      if(!user) return "Unknown user";
+      let userName = "";
+      if(user.firstname) userName += user.firstname;
+      if(user.firstname && user.lastname) userName += " ";
+      if(user.lastname) userName += user.lastname;
+      return userName || "Nameless user";
+    },
+    getUserInitials: (state) => (uid) => {
+      let user = state.householdUsers[uid];
+      if(!user) return "??";
+      let userName = "";
+      if(user.firstname) userName += user.firstname.substr(0,1).toUpperCase();
+      if(user.lastname) userName += user.lastname.substr(0,1).toUpperCase();
+      return userName;
     }
   }
 });
