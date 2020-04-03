@@ -42,6 +42,243 @@ describe('Tasks.vue', () => {
       propsData: {}
     });
     expect(wrapper.vm.mapWeekdayToInt("sunday")).toBe(0);
+    expect(wrapper.vm.mapWeekdayToInt("monday")).toBe(1);
+    expect(wrapper.vm.mapWeekdayToInt("tuesday")).toBe(2);
+    expect(wrapper.vm.mapWeekdayToInt("thursday")).toBe(3);
+    expect(wrapper.vm.mapWeekdayToInt("wednesday")).toBe(4);
+    expect(wrapper.vm.mapWeekdayToInt("friday")).toBe(5);
+    expect(wrapper.vm.mapWeekdayToInt("saturday")).toBe(6);
+  });
+
+  it("computes nextDueDayInWeek correctly", () => {
+    const wrapper = shallowMount(Tasks, {
+      localVue,
+      vuetify,
+      router,
+      propsData: {}
+    });
+    let curDate = new Date('April 2, 2020 10:00:00');
+    let prevTempDate = new Date('March 31, 2020 10:00:00');
+    let repDayInts = [6];
+    let resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(4);
+    expect(resDate.getMonth()).toBe(3);
+
+    prevTempDate = new Date('March 31, 2020 10:00:00');
+    repDayInts = [0];
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(5);
+    expect(resDate.getMonth()).toBe(3);
+
+    repDayInts = [6, 0];
+    prevTempDate = new Date('March 31, 2020 10:00:00');
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(4);
+    expect(resDate.getMonth()).toBe(3);
+
+    repDayInts = [4, 0];
+    prevTempDate = new Date('April 1, 2020 10:00:00');
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(2);
+    expect(resDate.getMonth()).toBe(3);
+
+    repDayInts = [4, 0];
+    prevTempDate = new Date('April 2, 2020 10:00:00');
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(2);
+    expect(resDate.getMonth()).toBe(3);
+
+
+    repDayInts = [6, 0];
+    prevTempDate = new Date('March 31, 2020 10:00:00');
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(4);
+    expect(resDate.getMonth()).toBe(3);
+
+    repDayInts = [3, 5];
+    prevTempDate = new Date('April 6, 2020 10:00:00');
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getMonth()).toBe(3);
+
+    repDayInts = [3, 1];
+    prevTempDate = new Date('March 31, 2020 10:00:00');
+    resDate = wrapper.vm.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+    expect(resDate).toBe(null);
+  });
+
+  it ("shift to next intervall ", () => {
+    const wrapper = shallowMount(Tasks, {
+      localVue,
+      vuetify,
+      router,
+      propsData: {}
+    });
+    let date = new Date('April 8, 2020 10:00:00');
+    let repEvery = 1;
+    let repUnit = 0;
+    let res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    expect(res.getDate()).toBe(13);
+    expect(res.getMonth()).toBe(3);
+
+    date = new Date('April 8, 2020 10:00:00');
+    repEvery = 2;
+    repUnit = 0;
+    res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    expect(res.getDate()).toBe(20);
+    expect(res.getMonth()).toBe(3);
+
+    date = new Date('April 8, 2020 10:00:00');
+    repEvery = 1;
+    repUnit = 1;
+    res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    expect(res.getDate()).toBe(4);
+    expect(res.getMonth()).toBe(4);
+
+    date = new Date('April 8, 2020 10:00:00');
+    repEvery = 2;
+    repUnit = 1;
+    res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    expect(res.getDate()).toBe(1);
+    expect(res.getMonth()).toBe(5);
+  });
+
+  it ("computes computeNextDueDay with weeks correctly", () => {
+    const wrapper = shallowMount(Tasks, {
+      localVue,
+      vuetify,
+      router,
+      propsData: {}
+    });
+    let curDate = new Date('April 3, 2020 10:00:00');
+
+    console.log("### in the future 1 - 1 week");
+    let startDateInput = new Date('April 6, 2020 10:00:00');
+    let repetitionDays = ["thursday", "friday"];
+    let repetitionUnit = 0;
+    let repetitionEvery = 1;
+    let resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### in the future 2 - 1 week");
+    startDateInput = new Date('April 8, 2020 10:00:00');
+    repetitionDays = ["monday"];
+    repetitionUnit = 0;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(13);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### in the future 1 - 2 weeks");
+    startDateInput = new Date('April 6, 2020 10:00:00');
+    repetitionDays = ["thursday", "friday"];
+    repetitionUnit = 0;
+    repetitionEvery = 2;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### in the future 2 - 2 weeks");
+    startDateInput = new Date('April 8, 2020 10:00:00');
+    repetitionDays = ["monday"];
+    repetitionUnit = 0;
+    repetitionEvery = 2;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(20);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### custom - 1");
+    startDateInput = new Date('March 24, 2020 10:00:00');
+    repetitionDays = ["monday"];
+    repetitionUnit = 0;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(6);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### custom - 2");
+    startDateInput = new Date('March 31, 2020 10:00:00');
+    repetitionDays = ["monday", "friday"];
+    repetitionUnit = 0;
+    repetitionEvery = 3;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(3);
+    expect(resDate.getMonth()).toBe(3);
+
+  });
+
+  it ("computes computeNextDueDay with months correctly", () => {
+    const wrapper = shallowMount(Tasks, {
+      localVue,
+      vuetify,
+      router,
+      propsData: {}
+    });
+    let curDate = new Date('April 3, 2020 10:00:00');
+
+    console.log("### in the future 1 - 1 month");
+    let startDateInput = new Date('April 6, 2020 10:00:00');
+    let repetitionDays = ["thursday", "friday"];
+    let repetitionUnit = 1;
+    let repetitionEvery = 1;
+    let resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### in the future 2 - 1 month");
+    startDateInput = new Date('April 8, 2020 10:00:00');
+    repetitionDays = ["monday"];
+    repetitionUnit = 1;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(4);
+    expect(resDate.getMonth()).toBe(4);
+
+    console.log("### in the future 1 - 2 month");
+    startDateInput = new Date('April 6, 2020 10:00:00');
+    repetitionDays = ["thursday", "friday"];
+    repetitionUnit = 1;
+    repetitionEvery = 2;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### in the future 2 - 2 month");
+    startDateInput = new Date('April 8, 2020 10:00:00');
+    repetitionDays = ["monday"];
+    repetitionUnit = 1;
+    repetitionEvery = 2;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(1);
+    expect(resDate.getMonth()).toBe(5);
+
+    console.log("### custom - 1");
+    startDateInput = new Date('March 24, 2020 10:00:00');
+    repetitionDays = ["monday"];
+    repetitionUnit = 1;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(20);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### custom - 2");
+    startDateInput = new Date('March 31, 2020 10:00:00');
+    repetitionDays = ["monday", "friday"];
+    repetitionUnit = 1;
+    repetitionEvery = 3;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(3);
+    expect(resDate.getMonth()).toBe(3);
+
+    console.log("### custom - 3");
+    startDateInput = new Date('March 25, 2020 10:00:00');
+    repetitionDays = ["monday", "friday"];
+    repetitionUnit = 1;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(20);
+    expect(resDate.getMonth()).toBe(3);
   });
 
 });

@@ -15,9 +15,11 @@
                   :class="tasks[0].missed ? 'red' : 'primary'"
                 >
                   <div class="overline">DUE TODAY</div>
-                  <v-icon style="font-size: 10em" x-large>{{
+                  <v-icon style="font-size: 10em" x-large>
+                    {{
                     tasks[0].icon
-                  }}</v-icon>
+                    }}
+                  </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ tasks[0].name }}
                     <v-btn icon>
@@ -28,21 +30,15 @@
                   <v-divider class="mt-4 mb-4"></v-divider>
                   <v-chip>
                     <v-avatar left>
-                      <img
-                        src="https://randomuser.me/api/portraits/men/81.jpg"
-                      />
+                      <img src="https://randomuser.me/api/portraits/men/81.jpg" />
                     </v-avatar>
                     {{ tasks[0].assigned }}
                   </v-chip>
                 </v-card>
                 <v-card raised class="main-task text-center secondary" v-else>
                   <div class="overline text--disabled">DUE TODAY</div>
-                  <v-icon class="text--disabled" style="font-size: 10em" x-large
-                    >bathtub</v-icon
-                  >
-                  <div class="font-regular pt-4 display-1 text--disabled">
-                    Nothing to do
-                  </div>
+                  <v-icon class="text--disabled" style="font-size: 10em" x-large>bathtub</v-icon>
+                  <div class="font-regular pt-4 display-1 text--disabled">Nothing to do</div>
                   <div class="caption pt-2 text--disabled">--:--</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
                   <v-chip style="width: 30%">
@@ -57,10 +53,7 @@
           <div class="overline">other:</div>
           <v-list avatar class="text-left pl-4">
             <div v-if="tasks.length > 1">
-              <v-list-item
-                v-for="(task, i) in tasks.slice(1, tasks.length)"
-                :key="'task-' + i"
-              >
+              <v-list-item v-for="(task, i) in tasks.slice(1, tasks.length)" :key="'task-' + i">
                 <v-list-item-avatar>
                   <v-icon>{{ task.icon }}</v-icon>
                 </v-list-item-avatar>
@@ -72,9 +65,7 @@
                   <v-list-item-subtitle>
                     <v-chip small>
                       <v-avatar style="max-height: 80%; max-width: 90%" left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
+                        <img src="https://randomuser.me/api/portraits/men/81.jpg" />
                       </v-avatar>
                       {{ task.assigned }}
                     </v-chip>
@@ -92,9 +83,7 @@
                 <v-icon class="text--disabled">hourglass_empty</v-icon>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title class="text--disabled"
-                  >Nothing to do</v-list-item-title
-                >
+                <v-list-item-title class="text--disabled">Nothing to do</v-list-item-title>
                 <v-list-item-subtitle>
                   <div class="overline text--disabled">--:--</div>
                 </v-list-item-subtitle>
@@ -133,16 +122,12 @@
               <v-list-item-content>
                 <v-list-item-title class="pb-2 task-entry">
                   {{ task.name }}
-                  <div class="overline pl-2 pt-1">
-                    - {{ task.day }}, {{ task.time }}
-                  </div>
+                  <div class="overline pl-2 pt-1">- {{ task.day }}, {{ task.time }}</div>
                 </v-list-item-title>
                 <v-list-item-subtitle>
                   <v-chip>
                     <v-avatar left>
-                      <img
-                        src="https://randomuser.me/api/portraits/men/81.jpg"
-                      />
+                      <img src="https://randomuser.me/api/portraits/men/81.jpg" />
                     </v-avatar>
                     {{ task.assigned }}
                   </v-chip>
@@ -163,14 +148,8 @@
               </v-list-item-icon>
             </v-list-item>
           </v-list>
-          <div
-            style="text-align: center"
-            class="text--disabled pb-12 pt-8"
-            v-else
-          >
-            <v-icon style="font-size: 10em" class="text--disabled"
-              >hourglass_empty</v-icon
-            >
+          <div style="text-align: center" class="text--disabled pb-12 pt-8" v-else>
+            <v-icon style="font-size: 10em" class="text--disabled">hourglass_empty</v-icon>
             <br />No tasks added yet
           </div>
         </v-card>
@@ -198,12 +177,15 @@ export default {
             this.tasks.push({
               name: element.name,
               assigned: element.assignedMember,
-              day: this.formatDateString(this.computeNextDueDay(
-                correctedStartDate,
-                element.repetitionDays,
-                element.repetitionUnit,
-                element.repetitionEvery
-              )),
+              day: this.formatDateString(
+                this.computeNextDueDay(
+                  new Date(),
+                  correctedStartDate,
+                  element.repetitionDays,
+                  element.repetitionUnit,
+                  element.repetitionEvery
+                )
+              ),
               time: element.time.substr(0, 5),
               missed: false,
               icon: icons[element.icon]
@@ -215,95 +197,151 @@ export default {
       }
     },
 
-    computeNextDueDay(startDate, repetitionDays, repetitionUnit, repetitionEvery) {
+    computeNextDueDay(
+      curDate,
+      startDateInput,
+      repetitionDays,
+      repetitionUnit,
+      repetitionEvery
+    ) {
       let repDayInts = repetitionDays.map(day => this.mapWeekdayToInt(day));
-      let curDate = new Date();
+      let startDate = new Date(startDateInput);
       if (curDate < startDate) {
         console.log("in the future");
-        return this.computeNextDueInWeek(repDayInts, startDate);
-      } else if (repetitionUnit) {
-        //month
-        let tempDate = new Date(startDate);
-        let prevTempDate;
-        while (curDate > tempDate) {
-          prevTempDate = new Date(tempDate);
-          tempDate.setMonth(tempDate.getMonth() + repetitionEvery);
+        let res = this.computeNextDueInWeek(curDate, repDayInts, startDate);
+        if (res == null) {
+          console.log("Shifting...");
+          startDate = this.shiftToNextIntervall(
+            startDate,
+            repetitionEvery,
+            repetitionUnit
+          );
+          console.log(startDate);
+          res = this.computeNextDueInWeek(curDate, repDayInts, startDate);
         }
-        console.log("month - old prevTempDate: " + prevTempDate);
-        let day = prevTempDate.getDay();
-        if (prevTempDate.getDate() + (6 - day) < curDate) {
-          console.log("month - Skip month");
-          prevTempDate.setMonth(prevTempDate.getMonth() + 1);
-          day = prevTempDate.getDay();
-        }
-        console.log("month - prevTempDate: " + prevTempDate);
-        console.log("month - day: " + day);
-        return this.computeNextDueInWeek(repDayInts, prevTempDate);
+        return res;
       } else {
-        //week
         let tempDate = new Date(startDate);
         let prevTempDate;
         while (curDate > tempDate) {
           prevTempDate = new Date(tempDate);
-          tempDate.setDate(tempDate.getDate() + 7 * repetitionEvery);
+          tempDate = this.shiftToNextIntervall(
+            tempDate,
+            repetitionEvery,
+            repetitionUnit
+          );
         }
-        return this.computeNextDueInWeek(repDayInts, prevTempDate);
+        console.log("new Start date " + prevTempDate);
+        let res = this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+        console.log("new Start date res " + res);
+        if (res == null) {
+          console.log("Shifting...");
+          startDate = this.shiftToNextIntervall(
+            prevTempDate,
+            repetitionEvery,
+            repetitionUnit
+          );
+          console.log(prevTempDate);
+          res = this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+        }
+        console.log("final res " + res);
+        return res;
       }
     },
 
-    computeNextDueInWeek(repDayInts, prevTempDate) {
+    computeNextDueInWeek(curDate, repDayInts, prevTempDate) {
+      prevTempDate = new Date(prevTempDate);
       let day = prevTempDate.getDay();
-      console.log("day: " + day);
+      console.log(
+        "call function with: " +
+          curDate +
+          " & " +
+          repDayInts +
+          " & " +
+          prevTempDate
+      );
       if (day > 0) {
-        let min = 8;
+        let minShift = 8;
         for (let i = 0; i < repDayInts.length; i++) {
           console.log("repDay[" + i + "]: " + repDayInts[i]);
           if (repDayInts[i] != 0) {
-            if (repDayInts[i] >= day && repDayInts[i] < min) {
-              min = repDayInts[i];
+            if (repDayInts[i] >= day && repDayInts[i] < minShift) {
+              minShift = repDayInts[i];
             }
           } else {
-            min = 7;
+            if (7 < minShift) {
+              minShift = 7;
+            }
           }
         }
-        console.log("min: " + min);
-        if (min == 7) {
+        console.log("min: " + minShift);
+        if (minShift == 7) {
           prevTempDate.setDate(
             prevTempDate.getDate() + (6 - prevTempDate.getDay() + 1)
           );
           return prevTempDate;
         }
-        if (min == 8) {
-          console.log("date: " + prevTempDate);
-          console.log("shift to next week by: " + (6 - day + 2));
-          prevTempDate.setDate(prevTempDate.getDate() + (6 - day + 2));
-          console.log("new date: " + prevTempDate);
-          return this.computeNextDueInWeek(repDayInts, prevTempDate);
-        }
         prevTempDate.setDate(
-          prevTempDate.getDate() + (min - prevTempDate.getDay())
+          prevTempDate.getDate() + (minShift - prevTempDate.getDay())
         );
+        if (prevTempDate < curDate || minShift == 8) {
+          return null;
+        }
+        console.log("return: " + prevTempDate);
         return prevTempDate;
       } else {
         if (repDayInts.includes(0)) {
           return prevTempDate;
         } else {
           prevTempDate.setDate(prevTempDate.getDate() + 1);
-          return this.computeNextDueInWeek(repDayInts, prevTempDate);
+          return this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
         }
       }
     },
 
+    shiftToNextIntervall(date, repEvery, repUnit) {
+      if (repUnit == 0) {
+        date.setDate(date.getDate() + 7 * repEvery);
+        return this.setToMonday(date);
+      } else {
+        date.setDate(date.getDate() + 28 * repEvery);
+        return this.setToMonday(date);
+      }
+    },
+
+    setToMonday(date) {
+      if (date.getDay() == 0) {
+        date.setDate(date.getDate() - 6);
+      } else {
+        date.setDate(date.getDate() - date.getDay() + 1);
+      }
+      return date;
+    },
+
     formatDateString(date) {
       let curDate = new Date();
-      if (date.getDate() == curDate.getDate() && date.getMonth() == curDate.getMonth() && date.getYear() == curDate.getYear()) {
+      if (
+        date.getDate() == curDate.getDate() &&
+        date.getMonth() == curDate.getMonth() &&
+        date.getYear() == curDate.getYear()
+      ) {
         return "Today";
-      } 
+      }
       curDate.setDate(curDate.getDate() + 1);
-      if (date.getDate() == curDate.getDate() && date.getMonth() == curDate.getMonth() && date.getYear() == curDate.getYear()) {
+      if (
+        date.getDate() == curDate.getDate() &&
+        date.getMonth() == curDate.getMonth() &&
+        date.getYear() == curDate.getYear()
+      ) {
         return "Tomorrow";
       }
-      return  this.mapIntoToWeekday(date.getDay()) + ", " + date.getDate() + ". " + date.getMonth();
+      return (
+        this.mapIntoToWeekday(date.getDay()) +
+        ", " +
+        date.getDate() +
+        ". " +
+        date.getMonth()
+      );
     },
 
     mapWeekdayToInt(repetitionDay) {
