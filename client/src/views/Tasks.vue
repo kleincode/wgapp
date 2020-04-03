@@ -23,7 +23,8 @@
                   <div class="font-regular pt-4 display-1">
                     {{ tasks[0].name }}
                     <v-btn icon @click="checkedTasks(tasks[0].id)">
-                      <v-icon x-large>check_box_outline_blank</v-icon>
+                      <v-icon v-if="tasks[0].checked">check_box</v-icon>
+                      <v-icon v-else>check_box_outline_blank</v-icon>
                     </v-btn>
                   </div>
                   <div class="caption pt-2">{{ tasks[0].time }}</div>
@@ -73,7 +74,8 @@
                 </v-list-item-content>
                 <v-list-item-icon>
                   <v-btn icon @click="checkedTasks(task.id)">
-                    <v-icon>check_box_outline_blank</v-icon>
+                    <v-icon v-if="task.checked">check_box</v-icon>
+                    <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
                 </v-list-item-icon>
               </v-list-item>
@@ -175,15 +177,16 @@ export default {
           this.tasks = [];
           data.data.forEach(element => {
             let correctedStartDate = new Date(element.startDate.substr(0, 19));
-            correctedStartDate.setHours(correctedStartDate.getHours() + 2);
+            correctedStartDate.setHours(correctedStartDate.getHours() + 13);
+            let curDate = new Date();
+            curDate.setHours(12, 0, 0, 0);
             let nextDueDay = this.computeNextDueDay(
-              new Date(),
+              curDate,
               correctedStartDate,
               element.repetitionDays,
               element.repetitionUnit,
               element.repetitionEvery
             );
-            console.info("NextDueDay for " + element.name + " is " + nextDueDay);
             let lastExecution = new Date(element.lastExecution.substr(0, 19));
             lastExecution.setHours(lastExecution.getHours() + 2);
             let taskStatus = this.checkStatus(
@@ -214,16 +217,22 @@ export default {
     },
 
     //2=done today, 1=not done but okay, 0=missed
-    checkStatus(lastExecution, nextDueDay, repDays, repEvery, repUnit, startDate, curDate) {
+    checkStatus(
+      lastExecution,
+      nextDueDay,
+      repDays,
+      repEvery,
+      repUnit,
+      startDate,
+      curDate
+    ) {
       let repDayInts = repDays.map(day => this.mapWeekdayToInt(day));
       nextDueDay = new Date(nextDueDay);
       if (curDate < startDate) {
-        console.log("in the future");
         //in the future
         return 1;
       }
       if (this.isToday(nextDueDay, curDate)) {
-        console.log("isToday");
         if (this.isToday(curDate, lastExecution)) {
           return 2;
         }
@@ -238,32 +247,22 @@ export default {
       if (max == -1) {
         //change intervall
         lastDueDay = this.shiftIntervall(nextDueDay, -repEvery, repUnit);
-        console.log("changed intervall to " + lastDueDay);
         max = -1;
         for (let i = 0; i < repDayInts.length; i++) {
-            console.log("max :" + max + " - repday" + repDayInts[i]);
           if (repDayInts[i] > max) {
-            console.log("max updated:");
             max = repDayInts[i];
           }
         }
-      } 
+      }
       if (max == -1) {
-        console.log("repDays: " + repDayInts);
-        console.log("lastExec: " + lastExecution);
-        console.log("lastDueDay: " + lastDueDay);
-        console.error("Unexpected status: no repDays given");
         return;
       }
       lastDueDay.setDate(lastDueDay.getDate() + (max - lastDueDay.getDay()));
-      console.log("lastDueDay: " + lastDueDay);
-      console.log("lastExec: " + lastExecution);
 
       lastDueDay.setHours(0, 0, 0, 1);
       let endLastDueDay = new Date(lastDueDay);
       endLastDueDay.setHours(23, 59, 59, 0);
       if (lastExecution < lastDueDay) {
-        console.log("missed");
         return 0;
       }
       return 1;
@@ -294,7 +293,6 @@ export default {
             repetitionEvery,
             repetitionUnit
           );
-          console.log(startDate);
           res = this.computeNextDueInWeek(curDate, repDayInts, startDate);
         }
         return res;
@@ -316,7 +314,6 @@ export default {
             repetitionEvery,
             repetitionUnit
           );
-          console.log(prevTempDate);
           res = this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
         }
         return res;
@@ -418,7 +415,14 @@ export default {
     },
 
     async checkedTasks(id) {
-      await this.$http.post("/_/checktask", {id});
+      const { data } = await this.$http.post("/_/checktask", {
+        id
+      });
+      if (data.success == false) {
+        console.error(data.message);
+      } else {
+        console.log(data.message);
+      }
       await this.fetchTasks();
     },
 

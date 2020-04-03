@@ -206,6 +206,18 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(3);
     expect(resDate.getMonth()).toBe(3);
 
+    //custom - 2
+    console.log("### Start deubg");
+    curDate = new Date('April 3, 2020 12:00:00');
+    startDateInput = new Date('March 24, 2020 12:00:00');
+    repetitionDays = ["friday"];
+    repetitionUnit = 0;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    console.log("resDate: " + resDate);
+    expect(resDate.getDate()).toBe(3);
+    expect(resDate.getMonth()).toBe(3);
+
   });
 
   it ("computes computeNextDueDay with months correctly", () => {
@@ -328,7 +340,6 @@ describe('Tasks.vue', () => {
     
     //custom 
     startDate = new Date('March 22, 2020 10:00:00');
-    console.log("### Start debug");
     repDays = ["saturday"];
     expect(wrapper.vm.checkStatus(new Date('March 18, 2020 10:00:00'), new Date('April 18, 2020 10:00:00'), repDays, 1, 1, startDate, curDate)).toBe(0);
 

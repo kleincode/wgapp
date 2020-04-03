@@ -9,14 +9,11 @@
 
     if (!req.body) {
         res.status(200).send({ success: false, message: "Bad Request: Please provide a request body with valid household data." }).end();
-    } else if (!req.body.name) {
-        res.status(200).send({ success: false, message: "Bad Request: A task name needs to be specified." }).end();
+    } else if (!req.body.id) {
+        res.status(200).send({ success: false, message: "Bad Request: A task id needs to be specified." }).end();
     } else {
-        let lastExecution = new Date();
         let id = parseInt(req.body.id);
-
-        if (isNaN(uid) || uid < 0) res.status(200).send({ success: false, message: "Invalid user id." }).end();
-        else if (isNaN(id)) res.status(200).send({ success: false, message: "Invalid task id." }).end();
+        if (isNaN(id)) res.status(200).send({ success: false, message: "Invalid task id." }).end();
         else {
             mysql_conn.query("SELECT COUNT(*) AS 'c' FROM tasks WHERE id = ? AND hid = ?", [id, req.user.hid], (err, res2) => {
                 if (err) {
@@ -24,11 +21,11 @@
                 } else if (res2[0].c < 1) {
                     res.status(200).send({ success: false, message: "The specifed task does not exist or does not belong to this household." }).end();
                 } else {
-                    mysql_conn.query("UPDATE tasks SET lastExecution = ? WHERE id = ?", [id, lastExecution], (err, res3 => {
+                    mysql_conn.query("UPDATE tasks SET lastExecution = ? WHERE id = ?", [new Date(), id], (err, res3 => {
                         if (err) {
                             res.status(200).send({ success: false, message: "Error while inserting task into database." }).end();
                         } else {
-                            res.status(200).send({ success: true, message: "Task inserted successfully." }).end();
+                            res.status(200).send({ success: true, message: "Task updated successfully at id " + id + "." }).end();
                         }
                     }));
                 }
