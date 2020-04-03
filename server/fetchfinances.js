@@ -11,12 +11,14 @@ module.exports = (req, res) => {
         const page = Math.max(parseInt(req.query.p) || 0, 0),
             pageSize = Math.max(Math.min(parseInt(req.query.ps) || 100, 100), 0) || 100,
             offset = pageSize * page,
-            uid = parseInt(req.query.uid);
+            uid = parseInt(req.query.uid),
+            validSorts = ["description", "amount", "date"];
         
         // Construct queries
-        let displaySelect = `SELECT finances.id AS 'fid', description, amount, uid, UNIX_TIMESTAMP(created) as date`,
+        let displaySelect = `SELECT finances.id AS 'fid', description, amount, uid, UNIX_TIMESTAMP(created) as 'date'`,
             totalSelect = `SELECT COUNT(*) AS 'entries'`,
             mainQuery = ` FROM finances WHERE hid = ?`,
+            mainSuffix = ``,
             queryParams = [req.user.hid];
         
         // Filter user
@@ -30,13 +32,19 @@ module.exports = (req, res) => {
             mainQuery += ` AND description LIKE ?`;
             queryParams.push("%" + req.query.q + "%");
         }
+
+        //Sort
+        if(req.query.s && validSorts.includes(req.query.s)) {
+            let sortBy = req.query.s == "date" ? "created" : req.query.s;
+            mainSuffix += ` ORDER BY ${sortBy} ` + (req.query.desc ? "DESC" : "ASC");
+        }
         
         // Display query
-        mysql_conn.query(displaySelect + mainQuery + ` LIMIT ?, ?`, [...queryParams, offset, pageSize], (err, res2) => {
+        mysql_conn.query(displaySelect + mainQuery + mainSuffix + ` LIMIT ?, ?`, [...queryParams, offset, pageSize], (err, res2) => {
             if(err) {
                 res.status(500).send({success: false, message: "Error while fetching finances from database."}).end();
                 console.log(err);
-            // Total count query
+            // Total count query (count without sort and limit)
             } else mysql_conn.query(totalSelect + mainQuery, queryParams, (err, res3) => {
                 if(err) {
                     res.status(500).send({success: false, message: "Error while fetching finances from database."}).end();

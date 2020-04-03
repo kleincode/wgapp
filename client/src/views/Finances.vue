@@ -40,6 +40,7 @@
             :options.sync="tableOptions"
             :server-items-length="tableTotalItems"
             :loading="tableLoading"
+            must-sort
           >
             <template v-slot:item.uid="{ item }">
               {{ getUserName(item.uid) }}
@@ -86,12 +87,15 @@ export default {
         align: "start",
         value: "description"
       },
-      { text: "Member", value: "uid" },
+      { text: "Member", value: "uid", sortable: false },
       { text: "Date", value: "date" },
       { text: "Amount", value: "amount" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions", sortable: false }
     ],
-    tableOptions: {},
+    tableOptions: {
+      sortBy: ["date"],
+      sortDesc: [true]
+    },
     tableTotalItems: 2,
     tableLoading: null,
     expenses: [
@@ -149,7 +153,9 @@ export default {
         params: {
           p: this.tableOptions.page - 1,
           ps: this.tableOptions.itemsPerPage,
-          uid: this.filterMember
+          uid: this.filterMember,
+          s: this.tableOptions.sortBy[0],
+          desc: this.tableOptions.sortDesc[0] ? true : null
         }
       });
 
