@@ -8,28 +8,24 @@
             <!-- TODO: enable member filtering -->
             <v-subheader>Members</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item
-                three-line
-                v-for="(member, i) in members"
-                :key="'finmem-' + i"
-              >
+              <v-list-item three-line v-for="(member, i) in members" :key="'finmem-' + i">
                 <v-list-item-avatar size="48" color="teal" left>
-                  <span class="white--text headline"
-                    >{{ member.firstname.substr(0, 1).toUpperCase()
-                    }}{{ member.lastname.substr(0, 1).toUpperCase() }}</span
-                  >
+                  <span class="white--text headline">
+                    {{ member.firstname.substr(0, 1).toUpperCase()
+                    }}{{ member.lastname.substr(0, 1).toUpperCase() }}
+                  </span>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title
-                    >{{ member.firstname }}
-                    {{ member.lastname }}</v-list-item-title
-                  >
-                  <v-list-item-subtitle
-                    >{{ Math.floor(member.sum / 100) }},{{
-                      member.sum % 100
+                  <v-list-item-title>
+                    {{ member.firstname }}
+                    {{ member.lastname }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ Math.floor(member.sum / 100) }},{{
+                    member.sum % 100
                     }}
-                    €</v-list-item-subtitle
-                  >
+                    €
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -41,11 +37,7 @@
           <v-card-title>
             Expenses
             <v-spacer></v-spacer>
-            <edit-expense-dialog
-              v-model="editExpense"
-              @committed="updateTable"
-              ref="editDialog"
-            ></edit-expense-dialog>
+            <edit-expense-dialog v-model="editExpense" @committed="updateTable" ref="editDialog"></edit-expense-dialog>
           </v-card-title>
           <v-data-table
             :headers="tableHeaders"
@@ -54,19 +46,23 @@
             :server-items-length="tableTotalItems"
             :loading="tableLoading"
           >
+            <template v-slot:item.amount="{ item }">
+              {{ (item.amount / 100).toFixed(2) }} €
+            </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)"
-                >mdi-pencil</v-icon
-              >
+              <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
               <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
           </v-data-table>
         </v-card>
       </v-col>
     </v-row>
-    <confirm-dialog v-model="deleteDialogVisible" @positive="deleteConfirm" @negative="deleteDialogVisible = false" :loading="deleteDialogLoading">
-      Are you sure you want to delete "{{ deleteDescription }}"?
-    </confirm-dialog>
+    <confirm-dialog
+      v-model="deleteDialogVisible"
+      @positive="deleteConfirm"
+      @negative="deleteDialogVisible = false"
+      :loading="deleteDialogLoading"
+    >Are you sure you want to delete "{{ deleteDescription }}"?</confirm-dialog>
   </v-container>
 </template>
 <script>
@@ -188,18 +184,12 @@ export default {
       try {
         let data = await this.commitDelete(this.deleteId);
         this.deleteDialogLoading = false;
-        if(data.success) {
+        if (data.success) {
           this.deleteDialogVisible = false;
-          this.$store.dispatch(
-            "showSnackbar",
-            "Item deleted."
-          );
+          this.$store.dispatch("showSnackbar", "Item deleted.");
           this.updateTable();
-        } else this.$store.dispatch(
-            "showSnackbar",
-            data.message
-          );
-      } catch(err) {
+        } else this.$store.dispatch("showSnackbar", data.message);
+      } catch (err) {
         this.deleteDialogLoading = false;
         this.$store.dispatch(
           "showSnackbar",
