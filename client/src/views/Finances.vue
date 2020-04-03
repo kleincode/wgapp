@@ -7,8 +7,8 @@
           <v-list three-line avatar>
             <!-- TODO: enable member filtering -->
             <v-subheader>Members</v-subheader>
-            <v-list-item-group color="primary">
-              <v-list-item three-line v-for="member in memberTotals" :key="'finmem-' + member.id">
+            <v-list-item-group color="primary" v-model="filterMember" @change="updateTable">
+              <v-list-item three-line v-for="member in memberTotals" :key="'finmem-' + member.id" :value="member.id">
                 <v-list-item-avatar size="48" color="teal" left>
                   <span class="white--text headline">
                     {{ getUserInitials(member.id) }}
@@ -116,7 +116,8 @@ export default {
     deleteId: -1,
     deleteDescription: "",
     deleteDialogLoading: false,
-    unixTimestamp: Math.floor(Date.now() / 1000)
+    unixTimestamp: Math.floor(Date.now() / 1000),
+    filterMember: null
   }),
   computed: {
     ...mapGetters([
@@ -147,7 +148,8 @@ export default {
       const { data } = await this.$http.get("/_/fetchfinances", {
         params: {
           p: this.tableOptions.page - 1,
-          ps: this.tableOptions.itemsPerPage
+          ps: this.tableOptions.itemsPerPage,
+          uid: this.filterMember
         }
       });
 
