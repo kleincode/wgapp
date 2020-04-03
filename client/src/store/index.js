@@ -11,7 +11,8 @@ let store = new Vuex.Store({
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
     snackbarShow: false,
-    snackbarMessage: ""
+    snackbarMessage: "",
+    householdUsers: {}
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -36,6 +37,9 @@ let store = new Vuex.Store({
     },
     update_snackbar(state, visible) {
       state.snackbarShow = visible;
+    },
+    update_household_users(state, users) {
+      state.householdUsers = users;
     }
   },
   actions: {
@@ -63,6 +67,24 @@ let store = new Vuex.Store({
       else throw data.message;
       return data.redirect || "";
     },
+    /* returns false if user does not belong to any household (--> please redirect to "Add Household") */
+    async fetchHouseholdUsers({ commit }) {
+      try {
+        const { data } = await axios({
+          url: "/_/fetchusers",
+          method: "GET"
+        });
+        if (data.success)
+          commit("update_household_users", data.data);
+        else {
+          commit("update_household_users", {});
+          return false;
+        }
+      } catch (err) {
+        console.err("Error while fetching household users", err);
+      }
+      return true;
+    },
     logout({ commit }) {
       commit("logout");
       localStorage.removeItem("auth_token");
@@ -75,6 +97,11 @@ let store = new Vuex.Store({
   getters: {
     isAuthorized(state) {
       return !!state.userToken;
+    },
+    getUserName: (state) => (uid) => {
+      let user = state.householdUsers[uid];
+      if(user) return (user.firstname || "?") + " " + (user.lastname || "?");
+      else return "Unknown user";
     }
   }
 });

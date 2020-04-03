@@ -14,7 +14,7 @@ module.exports = (req, res) => {
         const mainQuery = ` FROM finances WHERE hid = ?` + (req.query.q ? ` AND description LIKE ?` : ""),
             queryParams = req.query.q ? [req.user.hid, "%" + req.query.q + "%"] : [req.user.hid];
         
-        mysql_conn.query(`SELECT finances.id AS 'fid', description, amount, uid` + mainQuery + ` LIMIT ?, ?`, [...queryParams, offset, pageSize], (err, res2) => {
+        mysql_conn.query(`SELECT finances.id AS 'fid', description, amount, uid, UNIX_TIMESTAMP(created) as date` + mainQuery + ` LIMIT ?, ?`, [...queryParams, offset, pageSize], (err, res2) => {
             if(err) {
                 res.status(500).send({success: false, message: "Error while fetching finances from database."}).end();
                 console.log(err);

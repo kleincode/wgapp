@@ -46,6 +46,12 @@
             :server-items-length="tableTotalItems"
             :loading="tableLoading"
           >
+            <template v-slot:item.uid="{ item }">
+              {{ getUserName(item.uid) }}
+            </template>
+            <template v-slot:item.date="{ item }">
+              {{ renderDate(item.date) }}
+            </template>
             <template v-slot:item.amount="{ item }">
               {{ (item.amount / 100).toFixed(2) }} €
             </template>
@@ -66,6 +72,8 @@
   </v-container>
 </template>
 <script>
+import { mapGetters } from "vuex";
+
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 
@@ -131,14 +139,21 @@ export default {
     deleteDialogVisible: false,
     deleteId: -1,
     deleteDescription: "",
-    deleteDialogLoading: false
+    deleteDialogLoading: false,
+    unixTimestamp: Math.floor(Date.now() / 1000)
   }),
+  computed: {
+    ...mapGetters([
+      "getUserName"
+    ])
+  },
   methods: {
     updateTable() {
       this.tableLoading = true;
       this.loadData()
         .then(res => {
           if (res.success) {
+            this.unixTimestamp = Math.floor(Date.now() / 1000);
             this.expenses = res.data;
             this.tableTotalItems = res.totalCount;
           } else alert(res.message);
@@ -151,8 +166,10 @@ export default {
     },
     async loadData() {
       const { data } = await this.$http.get("/_/fetchfinances", {
-        p: this.tableOptions.page - 1,
-        ps: this.tableOptions.itemsPerPage
+        params: {
+          p: this.tableOptions.page - 1,
+          ps: this.tableOptions.itemsPerPage
+        }
       });
 
       if (data.success) {
@@ -197,6 +214,33 @@ export default {
         );
         console.error(err);
       }
+    },
+    renderDate(itemTimestamp) {
+      let seconds = this.unixTimestamp - itemTimestamp;
+      let sign = seconds < 0;
+      seconds = Math.abs(seconds);
+      if(seconds < 60) return "just now";
+      let val = "";
+      if(seconds > 60 * 60 * 24 * 7 * 5) {
+        let dateThen = new Date(itemTimestamp),
+          dateNow = new Date(this.unixTimestamp);
+        let diffMonths = Math.abs(dateNow.getMonth() - dateThen.getMonth + 12 * (dateNow.getFullYear() - dateThen.getFullYear()));
+        if (diffMonths > 12) {
+          val = Math.floor(diffMonths / 12) + " years";
+        } else {
+          val = diffMonths + " months";
+        }
+      } if(seconds > 60 * 60 * 24 * 7) {
+        val = Math.floor(seconds / (60 * 60 * 24 * 7)) + " weeks";
+      } else if(seconds > 60 * 60 * 24) {
+        val = Math.floor(seconds / (60 * 60 * 24)) + " days";
+      } else if(seconds > 60 * 60) {
+        val = Math.floor(seconds / (60 * 60)) + " hours";
+      } else {
+        val = Math.floor(seconds / 60) + " minutes";
+      }
+      if(sign) return "in " + val;
+      else return val + " ago";
     }
   },
   watch: {
