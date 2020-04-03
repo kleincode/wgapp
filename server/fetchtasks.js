@@ -9,6 +9,7 @@ module.exports = (req, res) => {
     if (req.user.hid) {
 
         mysql_conn.query(`SELECT 
+            id,
             name,
             icon,
             iteratingMode,
@@ -18,7 +19,8 @@ module.exports = (req, res) => {
             repetitionUnit,
             reminder, 
             time, 
-            startDate 
+            startDate,
+            lastExecution
             FROM tasks WHERE hid = ?`, [req.user.hid], (err, res2) => {
             if (err) {
                 res.status(500).send({ success: false, message: "Error while fetching tasks from database." }).end();

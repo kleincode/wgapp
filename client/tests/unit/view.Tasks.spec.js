@@ -152,7 +152,7 @@ describe('Tasks.vue', () => {
     });
     let curDate = new Date('April 3, 2020 10:00:00');
 
-    console.log("### in the future 1 - 1 week");
+    //in the future 1 - 1 week
     let startDateInput = new Date('April 6, 2020 10:00:00');
     let repetitionDays = ["thursday", "friday"];
     let repetitionUnit = 0;
@@ -161,7 +161,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(8);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### in the future 2 - 1 week");
+    //in the future 2 - 1 week
     startDateInput = new Date('April 8, 2020 10:00:00');
     repetitionDays = ["monday"];
     repetitionUnit = 0;
@@ -170,7 +170,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(13);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### in the future 1 - 2 weeks");
+    //in the future 1 - 2 weeks
     startDateInput = new Date('April 6, 2020 10:00:00');
     repetitionDays = ["thursday", "friday"];
     repetitionUnit = 0;
@@ -179,7 +179,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(8);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### in the future 2 - 2 weeks");
+    //in the future 2 - 2 weeks
     startDateInput = new Date('April 8, 2020 10:00:00');
     repetitionDays = ["monday"];
     repetitionUnit = 0;
@@ -188,7 +188,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(20);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### custom - 1");
+    //custom - 1
     startDateInput = new Date('March 24, 2020 10:00:00');
     repetitionDays = ["monday"];
     repetitionUnit = 0;
@@ -197,7 +197,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(6);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### custom - 2");
+    //custom - 2
     startDateInput = new Date('March 31, 2020 10:00:00');
     repetitionDays = ["monday", "friday"];
     repetitionUnit = 0;
@@ -217,7 +217,7 @@ describe('Tasks.vue', () => {
     });
     let curDate = new Date('April 3, 2020 10:00:00');
 
-    console.log("### in the future 1 - 1 month");
+    //in the future 1 - 1 month
     let startDateInput = new Date('April 6, 2020 10:00:00');
     let repetitionDays = ["thursday", "friday"];
     let repetitionUnit = 1;
@@ -226,7 +226,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(8);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### in the future 2 - 1 month");
+    //in the future 2 - 1 month
     startDateInput = new Date('April 8, 2020 10:00:00');
     repetitionDays = ["monday"];
     repetitionUnit = 1;
@@ -235,7 +235,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(4);
     expect(resDate.getMonth()).toBe(4);
 
-    console.log("### in the future 1 - 2 month");
+    //in the future 1 - 2 month
     startDateInput = new Date('April 6, 2020 10:00:00');
     repetitionDays = ["thursday", "friday"];
     repetitionUnit = 1;
@@ -244,7 +244,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(8);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### in the future 2 - 2 month");
+    //in the future 2 - 2 month
     startDateInput = new Date('April 8, 2020 10:00:00');
     repetitionDays = ["monday"];
     repetitionUnit = 1;
@@ -253,7 +253,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(1);
     expect(resDate.getMonth()).toBe(5);
 
-    console.log("### custom - 1");
+    //custom - 1
     startDateInput = new Date('March 24, 2020 10:00:00');
     repetitionDays = ["monday"];
     repetitionUnit = 1;
@@ -262,7 +262,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(20);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### custom - 2");
+    //custom - 2
     startDateInput = new Date('March 31, 2020 10:00:00');
     repetitionDays = ["monday", "friday"];
     repetitionUnit = 1;
@@ -271,7 +271,7 @@ describe('Tasks.vue', () => {
     expect(resDate.getDate()).toBe(3);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("### custom - 3");
+    //custom - 3
     startDateInput = new Date('March 25, 2020 10:00:00');
     repetitionDays = ["monday", "friday"];
     repetitionUnit = 1;
@@ -279,6 +279,58 @@ describe('Tasks.vue', () => {
     resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
     expect(resDate.getDate()).toBe(20);
     expect(resDate.getMonth()).toBe(3);
+
+    //custom - 4
+    startDateInput = new Date('March 22, 2020 10:00:00');
+    repetitionDays = ["saturday"];
+    repetitionUnit = 1;
+    repetitionEvery = 1;
+    resDate = wrapper.vm.computeNextDueDay(curDate, startDateInput, repetitionDays, repetitionUnit, repetitionEvery);
+    expect(resDate.getDate()).toBe(18);
+    expect(resDate.getMonth()).toBe(3);
   });
 
+  it ("computes checkStatus", () => {
+    const wrapper = shallowMount(Tasks, {
+      localVue,
+      vuetify,
+      router,
+      propsData: {}
+    });
+    let curDate = new Date('April 3, 2020 10:00:00');
+    let startDate = new Date('March 1, 2020 10:00:00');
+
+    //not missed bc not over
+    let repDays = ["monday","friday"];
+    expect(wrapper.vm.checkStatus(new Date('March 30, 2020 10:00:00'), new Date('April 3, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(1);
+
+    //not missed bc not due
+    repDays = ["sunday"];
+    expect(wrapper.vm.checkStatus(new Date('April 1, 2020 10:00:00'), new Date('April 5, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(1);
+
+    //not missed bc second execution not over
+    repDays = ["wednesday", "sunday"];
+    expect(wrapper.vm.checkStatus(new Date('April 2, 2020 10:00:00'), new Date('April 9, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(1);
+    //missed
+    repDays = ["wednesday", "sunday"];
+    expect(wrapper.vm.checkStatus(new Date('April 1, 2020 10:00:00'), new Date('April 9, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(0);
+
+    //missed bc over
+    repDays = ["wednesday"];
+    expect(wrapper.vm.checkStatus(new Date('April 1, 2020 10:00:00'), new Date('April 9, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(0);
+    //missed bc way over
+    expect(wrapper.vm.checkStatus(new Date('April 1, 2020 10:00:00'), new Date('April 16, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(0);
+
+    
+    //okay bc start in future 
+    startDate = new Date('May 1, 2020 10:00:00');
+    expect(wrapper.vm.checkStatus(new Date('April 1, 2020 10:00:00'), new Date('April 16, 2020 10:00:00'), repDays, 1, 0, startDate, curDate)).toBe(1);
+    
+    //custom 
+    startDate = new Date('March 22, 2020 10:00:00');
+    console.log("### Start debug");
+    repDays = ["saturday"];
+    expect(wrapper.vm.checkStatus(new Date('March 18, 2020 10:00:00'), new Date('April 18, 2020 10:00:00'), repDays, 1, 1, startDate, curDate)).toBe(0);
+
+  });
 });
