@@ -160,7 +160,7 @@ export default {
         this.loading = false;
       } catch (err) {
         console.error(err);
-        this.alertSnackbar("Error logging in. Please try again.");
+        this.alertSnackbar("Error registering. Please try again.");
         this.loading = false;
       }
     },
@@ -172,20 +172,21 @@ export default {
       }
       this.loading = true;
       try {
-        const { data } = await this.$http.post("/_/login", {
+        let redirectTo = await this.$store.dispatch("login", {
           email: this.email,
           password: this.password
         });
-        if (data.success) {
-          this.loading = false;
-          this.$store.commit("login_success", data.email);
-          if (this.$route.params && this.$route.params.redirect)
-            this.$router.push(this.$route.params.redirect);
-          else this.$router.push(data.redirect || "/");
-        } else this.alertSnackbar(data.message);
+        this.$http.defaults.headers.common[
+          "x-access-token"
+        ] = this.$store.state.userToken;
+        this.loading = false;
+        this.$store.dispatch("authorize");
+        this.$store.dispatch("fetchHouseholdUsers");
+        if (this.$route.params && this.$route.params.redirect)
+          this.$router.push(this.$route.params.redirect);
+        else this.$router.push(redirectTo || "/");
       } catch (err) {
-        console.error(err);
-        this.alertSnackbar("Error logging in. Please try again.");
+        this.alertSnackbar(err);
         this.loading = false;
       }
     }

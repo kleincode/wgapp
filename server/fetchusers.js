@@ -19,7 +19,7 @@ module.exports = (req, res) => {
             }
         });
     } else {
-        res.status(400).send({success: false, message: "Please join a household to use this feature."}).end();
+        res.status(200).send({success: false, message: "Please join a household to use this feature."}).end();
     }
 
 };

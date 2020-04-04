@@ -9,12 +9,10 @@ module.exports = (req, res) => {
 
     if(!req.body) {
         res.status(400).send({success: false, message: "Bad Request: Please provide a request body with valid household data."}).end();
-    } else if(!req.body.uid) {
-        res.status(400).send({success: false, message: "A household member who made the expense needs to be specified."}).end();
     } else if(!req.body.amount) {
         res.status(400).send({success: false, message: "An expense amount is required."}).end();
     } else {
-        let uid = parseInt(req.body.uid), amount = parseInt(req.body.amount), description = req.body.description || "";
+        let uid = parseInt(req.body.uid || req.user.uid), amount = parseInt(req.body.amount), description = req.body.description || "";
         if(isNaN(uid) || uid < 0) res.status(400).send({success: false, message: "Invalid user id."}).end();
         else if(isNaN(amount)) res.status(400).send({success: false, message: "Invalid expense amount."}).end();
         else {
