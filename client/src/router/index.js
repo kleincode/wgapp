@@ -72,9 +72,8 @@ const router = new VueRouter({
 //Authorization
 router.beforeEach((to, from, next) => {
   if (to.name != "Login" && !store.getters.isAuthorized)
-      next({ name: "Login", params: { redirect: to } });
-  else
-      next();
+    next({ name: "Login", params: { redirect: to } });
+  else next();
 });
 
 export default router;

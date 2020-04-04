@@ -55,12 +55,12 @@ export default {
     showSnackbar: false,
     snackbarMessage: "",
     householdIdRules: [
-      v => !!v || 'Household ID is required',
-      v => (v && v.length == 32 && /^[A-Z0-9]*$/.test(v)) || 'Invalid format'
+      v => !!v || "Household ID is required",
+      v => (v && v.length == 32 && /^[A-Z0-9]*$/.test(v)) || "Invalid format"
     ],
     securityCodeRules: [
-      v => !!v || 'Security code is required',
-      v => (v && v.length == 6 && /^[0-9]*$/.test(v)) || 'Invalid format'
+      v => !!v || "Security code is required",
+      v => (v && v.length == 6 && /^[0-9]*$/.test(v)) || "Invalid format"
     ],
     validating: false,
     formValid: null
@@ -78,12 +78,12 @@ export default {
     async validate() {
       this.validating = true;
       this.$refs.form.validate();
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
       this.formValid = this.$refs.form.validate();
     },
     async formSubmit() {
       await this.validate();
-      if(!this.formValid) this.alertSnackbar("Please check your input.");
+      if (!this.formValid) this.alertSnackbar("Please check your input.");
       else this.alertSnackbar("form submitted");
     }
   },

@@ -10,6 +10,9 @@ let store = new Vuex.Store({
     userEmail: localStorage.getItem("user_email"),
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
+    snackbarShow: false,
+    snackbarMessage: "",
+    householdUsers: {}
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -27,6 +30,16 @@ let store = new Vuex.Store({
       state.userEmail = "";
       state.userFirstName = "";
       state.userLastName = "";
+    },
+    show_snackbar(state, message) {
+      state.snackbarMessage = message;
+      state.snackbarShow = true;
+    },
+    update_snackbar(state, visible) {
+      state.snackbarShow = visible;
+    },
+    update_household_users(state, users) {
+      state.householdUsers = users;
     }
   },
   actions: {
@@ -37,11 +50,7 @@ let store = new Vuex.Store({
           method: "GET"
         });
         if (data.success)
-          commit("update_user", [
-            data.email,
-            data.firstname,
-            data.lastname
-          ]);
+          commit("update_user", [data.email, data.firstname, data.lastname]);
         else commit("logout");
       } catch (err) {
         console.err("Error while authorizing user", err);
@@ -58,15 +67,56 @@ let store = new Vuex.Store({
       else throw data.message;
       return data.redirect || "";
     },
+    /* returns false if user does not belong to any household (--> please redirect to "Add Household") */
+    async fetchHouseholdUsers({ commit }) {
+      try {
+        const { data } = await axios({
+          url: "/_/fetchusers",
+          method: "GET"
+        });
+        if (data.success)
+          commit("update_household_users", data.data);
+        else {
+          commit("update_household_users", {});
+          return false;
+        }
+      } catch (err) {
+        console.err("Error while fetching household users", err);
+      }
+      return true;
+    },
     logout({ commit }) {
       commit("logout");
       localStorage.removeItem("auth_token");
+      localStorage.removeItem("user_email");
+      localStorage.removeItem("user_firstname");
+      localStorage.removeItem("user_lastname");
       //x-access-token header needs to be removed elsewhere!
+    },
+    showSnackbar({ commit }, message) {
+      commit("show_snackbar", message);
     }
   },
   getters: {
     isAuthorized(state) {
       return !!state.userToken;
+    },
+    getUserName: (state) => (uid) => {
+      let user = state.householdUsers[uid];
+      if(!user) return "Unknown user";
+      let userName = "";
+      if(user.firstname) userName += user.firstname;
+      if(user.firstname && user.lastname) userName += " ";
+      if(user.lastname) userName += user.lastname;
+      return userName || "Nameless user";
+    },
+    getUserInitials: (state) => (uid) => {
+      let user = state.householdUsers[uid];
+      if(!user) return "??";
+      let userName = "";
+      if(user.firstname) userName += user.firstname.substr(0,1).toUpperCase();
+      if(user.lastname) userName += user.lastname.substr(0,1).toUpperCase();
+      return userName;
     }
   }
 });

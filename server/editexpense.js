@@ -11,21 +11,17 @@ module.exports = (req, res) => {
         res.status(400).send({success: false, message: "Bad Request: Please provide a request body with valid household data."}).end();
     } else if(!req.body.id) {
         res.status(400).send({success: false, message: "No expense id specified."}).end();
-    } else if(!req.body.uid) {
-        res.status(400).send({success: false, message: "No user id specified."}).end();
     } else {
-        let id = parseInt(req.body.id), description = req.body.description || "", amount = parseInt(req.body.amount), uid = parseInt(req.body.uid);
+        let id = parseInt(req.body.id), description = req.body.description || "", amount = parseInt(req.body.amount);
         if(isNaN(amount)) amount = 0;
         if(isNaN(id) || id < 0) {
             res.status(400).send({success: false, message: "Invalid id."}).end();
-        } else if(isNaN(uid) || uid < 0) {
-            res.status(400).send({success: false, message: "Invalid user id."}).end();
-        } else mysql_conn.query("UPDATE finances SET uid = ?, description = ?, amount = ? WHERE id = ? AND hid = ?", [uid, description, amount, id, req.user.hid], (err, res2) => {
+        } else mysql_conn.query("UPDATE finances SET description = ?, amount = ? WHERE id = ? AND hid = ?", [description, amount, id, req.user.hid], (err, res2) => {
             if(err) {
                 res.status(500).send({success: false, message: "Error while deleting from database."}).end();
                 console.log(err);
             } else if(res2.affectedRows < 1) {
-                res.status(401).send({success: false, message: "You don't have permission to change this entry."}).end();
+                res.status(200).send({success: false, message: "You don't have permission to change this entry."}).end();
             } else if(res2.changedRows < 1) {
                 res.status(200).send({success: true, message: "No changes made."}).end();
             } else {
