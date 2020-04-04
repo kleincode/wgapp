@@ -14,8 +14,11 @@ const port = process.env.PORT || 3001;
 bcrypt = require("bcryptjs");
 auth_salt_rounds = parseInt(process.env.AUTH_SALT_ROUNDS) || 10;
 
-const mysql = require("mysql");
-mysql_conn = mysql.createPool({
+const Database = require("./server/components/MySQLDatabase");
+const db = new Database({
+    logSql: true,
+    logErrors: true
+}).connect({
     host: process.env.MYSQL_HOST || "localhost",
     port: process.env.MYSQL_PORT || 3306,
     user: process.env.MYSQL_USER,
@@ -24,6 +27,7 @@ mysql_conn = mysql.createPool({
     connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || 10,
     debug: false
 });
+mysql_conn = db.getPool();
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -68,7 +72,7 @@ app.get("/_/user", checkAuthorized, (req, res) => {
 app.post("/_/createhousehold", checkAuthorized, require("./server/createhousehold"));
 app.post("/_/addhousehold", checkAuthorized, require("./server/addhousehold"));
 app.get("/_/fetchfinances", checkAuthorized, require("./server/fetchfinances"));
-app.get("/_/fetchusers", checkAuthorized, require("./server/fetchusers"));
+app.get("/_/fetchusers", checkAuthorized, require("./server/fetchusers")(db));
 app.post("/_/addexpense", checkAuthorized, require("./server/addexpense"));
 app.post("/_/editexpense", checkAuthorized, require("./server/editexpense"));
 app.post("/_/delexpense", checkAuthorized, require("./server/delexpense"));
