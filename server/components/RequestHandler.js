@@ -6,7 +6,7 @@
     */
 
 module.exports = function registerRequestHandler(handlerName, beforeHandler, app, provideToHandler) {
-  let handlerProps = require("../" + handlerName)(provideToHandler);
+  let handlerProps = require("../views/" + handlerName)(provideToHandler);
   // Check required fields
   if(!handlerProps.type || !["GET","POST"].includes(handlerProps.type))
     throw "Please set handler type to 'GET' or 'POST' in " + handlerSourceFile;
@@ -35,6 +35,7 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
           switch(handlerProps.params[param].type) {
             case "int": req.query[param] = parseInt(req.query[param]); break;
             case "float": req.query[param] = parseFloat(req.query[param]); break;
+            case "boolean": req.query[param] = !!req.query[param]; break;
             case "json":
               try {
                 req.query[param] = JSON.parse(req.query[param]);
@@ -51,7 +52,7 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
           }
         } else if(handlerProps.params[param].required) {
           // required but not provided
-          res.status(400).send({message: `Parameter '${param}' is required`, success: false}).end();
+          res.status(400).send({message: handlerProps.params[param].message || `Parameter '${param}' is required`, success: false}).end();
           return;
         } else if("default" in handlerProps.params[param]) {
           // default value
@@ -68,6 +69,7 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
           switch(handlerProps.body[elem].type) {
             case "int": req.body[elem] = parseInt(req.body[elem]); break;
             case "float": req.body[elem] = parseFloat(req.body[elem]); break;
+            case "boolean": req.body[elem] = !!req.body[elem]; break;
             case "object": if(typeof req.body[elem] !== "object") req.body[elem] = null; break;
             case "string": if(typeof req.body[elem] !== "string") req.body[elem] = null; break;
             default: break;

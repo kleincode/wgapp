@@ -1,10 +1,4 @@
-/*  This module accepts requests to "/_/addexpense". The following arguments are passed to the function:
-    req.body    ..      JSON request body sent by client (for POST requests) OR
-    req.query   ..      HTTP params sent by client (for GET requests)
-    req.user    ..      Information about the user sending the request (properties: email, uid, firstname, lastname, hid)
-    res         ..      Result object, used to respond to the client
-    db          ..      Helper for database calls (see MySQLDatabase.js)
-    */
+/*  Handler for "/_/addexpense". Purpose: Adding expenses to database (used for 'finances' view). */
 module.exports = (db) => ({
   type: "POST",
   body: {
