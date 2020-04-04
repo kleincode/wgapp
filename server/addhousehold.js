@@ -1,9 +1,11 @@
-/*  This module accepts requests to "/_/addhousehold". The following arguments are passed to the function:
-    req.body    ..      JSON request body sent by client
-    req.user    ..      Information about the user sending the request (properties: email, uid, firstname, lastname)
+/*  This module accepts requests to "/_/addexpense". The following arguments are passed to the function:
+    req.body    ..      JSON request body sent by client (for POST requests) OR
+    req.query   ..      HTTP params sent by client (for GET requests)
+    req.user    ..      Information about the user sending the request (properties: email, uid, firstname, lastname, hid)
     res         ..      Result object, used to respond to the client
+    db          ..      Helper for database calls (see MySQLDatabase.js)
     */
-module.exports = (req, res) => {
+module.exports = (db) => async (req, res) => {
     if(!req.body) {
         res.status(400).send({success: false, message: "Bad Request: Please provide a request body with valid household data."}).end();
     } else if(!req.body.hid) {

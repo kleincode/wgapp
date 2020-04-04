@@ -29,6 +29,8 @@ const db = new Database({
 });
 mysql_conn = db.getPool();
 
+const registerRequestHandler = require("./server/components/RequestHandler");
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "client_build")));
@@ -73,7 +75,8 @@ app.post("/_/createhousehold", checkAuthorized, require("./server/createhousehol
 app.post("/_/addhousehold", checkAuthorized, require("./server/addhousehold"));
 app.get("/_/fetchfinances", checkAuthorized, require("./server/fetchfinances"));
 app.get("/_/fetchusers", checkAuthorized, require("./server/fetchusers")(db));
-app.post("/_/addexpense", checkAuthorized, require("./server/addexpense"));
+// app.post("/_/addexpense", checkAuthorized, require("./server/addexpense")(db));
+registerRequestHandler("addexpense", checkAuthorized, app, db);
 app.post("/_/editexpense", checkAuthorized, require("./server/editexpense"));
 app.post("/_/delexpense", checkAuthorized, require("./server/delexpense"));
 app.post("/_/addtask", checkAuthorized, require("./server/addtask"));
