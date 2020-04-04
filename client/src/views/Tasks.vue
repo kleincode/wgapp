@@ -151,7 +151,7 @@
                         src="https://randomuser.me/api/portraits/men/81.jpg"
                       />
                     </v-avatar>
-                    {{ task.assigned }}
+                    {{ getUserName(task.assigned) }}
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
@@ -191,6 +191,7 @@
 </template>
 <script>
 import icons from "@/assets/icons.js";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Tasks",
@@ -232,7 +233,7 @@ export default {
               name: element.name,
               assigned: element.assignedMember,
               day: this.formatDateString(nextDueDay),
-              nextDueDay: nextDueDay,
+              nextDueDay: new Date(nextDueDay),
               time: element.time.substr(0, 5),
               lastExecution: lastExecution,
               missed: !taskStatus,
@@ -240,6 +241,7 @@ export default {
               icon: icons[element.icon]
             });
           });
+          this.sortTasks();
         }
       } catch (err) {
         console.error(err);
@@ -350,6 +352,22 @@ export default {
       }
     },
 
+    isSameWeek(d1, d2) {
+      let date1 = new Date(d1),
+        date2 = new Date(d2);
+      if (date1.getDay() == 0) {
+        date1.setDate(date1.getDate() - 6);
+      } else {
+        date1.setDate(date1.getDate() - date1.getDay() + 1);
+      }
+      if (date2.getDay() == 0) {
+        date2.setDate(date2.getDate() - 6);
+      } else {
+        date2.setDate(date2.getDate() - date2.getDay() + 1);
+      }
+      return this.isToday(date1, date2);
+    },
+
     computeNextDueInWeek(curDate, repDayInts, prevTempDate) {
       prevTempDate = new Date(prevTempDate);
       let day = prevTempDate.getDay();
@@ -358,7 +376,14 @@ export default {
         for (let i = 0; i < repDayInts.length; i++) {
           if (repDayInts[i] != 0) {
             if (repDayInts[i] >= day && repDayInts[i] < minShift) {
-              minShift = repDayInts[i];
+              let sameWeek = this.isSameWeek(curDate, prevTempDate);
+              console.log("new Min: " + repDayInts[i] + " - " + sameWeek);
+              if (
+                (sameWeek && repDayInts[i] >= curDate.getDay()) ||
+                !sameWeek
+              ) {
+                minShift = repDayInts[i];
+              }
             }
           } else {
             if (7 < minShift) {
@@ -492,6 +517,10 @@ export default {
         case 0:
           return "Sunday";
       }
+    },
+
+    sortTasks() {
+      this.tasks.sort((a, b) => a.nextDueDay - b.nextDueDay);
     }
   },
 
@@ -504,11 +533,9 @@ export default {
       return this.tasks.filter(task => {
         return this.isToday(task.nextDueDay, new Date());
       });
-    }
+    },
 
-    //sortTasks() {
-    //  return this.tasks.sort((a, b) => a.nextDueDay < b.nextDueDay);
-    //}
+    ...mapGetters(["getUserName", "getUserInitials"])
   }
 };
 </script>
