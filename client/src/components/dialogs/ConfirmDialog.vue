@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="value" @input="onDialogToggle" @click:outside="onDialogToggle(false)" max-width="300">
+  <v-dialog
+    v-model="value"
+    @input="onDialogToggle"
+    @click:outside="onDialogToggle(false)"
+    max-width="300"
+  >
     <v-card :loading="loading">
       <v-card-title class="headline">{{ title }}</v-card-title>
 
@@ -9,8 +14,12 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-1" text @click="onNegativeOption">{{ negativeOption }}</v-btn>
-        <v-btn color="green darken-1" text @click="onPositiveOption">{{ positiveOption }}</v-btn>
+        <v-btn color="red darken-1" text @click="onNegativeOption">{{
+          negativeOption
+        }}</v-btn>
+        <v-btn color="green darken-1" text @click="onPositiveOption">{{
+          positiveOption
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

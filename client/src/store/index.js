@@ -74,8 +74,7 @@ let store = new Vuex.Store({
           url: "/_/fetchusers",
           method: "GET"
         });
-        if (data.success)
-          commit("update_household_users", data.data);
+        if (data.success) commit("update_household_users", data.data);
         else {
           commit("update_household_users", {});
           return false;
@@ -101,21 +100,21 @@ let store = new Vuex.Store({
     isAuthorized(state) {
       return !!state.userToken;
     },
-    getUserName: (state) => (uid) => {
+    getUserName: state => uid => {
       let user = state.householdUsers[uid];
-      if(!user) return "Unknown user";
+      if (!user) return "Unknown user";
       let userName = "";
-      if(user.firstname) userName += user.firstname;
-      if(user.firstname && user.lastname) userName += " ";
-      if(user.lastname) userName += user.lastname;
+      if (user.firstname) userName += user.firstname;
+      if (user.firstname && user.lastname) userName += " ";
+      if (user.lastname) userName += user.lastname;
       return userName || "Nameless user";
     },
-    getUserInitials: (state) => (uid) => {
+    getUserInitials: state => uid => {
       let user = state.householdUsers[uid];
-      if(!user) return "??";
+      if (!user) return "??";
       let userName = "";
-      if(user.firstname) userName += user.firstname.substr(0,1).toUpperCase();
-      if(user.lastname) userName += user.lastname.substr(0,1).toUpperCase();
+      if (user.firstname) userName += user.firstname.substr(0, 1).toUpperCase();
+      if (user.lastname) userName += user.lastname.substr(0, 1).toUpperCase();
       return userName;
     }
   }

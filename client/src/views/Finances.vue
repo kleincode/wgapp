@@ -7,8 +7,17 @@
           <v-list three-line avatar>
             <!-- TODO: enable member filtering -->
             <v-subheader>Members</v-subheader>
-            <v-list-item-group color="primary" v-model="filterMember" @change="updateTable">
-              <v-list-item three-line v-for="member in memberTotals" :key="'finmem-' + member.id" :value="member.id">
+            <v-list-item-group
+              color="primary"
+              v-model="filterMember"
+              @change="updateTable"
+            >
+              <v-list-item
+                three-line
+                v-for="member in memberTotals"
+                :key="'finmem-' + member.id"
+                :value="member.id"
+              >
                 <v-list-item-avatar size="48" color="teal" left>
                   <span class="white--text headline">
                     {{ getUserInitials(member.id) }}
@@ -21,6 +30,9 @@
                   <v-list-item-subtitle>
                     {{ (member.total / 100).toFixed(2) }} €
                   </v-list-item-subtitle>
+                  <v-progress-linear
+                    :value="memberTotalFunction(member.total)"
+                  ></v-progress-linear>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -32,7 +44,11 @@
           <v-card-title>
             Expenses
             <v-spacer></v-spacer>
-            <edit-expense-dialog v-model="editExpense" @committed="updateTable" ref="editDialog"></edit-expense-dialog>
+            <edit-expense-dialog
+              v-model="editExpense"
+              @committed="updateTable"
+              ref="editDialog"
+            ></edit-expense-dialog>
           </v-card-title>
           <v-data-table
             :headers="tableHeaders"
@@ -52,7 +68,9 @@
               {{ (item.amount / 100).toFixed(2) }} €
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
+              <v-icon small class="mr-2" @click="editItem(item)"
+                >mdi-pencil</v-icon
+              >
               <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
           </v-data-table>
@@ -64,7 +82,10 @@
       @positive="deleteConfirm"
       @negative="deleteDialogVisible = false"
       :loading="deleteDialogLoading"
-    >Are you sure you want to delete "{{ deleteDescription }}"?</confirm-dialog>
+      >Are you sure you want to delete "{{
+        deleteDescription
+      }}"?</confirm-dialog
+    >
   </v-container>
 </template>
 <script>
@@ -124,10 +145,19 @@ export default {
     filterMember: null
   }),
   computed: {
-    ...mapGetters([
-      "getUserName",
-      "getUserInitials"
-    ])
+    memberTotalFunction() {
+      const max = this.memberTotals[0].total,
+        min = this.memberTotals[this.memberTotals.length - 1].total;
+      //This function maps a progress value to every total using squared interpolation
+      const msq = Math.pow(min - max, 2),
+        a = 90 / msq,
+        b = (-180 * min) / msq,
+        c =
+          (100 * Math.pow(min, 2) - 20 * min * max + 10 * Math.pow(max, 2)) /
+          msq;
+      return total => a * Math.pow(total, 2) + b * total + c;
+    },
+    ...mapGetters(["getUserName", "getUserInitials"])
   },
   methods: {
     updateTable() {
@@ -139,7 +169,8 @@ export default {
             this.expenses = res.data;
             this.tableTotalItems = res.totalCount;
             this.memberTotals = Object.entries(res.memberTotals)
-              .map(([id, total]) => ({ id, total }));
+              .map(([id, total]) => ({ id, total }))
+              .sort((a, b) => b.total - a.total); // sort descending by total
           } else alert(res.message);
           this.tableLoading = false;
         })
@@ -206,27 +237,32 @@ export default {
       let seconds = this.unixTimestamp - itemTimestamp;
       let sign = seconds < 0;
       seconds = Math.abs(seconds);
-      if(seconds < 60) return "just now";
+      if (seconds < 60) return "just now";
       let val = "";
-      if(seconds > 60 * 60 * 24 * 7 * 5) {
+      if (seconds > 60 * 60 * 24 * 7 * 5) {
         let dateThen = new Date(itemTimestamp),
           dateNow = new Date(this.unixTimestamp);
-        let diffMonths = Math.abs(dateNow.getMonth() - dateThen.getMonth + 12 * (dateNow.getFullYear() - dateThen.getFullYear()));
+        let diffMonths = Math.abs(
+          dateNow.getMonth() -
+            dateThen.getMonth +
+            12 * (dateNow.getFullYear() - dateThen.getFullYear())
+        );
         if (diffMonths > 12) {
           val = Math.floor(diffMonths / 12) + " years";
         } else {
           val = diffMonths + " months";
         }
-      } if(seconds > 60 * 60 * 24 * 7) {
+      }
+      if (seconds > 60 * 60 * 24 * 7) {
         val = Math.floor(seconds / (60 * 60 * 24 * 7)) + " weeks";
-      } else if(seconds > 60 * 60 * 24) {
+      } else if (seconds > 60 * 60 * 24) {
         val = Math.floor(seconds / (60 * 60 * 24)) + " days";
-      } else if(seconds > 60 * 60) {
+      } else if (seconds > 60 * 60) {
         val = Math.floor(seconds / (60 * 60)) + " hours";
       } else {
         val = Math.floor(seconds / 60) + " minutes";
       }
-      if(sign) return "in " + val;
+      if (sign) return "in " + val;
       else return val + " ago";
     }
   },
