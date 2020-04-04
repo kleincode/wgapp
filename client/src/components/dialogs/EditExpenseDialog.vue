@@ -1,12 +1,16 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" dark text class="mb-2" v-on="on">New expense</v-btn>
+      <v-btn color="primary" dark text class="mb-2" v-on="on"
+        >New expense</v-btn
+      >
     </template>
     <v-form v-model="formValid" @submit.prevent="save" ref="form">
       <v-card :loading="loading">
         <v-card-title>
-          <span class="headline">{{ editMode ? "Edit expense" : "New expense" }}</span>
+          <span class="headline">{{
+            editMode ? "Edit expense" : "New expense"
+          }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -44,7 +48,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="reset">Cancel</v-btn>
-          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid">Save</v-btn>
+          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-form>
@@ -108,10 +114,17 @@ export default {
       if (!this.formValid) return;
       this.loading = true;
       try {
-        let data = await (this.editMode ? this.commitEditExpense : this.commitNewExpense)(this.value);
+        let data = await (this.editMode
+          ? this.commitEditExpense
+          : this.commitNewExpense)(this.value);
         this.loading = false;
         if (data.success) {
-          this.$store.dispatch("showSnackbar", this.editMode ? "Expense updated successfully." : "Expense added successfully.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.editMode
+              ? "Expense updated successfully."
+              : "Expense added successfully."
+          );
           this.$emit("committed");
           this.reset();
         } else this.$store.dispatch("showSnackbar", data.message);

@@ -23,7 +23,7 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common["x-access-token"] = token;
   store.dispatch("authorize");
   store.dispatch("fetchHouseholdUsers").then(res => {
-    if(!res) router.push({ name: "Add Household" })
+    if (!res) router.push({ name: "Add Household" });
   });
 }
 
