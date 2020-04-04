@@ -72,6 +72,10 @@ app.get("/_/fetchusers", checkAuthorized, require("./server/fetchusers"));
 app.post("/_/addexpense", checkAuthorized, require("./server/addexpense"));
 app.post("/_/editexpense", checkAuthorized, require("./server/editexpense"));
 app.post("/_/delexpense", checkAuthorized, require("./server/delexpense"));
+app.post("/_/addtask", checkAuthorized, require("./server/addtask"));
+app.get("/_/fetchtasks", checkAuthorized, require("./server/fetchtasks"));
+app.post("/_/checktask", checkAuthorized, require("./server/checktask"));
+app.post("/_/edittask", checkAuthorized, require("./server/edittask"));
 
 //Provide static build files (for production)
 app.get("/", (req, res)  => res.sendFile(path.join(__dirname, "build", "index.html")));

@@ -1,6 +1,7 @@
 <template>
   <v-container fluid>
-    <h1 class="display-2 pb-6">Edit task - "{{ name }}"</h1>
+    <h1 v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</h1>
+    <h1 v-if="!editMode" class="display-2 pb-6">Add task - "{{ name }}"</h1>
     <v-card outlined>
       <div class="container">
         <v-row>
@@ -26,7 +27,7 @@
               </v-col>
               <v-col cols="12" md="4">
                 <v-select
-                  :items="members"
+                  :items="assignedMember"
                   label="Assigned to"
                   outlined
                   :disabled="iterating"
@@ -114,7 +115,7 @@
           <v-col cols="12" lg="4" md="6">
             <v-text-field
               type="number"
-              v-model="repetition"
+              v-model="repetitionEvery"
               label="Repeat every"
               required
               outlined
@@ -122,24 +123,33 @@
           </v-col>
           <v-col cols="12" lg="4" md="6">
             <v-select
-              :items="repetition_units"
+              v-model="repetitionUnit"
+              :items="repetitionUnits"
               label="Repetition unit"
               outlined
             ></v-select>
           </v-col>
           <v-col cols="12" style="text-align: right">
-            <v-btn large color="primary" class="mr-4">save</v-btn>
+            <v-btn large color="primary" @click="postChanges()" class="mr-4"
+              >save</v-btn
+            >
             <v-btn large>cancel</v-btn>
           </v-col>
         </v-row>
       </div>
     </v-card>
+    <v-snackbar v-model="snackbar">
+      {{ snackText }}
+      <v-btn color="primary" text @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
 export default {
   name: "EditTask",
   data: () => ({
+    editMode: false,
+    id: -1,
     name: "Bad putzen",
     iterating: true,
     selectedMember: "none",
@@ -156,14 +166,98 @@ export default {
     chosenDays: ["Friday"],
     time: null,
     reminder: false,
-    repetition: "",
-    repetition_unit: "",
-    repetition_units: ["Weeks", "Months"],
-    members: ["Felix", "Matti", "Tom"],
+    repetitionEvery: "",
+    repetitionUnit: "",
+    repetitionUnits: ["Weeks", "Months"],
+    assignedMember: ["Felix", "Matti", "Tom"],
 
     startDateMenu: false,
-    startTimeMenu: false
-  })
+    startTimeMenu: false,
+    snackbar: false,
+    snackText: ""
+  }),
+  methods: {
+    async fetch_settings(id) {
+      const { data } = await this.$http.get("/_/fetchtasks", {
+        params: { id }
+      });
+      if (data.success) {
+        if (data.data.length == 0 || data.data.length > 1) {
+          console.error(
+            "Error while fetching tasks. Multiple or no task received."
+          );
+        }
+        let task = data.data[0];
+        console.log(task);
+        this.id = task.id;
+        this.name = task.name;
+        this.iterating = !!task.iterating;
+        this.selectedMember = task.assignedMember;
+        this.chosenDays = task.repetitionDays.map(
+          day => day[0].toUpperCase() + day.substr(1, day.length)
+        );
+        this.time = task.time.substr(0, 5);
+        this.date = task.startDate.substr(0, 10);
+        this.repetitionEvery = parseInt(task.repetitionEvery);
+        this.repetitionUnit = this.repetitionUnits[task.repetitionUnit];
+        this.reminder = !!task.reminder;
+        console.log(this.repetitionUnit);
+      }
+    },
+
+    async postChanges() {
+      let id = this.id;
+      let name = this.name;
+      let icon = 0; //TODO
+      let iterating = this.iterating;
+      let selectedMember = 8; //TODO this.assignedMember
+      let chosenDays = this.chosenDays.map(
+        day => day[0].toLowerCase() + day.substr(1, day.length)
+      );
+      let time = this.time;
+      let repetitionEvery = parseInt(this.repetitionEvery);
+      let repetitionUnit = this.repetitionUnits.indexOf(this.repetitionUnit);
+      let startDate = this.date;
+      let reminder = this.reminder;
+      if (name.length == 0) {
+        this.snackText = "You need to specify a name.";
+        this.snackbar = true;
+        return;
+      }
+      if (!repetitionEvery || repetitionEvery == 0) {
+        this.snackText = "You need to specify a valid intervall.";
+        this.snackbar = true;
+        return;
+      }
+      if (chosenDays.length == 0) {
+        this.snackText = "You need to specify at least one weekday.";
+        this.snackbar = true;
+        return;
+      }
+
+      const { data } = await this.$http.post("/_/edittask", {
+        id,
+        name,
+        icon,
+        iterating,
+        selectedMember,
+        chosenDays,
+        time,
+        repetitionEvery,
+        repetitionUnit,
+        reminder,
+        startDate
+      });
+      console.log(data);
+    }
+  },
+  mounted() {
+    this.id = this.$route.params.id;
+    this.editMode = !!this.$route.params.id;
+    if (this.editMode) {
+      this.fetch_settings(this.id);
+    }
+  }
 };
 </script>
 <style lang="scss" scoped></style>
