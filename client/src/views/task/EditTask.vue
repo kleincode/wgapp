@@ -133,7 +133,7 @@
             <v-btn large color="primary" @click="postChanges()" class="mr-4"
               >save</v-btn
             >
-            <v-btn large>cancel</v-btn>
+            <v-btn large :to="{ name: 'Tasks' }">cancel</v-btn>
           </v-col>
         </v-row>
       </div>
@@ -191,7 +191,7 @@ export default {
         console.log(task);
         this.id = task.id;
         this.name = task.name;
-        this.iterating = !!task.iterating;
+        this.iterating = Boolean(parseInt(task.iteratingMode));
         this.selectedMember = task.assignedMember;
         this.chosenDays = task.repetitionDays.map(
           day => day[0].toUpperCase() + day.substr(1, day.length)
@@ -209,7 +209,14 @@ export default {
       let id = this.id;
       let name = this.name;
       let icon = 0; //TODO
-      let iterating = this.iterating;
+      let iterating;
+      console.log("iter: " + this.iterating);
+      if (this.iterating) {
+        iterating = 1;
+      } else {
+        iterating = 0;
+      }
+      console.log("iter: " + iterating);
       let selectedMember = 8; //TODO this.assignedMember
       let chosenDays = this.chosenDays.map(
         day => day[0].toLowerCase() + day.substr(1, day.length)
@@ -235,7 +242,7 @@ export default {
         return;
       }
 
-      const { data } = await this.$http.post("/_/edittask", {
+      await this.$http.post("/_/edittask", {
         id,
         name,
         icon,
@@ -248,7 +255,7 @@ export default {
         reminder,
         startDate
       });
-      console.log(data);
+      this.$router.push({ name: "Tasks" });
     }
   },
   mounted() {
