@@ -35,7 +35,7 @@
                         src="https://randomuser.me/api/portraits/men/81.jpg"
                       />
                     </v-avatar>
-                    {{ getTodaysTasks[0].assigned }}
+                    {{ getUserName(getTodaysTasks[0].assigned) }}
                   </v-chip>
                 </v-card>
                 <v-card raised class="main-task text-center secondary" v-else>
@@ -82,7 +82,7 @@
                           src="https://randomuser.me/api/portraits/men/81.jpg"
                         />
                       </v-avatar>
-                      {{ task.assigned }}
+                      {{ getUserName(task.assigned) }}
                     </v-chip>
                   </v-list-item-subtitle>
                 </v-list-item-content>

@@ -32,13 +32,13 @@ const routes = [
     path: "/tasks/edit/:id",
     name: "EditTask",
     component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "edittask" */ "../views/task/EditTask.vue")
   },
   {
     path: "/tasks/add",
     name: "AddTask",
     component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "addtask" */ "../views/task/EditTask.vue")
   },
   {
     path: "/settings",
