@@ -103,14 +103,12 @@ describe("Tasks.vue", () => {
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [4, 0];
-    console.log("##START DEBUG");
     prevTempDate = new Date("April 1, 2020 10:00:00");
     resDate = wrapper.vm.computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
     );
-    console.log("##END DEBUG");
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
 
@@ -162,6 +160,26 @@ describe("Tasks.vue", () => {
     );
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
+
+    curDate = new Date("April 5, 2020 10:00:00");
+    repDayInts = [1,2,3,4,5,6,0];
+    prevTempDate = new Date("April 1, 2020 10:00:00");
+    resDate = wrapper.vm.computeNextDueInWeek(
+      curDate,
+      repDayInts,
+      prevTempDate
+    );
+    expect(resDate.getDate()).toBe(5);
+    expect(resDate.getMonth()).toBe(3);
+
+    repDayInts = [1,2,3,4,5,6];
+    prevTempDate = new Date("April 1, 2020 10:00:00");
+    resDate = wrapper.vm.computeNextDueInWeek(
+      curDate,
+      repDayInts,
+      prevTempDate
+    );
+    expect(resDate).toBe(null);
   });
 
   it("shift to next intervall ", () => {
@@ -316,7 +334,6 @@ describe("Tasks.vue", () => {
     expect(resDate.getMonth()).toBe(3);
 
     //custom - 3
-    console.log("### start debug");
     curDate = new Date("April 2, 2020 12:00:00");
     startDateInput = new Date("March 24, 2020 12:00:00");
     repetitionDays = ["monday", "tuesday", "thursday", "wednesday", "friday", "saturday", "sunday"];
@@ -329,7 +346,6 @@ describe("Tasks.vue", () => {
       repetitionUnit,
       repetitionEvery
     );
-    console.log("resDate: " + resDate);
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
   });

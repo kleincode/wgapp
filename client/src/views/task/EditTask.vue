@@ -1,7 +1,18 @@
 <template>
   <v-container fluid>
-    <h1 v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</h1>
-    <h1 v-if="!editMode" class="display-2 pb-6">Add task - "{{ name }}"</h1>
+    <div style="display: flex">
+      <v-btn
+        exact
+        icon
+        color="primary"
+        :to="{ name: 'Tasks' }"
+        class="mt-2 mr-2"
+      >
+        <v-icon>keyboard_arrow_left</v-icon>
+      </v-btn>
+      <div v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</div>
+      <div v-if="!editMode" class="display-2 pb-6">Add task - "{{ name }}"</div>
+    </div>
     <v-card outlined>
       <div class="container">
         <v-row>
@@ -36,9 +47,11 @@
             </v-row>
           </v-col>
           <v-col cols="12" md="4" lg="4" style="text-align: center">
-            <v-icon style="font-size: 12em">bathtub</v-icon>
+            <v-icon style="font-size: 12em">{{
+              this.getIcon(this.icon)
+            }}</v-icon>
             <br />
-            <v-btn text>Change Icon</v-btn>
+            <IconChooser v-model="icon"></IconChooser>
           </v-col>
         </v-row>
         <div class="title">Time & Date</div>
@@ -145,13 +158,20 @@
   </v-container>
 </template>
 <script>
+import IconChooser from "@/components/IconChooser.vue";
+import icons from "@/assets/icons.js";
+
 export default {
   name: "EditTask",
+  components: {
+    IconChooser
+  },
   data: () => ({
     editMode: false,
     id: -1,
     name: "Bad putzen",
     iterating: true,
+    icon: 0,
     selectedMember: "none",
     date: new Date().toISOString().substr(0, 10),
     days: [
@@ -188,7 +208,6 @@ export default {
           );
         }
         let task = data.data[0];
-        console.log(task);
         this.id = task.id;
         this.name = task.name;
         this.iterating = Boolean(parseInt(task.iteratingMode));
@@ -196,6 +215,7 @@ export default {
         this.chosenDays = task.repetitionDays.map(
           day => day[0].toUpperCase() + day.substr(1, day.length)
         );
+        this.icon = task.icon;
         this.time = task.time.substr(0, 5);
         this.date = task.startDate.substr(0, 10);
         this.repetitionEvery = parseInt(task.repetitionEvery);
@@ -208,7 +228,7 @@ export default {
     async postChanges() {
       let id = this.id;
       let name = this.name;
-      let icon = 0; //TODO
+      let icon = this.icon;
       let iterating;
       console.log("iter: " + this.iterating);
       if (this.iterating) {
@@ -256,6 +276,9 @@ export default {
         startDate
       });
       this.$router.push({ name: "Tasks" });
+    },
+    getIcon(id) {
+      return icons[id];
     }
   },
   mounted() {

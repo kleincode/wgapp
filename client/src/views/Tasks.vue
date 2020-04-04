@@ -134,7 +134,7 @@
               :class="task.missed ? 'red' : ''"
             >
               <v-list-item-avatar>
-                <v-icon>{{ task.icon }}</v-icon>
+                <v-icon x-large>{{ task.icon }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content>
@@ -371,13 +371,12 @@ export default {
     computeNextDueInWeek(curDate, repDayInts, prevTempDate) {
       prevTempDate = new Date(prevTempDate);
       let day = prevTempDate.getDay();
-      if (day > 0) {
+      if (curDate.getDay() > 0) {
         let minShift = 8;
         for (let i = 0; i < repDayInts.length; i++) {
           if (repDayInts[i] != 0) {
             if (repDayInts[i] >= day && repDayInts[i] < minShift) {
               let sameWeek = this.isSameWeek(curDate, prevTempDate);
-              console.log("new Min: " + repDayInts[i] + " - " + sameWeek);
               if (
                 (sameWeek && repDayInts[i] >= curDate.getDay()) ||
                 !sameWeek
@@ -406,10 +405,9 @@ export default {
         return prevTempDate;
       } else {
         if (repDayInts.includes(0)) {
-          return prevTempDate;
+          return curDate;
         } else {
-          prevTempDate.setDate(prevTempDate.getDate() + 1);
-          return this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+          return null;
         }
       }
     },
@@ -475,8 +473,6 @@ export default {
       });
       if (data.success == false) {
         console.error(data.message);
-      } else {
-        console.log(data.message);
       }
       await this.fetchTasks();
     },
