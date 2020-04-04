@@ -7,8 +7,35 @@
 module.exports = (req, res) => {
 
     if (req.user.hid) {
-
-        mysql_conn.query(`SELECT 
+        let id = parseInt(req.query.id);
+        if (id) {
+            //fetch specific task
+            mysql_conn.query(`SELECT 
+            id,
+            name,
+            icon,
+            iteratingMode,
+            assignedMember, 
+            repetitionDays, 
+            repetitionEvery,
+            repetitionUnit,
+            reminder, 
+            time, 
+            startDate,
+            lastExecution
+            FROM tasks WHERE hid = ? AND id = ?`, [req.user.hid, id], (err, res2) => {
+                if (err) {
+                    res.status(500).send({ success: false, message: "Error while fetching specific task from database." }).end();
+                    console.log(err);
+                } else {
+                    res2.forEach((elem) => {
+                        elem.repetitionDays = JSON.parse(elem.repetitionDays);
+                    });
+                    res.status(200).send({ success: true, message: "Task received", data: res2 }).end();
+                }
+            });
+        } else {
+            mysql_conn.query(`SELECT 
             id,
             name,
             icon,
@@ -22,16 +49,17 @@ module.exports = (req, res) => {
             startDate,
             lastExecution
             FROM tasks WHERE hid = ?`, [req.user.hid], (err, res2) => {
-            if (err) {
-                res.status(500).send({ success: false, message: "Error while fetching tasks from database." }).end();
-                console.log(err);
-            } else {
-                res2.forEach((elem) => {
-                    elem.repetitionDays = JSON.parse(elem.repetitionDays);
-                });
-                res.status(200).send({success:true, message: "Tasks received", data: res2}).end();
-            }
-        });
+                if (err) {
+                    res.status(500).send({ success: false, message: "Error while fetching tasks from database." }).end();
+                    console.log(err);
+                } else {
+                    res2.forEach((elem) => {
+                        elem.repetitionDays = JSON.parse(elem.repetitionDays);
+                    });
+                    res.status(200).send({ success: true, message: "Tasks received", data: res2 }).end();
+                }
+            });
+        }
     } else {
         res.status(200).send({ success: false, message: "Please join a household to use this feature." }).end();
     }
