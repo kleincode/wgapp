@@ -1,4 +1,4 @@
-/*  Handler for "/_/createtask". Purpose: Creating new task (used for 'edit task' view). */
+/*  Handler for "/_/addtask". Purpose: Creating new task (used for 'edit task' view). */
 module.exports = ({ db }) => ({
   type: "POST",
   body: {

@@ -6,7 +6,7 @@ module.exports = ({ db }) => ({
       type: "int",
       unsigned: true,
       required: true,
-      message: "Please provide a task id."
+      message: "Please provide an expense id."
     }
   },
   handler: async ({ body, query, user }, { success, fail, error }) => {
