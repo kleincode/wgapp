@@ -89,6 +89,11 @@ export default {
         path: "/dashboard"
       },
       {
+        name: "Calendar",
+        icon: "event",
+        path: "/calendar"
+      },
+      {
         name: "Finances",
         icon: "money",
         path: "/finances"
