@@ -16,9 +16,8 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 /**
  *  On load, called to load the auth2 library and API client library.
  */
-function handleClientLoad() {
-  console.log("Loading client");
-  gapi.load("client:auth2", initClient);
+async function handleClientLoad() {
+  await gapi.load("client:auth2", initClient);
 }
 
 /**
@@ -73,40 +72,34 @@ function handleSignoutClick() {
   gapi.auth2.getAuthInstance().signOut();
 }
 
+async function listCalendars() {
+  const response = await gapi.client.calendar.calendarList.list({});
+  return response.result.items;
+}
+
 /**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
  * appropriate message is printed.
  */
-function listUpcomingEvents() {
-  return gapi.client.calendar.calendarList.list({}).then(
-    function(response) {
-      let id = response.result.items[4].id;
-      console.log(id);
-      gapi.client.calendar.events
-        .list({
-          calendarId: id,
-          timeMin: new Date().toISOString(),
-          showDeleted: false,
-          singleEvents: true,
-          maxResults: 10,
-          orderBy: "startTime"
-        })
-        .then(response => {
-          var events = response.result.items;
-          console.log(response.result);
-          return events;
-        });
-    },
-    function(err) {
-      console.error("Execute error", err);
-    }
-  );
+async function listUpcomingEvents() {
+  const response = await listCalendars();
+  let id = response[4].id;
+  const response2 = await gapi.client.calendar.events.list({
+    calendarId: id,
+    timeMin: new Date().toISOString(),
+    showDeleted: false,
+    singleEvents: true,
+    maxResults: 10,
+    orderBy: "startTime"
+  });
+  return response2.result.items;
 }
 
 export {
   listUpcomingEvents,
   handleAuthClick,
   handleSignoutClick,
-  handleClientLoad
+  handleClientLoad,
+  listCalendars
 };
