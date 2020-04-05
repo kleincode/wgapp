@@ -2,22 +2,28 @@
   <v-container fluid>
     <h1 class="display-2 pb-6">Calendar</h1>
     <v-btn @click="signIn">sign in</v-btn>
+
+    <v-select
+      v-model="choosenCalendars"
+      :items="allCalendars"
+      :change="updateG"
+      chips
+      label="Choose Calendars"
+      multiple
+      outlined
+    ></v-select>
+
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
-          <v-toolbar flat color="white">
-            <v-btn
-              outlined
-              class="mr-4"
-              color="grey darken-2"
-              @click="setToday"
-            >
+          <v-toolbar flat>
+            <v-btn outlined class="mr-4" @click="setToday">
               Today
             </v-btn>
-            <v-btn fab text small color="grey darken-2" @click="prev">
+            <v-btn fab text small @click="prev">
               <v-icon small>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn fab text small color="grey darken-2" @click="next">
+            <v-btn fab text small @click="next">
               <v-icon small>mdi-chevron-right</v-icon>
             </v-btn>
             <v-toolbar-title>{{ title }}</v-toolbar-title>
@@ -25,7 +31,7 @@
             <v-menu bottom right>
               <template v-slot:activator="{ on }">
                 <div v-on="on">
-                  <v-btn outlined color="grey darken-2">
+                  <v-btn outlined>
                     <span>{{ typeToLabel[type] }}</span>
                     <v-icon right>mdi-menu-down</v-icon>
                   </v-btn>
@@ -68,28 +74,13 @@
             :activator="selectedElement"
             offset-x
           >
-            <v-card color="grey lighten-4" min-width="350px" flat>
+            <v-card min-width="350px" flat>
               <v-toolbar :color="selectedEvent.color" dark>
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
                 <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
               </v-toolbar>
               <v-card-text>
-                <span v-html="selectedEvent.details"></span>
+                <span v-html="selectedEvent.description"></span>
               </v-card-text>
-              <v-card-actions>
-                <v-btn text color="secondary" @click="selectedOpen = false">
-                  Cancel
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-menu>
         </v-sheet>
@@ -101,7 +92,8 @@
 import {
   handleClientLoad,
   handleAuthClick,
-  listUpcomingEvents
+  listUpcomingEvents,
+  listCalendars
 } from "@/assets/googleCalendar.js";
 
 export default {
@@ -120,6 +112,7 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
+    eventData: [],
     events: [],
     colors: [
       "blue",
@@ -140,7 +133,8 @@ export default {
       "Conference",
       "Party"
     ],
-    today: "2019-01-08"
+    choosenCalendars: [],
+    allCalendars: []
   }),
   computed: {
     title() {
@@ -176,25 +170,40 @@ export default {
         timeZone: "UTC",
         month: "long"
       });
+    },
+    today() {
+      let dat = new Date();
+      return dat.getYear() + "-" + dat.getMonth() + "-" + dat.getDate();
     }
   },
-  created() {
-    const gapiscript = document.createElement("script");
-    gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
-    window.onGapiload = handleClientLoad;
-    document.body.appendChild(gapiscript);
+  async created() {
+    this.initG();
   },
 
-  mounted() {
+  async mounted() {
+    await this.updateG();
     this.$refs.calendar.checkChange();
-    listUpcomingEvents().then(res => {
-      console.log("mounted res: " + res);
-    });
   },
   methods: {
     //Google Handling
-    signIn() {
+    async signIn() {
       handleAuthClick();
+    },
+
+    initG() {
+      const gapiscript = document.createElement("script");
+      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
+      window.onGapiload = handleClientLoad;
+      document.body.appendChild(gapiscript);
+    },
+
+    async updateG() {
+      console.log("update");
+      this.eventData = await listUpcomingEvents();
+      let calendars = await listCalendars();
+      console.log("calendars: ", calendars);
+      this.allCalendars = calendars.map(cal => cal.summary);
+      this.updateRange({ start: this.start, end: this.end });
     },
 
     //Calendar handling
@@ -230,33 +239,33 @@ export default {
 
       nativeEvent.stopPropagation();
     },
-    updateRange({ start, end }) {
-      const events = [];
 
+    updateRange({ start, end }) {
       const min = new Date(`${start.date}T00:00:00`);
       const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: this.formatDate(first, !allDay),
-          end: this.formatDate(second, !allDay),
-          color: this.colors[this.rnd(0, this.colors.length - 1)]
-        });
-      }
-
       this.start = start;
       this.end = end;
-      this.events = events;
+      this.setEvents(min, max);
     },
+
+    setEvents(min, max) {
+      this.events = [];
+      this.eventData.forEach(env => {
+        let start = new Date(env.start.dateTime);
+        let end = new Date(env.end.dateTime);
+        let allDay = !(env.start.dateTime.length > 10);
+        if (start > min && end < max) {
+          this.events.push({
+            name: env.summary,
+            start: this.formatDate(start, !allDay),
+            end: this.formatDate(end, !allDay),
+            color: "primary",
+            description: env.description
+          });
+        }
+      });
+    },
+
     nth(d) {
       return d > 3 && d < 21
         ? "th"
