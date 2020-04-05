@@ -98,7 +98,11 @@
   </v-container>
 </template>
 <script>
-import { handleClientLoad, handleAuthClick } from "@/assets/googleCalendar.js";
+import {
+  handleClientLoad,
+  handleAuthClick,
+  listUpcomingEvents
+} from "@/assets/googleCalendar.js";
 
 export default {
   name: "Calendar",
@@ -175,7 +179,6 @@ export default {
     }
   },
   created() {
-    console.log("mounted");
     const gapiscript = document.createElement("script");
     gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
     window.onGapiload = handleClientLoad;
@@ -184,6 +187,9 @@ export default {
 
   mounted() {
     this.$refs.calendar.checkChange();
+    listUpcomingEvents().then(res => {
+      console.log("mounted res: " + res);
+    });
   },
   methods: {
     //Google Handling

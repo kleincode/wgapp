@@ -42,7 +42,7 @@ function initClient() {
         updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
       },
       function(error) {
-        appendPre(JSON.stringify(error, null, 2));
+        console.error(JSON.stringify(error, null, 2));
       }
     );
 }
@@ -53,7 +53,7 @@ function initClient() {
  */
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
-    listUpcomingEvents();
+    //listUpcomingEvents();
   }
 }
 
@@ -74,47 +74,34 @@ function handleSignoutClick() {
 }
 
 /**
- * Append a pre element to the body containing the given message
- * as its text node. Used to display the results of the API call.
- *
- * @param {string} message Text to be placed in pre element.
- */
-function appendPre(message) {
-  console.log(message);
-}
-
-/**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
  * appropriate message is printed.
  */
 function listUpcomingEvents() {
-  gapi.client.calendar.events
-    .list({
-      calendarId: "primary",
-      timeMin: new Date().toISOString(),
-      showDeleted: false,
-      singleEvents: true,
-      maxResults: 10,
-      orderBy: "startTime"
-    })
-    .then(function(response) {
-      var events = response.result.items;
-      appendPre("Upcoming events:");
-
-      if (events.length > 0) {
-        for (let i = 0; i < events.length; i++) {
-          var event = events[i];
-          var when = event.start.dateTime;
-          if (!when) {
-            when = event.start.date;
-          }
-          appendPre(event.summary + " (" + when + ")");
-        }
-      } else {
-        appendPre("No upcoming events found.");
-      }
-    });
+  return gapi.client.calendar.calendarList.list({}).then(
+    function(response) {
+      let id = response.result.items[4].id;
+      console.log(id);
+      gapi.client.calendar.events
+        .list({
+          calendarId: id,
+          timeMin: new Date().toISOString(),
+          showDeleted: false,
+          singleEvents: true,
+          maxResults: 10,
+          orderBy: "startTime"
+        })
+        .then(response => {
+          var events = response.result.items;
+          console.log(response.result);
+          return events;
+        });
+    },
+    function(err) {
+      console.error("Execute error", err);
+    }
+  );
 }
 
 export {
