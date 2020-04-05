@@ -40,9 +40,9 @@ var DatabaseHelper = class DatabaseHelper {
   query(query, data) {
     const pool = this.pool;
     return new Promise((resolve, reject) => {
-      pool.query(query, data, (err, rows, cols) => {
+      pool.query(query, data, (err, results, fields) => {
         if(err) reject(err);
-        else resolve({err, rows, cols});
+        else resolve({err, results, fields});
       });
     });
   }

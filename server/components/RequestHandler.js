@@ -6,7 +6,7 @@
     */
 
 module.exports = function registerRequestHandler(handlerName, beforeHandler, app, provideToHandler) {
-  let handlerProps = require("../views/" + handlerName)(provideToHandler);
+  let handlerProps = require("../handlers/" + handlerName)(provideToHandler);
   // Check required fields
   if(!handlerProps.type || !["GET","POST"].includes(handlerProps.type))
     throw "Please set handler type to 'GET' or 'POST' in " + handlerSourceFile;
@@ -22,7 +22,8 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
       if(typeof send === "object") res.status(200).send({...send, success: false}).end();
       else res.status(200).send({message: send, success: false}).end();
     };
-    let error = (send) => {
+    let error = (send, log) => {
+      if(log) console.error("Error at " + handlerName + ":", log);
       if(typeof send === "object") res.status(500).send({...send, success: false}).end();
       else res.status(500).send({message: send, success: false}).end();
     };
@@ -48,6 +49,9 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
           }
           if(!req.query[param]) {
             res.status(400).send({message: `Invalid type for parameter '${param}' (expected ${handlerProps.params[param].type})`, success: false}).end();
+            return;
+          } else if(typeof req.query[param] === "number" && handlerProps.params[param].unsigned && req.query[param] < 0) {
+            res.status(400).send({message: `Parameter '${param}' out of range (expected unsigned ${handlerProps.params[param].type})`, success: false}).end();
             return;
           }
         } else if(handlerProps.params[param].required) {
@@ -75,7 +79,10 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
             default: break;
           }
           if(!req.body[elem]) {
-            res.status(400).send({message: `Invalid type for parameter '${param}' (expected ${handlerProps.params[param].type})`, success: false}).end();
+            res.status(400).send({message: `Invalid type for parameter '${elem}' (expected ${handlerProps.body[elem].type})`, success: false}).end();
+            return;
+          } else if(typeof req.body[elem] === "number" && handlerProps.body[elem].unsigned && req.body[elem] < 0) {
+            res.status(400).send({message: `Parameter '${elem}' out of range (expected unsigned ${handlerProps.body[elem].type})`, success: false}).end();
             return;
           }
         } else if(handlerProps.body[elem].required) {

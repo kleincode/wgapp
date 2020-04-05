@@ -1,9 +1,9 @@
 /*  Handler for "/_/addhousehold". Purpose: Setting household for user (used for 'add household' view). */
-module.exports = (db) => ({
+module.exports = ({ db }) => ({
   type: "POST",
   body: {
     hid: {
-      type: "int",
+      type: "string",
       required: true,
       message: "Please provide a household id."
     },
@@ -22,29 +22,29 @@ module.exports = (db) => ({
   handler: async ({ body, query, user }, { success, fail, error }) => {
     //Check household
     try {
-      const { householdRows } = await db.query(
+      const { results: householdRows } = await db.query(
         "SELECT id, name, type, registered FROM households WHERE id = AES_DECRYPT(UNHEX(?), ?) AND passphrase = ?",
         [body.hid, process.env.AES_HOUSEHOLD_PASSPHRASE || "9;|`eUk|$Lzo]*9J", body.sec]
       );
-      if(householdRows.length == 0) {
+      if (householdRows.length == 0) {
         // Household/security code combination does not exist
         fail("The given combination of household identifier and security code is invalid. Please check your inputs.");
-      } else if(body.confirm) {
+      } else if (body.confirm) {
         // User confirmed -> update household
         try {
           await db.query("UPDATE users SET ? WHERE ?", [{ hid: householdRows.id }, { id: req.user.uid }]);
           success("The given household was successfully assigned to you.");
-        } catch(err) {
-          error(`Error while assigning user to household: ${err.code}`);
+        } catch (err) {
+          error(`Error while assigning user to household: ${err.code}`, err);
         }
       } else {
         // Fetch old household if any and request confirmation
         try {
-          const { oldHouseholdRows } = await db.query(
+          const { results: oldHouseholdRows } = await db.query(
             "SELECT households.id, households.name, households.type, households.registered FROM households JOIN users ON households.id = users.hid WHERE users.id = ?",
             [req.user.uid]
           );
-          if(oldHouseholdRows.length == 0) {
+          if (oldHouseholdRows.length == 0) {
             // User is not assigned to any household
             success({
               message: "Please confirm.",
@@ -72,12 +72,12 @@ module.exports = (db) => ({
               same: oldHouseholdRows[0].id == householdRows[0].id
             });
           }
-        } catch(err) {
-          error(`Error while trying to fetch current household from database: ${err.code}`);
+        } catch (err) {
+          error(`Error while trying to fetch current household from database: ${err.code}`, err);
         }
       }
-    } catch(err) {
-      error(`Error while looking up household in database: ${err.code}`);
+    } catch (err) {
+      error(`Error while looking up household in database: ${err.code}`, err);
     }
   }
 });

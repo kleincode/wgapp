@@ -9,9 +9,9 @@ module.exports = (db) => async (req, res) => {
 
   if (req.user.hid) {
     try {
-      const { rows } = await db.query(`SELECT id, firstname, lastname FROM users WHERE hid = ?`, [req.user.hid]);
+      const { results } = await db.query(`SELECT id, firstname, lastname FROM users WHERE hid = ?`, [req.user.hid]);
       let userdata = {};
-      rows.forEach(u => userdata[u.id] = { firstname: u.firstname, lastname: u.lastname });
+      results.forEach(u => userdata[u.id] = { firstname: u.firstname, lastname: u.lastname });
       res.status(200).send({ success: true, message: "User data fetched.", data: userdata }).end();
     } catch (err) {
       res.status(500).send({ success: false, message: "Error while fetching users from database." }).end();

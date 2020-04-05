@@ -71,23 +71,26 @@ app.get("/_/user", checkAuthorized, (req, res) => {
 
 //on create household: passphrase = FLOOR(100000 + RAND()*900000)
 
-app.post("/_/createhousehold", checkAuthorized, require("./server/createhousehold"));
+//app.post("/_/createhousehold", checkAuthorized, require("./server/createhousehold"));
 //app.post("/_/addhousehold", checkAuthorized, require("./server/addhousehold"));
 app.get("/_/fetchfinances", checkAuthorized, require("./server/fetchfinances"));
 app.get("/_/fetchusers", checkAuthorized, require("./server/fetchusers")(db));
 // app.post("/_/addexpense", checkAuthorized, require("./server/addexpense")(db));
 app.post("/_/editexpense", checkAuthorized, require("./server/editexpense"));
-app.post("/_/delexpense", checkAuthorized, require("./server/delexpense"));
+//app.post("/_/delexpense", checkAuthorized, require("./server/delexpense"));
 //app.post("/_/createtask", checkAuthorized, require("./server/createtask"));
 app.get("/_/fetchtasks", checkAuthorized, require("./server/fetchtasks"));
-app.post("/_/checktask", checkAuthorized, require("./server/checktask"));
+//app.post("/_/checktask", checkAuthorized, require("./server/checktask"));
 app.post("/_/edittask", checkAuthorized, require("./server/edittask"));
 
 [
     "addexpense",
     "addhousehold",
-    "createtask"
-].forEach(file => registerRequestHandler(file, checkAuthorized, app, db))
+    "checktask",
+    "createhousehold",
+    "createtask",
+    "delexpense"
+].forEach(file => registerRequestHandler(file, checkAuthorized, app, { db }))
 
 //Provide static build files (for production)
 app.get("/", (req, res)  => res.sendFile(path.join(__dirname, "build", "index.html")));
