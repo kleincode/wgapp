@@ -116,6 +116,18 @@ let store = new Vuex.Store({
       if (user.firstname) userName += user.firstname.substr(0, 1).toUpperCase();
       if (user.lastname) userName += user.lastname.substr(0, 1).toUpperCase();
       return userName;
+    },
+    getUserSelect: state => {
+      let users = [];
+      Object.entries(state.householdUsers).forEach(([key, user]) => {
+        if (!user) return "Unknown user";
+        let userName = "";
+        if (user.firstname) userName += user.firstname;
+        if (user.firstname && user.lastname) userName += " ";
+        if (user.lastname) userName += user.lastname;
+        users.push({ value: parseInt(key), text: userName || "Nameless user" });
+      });
+      return users;
     }
   }
 });

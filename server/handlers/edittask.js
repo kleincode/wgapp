@@ -5,12 +5,12 @@ module.exports = ({ db }) => ({
   type: "POST",
   public: false,
   body: {
-    // Expense id in finances table
+    // task id in tasks table
     id: {
       type: "int",
       unsigned: true,
       required: true,
-      message: "Please provide an expense id."
+      message: "Please provide an task id."
     },
     // Task name (not updated if not provided)
     name: {

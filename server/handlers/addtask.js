@@ -56,20 +56,20 @@ module.exports = ({ db }) => ({
 
     // default values
     let genDate = new Date();
-    const { name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, date } = body;
+    let { name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, date } = body;
     assignedMember = assignedMember || user.uid; // assign to sending user by default
     time = time || genDate.getHours() + ":" + genDate.getMinutes() + ":" + genDate.getSeconds(); genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
     date = date || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
 
     try {
-      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [req.user.uid, req.user.hid]);
+      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [user.uid, user.hid]);
 
       if (results[0].c < 1) {
         fail("The specifed user does not exist or does not belong to this household.");
       } else try {
         await db.query(
           "INSERT INTO tasks (hid, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [req.user.hid, name, icon, iteratingMode, assignedMember, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, date]
+          [user.hid, name, icon, iteratingMode, assignedMember, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, date]
         );
         success("Task inserted successfully.");
       } catch (err) {

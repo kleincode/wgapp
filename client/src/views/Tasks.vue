@@ -20,7 +20,7 @@
                   </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
-                    <v-btn icon @click="checkedTasks(getTodaysTasks[0].id)">
+                    <v-btn icon @click="checkedTasks(getTodaysTasks[0])">
                       <v-icon v-if="getTodaysTasks[0].checked"
                         >check_box</v-icon
                       >
@@ -35,7 +35,7 @@
                         src="https://randomuser.me/api/portraits/men/81.jpg"
                       />
                     </v-avatar>
-                    {{ getTodaysTasks[0].assigned }}
+                    {{ getUserName(getTodaysTasks[0].assigned) }}
                   </v-chip>
                 </v-card>
                 <v-card raised class="main-task text-center secondary" v-else>
@@ -82,12 +82,12 @@
                           src="https://randomuser.me/api/portraits/men/81.jpg"
                         />
                       </v-avatar>
-                      {{ task.assigned }}
+                      {{ getUserName(task.assigned) }}
                     </v-chip>
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon>
-                  <v-btn icon @click="checkedTasks(task.id)">
+                  <v-btn icon @click="checkedTasks(task)">
                     <v-icon v-if="task.checked">check_box</v-icon>
                     <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
@@ -134,7 +134,7 @@
               :class="task.missed ? 'red' : ''"
             >
               <v-list-item-avatar>
-                <v-icon>{{ task.icon }}</v-icon>
+                <v-icon x-large>{{ task.icon }}</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content>
@@ -151,14 +151,14 @@
                         src="https://randomuser.me/api/portraits/men/81.jpg"
                       />
                     </v-avatar>
-                    {{ task.assigned }}
+                    {{ getUserName(task.assigned) }}
                   </v-chip>
                 </v-list-item-subtitle>
               </v-list-item-content>
 
               <v-list-item-icon>
                 <v-hover>
-                  <v-btn icon @click="checkedTasks(task.id)">
+                  <v-btn icon @click="checkedTasks(task)">
                     <v-icon v-if="task.checked">check_box</v-icon>
                     <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
@@ -191,6 +191,7 @@
 </template>
 <script>
 import icons from "@/assets/icons.js";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Tasks",
@@ -204,11 +205,16 @@ export default {
         const { data } = await this.$http.get("/_/fetchtasks");
         if (data.success) {
           this.tasks = [];
+          let curDateBegin = new Date();
+          curDateBegin.setHours(0, 0, 1, 0);
+          let curDateEnd = new Date();
+          curDateEnd.setHours(12, 59, 59, 0);
+
+          let curDate = new Date();
+          curDate.setHours(12, 0, 0, 0);
           data.data.forEach(element => {
             let correctedStartDate = new Date(element.startDate.substr(0, 19));
             correctedStartDate.setHours(correctedStartDate.getHours() + 13);
-            let curDate = new Date();
-            curDate.setHours(12, 0, 0, 0);
             let nextDueDay = this.computeNextDueDay(
               curDate,
               correctedStartDate,
@@ -225,21 +231,25 @@ export default {
               element.repetitionEvery,
               element.repetitionUnit,
               correctedStartDate,
-              new Date()
+              curDateBegin,
+              curDateEnd
             );
             this.tasks.push({
               id: element.id,
               name: element.name,
               assigned: element.assignedMember,
               day: this.formatDateString(nextDueDay),
-              nextDueDay: nextDueDay,
+              iteratingMode: element.iteratingMode,
+              nextDueDay: new Date(nextDueDay),
               time: element.time.substr(0, 5),
               lastExecution: lastExecution,
-              missed: !taskStatus,
-              checked: taskStatus == 2,
-              icon: icons[element.icon]
+              missed: !taskStatus[0],
+              checked: taskStatus[0] == 2,
+              icon: icons[element.icon],
+              lastDueDay: taskStatus[1]
             });
           });
+          this.sortTasks();
         }
       } catch (err) {
         console.error(err);
@@ -254,23 +264,31 @@ export default {
       repEvery,
       repUnit,
       startDate,
-      curDate
+      curDateBegin,
+      curDateEnd
     ) {
       let repDayInts = repDays.map(day => this.mapWeekdayToInt(day));
       nextDueDay = new Date(nextDueDay);
-      if (curDate < startDate) {
+      if (curDateEnd < startDate) {
         //in the future
-        return 1;
-      }
-      if (this.isToday(nextDueDay, curDate)) {
-        if (this.isToday(curDate, lastExecution)) {
-          return 2;
+        if (
+          curDateBegin < lastExecution ||
+          this.isToday(curDateBegin, lastExecution)
+        ) {
+          return [2, new Date()];
         }
+        return [1, null];
+      }
+      if (
+        curDateBegin < lastExecution ||
+        this.isToday(curDateBegin, lastExecution)
+      ) {
+        return [2, new Date()];
       }
       let max = -1;
-      let lastDueDay = new Date(curDate);
+      let lastDueDay = new Date(curDateBegin);
       for (let i = 0; i < repDayInts.length; i++) {
-        if (repDayInts[i] > max && repDayInts[i] < curDate.getDay()) {
+        if (repDayInts[i] > max && repDayInts[i] < curDateBegin.getDay()) {
           max = repDayInts[i];
         }
       }
@@ -293,9 +311,9 @@ export default {
       let endLastDueDay = new Date(lastDueDay);
       endLastDueDay.setHours(23, 59, 59, 0);
       if (lastExecution < lastDueDay) {
-        return 0;
+        return [0, lastDueDay];
       }
-      return 1;
+      return [1, lastDueDay];
     },
 
     isToday(date, curDate) {
@@ -350,15 +368,37 @@ export default {
       }
     },
 
+    isSameWeek(d1, d2) {
+      let date1 = new Date(d1),
+        date2 = new Date(d2);
+      if (date1.getDay() == 0) {
+        date1.setDate(date1.getDate() - 6);
+      } else {
+        date1.setDate(date1.getDate() - date1.getDay() + 1);
+      }
+      if (date2.getDay() == 0) {
+        date2.setDate(date2.getDate() - 6);
+      } else {
+        date2.setDate(date2.getDate() - date2.getDay() + 1);
+      }
+      return this.isToday(date1, date2);
+    },
+
     computeNextDueInWeek(curDate, repDayInts, prevTempDate) {
       prevTempDate = new Date(prevTempDate);
       let day = prevTempDate.getDay();
-      if (day > 0) {
+      if (curDate.getDay() > 0) {
         let minShift = 8;
         for (let i = 0; i < repDayInts.length; i++) {
           if (repDayInts[i] != 0) {
             if (repDayInts[i] >= day && repDayInts[i] < minShift) {
-              minShift = repDayInts[i];
+              let sameWeek = this.isSameWeek(curDate, prevTempDate);
+              if (
+                (sameWeek && repDayInts[i] >= curDate.getDay()) ||
+                !sameWeek
+              ) {
+                minShift = repDayInts[i];
+              }
             }
           } else {
             if (7 < minShift) {
@@ -381,10 +421,9 @@ export default {
         return prevTempDate;
       } else {
         if (repDayInts.includes(0)) {
-          return prevTempDate;
+          return curDate;
         } else {
-          prevTempDate.setDate(prevTempDate.getDate() + 1);
-          return this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
+          return null;
         }
       }
     },
@@ -444,16 +483,55 @@ export default {
       );
     },
 
-    async checkedTasks(id) {
+    async checkedTasks(task) {
+      let lastExecution, assignedMember;
+      let users = this.getUserSelect.map(entry => entry.value);
+      let index = users.indexOf(task.assigned);
+      if (!task.checked) {
+        //check
+        lastExecution = new Date().toString();
+        if (task.iteratingMode) {
+          assignedMember = users[this.nextAssignedMember(users, index)];
+        } else {
+          assignedMember = task.assigned;
+        }
+      } else {
+        //uncheck
+        let date = new Date(task.lastDueDay);
+        date.setDate(date.getDate() - 1);
+        lastExecution = date.toString();
+        if (task.iteratingMode) {
+          assignedMember = users[this.previousAssignedMember(users, index)];
+        } else {
+          assignedMember = task.assigned;
+        }
+      }
+      let id = task.id;
       const { data } = await this.$http.post("/_/checktask", {
-        id
+        id,
+        lastExecution,
+        assignedMember
       });
       if (data.success == false) {
         console.error(data.message);
-      } else {
-        console.log(data.message);
       }
       await this.fetchTasks();
+    },
+
+    nextAssignedMember(users, index) {
+      if (users.length > index + 1) {
+        return index + 1;
+      } else {
+        return 0;
+      }
+    },
+
+    previousAssignedMember(users, index) {
+      if (0 < index) {
+        return index - 1;
+      } else {
+        return users.length - 1;
+      }
     },
 
     mapWeekdayToInt(repetitionDay) {
@@ -492,6 +570,10 @@ export default {
         case 0:
           return "Sunday";
       }
+    },
+
+    sortTasks() {
+      this.tasks.sort((a, b) => a.nextDueDay - b.nextDueDay);
     }
   },
 
@@ -504,11 +586,9 @@ export default {
       return this.tasks.filter(task => {
         return this.isToday(task.nextDueDay, new Date());
       });
-    }
+    },
 
-    //sortTasks() {
-    //  return this.tasks.sort((a, b) => a.nextDueDay < b.nextDueDay);
-    //}
+    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
   }
 };
 </script>
