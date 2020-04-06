@@ -52,7 +52,7 @@
                 this.getIcon(this.icon)
               }}</v-icon>
               <br />
-              <IconChooser v-model="icon"></IconChooser>
+              <IconChooser v-model="icon" @ok="newIconSelected"></IconChooser>
             </v-col>
           </v-row>
           <div class="title">Time & Date</div>
@@ -322,6 +322,10 @@ export default {
     getIcon(id) {
       return icons[id];
     },
+    newIconSelected(id) {
+      this.icon = id;
+    },
+    noNewIconSelected() {},
     deleteTask() {
       this.deleteDialog = false;
       let id = this.id;

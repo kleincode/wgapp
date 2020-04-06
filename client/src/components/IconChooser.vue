@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" max-width="1000px" scrollable>
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" outlined dark v-on="on">Change Icon</v-btn>
+        <v-btn color="primary" outlined v-on="on">Change Icon</v-btn>
       </template>
       <v-card>
         <v-card-title>
@@ -61,7 +61,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn outlined text @click="save">ok</v-btn>
+          <v-btn color="primary" outlined @click="save">ok</v-btn>
+          <v-btn text @click="cancel">cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -85,7 +86,12 @@ export default {
     },
 
     save() {
-      this.$emit("input", this.selId);
+      this.$emit("ok", this.selId);
+      this.dialog = false;
+    },
+
+    cancel() {
+      this.$emit("cancel");
       this.dialog = false;
     }
   },

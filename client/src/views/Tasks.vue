@@ -20,7 +20,7 @@
                   </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
-                    <v-btn icon @click="checkedTasks(getTodaysTasks[0].id)">
+                    <v-btn icon @click="checkedTasks(getTodaysTasks[0])">
                       <v-icon v-if="getTodaysTasks[0].checked"
                         >check_box</v-icon
                       >
@@ -87,7 +87,7 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon>
-                  <v-btn icon @click="checkedTasks(task.id)">
+                  <v-btn icon @click="checkedTasks(task)">
                     <v-icon v-if="task.checked">check_box</v-icon>
                     <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
@@ -158,7 +158,7 @@
 
               <v-list-item-icon>
                 <v-hover>
-                  <v-btn icon @click="checkedTasks(task.id)">
+                  <v-btn icon @click="checkedTasks(task)">
                     <v-icon v-if="task.checked">check_box</v-icon>
                     <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
@@ -205,11 +205,16 @@ export default {
         const { data } = await this.$http.get("/_/fetchtasks");
         if (data.success) {
           this.tasks = [];
+          let curDateBegin = new Date();
+          curDateBegin.setHours(0, 0, 1, 0);
+          let curDateEnd = new Date();
+          curDateEnd.setHours(12, 59, 59, 0);
+
+          let curDate = new Date();
+          curDate.setHours(12, 0, 0, 0);
           data.data.forEach(element => {
             let correctedStartDate = new Date(element.startDate.substr(0, 19));
             correctedStartDate.setHours(correctedStartDate.getHours() + 13);
-            let curDate = new Date();
-            curDate.setHours(12, 0, 0, 0);
             let nextDueDay = this.computeNextDueDay(
               curDate,
               correctedStartDate,
@@ -226,7 +231,8 @@ export default {
               element.repetitionEvery,
               element.repetitionUnit,
               correctedStartDate,
-              new Date()
+              curDateBegin,
+              curDateEnd
             );
             this.tasks.push({
               id: element.id,
@@ -236,9 +242,10 @@ export default {
               nextDueDay: new Date(nextDueDay),
               time: element.time.substr(0, 5),
               lastExecution: lastExecution,
-              missed: !taskStatus,
-              checked: taskStatus == 2,
-              icon: icons[element.icon]
+              missed: !taskStatus[0],
+              checked: taskStatus[0] == 2,
+              icon: icons[element.icon],
+              lastDueDay: taskStatus[1]
             });
           });
           this.sortTasks();
@@ -256,23 +263,25 @@ export default {
       repEvery,
       repUnit,
       startDate,
-      curDate
+      curDateBegin,
+      curDateEnd
     ) {
       let repDayInts = repDays.map(day => this.mapWeekdayToInt(day));
       nextDueDay = new Date(nextDueDay);
-      if (curDate < startDate) {
+      if (curDateEnd < startDate) {
         //in the future
-        return 1;
+        return [1, null];
       }
-      if (this.isToday(nextDueDay, curDate)) {
-        if (this.isToday(curDate, lastExecution)) {
-          return 2;
-        }
+      if (
+        curDateBegin < lastExecution ||
+        this.isToday(curDateBegin, lastExecution)
+      ) {
+        return [2, new Date()];
       }
       let max = -1;
-      let lastDueDay = new Date(curDate);
+      let lastDueDay = new Date(curDateBegin);
       for (let i = 0; i < repDayInts.length; i++) {
-        if (repDayInts[i] > max && repDayInts[i] < curDate.getDay()) {
+        if (repDayInts[i] > max && repDayInts[i] < curDateBegin.getDay()) {
           max = repDayInts[i];
         }
       }
@@ -295,9 +304,9 @@ export default {
       let endLastDueDay = new Date(lastDueDay);
       endLastDueDay.setHours(23, 59, 59, 0);
       if (lastExecution < lastDueDay) {
-        return 0;
+        return [0, lastDueDay];
       }
-      return 1;
+      return [1, lastDueDay];
     },
 
     isToday(date, curDate) {
@@ -467,14 +476,48 @@ export default {
       );
     },
 
-    async checkedTasks(id) {
+    async checkedTasks(task) {
+      let lastExecution, assignedMember;
+      let users = this.getUserSelect.map(entry => entry.value);
+      let index = users.indexOf(task.assignedMember);
+      console.log(users);
+      if (!task.checked) {
+        //check
+        lastExecution = new Date().toString();
+        assignedMember = users[this.nextAssignedMember(users, index)];
+      } else {
+        //uncheck
+        let date = new Date(task.lastDueDay);
+        date.setDate(date.getDate() - 1);
+        lastExecution = date.toString();
+        assignedMember = users[this.previousAssignedMember(users, index)];
+      }
+      let id = task.id;
       const { data } = await this.$http.post("/_/checktask", {
-        id
+        id,
+        lastExecution,
+        assignedMember
       });
       if (data.success == false) {
         console.error(data.message);
       }
       await this.fetchTasks();
+    },
+
+    nextAssignedMember(users, index) {
+      if (users.length > index - 2) {
+        return index + 1;
+      } else {
+        return 0;
+      }
+    },
+
+    previousAssignedMember(users, index) {
+      if (0 < index) {
+        return index - 1;
+      } else {
+        return users.length - 1;
+      }
     },
 
     mapWeekdayToInt(repetitionDay) {
@@ -531,7 +574,7 @@ export default {
       });
     },
 
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
   }
 };
 </script>
