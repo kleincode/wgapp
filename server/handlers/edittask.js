@@ -3,6 +3,7 @@ const Helpers = require("../components/Helpers");
 
 module.exports = ({ db }) => ({
   type: "POST",
+  public: false,
   body: {
     // Expense id in finances table
     id: {

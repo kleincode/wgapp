@@ -5,13 +5,14 @@ Work in Progress.
 
 ## Project setup
 ```
+cd server
 npm install
-cd client
+cd ../client
 npm install
 ```
 
 ### Setup back-end
-In the .env file, specify the following properties:
+In the server/.env file, specify the following properties:
 ```
 PORT=3001
 
@@ -30,6 +31,7 @@ AES_HOUSEHOLD_PASSPHRASE=(random token)
 
 ### Run back-end
 ```
+cd server
 node server.js
 ```
 
@@ -44,3 +46,5 @@ npm run serve
 cd client
 npm run build
 ```
+### Run for production
+For use in production, build the client and copy the generated files to server/public. The server will make all files in public folder statically available.

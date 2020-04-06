@@ -1,6 +1,7 @@
 /*  Handler for "/_/addexpense". Purpose: Adding expenses to database (used for 'finances' view). */
 module.exports = ({ db }) => ({
   type: "POST",
+  public: false,
   body: {
     amount: {
       type: "int",

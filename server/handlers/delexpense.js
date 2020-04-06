@@ -1,6 +1,7 @@
 /*  Handler for "/_/delexpense". Purpose: Deleting expense from finances table (used for 'finances' view). */
 module.exports = ({ db }) => ({
   type: "POST",
+  public: false,
   body: {
     id: {
       type: "int",

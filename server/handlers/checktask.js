@@ -1,6 +1,7 @@
 /*  Handler for "/_/checktask". Purpose: Setting task to checked (used for 'tasks' view). */
 module.exports = ({ db }) => ({
   type: "POST",
+  public: false,
   body: {
     id: {
       type: "int",

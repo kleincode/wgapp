@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 
+// Currently dummy wrapper for mysql package, might extend later
 var DatabaseHelper = class DatabaseHelper {
 
   constructor(options) {

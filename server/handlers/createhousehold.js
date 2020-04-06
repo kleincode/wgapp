@@ -1,6 +1,7 @@
 /*  Handler for "/_/createhousehold". Purpose: Inserting new household and assigning user to it (used for 'create household' view). */
 module.exports = ({ db }) => ({
   type: "POST",
+  public: false,
   body: {
     name: {
       type: "string",

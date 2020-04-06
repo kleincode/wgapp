@@ -1,6 +1,7 @@
 /*  Handler for "/_/addhousehold". Purpose: Setting household for user (used for 'add household' view). */
 module.exports = ({ db }) => ({
   type: "POST",
+  public: false,
   body: {
     hid: {
       type: "string",

@@ -1,12 +1,30 @@
+const path = require("path");
+const JWT = require("jsonwebtoken");
+const JWT_SECRET = process.env.AUTH_TOKEN_SECRET || "[%N[ED0pGs&3QApB";
+
+async function checkAuthorized(req, res, next) {
+  let token = req.headers["x-access-token"];
+  if(!!token) {
+    JWT.verify(token, JWT_SECRET, (err, decoded) => {
+      if(err) {
+          res.status(401).send({success: false, message: "Unauthorized: invalid token.", redirect: "/login"});
+      } else {
+          req.user = decoded;
+          next();
+      }
+  });
+  } else {
+    res.status(401).send({success: false, message: "Unauthorized: Please log in.", redirect: "/login"});
+  }
+}
+
 /*  This module exports a function for registering request handlers utilizing parameter checks.
     handlerSourceFile ..   Path to JS module exporting handler props
-    beforeHandler     ..   Handler to be executed before the actual handler (e.g. authorization)
     app               ..   Express instance for registering the generated handler
     provideToHandler  ..   Parameter object to be supplied to the handler source file
     */
-
-module.exports = function registerRequestHandler(handlerName, beforeHandler, app, provideToHandler) {
-  let handlerProps = require("../handlers/" + handlerName)(provideToHandler);
+module.exports = function registerRequestHandler(handlerPath, handlerName, app, provideToHandler) {
+  let handlerProps = require(path.join(handlerPath, handlerName))(provideToHandler);
   // Check required fields
   if (!handlerProps.type || !["GET", "POST"].includes(handlerProps.type))
     throw "Please set handler type to 'GET' or 'POST' in " + handlerSourceFile;
@@ -31,11 +49,18 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
     //Check params
     if (handlerProps.params) {
       for (let param in handlerProps.params) {
-        if (req.query[param]) {
+        if (param in req.query) {
           // type conversion
+          let conv;
           switch (handlerProps.params[param].type) {
-            case "int": req.query[param] = parseInt(req.query[param]); break;
-            case "float": req.query[param] = parseFloat(req.query[param]); break;
+            case "int":
+              conv = parseInt(req.query[param]);
+              req.query[param] = isNaN(conv) ? null : conv;
+              break;
+            case "float":
+              conv = parseFloat(req.query[param]);
+              req.query[param] = isNaN(conv) ? null : conv;
+              break;
             case "boolean": req.query[param] = !!req.query[param]; break;
             case "json":
               try {
@@ -47,7 +72,7 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
               break;
             default: break;
           }
-          if (!req.query[param]) {
+          if (req.query[param] === null) {
             res.status(400).send({ message: `Invalid type for parameter '${param}' (expected ${handlerProps.params[param].type})`, success: false }).end();
             return;
           } else if (typeof req.query[param] === "number" && handlerProps.params[param].unsigned && req.query[param] < 0) {
@@ -70,15 +95,22 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
       for (let elem in handlerProps.body) {
         if (req.body[elem]) {
           // type conversion
+          let conv;
           switch (handlerProps.body[elem].type) {
-            case "int": req.body[elem] = parseInt(req.body[elem]); break;
-            case "float": req.body[elem] = parseFloat(req.body[elem]); break;
+            case "int":
+              conv = parseInt(req.body[elem]);
+              req.body[elem] = isNaN(conv) ? null : conv;
+              break;
+            case "float":
+              conv = parseFloat(req.body[elem]);
+              req.body[elem] = isNaN(conv) ? null : conv;
+              break;
             case "boolean": req.body[elem] = !!req.body[elem]; break;
             case "object": if (typeof req.body[elem] !== "object") req.body[elem] = null; break;
             case "string": if (typeof req.body[elem] !== "string") req.body[elem] = null; break;
             default: break;
           }
-          if (!req.body[elem]) {
+          if (req.body[elem] === null) {
             res.status(400).send({ message: `Invalid type for parameter '${elem}' (expected ${handlerProps.body[elem].type})`, success: false }).end();
             return;
           } else if (typeof req.body[elem] === "number" && handlerProps.body[elem].unsigned && req.body[elem] < 0) {
@@ -104,6 +136,11 @@ module.exports = function registerRequestHandler(handlerName, beforeHandler, app
     }
 
   };
-  if (handlerProps.type == "GET") app.get("/_/" + handlerName, beforeHandler, handler);
-  else app.post("/_/" + handlerName, beforeHandler, handler);
+  if(handlerProps.public === true) {
+    if (handlerProps.type == "GET") app.get("/_/" + handlerName, handler);
+    else app.post("/_/" + handlerName, handler);
+  } else {
+    if (handlerProps.type == "GET") app.get("/_/" + handlerName, checkAuthorized, handler);
+    else app.post("/_/" + handlerName, checkAuthorized, handler);
+  }
 };
