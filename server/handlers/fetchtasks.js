@@ -12,7 +12,7 @@ module.exports = ({ db }) => ({
   handler: async ({ body, query, user }, { success, fail, error }) => {
     if (user.hid) {
       const { id } = query;
-      const baseQuery = `SELECT id, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
+      let baseQuery = `SELECT id, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
         baseParams = [user.hid];
       if (id) {
         baseQuery += " AND id = ?";

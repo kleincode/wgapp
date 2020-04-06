@@ -37,7 +37,9 @@
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-select
-                    :items="assignedMember"
+                    :items="getUserSelect"
+                    v-model="selectedMember"
+                    item-value="value"
                     label="Assigned to"
                     outlined
                     :disabled="iterating"
@@ -95,7 +97,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     v-model="time"
-                    label="Choose you task time"
+                    label="Choose your task time"
                     prepend-icon="access_time"
                     readonly
                     v-on="on"
@@ -180,6 +182,7 @@
 <script>
 import IconChooser from "@/components/IconChooser.vue";
 import icons from "@/assets/icons.js";
+import { mapGetters } from "vuex";
 
 export default {
   name: "EditTask",
@@ -192,7 +195,7 @@ export default {
     name: "",
     iterating: true,
     icon: 0,
-    selectedMember: "none",
+    selectedMember: 0,
     date: new Date().toISOString().substr(0, 10),
     days: [
       "Monday",
@@ -209,7 +212,6 @@ export default {
     repetitionEvery: "",
     repetitionUnit: "",
     repetitionUnits: ["Weeks", "Months"],
-    assignedMember: [""],
 
     startDateMenu: false,
     startTimeMenu: false,
@@ -249,21 +251,26 @@ export default {
       let id = this.id;
       let name = this.name;
       let icon = this.icon;
-      let iterating;
-      if (this.iterating) {
-        iterating = 1;
-      } else {
-        iterating = 0;
-      }
-      let selectedMember = 8; //TODO this.assignedMember
-      let chosenDays = this.chosenDays.map(
+      let iteratingMode = this.iterating;
+      let assignedMember = this.selectedMember;
+      let repetitionDays = this.chosenDays.map(
         day => day[0].toLowerCase() + day.substr(1, day.length)
       );
       let time = this.time;
       let repetitionEvery = parseInt(this.repetitionEvery);
-      let repetitionUnit = this.repetitionUnits.indexOf(this.repetitionUnit);
+      let repetitionUnit;
+      if (this.repetitionUnits.indexOf(this.repetitionUnit)) {
+        repetitionUnit = true;
+      } else {
+        repetitionUnit = false;
+      }
       let startDate = this.date;
-      let reminder = this.reminder;
+      let reminder;
+      if (this.reminder) {
+        reminder = true;
+      } else {
+        reminder = false;
+      }
       if (name.length == 0) {
         this.snackText = "You need to specify a name.";
         this.snackbar = true;
@@ -274,7 +281,7 @@ export default {
         this.snackbar = true;
         return;
       }
-      if (chosenDays.length == 0) {
+      if (repetitionDays.length == 0) {
         this.snackText = "You need to specify at least one weekday.";
         this.snackbar = true;
         return;
@@ -285,9 +292,9 @@ export default {
           id,
           name,
           icon,
-          iterating,
-          selectedMember,
-          chosenDays,
+          iteratingMode,
+          assignedMember,
+          repetitionDays,
           time,
           repetitionEvery,
           repetitionUnit,
@@ -295,14 +302,13 @@ export default {
           startDate
         });
       } else {
-        let assignedMember = selectedMember;
         let date = startDate;
         const { data } = await this.$http.post("/_/addtask", {
-          id,
           name,
           icon,
-          iterating,
+          iteratingMode,
           assignedMember,
+          repetitionDays,
           repetitionEvery,
           repetitionUnit,
           reminder,
@@ -318,7 +324,10 @@ export default {
     },
     deleteTask() {
       this.deleteDialog = false;
-      //TODO
+      let id = this.id;
+      this.$http.post("/_/deletetask", {
+        id
+      });
       this.$router.push({ name: "Tasks" });
     },
 
@@ -332,6 +341,10 @@ export default {
     if (this.editMode) {
       this.fetch_settings(this.id);
     }
+  },
+
+  computed: {
+    ...mapGetters(["getUserSelect"])
   }
 };
 </script>
