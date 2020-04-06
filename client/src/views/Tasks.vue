@@ -239,6 +239,7 @@ export default {
               name: element.name,
               assigned: element.assignedMember,
               day: this.formatDateString(nextDueDay),
+              iteratingMode: element.iteratingMode,
               nextDueDay: new Date(nextDueDay),
               time: element.time.substr(0, 5),
               lastExecution: lastExecution,
@@ -270,6 +271,12 @@ export default {
       nextDueDay = new Date(nextDueDay);
       if (curDateEnd < startDate) {
         //in the future
+        if (
+          curDateBegin < lastExecution ||
+          this.isToday(curDateBegin, lastExecution)
+        ) {
+          return [2, new Date()];
+        }
         return [1, null];
       }
       if (
@@ -479,18 +486,25 @@ export default {
     async checkedTasks(task) {
       let lastExecution, assignedMember;
       let users = this.getUserSelect.map(entry => entry.value);
-      let index = users.indexOf(task.assignedMember);
-      console.log(users);
+      let index = users.indexOf(task.assigned);
       if (!task.checked) {
         //check
         lastExecution = new Date().toString();
-        assignedMember = users[this.nextAssignedMember(users, index)];
+        if (task.iteratingMode) {
+          assignedMember = users[this.nextAssignedMember(users, index)];
+        } else {
+          assignedMember = task.assigned;
+        }
       } else {
         //uncheck
         let date = new Date(task.lastDueDay);
         date.setDate(date.getDate() - 1);
         lastExecution = date.toString();
-        assignedMember = users[this.previousAssignedMember(users, index)];
+        if (task.iteratingMode) {
+          assignedMember = users[this.previousAssignedMember(users, index)];
+        } else {
+          assignedMember = task.assigned;
+        }
       }
       let id = task.id;
       const { data } = await this.$http.post("/_/checktask", {
@@ -505,7 +519,7 @@ export default {
     },
 
     nextAssignedMember(users, index) {
-      if (users.length > index - 2) {
+      if (users.length > index + 1) {
         return index + 1;
       } else {
         return 0;

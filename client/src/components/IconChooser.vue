@@ -1,6 +1,11 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" max-width="1000px" scrollable>
+    <v-dialog
+      v-model="dialog"
+      max-width="1000px"
+      scrollable
+      @click:outside="cancel"
+    >
       <template v-slot:activator="{ on }">
         <v-btn color="primary" outlined v-on="on">Change Icon</v-btn>
       </template>
@@ -22,7 +27,7 @@
             >
               <v-hover v-slot:default="{ hover }">
                 <v-card
-                  :class="{ 'on-hover': hover, primary: selId == i }"
+                  :class="{ 'on-hover': hover, primary: value == i }"
                   :elevation="hover ? 12 : 2"
                   class="pt-2 pb-2"
                 >
@@ -47,7 +52,10 @@
             >
               <v-hover v-slot:default="{ hover }">
                 <v-card
-                  :class="{ 'on-hover': hover, primary: selId == i + offset }"
+                  :class="{
+                    'on-hover': hover,
+                    primary: value == i + offset
+                  }"
                   :elevation="hover ? 12 : 2"
                   class="pt-2 pb-2"
                 >
@@ -76,17 +84,16 @@ export default {
     return {
       dialog: false,
       icons,
-      selId: -1,
       offset: 11
     };
   },
   methods: {
     select(id) {
-      this.selId = id;
+      this.$emit("input", id);
     },
 
     save() {
-      this.$emit("ok", this.selId);
+      this.$emit("ok", this.value);
       this.dialog = false;
     },
 

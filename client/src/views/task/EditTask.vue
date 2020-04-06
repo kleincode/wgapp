@@ -52,7 +52,11 @@
                 this.getIcon(this.icon)
               }}</v-icon>
               <br />
-              <IconChooser v-model="icon" @ok="newIconSelected"></IconChooser>
+              <IconChooser
+                v-model="selectedIcon"
+                @ok="newIconSelected"
+                @cancel="noNewIconSelected"
+              ></IconChooser>
             </v-col>
           </v-row>
           <div class="title">Time & Date</div>
@@ -195,6 +199,7 @@ export default {
     name: "",
     iterating: true,
     icon: 0,
+    selectedIcon: 0,
     selectedMember: 0,
     date: new Date().toISOString().substr(0, 10),
     days: [
@@ -324,8 +329,13 @@ export default {
     },
     newIconSelected(id) {
       this.icon = id;
+      this.selectedIcon = id;
+      console.log("new Icon " + id);
     },
-    noNewIconSelected() {},
+    noNewIconSelected() {
+      this.selectedIcon = this.icon;
+      console.log("old Icon " + this.selectedIcon);
+    },
     deleteTask() {
       this.deleteDialog = false;
       let id = this.id;
