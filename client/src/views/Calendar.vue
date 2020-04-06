@@ -6,7 +6,7 @@
     <v-select
       v-model="choosenCalendars"
       :items="allCalendars"
-      :change="updateG"
+      @change="updateG"
       chips
       label="Choose Calendars"
       multiple
@@ -198,10 +198,8 @@ export default {
     },
 
     async updateG() {
-      console.log("update");
       this.eventData = await listUpcomingEvents();
       let calendars = await listCalendars();
-      console.log("calendars: ", calendars);
       this.allCalendars = calendars.map(cal => cal.summary);
       this.updateRange({ start: this.start, end: this.end });
     },
