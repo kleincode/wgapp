@@ -180,15 +180,12 @@ export default {
     },
 
     async updateG() {
-      console.log("choosenCalendars: ", this.choosenCalendars);
       let startDate = new Date(this.start.date);
       let calendars = await listCalendars();
       this.allCalendars = calendars.map(cal => cal.summary);
-      console.log("all: ", calendars);
       let calIds = this.choosenCalendars.map(
         cal => calendars[this.allCalendars.indexOf(cal)].id
       );
-      console.log("calIds: ", calIds);
       this.eventData = await listUpcomingEvents(startDate, calIds);
       this.updateRange({ start: this.start, end: this.end });
     },
@@ -240,17 +237,7 @@ export default {
       if (this.eventData == null || this.eventData.length == 0) {
         return;
       }
-      console.log("eventData: ", this.eventData);
       this.eventData.forEach(env => {
-        if (env == undefined) {
-          console.log("env undefined");
-        }
-        if (env.start == undefined) {
-          console.log("env undefined ", env);
-        }
-        if (env.end == undefined) {
-          console.log("env undefined ", env);
-        }
         let startStr = env.start.dateTime;
         let endStr = env.end.dateTime;
         let start, end, allDay;
