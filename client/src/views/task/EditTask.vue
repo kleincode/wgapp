@@ -330,11 +330,9 @@ export default {
     newIconSelected(id) {
       this.icon = id;
       this.selectedIcon = id;
-      console.log("new Icon " + id);
     },
     noNewIconSelected() {
       this.selectedIcon = this.icon;
-      console.log("old Icon " + this.selectedIcon);
     },
     deleteTask() {
       this.deleteDialog = false;

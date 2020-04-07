@@ -63,6 +63,7 @@
             :event-color="getEventColor"
             :now="today"
             :type="type"
+            :weekdays="[1, 2, 3, 4, 5, 6, 0]"
             @click:event="showEvent"
             @click:more="viewDay"
             @click:date="viewDay"
@@ -114,25 +115,6 @@ export default {
     selectedOpen: false,
     eventData: [],
     events: [],
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1"
-    ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party"
-    ],
     choosenCalendars: [],
     allCalendars: []
   }),
@@ -173,7 +155,7 @@ export default {
     },
     today() {
       let dat = new Date();
-      return dat.getYear() + "-" + dat.getMonth() + "-" + dat.getDate();
+      return this.formatDate(dat, false);
     }
   },
   async created() {
@@ -198,9 +180,16 @@ export default {
     },
 
     async updateG() {
-      this.eventData = await listUpcomingEvents();
+      console.log("choosenCalendars: ", this.choosenCalendars);
+      let startDate = new Date(this.start.date);
       let calendars = await listCalendars();
       this.allCalendars = calendars.map(cal => cal.summary);
+      console.log("all: ", calendars);
+      let calIds = this.choosenCalendars.map(
+        cal => calendars[this.allCalendars.indexOf(cal)].id
+      );
+      console.log("calIds: ", calIds);
+      this.eventData = await listUpcomingEvents(startDate, calIds);
       this.updateRange({ start: this.start, end: this.end });
     },
 
@@ -248,10 +237,32 @@ export default {
 
     setEvents(min, max) {
       this.events = [];
+      if (this.eventData == null || this.eventData.length == 0) {
+        return;
+      }
+      console.log("eventData: ", this.eventData);
       this.eventData.forEach(env => {
-        let start = new Date(env.start.dateTime);
-        let end = new Date(env.end.dateTime);
-        let allDay = !(env.start.dateTime.length > 10);
+        if (env == undefined) {
+          console.log("env undefined");
+        }
+        if (env.start == undefined) {
+          console.log("env undefined ", env);
+        }
+        if (env.end == undefined) {
+          console.log("env undefined ", env);
+        }
+        let startStr = env.start.dateTime;
+        let endStr = env.end.dateTime;
+        let start, end, allDay;
+        if (startStr == undefined) {
+          allDay = true;
+          start = new Date(env.start.date);
+          end = new Date(env.end.date);
+        } else {
+          allDay = false;
+          start = new Date(startStr);
+          end = new Date(endStr);
+        }
         if (start > min && end < max) {
           this.events.push({
             name: env.summary,
@@ -273,10 +284,18 @@ export default {
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
     formatDate(a, withTime) {
-      return withTime
-        ? `${a.getFullYear()}-${a.getMonth() +
-            1}-${a.getDate()} ${a.getHours()}:${a.getMinutes()}`
-        : `${a.getFullYear()}-${a.getMonth() + 1}-${a.getDate()}`;
+      let year = a.getFullYear();
+      let monthInt = a.getMonth() + 1;
+      let month = monthInt < 10 ? "0" + monthInt : monthInt;
+      let date = a.getDate() < 10 ? "0" + a.getDate() : a.getDate();
+      let str = year + "-" + month + "-" + date;
+      if (withTime) {
+        let hours = a.getHours() < 10 ? "0" + a.getHours() : a.getHours();
+        let minutes =
+          a.getMinutes() < 10 ? "0" + a.getMinutes() : a.getMinutes();
+        str = str + " " + hours + ":" + minutes;
+      }
+      return str;
     }
   }
 };

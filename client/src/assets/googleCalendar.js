@@ -82,18 +82,27 @@ async function listCalendars() {
  * the authorized user's calendar. If no events are found an
  * appropriate message is printed.
  */
-async function listUpcomingEvents() {
-  const response = await listCalendars();
-  let id = response[4].id;
-  const response2 = await gapi.client.calendar.events.list({
-    calendarId: id,
-    timeMin: new Date().toISOString(),
-    showDeleted: false,
-    singleEvents: true,
-    maxResults: 10,
-    orderBy: "startTime"
-  });
-  return response2.result.items;
+async function listUpcomingEvents(minDate, calendars) {
+  if (calendars.length == 0) {
+    return null;
+  }
+  let items = [];
+  console.log("calendars: " + calendars);
+  for (let i = 0; i < calendars.length; i++) {
+    const response2 = await gapi.client.calendar.events.list({
+      calendarId: calendars[i],
+      timeMin: minDate.toISOString(),
+      showDeleted: false,
+      singleEvents: true,
+      maxResults: 10,
+      orderBy: "startTime"
+    });
+    console.log("response: ", response2.result.items);
+    items = items.concat(response2.result.items);
+  }
+
+  console.log("items: ", items);
+  return items;
 }
 
 export {
