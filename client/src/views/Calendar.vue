@@ -5,7 +5,7 @@
 
     <v-select
       v-model="choosenCalendars"
-      :items="allCalendars"
+      :items="allCalendarsStrings"
       @change="updateG"
       chips
       label="Choose Calendars"
@@ -116,7 +116,8 @@ export default {
     eventData: [],
     events: [],
     choosenCalendars: [],
-    allCalendars: []
+    allCalendarsStrings: [],
+    calendars: []
   }),
   computed: {
     title() {
@@ -182,11 +183,16 @@ export default {
     async updateG() {
       let startDate = new Date(this.start.date);
       let calendars = await listCalendars();
-      this.allCalendars = calendars.map(cal => cal.summary);
+      this.allCalendarsStrings = calendars.map(cal => cal.summary);
+      this.allCalendars = calendars;
       let calIds = this.choosenCalendars.map(
-        cal => calendars[this.allCalendars.indexOf(cal)].id
+        cal => calendars[this.allCalendarsStrings.indexOf(cal)].id
       );
-      this.eventData = await listUpcomingEvents(startDate, calIds);
+      this.eventData = await listUpcomingEvents(
+        startDate,
+        calIds,
+        this.allCalendars
+      );
       this.updateRange({ start: this.start, end: this.end });
     },
 
@@ -255,7 +261,8 @@ export default {
             name: env.summary,
             start: this.formatDate(start, !allDay),
             end: this.formatDate(end, !allDay),
-            color: "primary",
+            colorID: env.colorId,
+            color: env.color,
             description: env.description
           });
         }

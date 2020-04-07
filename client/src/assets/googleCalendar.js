@@ -77,31 +77,37 @@ async function listCalendars() {
   return response.result.items;
 }
 
+async function listColors() {
+  const response = await gapi.client.calendar.colors.get({});
+  return response.result.calendar;
+}
+
 /**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
  * appropriate message is printed.
  */
-async function listUpcomingEvents(minDate, calendars) {
-  if (calendars.length == 0) {
+async function listUpcomingEvents(minDate, calIDs, allCalendars) {
+  let colors = await listColors();
+  if (calIDs.length == 0) {
     return null;
   }
   let items = [];
-  console.log("calendars: " + calendars);
-  for (let i = 0; i < calendars.length; i++) {
+  for (let i = 0; i < calIDs.length; i++) {
     const response2 = await gapi.client.calendar.events.list({
-      calendarId: calendars[i],
+      calendarId: calIDs[i],
       timeMin: minDate.toISOString(),
       showDeleted: false,
       singleEvents: true,
       maxResults: 10,
       orderBy: "startTime"
     });
-    console.log("response: ", response2.result.items);
-    items = items.concat(response2.result.items);
+    let tempItems = response2.result.items;
+    tempItems.forEach(item => {
+      item.color = colors[allCalendars[i].colorId].background;
+    });
+    items = items.concat(tempItems);
   }
-
-  console.log("items: ", items);
   return items;
 }
 
