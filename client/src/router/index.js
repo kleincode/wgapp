@@ -3,7 +3,6 @@ import VueRouter from "vue-router";
 import Dashboard from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import store from "../store";
-import { initStore } from "../store/PersistentStore";
 
 Vue.use(VueRouter);
 
@@ -77,19 +76,7 @@ const router = new VueRouter({
 });
 
 //Authorization
-router.beforeEach(async (to, from, next) => {
-  if (!store.getters.isInitialized) {
-    await initStore(store);
-    console.log("auth:", store.getters.isAuthorized);
-    if (store.getters.isAuthorized) {
-      Vue.prototype.$http.defaults.headers.common["x-access-token"] =
-        store.state.userToken;
-      store.dispatch("authorize");
-      store.dispatch("fetchHouseholdUsers").then(res => {
-        if (!res) router.push({ name: "Add Household" });
-      });
-    }
-  }
+router.beforeEach((to, from, next) => {
   if (to.name != "Login" && !store.getters.isAuthorized)
     next({ name: "Login", params: { redirect: to } });
   else next();
