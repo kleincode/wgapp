@@ -76,7 +76,7 @@ module.exports = ({ db }) => ({
 
         if(totalEntries == 0) {
           // The page is empty, no need to fetch entries.
-          success({message: "Empty.", page: page, entries: 0, pages: 0, data: {}, totals: memberobj });
+          success({message: "Empty.", page: page, entries: 0, pages: 0, data: [], totals: memberobj });
         } else {
           // Now fetch entries with sort and limit to return them as data
           const { results: expenseRows } = await db.query(displaySelect + mainQuery + mainSuffix + ` LIMIT ?, ?`, [...queryParams, offset, pageSize]);

@@ -23,9 +23,9 @@ module.exports = ({ db }) => ({
       try {
         await db.query("UPDATE users SET ? WHERE ?", [{ hid: actualHID }, { id: user.uid }]);
         try {
-          const { results } = db.query(
+          const { results } = await db.query(
             "SELECT HEX(AES_ENCRYPT(?, ?)) AS hid",
-            [hId, process.env.AES_HOUSEHOLD_PASSPHRASE || "9;|`eUk|$Lzo]*9J"]
+            [actualHID, process.env.AES_HOUSEHOLD_PASSPHRASE || "9;|`eUk|$Lzo]*9J"]
           );
           success({
             message: "Your household has been created successfully. Please proceed by inviting members.",

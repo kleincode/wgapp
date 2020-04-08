@@ -5,7 +5,9 @@
         <v-col cols="12" sm="8" md="6" xl="5">
           <v-card class="elevation-12">
             <v-toolbar color="primary" dark flat>
-              <v-toolbar-title>New household</v-toolbar-title>
+              <v-toolbar-title>{{
+                stepperProgress > 1 ? householdName : "New household"
+              }}</v-toolbar-title>
             </v-toolbar>
             <v-stepper v-model="stepperProgress" vertical>
               <v-stepper-step :complete="stepperProgress > 1" step="1"
@@ -44,7 +46,9 @@
                     label="Household type"
                     class="mt-2"
                   ></v-select>
-                  <v-btn color="primary" type="submit">Continue</v-btn>
+                  <v-btn color="primary" type="submit" :loading="loading"
+                    >Continue</v-btn
+                  >
                   <v-btn text class="ml-2" @click.prevent="cancel"
                     >Cancel</v-btn
                   >
@@ -108,6 +112,7 @@ export default {
     ],
     step1Valid: null,
     step2Valid: null,
+    loading: false,
     showSnackbar: false,
     snackbarMessage: "Loading...",
     householdType: 0,
@@ -141,8 +146,18 @@ export default {
       if (this.step1Valid) this.stepperProgress = 2;
       else this.alertSnackbar("Please check your input.");
     },
-    step2Submit() {
-      this.stepperProgress = 3;
+    async step2Submit() {
+      this.loading = true;
+      const { data } = await this.$http.post("/_/createhousehold", {
+        name: this.householdName,
+        type: this.householdType
+      });
+      if (data.success) {
+        this.householdLink =
+          window.location.origin + `/household/add?h=${data.hid}&s=${data.sec}`;
+        this.stepperProgress = 3;
+      } else this.alertSnackbar("Error while creating household.");
+      this.loading = false;
     },
     step3Submit() {
       this.stepperProgress = 4;
@@ -158,12 +173,13 @@ export default {
       this.$router.push({ name: "Dashboard" });
     },
     cancel() {
-      this.householdName = "My household";
+      this.householdName = this.$store.state.userFirstName + "'s household";
       this.stepperProgress = 1;
+      this.loading = false;
     }
   },
   mounted() {
-    this.householdName = this.$store.state.userFirstName + "'s household";
+    this.cancel();
   }
 };
 </script>
