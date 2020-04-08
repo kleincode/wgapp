@@ -12,6 +12,7 @@
       multiple
       outlined
     ></v-select>
+    <v-btn icon @click="updateG"><v-icon>refresh</v-icon></v-btn>
 
     <v-row class="fill-height">
       <v-col>
@@ -94,7 +95,8 @@ import {
   handleClientLoad,
   handleAuthClick,
   listUpcomingEvents,
-  listCalendars
+  listCalendars,
+  signedIn
 } from "@/assets/googleCalendar.js";
 
 export default {
@@ -164,8 +166,10 @@ export default {
   },
 
   async mounted() {
-    await this.updateG();
-    this.$refs.calendar.checkChange();
+    if (signedIn) {
+      await this.updateG();
+      this.$refs.calendar.checkChange();
+    }
   },
   methods: {
     //Google Handling
@@ -176,7 +180,7 @@ export default {
     initG() {
       const gapiscript = document.createElement("script");
       gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
-      window.onGapiload = handleClientLoad;
+      window.onGapiload = () => handleClientLoad(this.updateG);
       document.body.appendChild(gapiscript);
     },
 
@@ -249,8 +253,14 @@ export default {
         let start, end, allDay;
         if (startStr == undefined) {
           allDay = true;
-          start = new Date(env.start.date);
-          end = new Date(env.end.date);
+          start = new Date();
+          start.setFullYear(env.start.date.substring(0, 4));
+          start.setMonth(parseInt(env.start.date.substring(5, 7)) - 1);
+          start.setDate(env.start.date.substring(8, 10));
+          end = new Date();
+          end.setFullYear(env.end.date.substring(0, 4));
+          end.setMonth(parseInt(env.end.date.substring(5, 7)) - 1);
+          end.setDate(parseInt(env.end.date.substring(8, 10)) - 1);
         } else {
           allDay = false;
           start = new Date(startStr);

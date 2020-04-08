@@ -13,11 +13,14 @@ var DISCOVERY_DOCS = [
 // included, separated by spaces.
 var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 
+var signedIn = false;
+
 /**
  *  On load, called to load the auth2 library and API client library.
  */
-async function handleClientLoad() {
+async function handleClientLoad(updateG) {
   await gapi.load("client:auth2", initClient);
+  updateG();
 }
 
 /**
@@ -52,7 +55,7 @@ function initClient() {
  */
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
-    //listUpcomingEvents();
+    signedIn = true;
   }
 }
 
@@ -116,5 +119,6 @@ export {
   handleAuthClick,
   handleSignoutClick,
   handleClientLoad,
-  listCalendars
+  listCalendars,
+  signedIn
 };
