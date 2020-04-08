@@ -154,7 +154,8 @@ export default {
       });
       if (data.success) {
         this.householdLink =
-          window.location.origin + `/household/add?h=${data.hid}&s=${data.sec}`;
+          window.location.origin +
+          `/household/join?h=${data.hid}&s=${data.sec}`;
         this.stepperProgress = 3;
       } else this.alertSnackbar("Error while creating household.");
       this.loading = false;
