@@ -4,28 +4,22 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 
-//Vuetify
+// Vuetify
 import vuetify from "./plugins/vuetify";
 import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 
-//Axios
+// Axios
 import axios from "axios";
 import VueAxios from "vue-axios";
+
+// Vue local forage
+import Vlf from "vlf";
 
 Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
-
-//Authorization: load token and refresh user data on startup
-const token = localStorage.getItem("auth_token");
-if (token) {
-  Vue.prototype.$http.defaults.headers.common["x-access-token"] = token;
-  store.dispatch("authorize");
-  store.dispatch("fetchHouseholdUsers").then(res => {
-    if (!res) router.push({ name: "Add Household" });
-  });
-}
+Vue.use(Vlf);
 
 //Authorization: forward to login page if 401 (unauthorized)
 axios.interceptors.response.use(

@@ -159,8 +159,7 @@ export default {
         } else this.alertSnackbar(data.message);
         this.loading = false;
       } catch (err) {
-        console.error(err);
-        this.alertSnackbar("Error registering. Please try again.");
+        this.alertSnackbar("Could not reach server.");
         this.loading = false;
       }
     },
@@ -186,7 +185,7 @@ export default {
           this.$router.push(this.$route.params.redirect);
         else this.$router.push(redirectTo || "/");
       } catch (err) {
-        this.alertSnackbar(err);
+        this.alertSnackbar("Could not reach server.");
         this.loading = false;
       }
     }
