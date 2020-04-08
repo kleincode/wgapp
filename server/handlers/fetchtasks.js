@@ -4,7 +4,6 @@ module.exports = ({ db }) => ({
   type: "GET",
   public: false,
   params: {
-    // Expense id in finances table
     id: {
       type: "int"
     }

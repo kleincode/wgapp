@@ -20,7 +20,7 @@
                 :key="'finmem-' + member.id"
                 :value="member.id"
               >
-                <v-list-item-avatar size="48" color="teal" left>
+                <v-list-item-avatar size="48" color="primary" left>
                   <span class="white--text headline">
                     {{ getUserInitials(member.id) }}
                   </span>
@@ -98,7 +98,7 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon
-                  >{{ charge.amount }}{{ charge.currency }}</v-list-item-icon
+                  >{{ charge.amount }} {{ currency }}</v-list-item-icon
                 >
               </v-list-item>
             </v-list>
@@ -151,7 +151,9 @@
               >
                 <div class="text-center">
                   <div class="overline">used</div>
-                  <div class="display-1">{{ usedThisMonth }} €</div>
+                  <div class="display-1">
+                    {{ usedThisMonth }} {{ currency }}
+                  </div>
                 </div>
               </v-col>
               <v-col
@@ -163,12 +165,14 @@
               <v-col cols="12" md="4" v-if="budgetMode">
                 <div class="text-center">
                   <div class="overline">total</div>
-                  <div class="display-1">{{ totalMonthlyBudget }} €</div>
+                  <div class="display-1">
+                    {{ totalMonthlyBudget }} {{ currency }}
+                  </div>
                 </div>
               </v-col>
             </v-row>
             <v-list-item>
-              <v-list-item-avatar size="48" color="teal" left>
+              <v-list-item-avatar size="48" color="secondary" left>
                 <span class="white--text headline">
                   <v-icon xLarge>home</v-icon>
                 </span>
@@ -178,10 +182,12 @@
                   Monthly charges
                 </v-list-item-title>
               </v-list-item-content>
-              <v-list-item-icon>{{ usedMonthlyBudget }}€</v-list-item-icon>
+              <v-list-item-icon
+                >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
+              >
             </v-list-item>
             <v-list-item v-for="(expense, i) in sharedExpenses" :key="i">
-              <v-list-item-avatar size="48" color="teal" left>
+              <v-list-item-avatar size="48" color="primary" left>
                 <span class="white--text headline">
                   {{ getUserInitials(expense.id) }}
                 </span>
@@ -191,7 +197,9 @@
                   getUserName(expense.id)
                 }}</v-list-item-title>
               </v-list-item-content>
-              <v-list-item-icon>{{ expense.amount }}€</v-list-item-icon>
+              <v-list-item-icon
+                >{{ expense.amount }} {{ currency }}</v-list-item-icon
+              >
             </v-list-item>
           </v-container>
         </v-card>
@@ -210,6 +218,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import icons from "@/assets/icons.js";
 
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
@@ -253,22 +262,7 @@ export default {
 
     budgetMode: true,
     editBudgetDialog: false,
-    monthlyCharges: [
-      {
-        name: "Rental",
-        amount: 300,
-        currency: "€",
-        icon: "home",
-        responsibleUser: 8
-      },
-      {
-        name: "Electricity",
-        amount: 50,
-        currency: "€",
-        icon: "flash_on",
-        responsibleUser: 8
-      }
-    ],
+    monthlyCharges: [],
     totalMonthlyBudget: 300,
     tempTotalMonthlyBudget: 300,
     sharedExpenses: [
@@ -280,7 +274,8 @@ export default {
         amount: 200,
         id: 13
       }
-    ]
+    ],
+    currency: "€"
   }),
   computed: {
     memberTotalFunction() {
@@ -387,6 +382,23 @@ export default {
       this.editBudgetDialog = false;
     },
 
+    async fetchMonthlyData() {
+      const { data } = await this.$http.get("/_/fetchmonthlycharges");
+      if (data.success) {
+        this.monthlyCharges = [];
+        data.data.forEach(charge => {
+          this.monthlyCharges.push({
+            name: charge.name,
+            amount: charge.amount,
+            icon: icons[charge.icon],
+            responsibleUser: this.getUserName(charge.payingUID)
+          });
+        });
+      } else {
+        console.error("Error during fetching monthlyData");
+      }
+    },
+
     renderDate(itemTimestamp) {
       let seconds = this.unixTimestamp - itemTimestamp;
       let sign = seconds < 0;
@@ -419,6 +431,9 @@ export default {
       if (sign) return "in " + val;
       else return val + " ago";
     }
+  },
+  mounted() {
+    this.fetchMonthlyData();
   },
   watch: {
     tableOptions: {
