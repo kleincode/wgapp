@@ -154,6 +154,7 @@ export default {
       await this.validate();
       if (!this.formValid) this.alertSnackbar("Please check your input.");
       else {
+        this.loading = true;
         const { data } = await this.$http.post("/_/joinhousehold", {
           hid: this.householdId,
           sec: this.securityCode
@@ -167,6 +168,7 @@ export default {
             data.message ||
               "Error connecting to server. Please try again later."
           );
+        this.loading = false;
       }
     },
     async step2Submit() {

@@ -26,7 +26,7 @@ module.exports = ({ db }) => ({
       default: ""
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query }, { success, fail, error }) => {
     const { email, firstname, lastname, password } = body;
     if(email.match(/^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i)) {
       try {

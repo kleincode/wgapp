@@ -1,4 +1,6 @@
 /*  Handler for "/_/addexpense". Purpose: Adding expenses to database (used for 'finances' view). */
+const Helpers = require("../components/Helpers");
+
 module.exports = ({ db }) => ({
   type: "POST",
   public: false,
@@ -16,13 +18,15 @@ module.exports = ({ db }) => ({
       default: ""
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [body.uid || user.uid, user.hid]);
-      if (results[0].c < 1) {
+      const assignedUid = body.uid || uid,
+        requestHid = await Helpers.fetchHouseholdID(db, uid),
+        assignedHid = uid == assignedUid ? requestHid : await Helpers.fetchHouseholdID(db, assignedUid);
+      if (requestHid !== assignedHid) {
         fail("The specifed user does not exist or does not belong to this household.");
       } else try {
-        await db.query("INSERT INTO finances (hid, uid, description, amount) VALUES (?, ?, ?, ?)", [user.hid, body.uid || user.uid, body.description, body.amount]);
+        await db.query("INSERT INTO finances (hid, uid, description, amount) VALUES (?, ?, ?, ?)", [assignedHid, assignedUid, body.description, body.amount]);
         success("Expense inserted successfully.");
       } catch (err) {
         error("Error while inserting expense into database.", err);

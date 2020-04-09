@@ -1,4 +1,6 @@
 /*  Handler for "/_/checktask". Purpose: Setting task to checked (used for 'tasks' view). */
+const Helpers = require("../components/Helpers");
+
 module.exports = ({ db }) => ({
   type: "POST",
   public: false,
@@ -19,12 +21,13 @@ module.exports = ({ db }) => ({
       message: "Please specify the new assigned Member"
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM tasks WHERE id = ? AND hid = ?", [body.id, user.hid]);
+      const hid = await Helpers.fetchHouseholdID(db, uid);
+      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM tasks WHERE id = ? AND hid = ?", [body.id, hid]);
       let date = new Date(body.lastExecution);
       if (results[0].c < 1) {
-        fail("The specified task does not exist.");
+        fail("You do not have permission to perform this operation.");
       } else try {
         await db.query("UPDATE tasks SET lastExecution = ?, assignedMember = ? WHERE id = ?", [date, body.assignedMember, body.id]);
         success("Update successful.");

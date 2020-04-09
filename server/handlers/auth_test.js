@@ -2,5 +2,5 @@
 module.exports = ({ db }) => ({
   type: "GET",
   public: false,
-  handler: async ({ body, query, user }, { success, fail, error }) => success("Authorized.")
+  handler: async ({ body, query, uid }, { success, fail, error }) => success("Authorized.")
 });

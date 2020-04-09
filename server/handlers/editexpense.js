@@ -21,15 +21,16 @@ module.exports = ({ db }) => ({
       type: "int"
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     let updateVals = Helpers.copyKeysIfPresent(body, ["description", "amount"]);
 
     if (Helpers.isObjectEmpty(updateVals)) {
       success("No changes made.");
     } else try {
+      const hid = await Helpers.fetchHouseholdID(db, uid);
       const { results: { affectedRows, changedRows } } = await db.query(
         "UPDATE finances SET ? WHERE id = ? AND hid = ?",
-        [updateVals, body.id, user.hid]
+        [updateVals, body.id, hid]
       );
 
       if (affectedRows < 1) {

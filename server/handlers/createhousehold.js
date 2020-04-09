@@ -13,7 +13,7 @@ module.exports = ({ db }) => ({
       default: 0
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     const key = Math.floor(100000 + Math.random() * 900000);
     try {
       const { results: { insertId: actualHID } } = await db.query(
@@ -21,7 +21,7 @@ module.exports = ({ db }) => ({
         [body.name, key, body.type]
       );
       try {
-        await db.query("UPDATE users SET ? WHERE ?", [{ hid: actualHID }, { id: user.uid }]);
+        await db.query("UPDATE users SET ? WHERE ?", [{ hid: actualHID }, { id: uid }]);
         try {
           const { results } = await db.query(
             "SELECT HEX(AES_ENCRYPT(?, ?)) AS hid",
