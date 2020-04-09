@@ -3,14 +3,11 @@
     <h1 class="display-2 pl-12 pb-6">{{ householdName }}</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4" xl="3">
-        <v-card>
+        <v-card style="height: 100%;">
           <v-card-title>
             Members
             <v-spacer></v-spacer>
-            <v-btn text color="primary">
-              <v-icon left>group_add</v-icon>
-              Invite
-            </v-btn>
+            <invite-link-dialog></invite-link-dialog>
           </v-card-title>
           <v-list avatar>
             <v-list-item-group color="primary">
@@ -34,6 +31,41 @@
           </v-list>
         </v-card>
       </v-col>
+      <v-col cols="12" md="6" lg="4" xl="3">
+        <v-card style="height: 100%;">
+          <v-card-title>
+            Info
+          </v-card-title>
+          <v-list disabled>
+            <v-list-item-group>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>text_format</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  {{ householdName }}
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>home_work</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  {{ householdTypes[householdType] }}
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>history</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  Created {{ formatDate(householdRegistered) }}
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -41,13 +73,19 @@
 <script>
 import { mapGetters } from "vuex";
 
+import InviteLinkDialog from "@/components/dialogs/InviteLinkDialog.vue";
+
 export default {
   name: "ManageHousehold",
+  components: {
+    InviteLinkDialog
+  },
   data: () => ({
     householdName: "Manage household",
     members: [],
     householdType: 0,
-    householdRegistered: ""
+    householdRegistered: "",
+    householdTypes: ["Shared apartment", "Couple", "Family"]
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"])
