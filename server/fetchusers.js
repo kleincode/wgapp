@@ -1,0 +1,25 @@
+/*  This module accepts requests to "/_/fetchusers". The following arguments are passed to the function:
+    req.body    ..      JSON request body sent by client OR
+    req.query   ..      HTTP params sent by client
+    req.user    ..      Information about the user sending the request (properties: email, uid, firstname, lastname, hid)
+    res         ..      Result object, used to respond to the client
+    mysql_conn  ..      MySQL connection (see mysql package)
+    */
+module.exports = (req, res) => {
+
+    if(req.user.hid) {
+        mysql_conn.query(`SELECT id, firstname, lastname FROM users WHERE hid = ?`, [req.user.hid], (err, res2) => {
+            if(err) {
+                res.status(500).send({success: false, message: "Error while fetching users from database."}).end();
+                console.log(err);
+            } else {
+                let userdata = {};
+                res2.forEach(u => userdata[u.id] = {firstname: u.firstname, lastname: u.lastname});
+                res.status(200).send({success: true, message: "User data fetched.", data: userdata}).end();
+            }
+        });
+    } else {
+        res.status(200).send({success: false, message: "Please join a household to use this feature."}).end();
+    }
+
+};
