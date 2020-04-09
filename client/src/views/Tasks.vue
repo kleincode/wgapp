@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <h1 class="display-2 pb-6">Tasks</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4">

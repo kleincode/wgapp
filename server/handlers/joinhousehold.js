@@ -60,7 +60,6 @@ module.exports = ({ db }) => ({
           } else {
             // User currently in household
             success({
-              success: true,
               message: "Please confirm overwriting your currently active household.",
               household: {
                 name: householdRows[0].name,
