@@ -7,7 +7,7 @@ module.exports = ({ db }) => ({
     },
     handler: async ({ body, query, user }, { success, fail, error }) => {
       if (user.hid) {
-        let baseQuery = `SELECT id, payingUID, name, amount, icon FROM monthlycharges WHERE hid = ?`,
+        let baseQuery = `SELECT id, uid, name, amount, icon FROM monthlycharges WHERE hid = ?`,
           baseParams = [user.hid];
         try {
           const { results } = await db.query(baseQuery, baseParams);

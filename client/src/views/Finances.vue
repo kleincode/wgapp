@@ -1,9 +1,9 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <h1 class="display-2 pl-12 pb-6">Finances</h1>
-    <v-row fluid>
+    <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title>
             Member Expenses
           </v-card-title>
@@ -42,7 +42,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title>
             Expenses
             <v-spacer></v-spacer>
@@ -79,34 +79,59 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title>
             Monthly charges
             <v-spacer></v-spacer>
-            <v-btn icon color="primary"><v-icon>edit</v-icon></v-btn>
+            <v-btn
+              icon
+              @click="monCharEditMode = !monCharEditMode"
+              :color="monCharEditMode ? 'primary' : ''"
+              ><v-icon>edit</v-icon></v-btn
+            >
+            <EditMonthlyChargesDialog
+              v-model="editMonthlyCharges"
+              @committed="fetchMonthlyData"
+              ref="editMonthlyChargesDialog"
+            ></EditMonthlyChargesDialog>
           </v-card-title>
           <v-container>
             <v-list>
               <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
                 <v-list-item-icon>
-                  <v-icon>{{ charge.icon }}</v-icon>
+                  <v-icon>{{ getIcon(charge.icon) }}</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>{{ charge.name }}</v-list-item-title>
                   <v-list-item-subtitle
-                    >payed by: {{ getUserName(charge.responsibleUser) }}
+                    >payed by:
+                    {{ charge.responsibleUser }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
-                <v-list-item-icon
-                  >{{ charge.amount }} {{ currency }}</v-list-item-icon
-                >
+                <v-list-item-icon>
+                  {{ charge.amount }} {{ currency }}
+                  <v-slide-x-reverse-transition>
+                    <div v-show="monCharEditMode">
+                      <v-btn
+                        small
+                        icon
+                        @click="editMonChargeItem(charge)"
+                        class="ml-2"
+                        ><v-icon>edit</v-icon></v-btn
+                      >
+                      <v-btn small icon color="error"
+                        ><v-icon>delete</v-icon></v-btn
+                      >
+                    </div>
+                  </v-slide-x-reverse-transition>
+                </v-list-item-icon>
               </v-list-item>
             </v-list>
           </v-container>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title>
             Shared Expenses: March 2020
             <v-spacer></v-spacer>
@@ -129,10 +154,10 @@
                   ></v-text-field>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" outlined @click="saveMonthlyBudget"
+                    <v-btn text color="primary" @click="saveMonthlyBudget"
                       >ok</v-btn
                     >
-                    <v-btn @click="editBudgetDialog = false">cancel</v-btn>
+                    <v-btn text @click="editBudgetDialog = false">cancel</v-btn>
                   </v-card-actions>
                 </v-card-text>
               </v-card>
@@ -186,19 +211,19 @@
                 >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
               >
             </v-list-item>
-            <v-list-item v-for="(expense, i) in sharedExpenses" :key="i">
-              <v-list-item-avatar size="48" color="primary" left>
+            <v-list-item>
+              <v-list-item-avatar size="48" color="secondary" left>
                 <span class="white--text headline">
-                  {{ getUserInitials(expense.id) }}
+                  <v-icon xLarge>person</v-icon>
                 </span>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title>{{
-                  getUserName(expense.id)
-                }}</v-list-item-title>
+                <v-list-item-title>
+                  Member charges
+                </v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon
-                >{{ expense.amount }} {{ currency }}</v-list-item-icon
+                >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
               >
             </v-list-item>
           </v-container>
@@ -221,13 +246,15 @@ import { mapGetters } from "vuex";
 import icons from "@/assets/icons.js";
 
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
+import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
-    ConfirmDialog
+    ConfirmDialog,
+    EditMonthlyChargesDialog
   },
   data: () => ({
     memberTotals: [],
@@ -263,6 +290,13 @@ export default {
     budgetMode: true,
     editBudgetDialog: false,
     monthlyCharges: [],
+    monCharEditMode: false,
+    editMonthlyCharges: {
+      name: "",
+      icon: 0,
+      amount: 0,
+      uid: 0
+    },
     totalMonthlyBudget: 300,
     tempTotalMonthlyBudget: 300,
     sharedExpenses: [
@@ -382,16 +416,32 @@ export default {
       this.editBudgetDialog = false;
     },
 
+    editMonChargeItem(item) {
+      this.monCharEditMode = false;
+      this.$refs.editMonthlyChargesDialog.startEdit(item);
+    },
+
     async fetchMonthlyData() {
       const { data } = await this.$http.get("/_/fetchmonthlycharges");
       if (data.success) {
         this.monthlyCharges = [];
         data.data.forEach(charge => {
+          let user, allMode;
+          if (charge.uid == -1) {
+            user = "ALL";
+            allMode = true;
+          } else {
+            user = this.getUserName(charge.uid);
+            allMode = false;
+          }
           this.monthlyCharges.push({
+            id: charge.id,
             name: charge.name,
             amount: charge.amount,
-            icon: icons[charge.icon],
-            responsibleUser: this.getUserName(charge.payingUID)
+            icon: charge.icon,
+            responsibleUser: user,
+            uid: charge.uid,
+            all: allMode
           });
         });
       } else {
@@ -430,6 +480,9 @@ export default {
       }
       if (sign) return "in " + val;
       else return val + " ago";
+    },
+    getIcon(id) {
+      return icons[id];
     }
   },
   mounted() {
