@@ -3,7 +3,7 @@
     v-model="value"
     @input="onDialogToggle"
     @click:outside="onDialogToggle(false)"
-    :max-width="maxWidth"
+    max-width="300"
   >
     <v-card :loading="loading">
       <v-card-title class="headline">{{ title }}</v-card-title>
@@ -47,10 +47,6 @@ export default {
     loading: {
       type: Boolean,
       default: false
-    },
-    maxWidth: {
-      type: Number,
-      default: 300
     }
   },
   methods: {
