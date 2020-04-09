@@ -1,4 +1,4 @@
-/*  Handler for "/_/addhousehold". Purpose: Setting household for user (used for 'add household' view). */
+/*  Handler for "/_/joinhousehold". Purpose: Setting household for user (used for 'join household' view). */
 module.exports = ({ db }) => ({
   type: "POST",
   public: false,
@@ -20,7 +20,7 @@ module.exports = ({ db }) => ({
       default: false
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     //Check household
     try {
       const { results: householdRows } = await db.query(
@@ -29,11 +29,11 @@ module.exports = ({ db }) => ({
       );
       if (householdRows.length == 0) {
         // Household/security code combination does not exist
-        fail("The given combination of household identifier and security code is invalid. Please check your inputs.");
+        fail("Invalid household credentials. Please check your inputs.");
       } else if (body.confirm) {
         // User confirmed -> update household
         try {
-          await db.query("UPDATE users SET ? WHERE ?", [{ hid: householdRows.id }, { id: req.user.uid }]);
+          await db.query("UPDATE users SET ? WHERE ?", [{ hid: householdRows[0].id }, { id: uid }]);
           success("The given household was successfully assigned to you.");
         } catch (err) {
           error(`Error while assigning user to household: ${err.code}`, err);
@@ -43,7 +43,7 @@ module.exports = ({ db }) => ({
         try {
           const { results: oldHouseholdRows } = await db.query(
             "SELECT households.id, households.name, households.type, households.registered FROM households JOIN users ON households.id = users.hid WHERE users.id = ?",
-            [req.user.uid]
+            [uid]
           );
           if (oldHouseholdRows.length == 0) {
             // User is not assigned to any household
@@ -55,10 +55,11 @@ module.exports = ({ db }) => ({
                 registered: householdRows[0].registered
               }
             });
+          } else if(oldHouseholdRows[0].id == householdRows[0].id) {
+            fail("You're already a member of this household.");
           } else {
             // User currently in household
             success({
-              success: true,
               message: "Please confirm overwriting your currently active household.",
               household: {
                 name: householdRows[0].name,
@@ -69,16 +70,15 @@ module.exports = ({ db }) => ({
                 name: oldHouseholdRows[0].name,
                 type: oldHouseholdRows[0].type,
                 registered: oldHouseholdRows[0].registered
-              },
-              same: oldHouseholdRows[0].id == householdRows[0].id
+              }
             });
           }
         } catch (err) {
-          error(`Error while trying to fetch current household from database: ${err.code}`, err);
+          error(`Error while trying to fetch current household from database.`, err);
         }
       }
     } catch (err) {
-      error(`Error while looking up household in database: ${err.code}`, err);
+      error(`Error while looking up household in database.`, err);
     }
   }
 });

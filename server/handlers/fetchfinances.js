@@ -1,4 +1,6 @@
 /*  Handler for "/_/fetchfinances". Purpose: Fetching expenses and member totals from finances table (used for 'finances' view). */
+const Helpers = require("../components/Helpers");
+
 module.exports = ({ db }) => ({
   type: "GET",
   public: false,
@@ -31,10 +33,11 @@ module.exports = ({ db }) => ({
       type: "boolean"
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
-    if (user.hid) {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
+    const hid = await Helpers.fetchHouseholdID(db, uid);
+    if (hid) {
       // Receive GET params
-      let { p: page, ps: pageSize, uid, q, s, desc } = query;
+      let { p: page, ps: pageSize, uid: filterUid, q, s, desc } = query;
       if (pageSize > 100 || pageSize < 1) pageSize = 100; // limit page size to 100
       const offset = pageSize * page,
         validSorts = ["description", "amount", "date"];
@@ -44,12 +47,12 @@ module.exports = ({ db }) => ({
         totalSelect = `SELECT COUNT(*) AS 'c'`,
         mainQuery = ` FROM finances WHERE hid = ?`,
         mainSuffix = ``,
-        queryParams = [user.hid];
+        queryParams = [hid];
 
       // Filter user
-      if (uid) {
+      if (filterUid) {
         mainQuery += ` AND uid = ?`;
-        queryParams.push(uid);
+        queryParams.push(filterUid);
       }
 
       // Search string
@@ -70,13 +73,13 @@ module.exports = ({ db }) => ({
         const totalEntries = results[0].c;
 
         // Accumulate entries for all users (independently from single entries)
-        const { results: memberTotals } = await db.query("SELECT uid, SUM(amount) AS 'amount' FROM finances WHERE hid = ? GROUP BY uid", [user.hid]);
+        const { results: memberTotals } = await db.query("SELECT uid, SUM(amount) AS 'amount' FROM finances WHERE hid = ? GROUP BY uid", [hid]);
         let memberobj = {};
         memberTotals.forEach(el => memberobj[el.uid] = el.amount);
 
         if(totalEntries == 0) {
           // The page is empty, no need to fetch entries.
-          success({message: "Empty.", page: page, entries: 0, pages: 0, data: {}, totals: memberobj });
+          success({message: "Empty.", page: page, entries: 0, pages: 0, data: [], totals: memberobj });
         } else {
           // Now fetch entries with sort and limit to return them as data
           const { results: expenseRows } = await db.query(displaySelect + mainQuery + mainSuffix + ` LIMIT ?, ?`, [...queryParams, offset, pageSize]);

@@ -1,4 +1,5 @@
 /*  Handler for "/_/fetchtasks". Purpose: Updating task in tasks table (used for 'edit task' view). */
+const Helpers = require("../components/Helpers");
 
 module.exports = ({ db }) => ({
   type: "GET",
@@ -9,11 +10,12 @@ module.exports = ({ db }) => ({
       type: "int"
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
-    if (user.hid) {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
+    const hid = await Helpers.fetchHouseholdID(db, uid);
+    if (hid) {
       const { id } = query;
       let baseQuery = `SELECT id, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
-        baseParams = [user.hid];
+        baseParams = [hid];
       if (id) {
         baseQuery += " AND id = ?";
         baseParams.push(id);

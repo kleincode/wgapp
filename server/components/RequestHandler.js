@@ -9,7 +9,7 @@ async function checkAuthorized(req, res, next) {
       if(err) {
           res.status(401).send({success: false, message: "Unauthorized: invalid token.", redirect: "/login"});
       } else {
-          req.user = decoded;
+          req.uid = decoded.uid;
           next();
       }
   });

@@ -1,4 +1,6 @@
 /*  Handler for "/_/deletetask". Purpose: Delete task in tasks table (used in 'edit task' view). */
+const Helpers = require("../components/Helpers");
+
 module.exports = ({ db }) => ({
   type: "POST",
   public: false,
@@ -11,11 +13,12 @@ module.exports = ({ db }) => ({
       message: "Please provide an task id."
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [user.uid, user.hid]);
+      const hid = Helpers.fetchHouseholdID(db, uid);
+      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [uid, hid]);
       if (results[0].c < 1) {
-        fail("You don't have permission to delete tasks for this household.");
+        fail("You do not have permission to perform this operation.");
         return;
       }
 
