@@ -99,9 +99,9 @@ export default {
         path: "/tasks"
       },
       {
-        name: "Members",
+        name: "Manage household",
         icon: "people",
-        path: "/household/members"
+        path: "/household"
       },
       {
         name: "Settings",
