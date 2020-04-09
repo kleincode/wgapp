@@ -1,6 +1,15 @@
 <template>
   <v-container>
-    <h1 class="display-2 pl-12 pb-6">Finances</h1>
+    <div style="display:flex">
+      <h1 class="display-2 ml-12 mb-6" style="max-width: 80%">Finances</h1>
+      <v-spacer></v-spacer>
+      <v-select
+        :items="timespanes"
+        v-model="choosenTimeSpan"
+        item-value="value"
+        label="Choose time span"
+      ></v-select>
+    </div>
     <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
         <v-card style="height: 100%">
@@ -119,7 +128,11 @@
                         class="ml-2"
                         ><v-icon>edit</v-icon></v-btn
                       >
-                      <v-btn small icon color="error"
+                      <v-btn
+                        small
+                        icon
+                        color="error"
+                        @click="deleteMonthlyCharge(charge)"
                         ><v-icon>delete</v-icon></v-btn
                       >
                     </div>
@@ -168,11 +181,7 @@
               <v-col
                 cols="12"
                 md="4"
-                :class="
-                  usedThisMonth > totalMonthlyBudget && budgetMode
-                    ? 'red--text'
-                    : ''
-                "
+                :class="usedThisMonth > totalMonthlyBudget ? 'red--text' : ''"
               >
                 <div class="text-center">
                   <div class="overline">used</div>
@@ -181,15 +190,12 @@
                   </div>
                 </div>
               </v-col>
-              <v-col
-                cols="1"
-                v-if="budgetMode"
-                class="text-center d-sm-none d-md-flex"
+              <v-col cols="1" class="text-center d-sm-none d-md-flex"
                 ><v-divider vertical></v-divider
               ></v-col>
-              <v-col cols="12" md="4" v-if="budgetMode">
+              <v-col cols="12" md="4">
                 <div class="text-center">
-                  <div class="overline">total</div>
+                  <div class="overline">target total</div>
                   <div class="display-1">
                     {{ totalMonthlyBudget }} {{ currency }}
                   </div>
@@ -227,6 +233,46 @@
               >
             </v-list-item>
           </v-container>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="4">
+        <v-card style="height: 100%">
+          <v-card-title>
+            Compensation Payments
+          </v-card-title>
+          <v-card-text>
+            Calculate compensation payments for all member expenses since the
+            last billing.
+            <div class="text-center pt-8 pb-4">
+              <span class="overline" style="font-size: 1em !important">
+                last Billing
+              </span>
+              <h1 class="display-1">01.04.2020</h1>
+            </div>
+          </v-card-text>
+          <v-card-actions
+            ><v-btn color="primary" block>New Bill</v-btn></v-card-actions
+          >
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="8">
+        <v-card style="height: 100%">
+          <v-card-title>Trend Expenses</v-card-title>
+          <v-card-text
+            ><v-sparkline
+              :value="trendValues"
+              :gradient="['#42b3f4']"
+              :smooth="5"
+              :padding="8"
+              :line-width="1"
+              stroke-linecap="round"
+              gradient-direction="top"
+              :fill="false"
+              type="trend"
+              :auto-line-width="false"
+              auto-draw
+            ></v-sparkline>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -281,13 +327,13 @@ export default {
       amount: 0
     },
     deleteDialogVisible: false,
+    deleteExpenseMode: true, //false -> monthly charge
     deleteId: -1,
     deleteDescription: "",
     deleteDialogLoading: false,
     unixTimestamp: Math.floor(Date.now() / 1000),
     filterMember: null,
 
-    budgetMode: true,
     editBudgetDialog: false,
     monthlyCharges: [],
     monCharEditMode: false,
@@ -309,7 +355,14 @@ export default {
         id: 13
       }
     ],
-    currency: "€"
+    currency: "€",
+    timespanes: [
+      { text: "current month", value: 0 },
+      { text: "last 3 months", value: 1 },
+      { text: "current year", value: 2 }
+    ],
+    choosenTimeSpan: 0,
+    trendValues: [0, 2, 5, 9, 9, 10, 13, 14, 18, 19, 19, 21, 25, 26, 26]
   }),
   computed: {
     memberTotalFunction() {
@@ -378,18 +431,33 @@ export default {
       } else return { success: false, message: data.message };
     },
     async commitDelete(fid) {
-      const { data } = await this.$http.post("/_/delexpense", {
-        id: fid
-      });
-      return data;
+      if (this.deleteExpenseMode) {
+        const { data } = await this.$http.post("/_/delexpense", {
+          id: fid
+        });
+        return data;
+      } else {
+        const { data } = await this.$http.post("/_/deletemonthlycharge", {
+          id: fid
+        });
+        return data;
+      }
     },
     editItem(item) {
       this.$refs.editDialog.startEdit(item);
     },
     deleteItem(item) {
+      this.deleteExpenseMode = true;
       this.deleteId = item.fid;
       this.deleteDescription = item.description;
       this.deleteDialogVisible = true;
+    },
+    deleteMonthlyCharge(item) {
+      this.deleteExpenseMode = false;
+      this.deleteId = item.id;
+      this.deleteDescription = item.name;
+      this.deleteDialogVisible = true;
+      this.monCharEditMode = false;
     },
     async deleteConfirm() {
       this.deleteDialogLoading = true;
@@ -400,6 +468,7 @@ export default {
           this.deleteDialogVisible = false;
           this.$store.dispatch("showSnackbar", "Item deleted.");
           this.updateTable();
+          this.fetchMonthlyData();
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
         this.deleteDialogLoading = false;
@@ -437,7 +506,7 @@ export default {
           this.monthlyCharges.push({
             id: charge.id,
             name: charge.name,
-            amount: charge.amount,
+            amount: charge.amount / 100,
             icon: charge.icon,
             responsibleUser: user,
             uid: charge.uid,
