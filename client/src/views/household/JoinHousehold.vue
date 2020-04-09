@@ -61,7 +61,7 @@
                   </v-card-title>
                   <v-card-text>
                     {{ householdTypes[oldHousehold.type] }}<br />
-                    Created at: {{ formatDate(oldHousehold.registered) }}
+                    Created: {{ formatDate(oldHousehold.registered) }}
                   </v-card-text>
                 </v-card>
                 <p v-if="!oldHousehold">
@@ -74,7 +74,7 @@
                   </v-card-title>
                   <v-card-text>
                     {{ householdTypes[newHousehold.type] }}<br />
-                    Created at: {{ formatDate(newHousehold.registered) }}
+                    Created: {{ formatDate(newHousehold.registered) }}
                   </v-card-text>
                 </v-card>
                 <v-btn color="primary" :loading="loading" @click="step2Submit">
@@ -177,8 +177,10 @@ export default {
         sec: this.securityCode,
         confirm: true
       });
-      if (data.success) this.stepperProgress = 3;
-      else
+      if (data.success) {
+        this.stepperProgress = 3;
+        this.$store.dispatch("fetchHouseholdUsers");
+      } else
         this.alertSnackbar(
           data.message || "Error connecting to server. Please try again later."
         );
