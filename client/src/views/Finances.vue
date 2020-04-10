@@ -248,6 +248,7 @@
                 last Billing
               </span>
               <h1 class="display-1">01.04.2020</h1>
+              <v-btn text>view bill</v-btn>
             </div>
           </v-card-text>
           <v-card-actions
