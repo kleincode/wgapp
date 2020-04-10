@@ -1,4 +1,6 @@
 /*  Handler for "/_/delexpense". Purpose: Deleting expense from finances table (used for 'finances' view). */
+const Helpers = require("../components/Helpers");
+
 module.exports = ({ db }) => ({
   type: "POST",
   public: false,
@@ -10,11 +12,12 @@ module.exports = ({ db }) => ({
       message: "Please provide an expense id."
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const { results: { affectedRows } } = await db.query("DELETE FROM finances WHERE id = ? AND hid = ?", [body.id, user.hid]);
+      const hid = await Helpers.fetchHouseholdID(db, uid);
+      const { results: { affectedRows } } = await db.query("DELETE FROM finances WHERE id = ? AND hid = ?", [body.id, hid]);
       if (affectedRows < 1) {
-        fail("You don't have permission to change this entry.");
+        fail("You do not have permission to perform this operation.");
       } else {
         success("Entry deleted.");
       }

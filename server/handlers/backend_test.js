@@ -2,5 +2,5 @@
 module.exports = ({ db }) => ({
   type: "GET",
   public: true,
-  handler: async ({ body, query, user }, { success, fail, error }) => success("Backend working.")
+  handler: async ({ body, query, uid }, { success, fail, error }) => success("Backend working.")
 });

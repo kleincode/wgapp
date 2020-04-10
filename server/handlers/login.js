@@ -18,20 +18,20 @@ module.exports = ({ db }) => ({
       message: "Please provide a password in order to log in."
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query }, { success, fail, error }) => {
     const { email: providedEmail, password: providedPassword } = body;
     try {
-      const { results } = await db.query("SELECT id AS uid, email, firstname, lastname, pass, hid FROM users WHERE ?", { email: providedEmail });
+      const { results } = await db.query("SELECT id AS uid, pass FROM users WHERE ?", { email: providedEmail });
 
       if (!results || results.length == 0) {
         fail("The given combination of email and password is incorrect.");
       } else {
-        const { uid, email, firstname, lastname, pass, hid } = results[0];
+        const { uid, pass } = results[0];
         try {
           const bcryptResult = await BCrypt.compare(providedPassword, pass);
           if(bcryptResult) {
-            const token = JWT.sign({ uid, email, firstname, lastname, hid }, JWT_SECRET);
-            success({ message: "You were successfully logged in.", email, token });
+            const token = JWT.sign({ uid }, JWT_SECRET);
+            success({ message: "You were successfully logged in.", providedEmail, token });
           } else {
             fail("The given combination of email and password is incorrect.");
           }

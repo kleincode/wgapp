@@ -2,13 +2,14 @@
 module.exports = ({ db }) => ({
   type: "GET",
   public: false,
-  handler: async ({ body, query, user }, { success, fail, error }) => {
-    if(user.email) success({
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
+    const { results } = await db.query("SELECT email, firstname, lastname FROM users WHERE ?", [{id: uid}]);
+    if(results.length > 0) success({
       message: "Authorized",
-      email: user.email,
-      firstname: user.firstname,
-      lastname: user.lastname
+      email: results[0].email,
+      firstname: results[0].firstname,
+      lastname: results[0].lastname
     });
-    else error("Internal Server Error: No email given, even though authorization was successful.");
+    else error("Internal Server Error: User not found. This should never happen.");
   }
 });

@@ -53,21 +53,14 @@ module.exports = ({ db }) => ({
       type: "string"
     }
   },
-  handler: async ({ body, query, user }, { success, fail, error }) => {
+  handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [user.uid, user.hid]);
-      if (results[0].c < 1) {
-        fail("You don't have permission to edit tasks for this household.");
-        return;
-      } else if (!!body.assignedMember && body.assignedMember != user.uid) try {
-        const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [body.assignedMember, user.hid]);
-
-        if (results[0].c < 1) {
-          fail("The assigned member id is invalid or does not belong to this household.");
-          return;
-        }
-      } catch (err) {
-        error("Error while fetching specified assigned member from database.", err);
+      const assignedUid = body.assignedMember || uid, // assign to sending user by default
+        requestHid = await Helpers.fetchHouseholdID(db, uid),
+        assignedHid = uid == assignedUid ? requestHid : Helpers.fetchHouseholdID(db, assignedUid);
+      
+      if(assignedHid != requestHid) {
+        fail("The assigned member does not belong to your household");
         return;
       }
 
@@ -77,15 +70,20 @@ module.exports = ({ db }) => ({
       );
       if (body.repetitionDays) updateVals.repetitionDays = JSON.stringify(body.repetitionDays);
       try {
-        await db.query(
-          "UPDATE tasks SET ? WHERE id = ?",
-          [updateVals, body.id]
+        const { results: { affectedRows, changedRows } } = await db.query(
+          "UPDATE tasks SET ? WHERE id = ? AND hid = ?",
+          [updateVals, body.id, requestHid]
         );
-        success("Task updated successfully.");
+        if(affectedRows == 0) {
+          fail("You do not have permission to perform this operation.");
+        } else if(changedRows == 0) {
+          success("No changes made.");
+        } else {
+          success("Task updated successfully.");
+        }
       } catch (err) {
         error("Error while updating task in database.", err);
       }
-
     } catch (err) {
       error("Error while fetching specified user from database.", err);
     }

@@ -52,11 +52,19 @@ const routes = [
     component: Login
   },
   {
-    path: "/household/add",
-    name: "Add Household",
+    path: "/household",
+    name: "Manage Household",
     component: () =>
       import(
-        /* webpackChunkName: "addhousehold" */ "../views/household/AddHousehold.vue"
+        /* webpackChunkName: "managehousehold" */ "../views/household/ManageHousehold.vue"
+      )
+  },
+  {
+    path: "/household/join",
+    name: "Join Household",
+    component: () =>
+      import(
+        /* webpackChunkName: "addhousehold" */ "../views/household/JoinHousehold.vue"
       )
   },
   {

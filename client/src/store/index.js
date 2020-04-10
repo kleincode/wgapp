@@ -67,7 +67,7 @@ let store = new Vuex.Store({
       else throw data.message;
       return data.redirect || "";
     },
-    /* returns false if user does not belong to any household (--> please redirect to "Add Household") */
+    /* returns false if user does not belong to any household */
     async fetchHouseholdUsers({ commit }) {
       try {
         const { data } = await axios({
