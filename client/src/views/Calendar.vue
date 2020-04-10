@@ -8,17 +8,30 @@
       :items="allCalendarsStrings"
       @change="updateG"
       chips
-      label="Choose Calendars"
+      :label="gapiSignedIn ? 'Choose Calendars' : 'Not signed in'"
       multiple
       outlined
+      :disabled="!gapiSignedIn"
+      v-show="!gapiNotSignedIn"
     ></v-select>
-    <v-btn icon @click="updateG"><v-icon>refresh</v-icon></v-btn>
+    <v-alert type="warning" v-if="gapiNotSignedIn">
+      Please refer to the settings to activate this feature.
+    </v-alert>
+
+    <v-btn icon @click="updateG" :disabled="!gapiSignedIn"
+      ><v-icon>refresh</v-icon></v-btn
+    >
 
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
           <v-toolbar flat>
-            <v-btn outlined class="mr-4" @click="setToday">
+            <v-btn
+              outlined
+              class="mr-4"
+              @click="setToday"
+              :disabled="!gapiSignedIn"
+            >
               Today
             </v-btn>
             <v-btn fab text small @click="prev">
@@ -32,7 +45,7 @@
             <v-menu bottom right>
               <template v-slot:activator="{ on }">
                 <div v-on="on">
-                  <v-btn outlined>
+                  <v-btn outlined :disabled="!gapiSignedIn">
                     <span>{{ typeToLabel[type] }}</span>
                     <v-icon right>mdi-menu-down</v-icon>
                   </v-btn>
@@ -69,6 +82,7 @@
             @click:more="viewDay"
             @click:date="viewDay"
             @change="updateRange"
+            :disabled="!gapiSignedIn"
           ></v-calendar>
           <v-menu
             v-model="selectedOpen"
@@ -96,7 +110,8 @@ import {
   handleAuthClick,
   listUpcomingEvents,
   listCalendars,
-  signedIn
+  signedIn,
+  gapiLoaded
 } from "@/assets/googleCalendar.js";
 
 export default {
@@ -119,7 +134,9 @@ export default {
     events: [],
     choosenCalendars: [],
     allCalendarsStrings: [],
-    calendars: []
+    calendars: [],
+    gapiSignedIn: false,
+    gapiNotSignedIn: false
   }),
   computed: {
     title() {
@@ -161,11 +178,20 @@ export default {
       return this.formatDate(dat, false);
     }
   },
-  async created() {
-    this.initG();
+  created() {
+    if (!gapiLoaded) {
+      const gapiscript = document.createElement("script");
+      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
+      //on success: updateG, on fail: signInFailed
+      window.onGapiload = () =>
+        handleClientLoad(this.updateG, this.signInFailed);
+      document.body.appendChild(gapiscript);
+    }
   },
 
   async mounted() {
+    this.gapiSignedIn = false;
+    this.gapiNotSignedIn = !signedIn;
     if (signedIn) {
       await this.updateG();
       this.$refs.calendar.checkChange();
@@ -173,18 +199,17 @@ export default {
   },
   methods: {
     //Google Handling
-    async signIn() {
+    signIn() {
       handleAuthClick();
     },
-
-    initG() {
-      const gapiscript = document.createElement("script");
-      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
-      window.onGapiload = () => handleClientLoad(this.updateG);
-      document.body.appendChild(gapiscript);
+    signInFailed() {
+      this.gapiSignedIn = false;
+      this.gapiNotSignedIn = true;
+      alert("Not signed in!");
     },
-
     async updateG() {
+      this.gapiSignedIn = true;
+      this.gapiNotSignedIn = false;
       let startDate = new Date(this.start.date);
       let calendars = await listCalendars();
       this.allCalendarsStrings = calendars.map(cal => cal.summary);

@@ -14,13 +14,18 @@ var DISCOVERY_DOCS = [
 var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 
 var signedIn = false;
+var gapiLoaded = false;
+var onSignedIn = null,
+  onNotSignedIn = null;
 
 /**
  *  On load, called to load the auth2 library and API client library.
  */
-async function handleClientLoad(updateG) {
-  await gapi.load("client:auth2", initClient);
-  updateG();
+async function handleClientLoad(signedInCallback, notSignedInCallback) {
+  onSignedIn = signedInCallback;
+  onNotSignedIn = notSignedInCallback;
+  gapiLoaded = true;
+  gapi.load("client:auth2", initClient);
 }
 
 /**
@@ -56,14 +61,15 @@ function initClient() {
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     signedIn = true;
-  }
+    if (onSignedIn) onSignedIn();
+  } else if (onNotSignedIn) onNotSignedIn();
 }
 
 /**
  *  Sign in the user upon button click.
  */
 function handleAuthClick() {
-  console.log("Loging in");
+  console.log("Logging in");
   gapi.auth2.getAuthInstance().signIn();
 }
 
@@ -120,5 +126,6 @@ export {
   handleSignoutClick,
   handleClientLoad,
   listCalendars,
-  signedIn
+  signedIn,
+  gapiLoaded
 };
