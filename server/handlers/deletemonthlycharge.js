@@ -1,4 +1,5 @@
 /*  Handler for "/_/deletemonthlycharge". Purpose: Delete monthly charge in monthlycharge table */
+const Helpers = require("../components/Helpers");
 module.exports = ({ db }) => ({
     type: "POST",
     public: false,
@@ -11,27 +12,25 @@ module.exports = ({ db }) => ({
         message: "Please provide an monthly charge id."
       }
     },
-    handler: async ({ body, query, user }, { success, fail, error }) => {
+    handler: async ({ body, query, uid }, { success, fail, error }) => {
       try {
-        const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [user.uid, user.hid]);
-        if (results[0].c < 1) {
-          fail("You don't have permission to delete monthly charges for this household.");
-          return;
-        }
-  
-        //Permissions granted; perform update
+        const requestHid = await Helpers.fetchHouseholdID(db, uid);
+
         try {
-          await db.query(
-            "DELETE FROM monthlycharges WHERE id = ?",
-            [body.id]
+          const { results: { affectedRows } } = await db.query(
+            "DELETE FROM monthlycharges WHERE id = ? AND hid = ?",
+            [body.id, requestHid]
           );
-          success("Monthly charge updated successfully.");
+          if (affectedRows == 0) {
+            fail("You do not have permission to perform this operation.");
+          } else {
+            success("Monthly charge deleted successfully.");
+          }
         } catch (err) {
           error("Error while deleting monthly charge in database.", err);
         }
-  
       } catch (err) {
-        error("Error while fetching specified user from database.", err);
+        error("Error while fetching hid from database.", err);
       }
     }
   });
