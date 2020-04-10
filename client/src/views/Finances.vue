@@ -8,6 +8,7 @@
         v-model="choosenTimeSpan"
         item-value="value"
         label="Choose time span"
+        @change="updateTable()"
       ></v-select>
     </div>
     <v-row align="stretch">
@@ -229,7 +230,7 @@
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon
-                >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
+                >{{ usedIndividualBudget }} {{ currency }}</v-list-item-icon
               >
             </v-list-item>
           </v-container>
@@ -344,18 +345,8 @@ export default {
       amount: 0,
       uid: 0
     },
-    totalMonthlyBudget: 300,
-    tempTotalMonthlyBudget: 300,
-    sharedExpenses: [
-      {
-        amount: 400,
-        id: 8
-      },
-      {
-        amount: 200,
-        id: 13
-      }
-    ],
+    totalMonthlyBudget: 1300,
+    tempTotalMonthlyBudget: 1300,
     currency: "€",
     timespanes: [
       { text: "current month", value: 0 },
@@ -383,10 +374,13 @@ export default {
       this.monthlyCharges.forEach(charge => (sum += charge.amount));
       return sum;
     },
-    usedThisMonth() {
+    usedIndividualBudget() {
       let sum = 0;
-      this.sharedExpenses.forEach(expense => (sum += expense.amount));
-      return this.usedMonthlyBudget + sum;
+      this.memberTotals.forEach(entry => (sum += entry.total / 100));
+      return sum;
+    },
+    usedThisMonth() {
+      return this.usedMonthlyBudget + this.usedIndividualBudget;
     },
     ...mapGetters(["getUserName", "getUserInitials"])
   },
@@ -396,12 +390,20 @@ export default {
       this.loadData()
         .then(res => {
           if (res.success) {
+            console.log(res);
             this.unixTimestamp = Math.floor(Date.now() / 1000);
             this.expenses = res.data;
             this.tableTotalItems = res.totalCount;
             this.memberTotals = Object.entries(res.memberTotals)
               .map(([id, total]) => ({ id, total }))
               .sort((a, b) => b.total - a.total); // sort descending by total
+            this.trendValues = [0];
+            res.trend.forEach(entry =>
+              this.trendValues.push(
+                this.trendValues[this.trendValues.length - 1] + entry.amount
+              )
+            );
+            this.updateTrendCurve();
           } else alert(res.message);
           this.tableLoading = false;
         })
@@ -417,20 +419,39 @@ export default {
           ps: this.tableOptions.itemsPerPage,
           uid: this.filterMember,
           s: this.tableOptions.sortBy[0],
-          desc: this.tableOptions.sortDesc[0] ? true : null
+          desc: this.tableOptions.sortDesc[0] ? true : null,
+          minTimestamp: this.getMinTimestamp()
         }
       });
-
       if (data.success) {
         return {
           success: true,
           data: data.data,
           page: data.page,
           totalCount: data.entries,
-          memberTotals: data.totals
+          memberTotals: data.totals,
+          trend: data.trend
         };
       } else return { success: false, message: data.message };
     },
+    updateTrendCurve() {},
+    getMinTimestamp() {
+      let date = new Date();
+      date.setDate(1);
+      date.setHours(0, 0, 0, 0);
+      switch (this.choosenTimeSpan) {
+        case 0:
+          break;
+        case 1:
+          date.setMonth(date.getMonth() - 2);
+          break;
+        case 2:
+          date.setMonth(0);
+          break;
+      }
+      return Math.floor(date.getTime() / 1000);
+    },
+
     async commitDelete(fid) {
       if (this.deleteExpenseMode) {
         const { data } = await this.$http.post("/_/delexpense", {
