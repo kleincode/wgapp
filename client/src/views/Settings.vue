@@ -4,18 +4,18 @@
     <v-tabs v-model="tab" class="elevation-2" vertical>
       <v-tabs-slider></v-tabs-slider>
 
-      <v-tab :key="user" :href="tab - user">
+      <v-tab href="#tab-user">
         User
       </v-tab>
-      <v-tab :key="household" :href="tab - household">
+      <v-tab href="#tab-household">
         Household
       </v-tab>
-      <v-tab-item :key="user" :value="user">
+      <v-tab-item value="tab-user">
         <v-card flat tile>
           <v-card-text>
             <div class="container">
               <div class="display-1">General</div>
-              <v-switch label="Dark design"></v-switch>
+              <v-switch label="Dark design" v-model="darkDesign"></v-switch>
               <v-divider class="mt-8 mb-8"></v-divider>
               <div class="display-1 mb-2">Integrations</div>
               <div class="title pt-2">Google Calendar</div>
@@ -24,12 +24,22 @@
                 'Calendar'-Tab. The next events will also be displayed in the
                 Dashboard.
               </p>
-              <v-switch label="Activate Calendar Integration"></v-switch>
               <div style="display: flex">
-                <v-btn text outlined>Sign in</v-btn>
-                <div class="pl-2">
+                <v-btn
+                  @click="calendarSignIn"
+                  v-if="signInState == 2"
+                  color="primary"
+                  >Sign in</v-btn
+                >
+                <v-btn
+                  @click="calendarSignOut"
+                  v-if="signInState == 1"
+                  color="red"
+                  >Sign out</v-btn
+                >
+                <div class="pl-4">
                   <div class="overline">Status:</div>
-                  Already signed in.
+                  {{ signInDescription }}
                 </div>
               </div>
               <div class="title pt-6">Philipps Hue</div>
@@ -43,7 +53,7 @@
           </v-card-text>
         </v-card>
       </v-tab-item>
-      <v-tab-item :key="household" :value="user">
+      <v-tab-item value="tab-household">
         <v-card flat tile>
           <v-card-text>
             <div class="headline">Household settings</div>
@@ -55,11 +65,73 @@
 </template>
 
 <script>
+import {
+  handleClientLoad,
+  handleAuthClick,
+  signedIn,
+  gapiLoaded,
+  user,
+  handleSignoutClick
+} from "@/assets/googleCalendar.js";
+
 export default {
   name: "Settings",
   data: () => ({
     tab: [],
-    tabs: 2
-  })
+    tabs: 2,
+    signInDescription: "Connecting...",
+    signInState: 0
+  }),
+  computed: {
+    darkDesign: {
+      set(val) {
+        this.$vuetify.theme.dark = val;
+        localStorage.setItem("darktheme", val);
+      },
+      get() {
+        return this.$vuetify.theme.dark;
+      }
+    }
+  },
+  methods: {
+    calendarSignIn() {
+      handleAuthClick(this.onSignIn, this.onSignOut);
+    },
+    updateSignInDescription() {
+      if (signedIn)
+        this.signInDescription =
+          "Signed in (" +
+          (user && user.getBasicProfile
+            ? user.getBasicProfile().getEmail()
+            : "Unknown email") +
+          ")";
+      else this.signInDescription = "Not signed in";
+    },
+    onSignIn() {
+      this.signInState = 1;
+      this.updateSignInDescription();
+      setTimeout(this.updateSignInDescription, 1000);
+    },
+    onSignOut() {
+      this.signInState = 2;
+      this.signInDescription = "Not signed in";
+    },
+    calendarSignOut() {
+      handleSignoutClick(this.onSignOut);
+      this.signInState = 2;
+    }
+  },
+  created() {
+    if (!gapiLoaded) {
+      const gapiscript = document.createElement("script");
+      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
+      window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);
+      document.body.appendChild(gapiscript);
+    }
+  },
+  mounted() {
+    this.signInState = signedIn ? 1 : 2;
+    this.updateSignInDescription();
+  }
 };
 </script>

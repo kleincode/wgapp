@@ -13,10 +13,13 @@ var DISCOVERY_DOCS = [
 // included, separated by spaces.
 var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 
+var GoogleAuth;
+
 var signedIn = false;
 var gapiLoaded = false;
 var onSignedIn = null,
   onNotSignedIn = null;
+var user = null;
 
 /**
  *  On load, called to load the auth2 library and API client library.
@@ -42,11 +45,14 @@ function initClient() {
     })
     .then(
       function() {
+        GoogleAuth = gapi.auth2.getAuthInstance();
         // Listen for sign-in state changes.
-        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+        GoogleAuth.isSignedIn.listen(updateSigninStatus);
+
+        user = GoogleAuth.currentUser.get();
 
         // Handle the initial sign-in state.
-        updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        updateSigninStatus(GoogleAuth.isSignedIn.get());
       },
       function(error) {
         console.error(JSON.stringify(error, null, 2));
@@ -59,8 +65,9 @@ function initClient() {
  *  appropriately. After a sign-in, the API is called.
  */
 function updateSigninStatus(isSignedIn) {
+  console.log(isSignedIn);
+  signedIn = isSignedIn;
   if (isSignedIn) {
-    signedIn = true;
     if (onSignedIn) onSignedIn();
   } else if (onNotSignedIn) onNotSignedIn();
 }
@@ -68,7 +75,9 @@ function updateSigninStatus(isSignedIn) {
 /**
  *  Sign in the user upon button click.
  */
-function handleAuthClick() {
+function handleAuthClick(signedInCallback, notSignedInCallback) {
+  onSignedIn = signedInCallback;
+  onNotSignedIn = notSignedInCallback;
   console.log("Logging in");
   gapi.auth2.getAuthInstance().signIn();
 }
@@ -76,7 +85,8 @@ function handleAuthClick() {
 /**
  *  Sign out the user upon button click.
  */
-function handleSignoutClick() {
+function handleSignoutClick(notSignedInCallback) {
+  onNotSignedIn = notSignedInCallback;
   console.log("Sign out");
   gapi.auth2.getAuthInstance().signOut();
 }
@@ -127,5 +137,6 @@ export {
   handleClientLoad,
   listCalendars,
   signedIn,
-  gapiLoaded
+  gapiLoaded,
+  user
 };

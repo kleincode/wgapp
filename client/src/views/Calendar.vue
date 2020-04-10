@@ -1,7 +1,6 @@
 <template>
   <v-container fluid>
     <h1 class="display-2 pb-6">Calendar</h1>
-    <v-btn @click="signIn">sign in</v-btn>
 
     <v-select
       v-model="choosenCalendars"
@@ -82,7 +81,7 @@
             @click:more="viewDay"
             @click:date="viewDay"
             @change="updateRange"
-            :disabled="!gapiSignedIn"
+            v-show="gapiSignedIn"
           ></v-calendar>
           <v-menu
             v-model="selectedOpen"
@@ -107,7 +106,6 @@
 <script>
 import {
   handleClientLoad,
-  handleAuthClick,
   listUpcomingEvents,
   listCalendars,
   signedIn,
@@ -188,24 +186,18 @@ export default {
       document.body.appendChild(gapiscript);
     }
   },
-
   async mounted() {
     this.gapiSignedIn = false;
-    this.gapiNotSignedIn = !signedIn;
+    this.gapiNotSignedIn = false;
     if (signedIn) {
       await this.updateG();
       this.$refs.calendar.checkChange();
     }
   },
   methods: {
-    //Google Handling
-    signIn() {
-      handleAuthClick();
-    },
     signInFailed() {
       this.gapiSignedIn = false;
       this.gapiNotSignedIn = true;
-      alert("Not signed in!");
     },
     async updateG() {
       this.gapiSignedIn = true;
