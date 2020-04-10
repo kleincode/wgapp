@@ -1,9 +1,12 @@
 <template>
   <v-container>
     <h1 class="display-2 pl-12 pb-6">Finances</h1>
-    <v-row>
+    <v-row fluid>
       <v-col cols="12" md="6" lg="4">
         <v-card>
+          <v-card-title>
+            Member Expenses
+          </v-card-title>
           <v-list three-line avatar>
             <v-subheader>Members</v-subheader>
             <v-list-item-group
@@ -75,6 +78,124 @@
           </v-data-table>
         </v-card>
       </v-col>
+      <v-col cols="12" md="6" lg="4">
+        <v-card>
+          <v-card-title>
+            Monthly charges
+            <v-spacer></v-spacer>
+            <v-btn icon color="primary"><v-icon>edit</v-icon></v-btn>
+          </v-card-title>
+          <v-container>
+            <v-list>
+              <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
+                <v-list-item-icon>
+                  <v-icon>{{ charge.icon }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>{{ charge.name }}</v-list-item-title>
+                  <v-list-item-subtitle
+                    >payed by: {{ getUserName(charge.responsibleUser) }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-icon
+                  >{{ charge.amount }}{{ charge.currency }}</v-list-item-icon
+                >
+              </v-list-item>
+            </v-list>
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="8">
+        <v-card>
+          <v-card-title>
+            Shared Expenses: March 2020
+            <v-spacer></v-spacer>
+            <v-dialog v-model="editBudgetDialog" max-width="600px">
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on" color="primary"
+                  ><v-icon>edit</v-icon></v-btn
+                >
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Edit monthly budget</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field
+                    label="Amount"
+                    v-model="tempTotalMonthlyBudget"
+                    outlined
+                    append-icon="euro"
+                  ></v-text-field>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="primary" outlined @click="saveMonthlyBudget"
+                      >ok</v-btn
+                    >
+                    <v-btn @click="editBudgetDialog = false">cancel</v-btn>
+                  </v-card-actions>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </v-card-title>
+          <v-container>
+            <v-row justify="center">
+              <v-col
+                cols="12"
+                md="4"
+                :class="
+                  usedThisMonth > totalMonthlyBudget && budgetMode
+                    ? 'red--text'
+                    : ''
+                "
+              >
+                <div class="text-center">
+                  <div class="overline">used</div>
+                  <div class="display-1">{{ usedThisMonth }} €</div>
+                </div>
+              </v-col>
+              <v-col
+                cols="1"
+                v-if="budgetMode"
+                class="text-center d-sm-none d-md-flex"
+                ><v-divider vertical></v-divider
+              ></v-col>
+              <v-col cols="12" md="4" v-if="budgetMode">
+                <div class="text-center">
+                  <div class="overline">total</div>
+                  <div class="display-1">{{ totalMonthlyBudget }} €</div>
+                </div>
+              </v-col>
+            </v-row>
+            <v-list-item>
+              <v-list-item-avatar size="48" color="teal" left>
+                <span class="white--text headline">
+                  <v-icon xLarge>home</v-icon>
+                </span>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Monthly charges
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon>{{ usedMonthlyBudget }}€</v-list-item-icon>
+            </v-list-item>
+            <v-list-item v-for="(expense, i) in sharedExpenses" :key="i">
+              <v-list-item-avatar size="48" color="teal" left>
+                <span class="white--text headline">
+                  {{ getUserInitials(expense.id) }}
+                </span>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>{{
+                  getUserName(expense.id)
+                }}</v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon>{{ expense.amount }}€</v-list-item-icon>
+            </v-list-item>
+          </v-container>
+        </v-card>
+      </v-col>
     </v-row>
     <confirm-dialog
       v-model="deleteDialogVisible"
@@ -118,20 +239,7 @@ export default {
     },
     tableTotalItems: 2,
     tableLoading: null,
-    expenses: [
-      {
-        description: "Tiefkühlpizzaaa!",
-        member: "Felix Kleinsteuber",
-        date: 1585475790,
-        amount: 164
-      },
-      {
-        description: "Einkauf",
-        member: "Max Mustermann",
-        date: 1585375790,
-        amount: 2354
-      }
-    ],
+    expenses: [],
     editExpense: {
       description: "",
       amount: 0
@@ -141,7 +249,38 @@ export default {
     deleteDescription: "",
     deleteDialogLoading: false,
     unixTimestamp: Math.floor(Date.now() / 1000),
-    filterMember: null
+    filterMember: null,
+
+    budgetMode: true,
+    editBudgetDialog: false,
+    monthlyCharges: [
+      {
+        name: "Rental",
+        amount: 300,
+        currency: "€",
+        icon: "home",
+        responsibleUser: 8
+      },
+      {
+        name: "Electricity",
+        amount: 50,
+        currency: "€",
+        icon: "flash_on",
+        responsibleUser: 8
+      }
+    ],
+    totalMonthlyBudget: 300,
+    tempTotalMonthlyBudget: 300,
+    sharedExpenses: [
+      {
+        amount: 400,
+        id: 8
+      },
+      {
+        amount: 200,
+        id: 13
+      }
+    ]
   }),
   computed: {
     memberTotalFunction() {
@@ -155,6 +294,16 @@ export default {
           (100 * Math.pow(min, 2) - 20 * min * max + 10 * Math.pow(max, 2)) /
           msq;
       return total => a * Math.pow(total, 2) + b * total + c;
+    },
+    usedMonthlyBudget() {
+      let sum = 0;
+      this.monthlyCharges.forEach(charge => (sum += charge.amount));
+      return sum;
+    },
+    usedThisMonth() {
+      let sum = 0;
+      this.sharedExpenses.forEach(expense => (sum += expense.amount));
+      return this.usedMonthlyBudget + sum;
     },
     ...mapGetters(["getUserName", "getUserInitials"])
   },
@@ -232,6 +381,12 @@ export default {
         console.error(err);
       }
     },
+
+    saveMonthlyBudget() {
+      this.totalMonthlyBudget = this.tempTotalMonthlyBudget;
+      this.editBudgetDialog = false;
+    },
+
     renderDate(itemTimestamp) {
       let seconds = this.unixTimestamp - itemTimestamp;
       let sign = seconds < 0;
