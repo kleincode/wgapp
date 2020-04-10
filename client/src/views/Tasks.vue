@@ -252,6 +252,10 @@ export default {
           this.sortTasks();
         }
       } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while fetching data. Please try again later."
+        );
         console.error(err);
       }
     },
@@ -307,7 +311,7 @@ export default {
       }
       lastDueDay.setDate(lastDueDay.getDate() + (max - lastDueDay.getDay()));
 
-      lastDueDay.setHours(0, 0, 0, 1);
+      lastDueDay.setHours(0, 0, 0, 0);
       let endLastDueDay = new Date(lastDueDay);
       endLastDueDay.setHours(23, 59, 59, 0);
       if (lastExecution < lastDueDay) {
@@ -513,6 +517,10 @@ export default {
         assignedMember
       });
       if (data.success == false) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while checking task. Please try again later."
+        );
         console.error(data.message);
       }
       await this.fetchTasks();

@@ -231,7 +231,8 @@ export default {
       });
       if (data.success) {
         if (data.data.length == 0 || data.data.length > 1) {
-          console.error(
+          this.$store.dispatch(
+            "showSnackbar",
             "Error while fetching tasks. Multiple or no task received."
           );
         }
@@ -291,36 +292,65 @@ export default {
         this.snackbar = true;
         return;
       }
-
-      if (this.editMode) {
-        await this.$http.post("/_/edittask", {
-          id,
-          name,
-          icon,
-          iteratingMode,
-          assignedMember,
-          repetitionDays,
-          time,
-          repetitionEvery,
-          repetitionUnit,
-          reminder,
-          startDate
-        });
-      } else {
-        let date = startDate;
-        const { data } = await this.$http.post("/_/addtask", {
-          name,
-          icon,
-          iteratingMode,
-          assignedMember,
-          repetitionDays,
-          repetitionEvery,
-          repetitionUnit,
-          reminder,
-          date,
-          time
-        });
-        console.log(data);
+      try {
+        if (this.editMode) {
+          const { data } = await this.$http.post("/_/edittask", {
+            id,
+            name,
+            icon,
+            iteratingMode,
+            assignedMember,
+            repetitionDays,
+            time,
+            repetitionEvery,
+            repetitionUnit,
+            reminder,
+            startDate
+          });
+          if (data.success) {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Successfully edited the task."
+            );
+          } else {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Error while editing the task."
+            );
+          }
+        } else {
+          let date = startDate;
+          const { data } = await this.$http.post("/_/addtask", {
+            name,
+            icon,
+            iteratingMode,
+            assignedMember,
+            repetitionDays,
+            repetitionEvery,
+            repetitionUnit,
+            reminder,
+            date,
+            time
+          });
+          if (data.success) {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Successfully added the new task."
+            );
+          } else {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Error while adding the new task."
+            );
+            console.error(data);
+          }
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while connecting to the server. Please try again later."
+        );
+        console.log(err);
       }
       this.$router.push({ name: "Tasks" });
     },
@@ -336,12 +366,25 @@ export default {
       this.selectedIcon = this.icon;
       console.log("old Icon " + this.selectedIcon);
     },
-    deleteTask() {
+    async deleteTask() {
       this.deleteDialog = false;
       let id = this.id;
-      this.$http.post("/_/deletetask", {
-        id
-      });
+      try {
+        const { data } = await this.$http.post("/_/deletetask", {
+          id
+        });
+        if (data.success) {
+          this.$store.dispatch("showSnackbar", "Deleted task.");
+        } else {
+          this.$store.dispatch("showSnackbar", "Error while deleting task.");
+          console.error(data);
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while connecting to the server. Please try again later."
+        );
+      }
       this.$router.push({ name: "Tasks" });
     },
 

@@ -15,18 +15,11 @@ module.exports = ({ db }) => ({
   },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const hid = Helpers.fetchHouseholdID(db, uid);
-      const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ?", [uid, hid]);
-      if (results[0].c < 1) {
-        fail("You do not have permission to perform this operation.");
-        return;
-      }
-
-      //Permissions granted; perform update
+      const hid = await Helpers.fetchHouseholdID(db, uid);
       try {
         await db.query(
-          "DELETE FROM tasks WHERE id = ?",
-          [body.id]
+          "DELETE FROM tasks WHERE id = ? AND hid = ?",
+          [body.id, hid]
         );
         success("Task updated successfully.");
       } catch (err) {

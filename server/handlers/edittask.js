@@ -56,7 +56,7 @@ module.exports = ({ db }) => ({
   handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
       const assignedUid = body.assignedMember || uid, // assign to sending user by default
-        requestHid = Helpers.fetchHouseholdID(db, uid),
+        requestHid = await Helpers.fetchHouseholdID(db, uid),
         assignedHid = uid == assignedUid ? requestHid : Helpers.fetchHouseholdID(db, assignedUid);
       
       if(assignedHid != requestHid) {
