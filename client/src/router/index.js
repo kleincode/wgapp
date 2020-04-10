@@ -32,13 +32,13 @@ const routes = [
     path: "/tasks/edit/:id",
     name: "EditTask",
     component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "edittask" */ "../views/task/EditTask.vue")
   },
   {
     path: "/tasks/add",
     name: "AddTask",
     component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "addtask" */ "../views/task/EditTask.vue")
   },
   {
     path: "/settings",
@@ -52,11 +52,19 @@ const routes = [
     component: Login
   },
   {
-    path: "/household/add",
-    name: "Add Household",
+    path: "/household",
+    name: "Manage Household",
     component: () =>
       import(
-        /* webpackChunkName: "addhousehold" */ "../views/household/AddHousehold.vue"
+        /* webpackChunkName: "managehousehold" */ "../views/household/ManageHousehold.vue"
+      )
+  },
+  {
+    path: "/household/join",
+    name: "Join Household",
+    component: () =>
+      import(
+        /* webpackChunkName: "addhousehold" */ "../views/household/JoinHousehold.vue"
       )
   },
   {

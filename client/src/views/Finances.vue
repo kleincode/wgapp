@@ -1,11 +1,10 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <h1 class="display-2 pl-12 pb-6">Finances</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4">
         <v-card>
           <v-list three-line avatar>
-            <!-- TODO: enable member filtering -->
             <v-subheader>Members</v-subheader>
             <v-list-item-group
               color="primary"
