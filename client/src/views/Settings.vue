@@ -21,8 +21,47 @@
               <div class="display-1">General</div>
               <v-switch v-model="darkDesign" label="Dark design"></v-switch>
               <v-divider class="mt-8 mb-8"></v-divider>
+
+              <div class="display-1 mb-2">Dashboard</div>
+              <!-- CLOCK WIDGET -->
+              <div class="title pt-2">Clock Widget</div>
+              <p>
+                Old, but gold.
+              </p>
+              <v-switch
+                v-model="clockWidgetEnabled"
+                label="Enable clock widget"
+              ></v-switch>
+              <!-- WEATHER WIDGET -->
+              <div class="title pt-2">Weather Widget</div>
+              <p>
+                The weather widget provides current weather data using the free
+                <a href="https://openweathermap.org/" target="_blank"
+                  >Open Weather Map</a
+                >
+                API.
+              </p>
+              <v-switch
+                v-model="weatherWidgetEnabled"
+                label="Enable weather widget"
+              ></v-switch>
+              <!-- TASKS WIDGET -->
+              <div class="title pt-2">Tasks Widget</div>
+              <p>
+                This widget makes sure things are getting done in your home. No
+                one ever dared to question its authority. (It might be useless
+                at the moment, but the authority is already implemented.)
+              </p>
+              <v-switch
+                v-model="tasksWidgetEnabled"
+                label="Enable tasks widget"
+              ></v-switch>
+
+              <v-divider class="mt-8 mb-8"></v-divider>
+
               <div class="display-1 mb-2">Integrations</div>
-              <div class="title pt-2">Google Calendar</div>
+              <!-- CALENDAR -->
+              <div class="title pt-2">Calendar</div>
               <p>
                 You can add your Google Calendar to view all your events in the
                 'Calendar'-Tab. The next events will also be displayed in the
@@ -54,13 +93,10 @@
                   {{ signInDescription }}
                 </div>
               </div>
+              <!-- PHILIPS HUE -->
               <div class="title pt-6">Philipps Hue</div>
               You can add your Philipps Hue Account to control your smart home
               devices.
-
-              <v-divider class="mt-8 mb-8"></v-divider>
-
-              <div class="display-1 mb-2">Household</div>
             </div>
           </v-card-text>
         </v-card>
@@ -97,7 +133,10 @@ export default {
   computed: {
     darkDesign: {
       set(val) {
-        this.$store.commit("userSettings/set_dark_mode", val);
+        this.$store.commit("userSettings/set_key", {
+          key: "darkMode",
+          value: val
+        });
         this.$vuetify.theme.dark = val;
       },
       get() {
@@ -106,10 +145,46 @@ export default {
     },
     calendarEnabled: {
       set(val) {
-        this.$store.commit("userSettings/set_calendar_enabled", val);
+        this.$store.commit("userSettings/set_key", {
+          key: "calendarEnabled",
+          value: val
+        });
       },
       get() {
         return this.$store.state.userSettings.calendarEnabled;
+      }
+    },
+    weatherWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "weatherWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.weatherWidgetEnabled;
+      }
+    },
+    clockWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "clockWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.clockWidgetEnabled;
+      }
+    },
+    tasksWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "tasksWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.tasksWidgetEnabled;
       }
     }
   },
