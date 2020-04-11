@@ -1,7 +1,11 @@
 <template>
   <v-container fluid>
     <h1 class="display-2 pb-6">Settings</h1>
-    <v-tabs v-model="tab" class="elevation-2" vertical>
+    <v-tabs
+      v-model="tab"
+      class="elevation-2"
+      :vertical="$vuetify.breakpoint.mdAndUp"
+    >
       <v-tabs-slider></v-tabs-slider>
 
       <v-tab href="#tab-user">
@@ -24,7 +28,9 @@
                 'Calendar'-Tab. The next events will also be displayed in the
                 Dashboard.
               </p>
-              <div style="display: flex">
+              <div
+                :style="{ display: $vuetify.breakpoint.mdAndUp ? 'flex' : '' }"
+              >
                 <v-btn
                   @click="calendarSignIn"
                   v-if="signInState == 2"
@@ -37,7 +43,7 @@
                   color="red"
                   >Sign out</v-btn
                 >
-                <div class="pl-4">
+                <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
                   <div class="overline">Status:</div>
                   {{ signInDescription }}
                 </div>

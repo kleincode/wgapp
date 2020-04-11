@@ -14,7 +14,8 @@
       v-show="!gapiNotSignedIn"
     ></v-select>
     <v-alert type="warning" v-if="gapiNotSignedIn">
-      Please refer to the settings to activate this feature.
+      Please refer to the <a :to="{ name: 'Settings' }">settings</a> to activate
+      this feature.
     </v-alert>
 
     <v-btn icon @click="updateG" :disabled="!gapiSignedIn"
@@ -26,12 +27,15 @@
         <v-sheet height="64">
           <v-toolbar flat>
             <v-btn
-              outlined
-              class="mr-4"
+              text
+              :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
               @click="setToday"
               :disabled="!gapiSignedIn"
+              color="primary"
+              :icon="$vuetify.breakpoint.smAndDown"
             >
-              Today
+              <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
+              {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
             </v-btn>
             <v-btn fab text small @click="prev">
               <v-icon small>mdi-chevron-left</v-icon>
@@ -39,13 +43,25 @@
             <v-btn fab text small @click="next">
               <v-icon small>mdi-chevron-right</v-icon>
             </v-btn>
-            <v-toolbar-title>{{ title }}</v-toolbar-title>
+            <v-toolbar-title
+              :class="$vuetify.breakpoint.smAndDown ? '' : 'ml-4'"
+              >{{ title }}</v-toolbar-title
+            >
             <v-spacer></v-spacer>
             <v-menu bottom right>
               <template v-slot:activator="{ on }">
                 <div v-on="on">
-                  <v-btn outlined :disabled="!gapiSignedIn">
-                    <span>{{ typeToLabel[type] }}</span>
+                  <v-btn
+                    text
+                    :disabled="!gapiSignedIn"
+                    :class="$vuetify.breakpoint.smAndDown ? 'pa-0' : ''"
+                  >
+                    <span v-if="!$vuetify.breakpoint.smAndDown">{{
+                      typeToLabel[type]
+                    }}</span>
+                    <v-icon v-if="$vuetify.breakpoint.smAndDown">{{
+                      typeToIcon[type]
+                    }}</v-icon>
                     <v-icon right>mdi-menu-down</v-icon>
                   </v-btn>
                 </div>
@@ -122,6 +138,12 @@ export default {
       week: "Week",
       day: "Day",
       "4day": "4 Days"
+    },
+    typeToIcon: {
+      month: "view_module",
+      week: "view_week",
+      day: "view_day",
+      "4day": "looks_4"
     },
     start: null,
     end: null,
