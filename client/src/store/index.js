@@ -2,6 +2,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
 
+import UserSettingsModule from "./userSettings.module";
+
 Vue.use(Vuex);
 
 let store = new Vuex.Store({
@@ -129,6 +131,9 @@ let store = new Vuex.Store({
       });
       return users;
     }
+  },
+  modules: {
+    userSettings: UserSettingsModule
   }
 });
 

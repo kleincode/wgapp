@@ -28,6 +28,13 @@ export default {
     date: "-",
     clockIntervalID: -1
   }),
+  mounted() {
+    this.tick();
+    this.clockIntervalID = setInterval(() => this.tick(), 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.clockIntervalID);
+  },
   methods: {
     tick() {
       let time = new Date();
@@ -47,13 +54,6 @@ export default {
         "" +
         time.getFullYear();
     }
-  },
-  mounted() {
-    this.tick();
-    this.clockIntervalID = setInterval(() => this.tick(), 1000);
-  },
-  beforeDestroy() {
-    clearInterval(this.clockIntervalID);
   }
 };
 </script>

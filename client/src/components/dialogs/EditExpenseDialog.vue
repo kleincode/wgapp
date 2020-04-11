@@ -5,7 +5,7 @@
         >New expense</v-btn
       >
     </template>
-    <v-form v-model="formValid" @submit.prevent="save" ref="form">
+    <v-form ref="form" v-model="formValid" @submit.prevent="save">
       <v-card :loading="loading">
         <v-card-title>
           <span class="headline">{{
@@ -18,27 +18,27 @@
             <v-row>
               <v-col cols="12" sm="6" lg="8">
                 <v-text-field
+                  ref="description"
                   v-model="value.description"
                   label="Description"
-                  ref="description"
                   outlined
-                  @input="updateValue()"
                   counter="160"
                   maxlength="160"
                   :rules="descriptionRules"
+                  @input="updateValue()"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" lg="4">
                 <v-text-field
+                  ref="amount"
                   v-model="value.amount"
                   label="Amount"
-                  ref="amount"
                   outlined
                   type="number"
                   step=".01"
                   prefix="€"
-                  @input="updateValue()"
                   :rules="amountRules"
+                  @input="updateValue()"
                 ></v-text-field>
               </v-col>
             </v-row>

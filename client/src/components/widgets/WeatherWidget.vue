@@ -19,6 +19,13 @@ export default {
     lastUpdate: "Never",
     condition: "..."
   }),
+  mounted() {
+    this.update();
+    this.clockIntervalID = setInterval(() => this.update(), 5 * 60 * 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.clockIntervalID);
+  },
   methods: {
     update() {
       fetch(
@@ -39,13 +46,6 @@ export default {
             ("0" + time.getMinutes()).slice(-2);
         });
     }
-  },
-  mounted() {
-    this.update();
-    this.clockIntervalID = setInterval(() => this.update(), 5 * 60 * 1000);
-  },
-  beforeDestroy() {
-    clearInterval(this.clockIntervalID);
   }
 };
 </script>
