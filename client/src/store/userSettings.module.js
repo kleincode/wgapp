@@ -1,42 +1,49 @@
 import { userSettings } from "./LocalAppStore";
 
+// Specify all values to sync with persistent store and their default values
+const syncEntries = {
+  darkMode: true,
+  calendarEnabled: false,
+  weatherWidgetEnabled: true,
+  clockWidgetEnabled: true,
+  tasksWidgetEnabled: true
+};
+
 const vuexModule = {
   namespaced: true,
   state: () => ({
+    // These values are set for the short period of time before the persistent settings are fetched
     _initialized: false,
     darkMode: true,
-    calendarEnabled: false
+    calendarEnabled: false,
+    weatherWidgetEnabled: false,
+    clockWidgetEnabled: false,
+    tasksWidgetEnabled: false
   }),
   mutations: {
     // (state, arg)
     set_initialized(state, value) {
       state._initialized = value;
     },
-    set_dark_mode(state, value) {
-      //Don't forget to update the dark mode in any Vue component!
-      state.darkMode = value;
-      userSettings.put({ key: "darkMode", value });
-    },
-    set_calendar_enabled(state, value) {
-      state.calendarEnabled = value;
-      userSettings.put({ key: "calendarEnabled", value });
+    set_key(state, { key, value }) {
+      state[key] = value;
+      userSettings.put({ key, value });
     }
   },
   actions: {
     // ({ state, commit, dispatch, getters, rootState, rootGetters })
     sync({ state, commit }) {
       if (state._initialized) return Promise.resolve();
-      return Promise.all([
-        userSettings.get("darkMode").then(obj => {
-          commit("set_dark_mode", obj && "value" in obj ? obj.value : true);
-        }),
-        userSettings.get("calendarEnabled").then(obj => {
-          commit(
-            "set_calendar_enabled",
-            obj && "value" in obj ? obj.value : false
-          );
-        })
-      ]).then(() => commit("set_initialized", true));
+      return Promise.all(
+        Object.entries(syncEntries).map(([key, defaultValue]) =>
+          userSettings.get(key).then(obj => {
+            commit("set_key", {
+              key,
+              value: obj && "value" in obj ? obj.value : defaultValue
+            });
+          })
+        )
+      ).then(() => commit("set_initialized", true));
     }
   },
   getters: {} // (state, getters, rootState, rootGetters)
