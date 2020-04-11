@@ -7,13 +7,18 @@
     </template>
 
     <v-card>
-      <v-card-title class="headline" primary-title>
-        Bill Manager - last bill:
+      <v-card-title>
+        <div class="headline">Bill Manager</div>
+        <v-spacer></v-spacer>
+        <div class="caption mr-2 mt-1">last bill:</div>
         {{ lastBill }}
       </v-card-title>
 
       <v-card-text>
-        <v-row>
+        <p v-if="empty" class="text-center headline pt-12 pb-12">
+          No new expenses available
+        </p>
+        <v-row v-if="!empty">
           <v-col cols="12" md="4">
             <v-list three-line avatar>
               <v-subheader>Members</v-subheader>
@@ -54,7 +59,7 @@
               </v-col>
             </v-row>
             <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
-            <v-simple-table>
+            <v-simple-table :loading="loading">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -80,7 +85,10 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="dialog = false">
+        <v-btn color="primary" text @click="finishPayments">
+          Finish payments
+        </v-btn>
+        <v-btn text @click="dialog = false">
           Close
         </v-btn>
       </v-card-actions>
@@ -91,17 +99,16 @@
 import { mapGetters } from "vuex";
 export default {
   data: () => ({
-    dialog: true,
+    dialog: false,
     memberTotals: [],
     memberMap: {},
     total: 0,
     mean: 0,
     lastBill: "",
-    debts: []
+    debts: [],
+    empty: true,
+    loading: false
   }),
-  mounted() {
-    this.fetchNewBill();
-  },
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"]),
     memberTotalFunction() {
@@ -119,10 +126,19 @@ export default {
   },
   methods: {
     async fetchNewBill() {
+      console.log("updating");
+      this.dialog = true;
+      this.loading = true;
       const { data } = await this.$http.get("/_/fetchnewbill");
       if (data.success) {
         this.memberTotals = [];
         this.memberMap = {};
+        this.lastBill = this.renderDate(new Date(data.lastBill).getTime());
+        if (data.mainResult.length == 0) {
+          this.empty = true;
+          return;
+        }
+        this.empty = false;
         data.mainResult.forEach(entry => {
           this.memberTotals.push({
             id: entry.uid,
@@ -132,13 +148,27 @@ export default {
         });
         this.memberTotals.sort((a, b) => b.total - a.total);
         this.debts = this.splitTotals(this.memberMap);
-        this.lastBill = this.renderDate(new Date(data.lastBill).getTime());
       } else {
         this.$store.dispatch(
           "showSnackbar",
           "Error while fetching Bill Manager data. Please try again later."
         );
+        this.dialog = false;
       }
+      this.loading = false;
+    },
+
+    async finishPayments() {
+      const { data } = await this.$http.post("/_/updatelastbill");
+      if (data.success) {
+        this.$store.dispatch("showSnackbar", "Successfully updated last bill.");
+      } else {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while updating last bill time. Please try again later."
+        );
+      }
+      this.dialog = false;
     },
 
     splitTotals(totals) {
@@ -184,7 +214,11 @@ export default {
       return debts;
     },
     renderDate(itemTimestamp) {
-      let curTimestamp = new Date().getTime();
+      if (itemTimestamp == 0) {
+        return "no last bill";
+      }
+      itemTimestamp = itemTimestamp / 1000;
+      let curTimestamp = new Date().getTime() / 1000;
       let seconds = curTimestamp - itemTimestamp;
       let sign = seconds < 0;
       seconds = Math.abs(seconds);
@@ -208,13 +242,33 @@ export default {
           }
         }
       } else if (seconds > 60 * 60 * 24 * 7) {
-        val = Math.floor(seconds / (60 * 60 * 24 * 7)) + " weeks";
+        let count = Math.floor(seconds / (60 * 60 * 24 * 7));
+        if (count == 1) {
+          val = count + " week";
+        } else {
+          val = count + " weeks";
+        }
       } else if (seconds > 60 * 60 * 24) {
-        val = Math.floor(seconds / (60 * 60 * 24)) + " days";
+        let count = Math.floor(seconds / (60 * 60 * 24));
+        if (count == 1) {
+          val = count + " day";
+        } else {
+          val = count + " days";
+        }
       } else if (seconds > 60 * 60) {
-        val = Math.floor(seconds / (60 * 60)) + " hours";
+        let count = Math.floor(seconds / (60 * 60));
+        if (count == 1) {
+          val = count + " hour";
+        } else {
+          val = count + " hours";
+        }
       } else {
-        val = Math.floor(seconds / 60) + " minutes";
+        let count = Math.floor(seconds / 60);
+        if (count == 1) {
+          val = count + " minute";
+        } else {
+          val = count + " minutes";
+        }
       }
       if (sign) return "in " + val;
       else return val + " ago";

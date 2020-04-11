@@ -9,15 +9,7 @@ module.exports = ({ db }) => ({
     if (hid) {
       try {
         const { results } = await db.query("SELECT lastBill FROM compensationpayments WHERE hid = ?", [hid]);
-        let mainQuery = "SELECT uid, SUM(amount) AS 'amount' FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > UNIX_TIMESTAMP(?) GROUP BY uid";
-        if (results.length == 0) {
-          //no bill made yet => select all
-          const { results:mainResult } = await db.query(mainQuery, [hid, 0]);
-          success({message: "Member totals all time.", mainResult, lastBill: 0});
-        } else {
-          const { results:mainResult } = await db.query(mainQuery, [hid, results[0].lastBill]);
-          success({message: "Member totals since last bill received.", mainResult, lastBill: results[0].lastBill});
-        }
+        success({message: "Received last result.", results});
       } catch(err) {
         error("Error while fetching finances from database", err);
       }

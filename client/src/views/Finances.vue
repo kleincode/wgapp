@@ -248,7 +248,7 @@
               <span class="overline" style="font-size: 1em !important">
                 last Billing
               </span>
-              <h1 class="display-1">01.04.2020</h1>
+              <h1 class="display-1">{{ lastBill }}</h1>
             </div>
           </v-card-text>
           <v-card-actions> <BillManager></BillManager></v-card-actions>
@@ -353,7 +353,8 @@ export default {
       { text: "current year", value: 2 }
     ],
     choosenTimeSpan: 0,
-    trendValues: [0, 2, 5, 9, 9, 10, 13, 14, 18, 19, 19, 21, 25, 26, 26]
+    lastBill: "",
+    trendValues: []
   }),
   computed: {
     memberTotalFunction() {
@@ -538,6 +539,21 @@ export default {
       }
     },
 
+    async fetchLastBilling() {
+      const { data } = await this.$http.get("/_/fetchlastbill");
+      if (data.success) {
+        if (data.results.length == 0) {
+          this.lastBill = "----";
+        } else {
+          this.lastBill = this.renderDate(
+            new Date(data.results[0].lastBill).getTime() / 1000
+          );
+        }
+      } else {
+        console.error("Error during fetching last bill");
+      }
+    },
+
     renderDate(itemTimestamp) {
       let seconds = this.unixTimestamp - itemTimestamp;
       let sign = seconds < 0;
@@ -562,13 +578,33 @@ export default {
           }
         }
       } else if (seconds > 60 * 60 * 24 * 7) {
-        val = Math.floor(seconds / (60 * 60 * 24 * 7)) + " weeks";
+        let count = Math.floor(seconds / (60 * 60 * 24 * 7));
+        if (count == 1) {
+          val = count + " week";
+        } else {
+          val = count + " weeks";
+        }
       } else if (seconds > 60 * 60 * 24) {
-        val = Math.floor(seconds / (60 * 60 * 24)) + " days";
+        let count = Math.floor(seconds / (60 * 60 * 24));
+        if (count == 1) {
+          val = count + " day";
+        } else {
+          val = count + " days";
+        }
       } else if (seconds > 60 * 60) {
-        val = Math.floor(seconds / (60 * 60)) + " hours";
+        let count = Math.floor(seconds / (60 * 60));
+        if (count == 1) {
+          val = count + " hour";
+        } else {
+          val = count + " hours";
+        }
       } else {
-        val = Math.floor(seconds / 60) + " minutes";
+        let count = Math.floor(seconds / 60);
+        if (count == 1) {
+          val = count + " minute";
+        } else {
+          val = count + " minutes";
+        }
       }
       if (sign) return "in " + val;
       else return val + " ago";
@@ -579,6 +615,7 @@ export default {
   },
   mounted() {
     this.fetchMonthlyData();
+    this.fetchLastBilling();
   },
   watch: {
     tableOptions: {
