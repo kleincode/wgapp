@@ -28,18 +28,24 @@
                 'Calendar'-Tab. The next events will also be displayed in the
                 Dashboard.
               </p>
+              <v-switch
+                v-model="calendarEnabled"
+                label="Enable Google Calendar integration"
+              ></v-switch>
               <div
                 :style="{ display: $vuetify.breakpoint.mdAndUp ? 'flex' : '' }"
               >
                 <v-btn
                   v-if="signInState == 2"
                   color="primary"
+                  :disabled="!calendarEnabled"
                   @click="calendarSignIn"
                   >Sign in</v-btn
                 >
                 <v-btn
                   v-if="signInState == 1"
                   color="red"
+                  :disabled="!calendarEnabled"
                   @click="calendarSignOut"
                   >Sign out</v-btn
                 >
@@ -97,15 +103,23 @@ export default {
       get() {
         return this.$store.state.userSettings.darkMode;
       }
+    },
+    calendarEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_calendar_enabled", val);
+      },
+      get() {
+        return this.$store.state.userSettings.calendarEnabled;
+      }
+    }
+  },
+  watch: {
+    calendarEnabled(val) {
+      if (val && !this.gapiLoaded) this.loadGapi();
     }
   },
   created() {
-    if (!gapiLoaded) {
-      const gapiscript = document.createElement("script");
-      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
-      window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);
-      document.body.appendChild(gapiscript);
-    }
+    if (this.calendarEnabled && !gapiLoaded) this.loadGapi();
   },
   mounted() {
     this.signInState = signedIn ? 1 : 2;
@@ -137,6 +151,14 @@ export default {
     calendarSignOut() {
       handleSignoutClick(this.onSignOut);
       this.signInState = 2;
+    },
+    loadGapi() {
+      this.signInState = 0;
+      this.signInDescription = "Loading Google API...";
+      const gapiscript = document.createElement("script");
+      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
+      window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);
+      document.body.appendChild(gapiscript);
     }
   }
 };

@@ -81,39 +81,7 @@ import { mapState } from "vuex";
 export default {
   name: "App",
   data: () => ({
-    menuVisible: null,
-    menuContents: [
-      {
-        name: "Dashboard",
-        icon: "dashboard",
-        path: "/dashboard"
-      },
-      {
-        name: "Calendar",
-        icon: "event",
-        path: "/calendar"
-      },
-      {
-        name: "Finances",
-        icon: "money",
-        path: "/finances"
-      },
-      {
-        name: "Tasks",
-        icon: "list",
-        path: "/tasks"
-      },
-      {
-        name: "Manage household",
-        icon: "people",
-        path: "/household"
-      },
-      {
-        name: "Settings",
-        icon: "settings",
-        path: "/settings"
-      }
-    ]
+    menuVisible: null
   }),
   computed: {
     snackbarShow: {
@@ -123,6 +91,48 @@ export default {
       set(value) {
         this.$store.commit("update_snackbar", value);
       }
+    },
+    menuContents() {
+      let contents = [
+        {
+          name: "Dashboard",
+          icon: "dashboard",
+          path: "/dashboard"
+        }
+      ];
+      if (this.$store.state.userSettings.calendarEnabled)
+        contents.push({
+          name: "Calendar",
+          icon: "event",
+          path: "/calendar"
+        });
+      contents.push(
+        {
+          name: "Finances",
+          icon: "money",
+          path: "/finances",
+          show: true
+        },
+        {
+          name: "Tasks",
+          icon: "list",
+          path: "/tasks",
+          show: true
+        },
+        {
+          name: "Manage household",
+          icon: "people",
+          path: "/household",
+          show: true
+        },
+        {
+          name: "Settings",
+          icon: "settings",
+          path: "/settings",
+          show: true
+        }
+      );
+      return contents;
     },
     ...mapState([
       "userEmail",

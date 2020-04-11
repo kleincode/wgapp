@@ -13,9 +13,15 @@
       :disabled="!gapiSignedIn"
       @change="updateG"
     ></v-select>
-    <v-alert v-if="gapiNotSignedIn" type="warning">
-      Please refer to the <a :to="{ name: 'Settings' }">settings</a> to activate
+    <v-alert v-if="!calendarEnabled" type="warning">
+      Please refer to the
+      <router-link :to="{ name: 'Settings' }">settings</router-link> to activate
       this feature.
+    </v-alert>
+    <v-alert v-if="gapiNotSignedIn" type="warning">
+      Please refer to the
+      <router-link :to="{ name: 'Settings' }">settings</router-link> to connect
+      to the Google services.
     </v-alert>
 
     <v-btn icon :disabled="!gapiSignedIn" @click="updateG"
@@ -120,6 +126,7 @@
   </v-container>
 </template>
 <script>
+import { mapState } from "vuex";
 import {
   handleClientLoad,
   listUpcomingEvents,
@@ -196,27 +203,34 @@ export default {
     today() {
       let dat = new Date();
       return this.formatDate(dat, false);
+    },
+    ...mapState("userSettings", ["calendarEnabled"])
+  },
+  watch: {
+    calendarEnabled(val) {
+      if (val && !this.gapiLoaded) this.loadGapi();
     }
   },
   created() {
-    if (!gapiLoaded) {
+    if (this.calendarEnabled && !gapiLoaded) this.loadGapi();
+  },
+  async mounted() {
+    this.gapiSignedIn = false;
+    this.gapiNotSignedIn = false;
+    if (this.calendarEnabled && signedIn) {
+      await this.updateG();
+      this.$refs.calendar.checkChange();
+    }
+  },
+  methods: {
+    loadGapi() {
       const gapiscript = document.createElement("script");
       gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
       //on success: updateG, on fail: signInFailed
       window.onGapiload = () =>
         handleClientLoad(this.updateG, this.signInFailed);
       document.body.appendChild(gapiscript);
-    }
-  },
-  async mounted() {
-    this.gapiSignedIn = false;
-    this.gapiNotSignedIn = false;
-    if (signedIn) {
-      await this.updateG();
-      this.$refs.calendar.checkChange();
-    }
-  },
-  methods: {
+    },
     signInFailed() {
       this.gapiSignedIn = false;
       this.gapiNotSignedIn = true;
