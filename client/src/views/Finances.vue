@@ -249,12 +249,9 @@
                 last Billing
               </span>
               <h1 class="display-1">01.04.2020</h1>
-              <v-btn text>view bill</v-btn>
             </div>
           </v-card-text>
-          <v-card-actions
-            ><v-btn color="primary" block>New Bill</v-btn></v-card-actions
-          >
+          <v-card-actions> <BillManager></BillManager></v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
@@ -296,13 +293,15 @@ import icons from "@/assets/icons.js";
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+import BillManager from "@/components/dialogs/BillManager.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
     ConfirmDialog,
-    EditMonthlyChargesDialog
+    EditMonthlyChargesDialog,
+    BillManager
   },
   data: () => ({
     memberTotals: [],
@@ -390,7 +389,6 @@ export default {
       this.loadData()
         .then(res => {
           if (res.success) {
-            console.log(res);
             this.unixTimestamp = Math.floor(Date.now() / 1000);
             this.expenses = res.data;
             this.tableTotalItems = res.totalCount;
@@ -557,10 +555,13 @@ export default {
         if (diffMonths > 12) {
           val = Math.floor(diffMonths / 12) + " years";
         } else {
-          val = diffMonths + " months";
+          if (diffMonths == 1) {
+            val = diffMonths + " month";
+          } else {
+            val = diffMonths + " months";
+          }
         }
-      }
-      if (seconds > 60 * 60 * 24 * 7) {
+      } else if (seconds > 60 * 60 * 24 * 7) {
         val = Math.floor(seconds / (60 * 60 * 24 * 7)) + " weeks";
       } else if (seconds > 60 * 60 * 24) {
         val = Math.floor(seconds / (60 * 60 * 24)) + " days";
