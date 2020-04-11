@@ -20,18 +20,18 @@
                   Please insert valid household credentials or use a share link
                   to fill them in automatically.
                 </p>
-                <v-form @submit.prevent="step1Submit" ref="form" class="mt-2">
+                <v-form ref="form" class="mt-2" @submit.prevent="step1Submit">
                   <v-text-field
-                    label="Household ID"
                     v-model="householdId"
+                    label="Household ID"
                     prepend-icon="home"
                     type="text"
                     outlined
                     :rules="validating ? householdIdRules : []"
                   />
                   <v-text-field
-                    label="Security code"
                     v-model="securityCode"
+                    label="Security code"
                     prepend-icon="vpn_key"
                     type="text"
                     outlined
@@ -51,10 +51,10 @@
                   Are you sure you want to move out of this household
                 </p>
                 <v-card
+                  v-if="oldHousehold"
                   outlined
                   color="secondary"
                   class="mb-4"
-                  v-if="oldHousehold"
                 >
                   <v-card-title class="pb-0">
                     {{ oldHousehold.name }}
@@ -99,7 +99,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar :timeout="4000" v-model="showSnackbar">
+    <v-snackbar v-model="showSnackbar" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
       <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
     </v-snackbar>
@@ -131,6 +131,16 @@ export default {
     newHousehold: {},
     householdTypes: ["Shared apartment", "Couple", "Family"]
   }),
+  mounted() {
+    if (this.$route.query.h) {
+      this.householdId = this.$route.query.h;
+      this.autoFill++;
+    }
+    if (this.$route.query.s) {
+      this.securityCode = this.$route.query.s;
+      this.autoFill++;
+    }
+  },
   methods: {
     alertSnackbar(msg) {
       if (this.showSnackbar) {
@@ -187,16 +197,6 @@ export default {
     },
     finish() {
       this.$router.push({ name: "Dashboard" });
-    }
-  },
-  mounted() {
-    if (this.$route.query.h) {
-      this.householdId = this.$route.query.h;
-      this.autoFill++;
-    }
-    if (this.$route.query.s) {
-      this.securityCode = this.$route.query.s;
-      this.autoFill++;
     }
   }
 };

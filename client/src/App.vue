@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer app clipped v-model="menuVisible">
+    <v-navigation-drawer v-model="menuVisible" app clipped>
       <v-list dense nav>
         <v-list-item two-line class="px-0">
           <v-list-item-avatar color="primary">
@@ -48,8 +48,8 @@
 
     <v-app-bar app color="primary" class="white--text" clipped-left>
       <v-app-bar-nav-icon
-        @click="menuVisible = !menuVisible"
         color="white"
+        @click="menuVisible = !menuVisible"
       ></v-app-bar-nav-icon>
       <v-toolbar-title>WG App</v-toolbar-title>
     </v-app-bar>
@@ -66,7 +66,7 @@
     <v-footer app inset class="text-center">
       <div style="width: 100%;">Made in self-isolation -- 2020</div>
     </v-footer>
-    <v-snackbar :timeout="4000" v-model="snackbarShow">
+    <v-snackbar v-model="snackbarShow" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
       <v-btn text small color="red" @click="snackbarShow = false">Close</v-btn>
     </v-snackbar>

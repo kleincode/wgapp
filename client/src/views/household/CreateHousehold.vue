@@ -21,9 +21,9 @@
                 </p>
                 <v-form v-model="step1Valid" @submit.prevent="step1Submit">
                   <v-text-field
+                    v-model="householdName"
                     label="Household name"
                     outlined
-                    v-model="householdName"
                     counter="64"
                     :rules="householdNameRules"
                   ></v-text-field>
@@ -38,8 +38,8 @@
               <v-stepper-content step="2">
                 <v-form v-model="step2Valid" @submit.prevent="step2Submit">
                   <v-select
-                    outlined
                     v-model="householdType"
+                    outlined
                     :items="householdTypes"
                     item-text="description"
                     item-value="id"
@@ -65,12 +65,12 @@
                   link below.
                 </p>
                 <v-text-field
+                  ref="addLink"
                   v-model="householdLink"
                   readonly
                   append-icon="assignment"
-                  @click:append="copyAddLink"
-                  ref="addLink"
                   outlined
+                  @click:append="copyAddLink"
                 ></v-text-field>
                 <v-btn color="primary" @click.prevent="step3Submit">Next</v-btn>
                 <v-btn text class="ml-2" @click.prevent="cancel">Cancel</v-btn>
@@ -94,7 +94,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar :timeout="4000" v-model="showSnackbar">
+    <v-snackbar v-model="showSnackbar" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
       <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
     </v-snackbar>
@@ -132,6 +132,9 @@ export default {
     ],
     householdLink: "https://usw"
   }),
+  mounted() {
+    this.cancel();
+  },
   methods: {
     alertSnackbar(msg) {
       if (this.showSnackbar) {
@@ -178,9 +181,6 @@ export default {
       this.stepperProgress = 1;
       this.loading = false;
     }
-  },
-  mounted() {
-    this.cancel();
   }
 };
 </script>

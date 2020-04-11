@@ -1,9 +1,9 @@
 <template>
   <v-dialog
     v-model="value"
+    :max-width="maxWidth"
     @input="onDialogToggle"
     @click:outside="onDialogToggle(false)"
-    :max-width="maxWidth"
   >
     <v-card :loading="loading">
       <v-card-title class="headline">{{ title }}</v-card-title>
