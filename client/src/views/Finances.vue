@@ -164,11 +164,13 @@
                     label="Amount"
                     v-model="tempTotalMonthlyBudget"
                     outlined
+                    type="number"
+                    step=".01"
                     append-icon="euro"
                   ></v-text-field>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="saveMonthlyBudget"
+                    <v-btn text color="primary" @click="updateFinancesTarget"
                       >ok</v-btn
                     >
                     <v-btn text @click="editBudgetDialog = false">cancel</v-btn>
@@ -389,7 +391,6 @@ export default {
         return trendCurve;
       }
       let minTimestamp = this.getMinTimestamp();
-      console.log(minTimestamp);
       let diff;
       switch (this.choosenTimeSpan) {
         case 0:
@@ -546,11 +547,6 @@ export default {
       }
     },
 
-    saveMonthlyBudget() {
-      this.totalMonthlyBudget = this.tempTotalMonthlyBudget;
-      this.editBudgetDialog = false;
-    },
-
     editMonChargeItem(item) {
       this.monCharEditMode = false;
       this.$refs.editMonthlyChargesDialog.startEdit(item);
@@ -596,6 +592,28 @@ export default {
         }
       } else {
         console.error("Error during fetching last bill");
+      }
+    },
+
+    async fetchFinancesTarget() {
+      const { data } = await this.$http.get("/_/fetchfinancestarget");
+      if (data.success) {
+        this.totalMonthlyBudget = data.results[0].amount / 100;
+        this.tempTotalMonthlyBudget = this.totalMonthlyBudget;
+      } else {
+        console.error("Error during fetching finances target");
+      }
+      this.editBudgetDialog = false;
+    },
+
+    async updateFinancesTarget() {
+      const { data } = await this.$http.post("/_/updatefinancestarget", {
+        amount: Math.round(this.tempTotalMonthlyBudget * 100)
+      });
+      if (data.success) {
+        this.fetchFinancesTarget();
+      } else {
+        console.error("Error while updating finances target");
       }
     },
 
@@ -661,6 +679,7 @@ export default {
   mounted() {
     this.fetchMonthlyData();
     this.fetchLastBilling();
+    this.fetchFinancesTarget();
   },
   watch: {
     tableOptions: {
