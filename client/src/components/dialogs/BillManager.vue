@@ -6,7 +6,15 @@
       >
     </template>
 
-    <v-card>
+    <confirm-dialog
+      v-model="finishPaymentDialog"
+      @positive="finishPayments"
+      @negative="finishPaymentDialog = false"
+      >Are you sure you want to finish these payments? You can't retrieve this
+      information afterwards.</confirm-dialog
+    >
+
+    <v-card :loading="loading">
       <v-card-title>
         <div class="headline">Bill Manager</div>
         <v-spacer></v-spacer>
@@ -49,11 +57,28 @@
           </v-col>
           <v-col cols="12" md="8">
             <v-row>
-              <v-col cols="12" md="6" class="text-center">
+              <v-col
+                v-if="includeMonthlyCharges"
+                cols="12"
+                md="4"
+                class="text-center"
+              >
+                <div class="overline">Monthly total</div>
+                <div class="display-1">{{ monthlyTotal }} €</div>
+              </v-col>
+              <v-col
+                cols="12"
+                :md="includeMonthlyCharges ? '4' : '6'"
+                class="text-center primary--text"
+              >
                 <div class="overline">Total</div>
                 <div class="display-1">{{ this.total }} €</div>
               </v-col>
-              <v-col cols="12" md="6" class="text-center">
+              <v-col
+                cols="12"
+                :md="includeMonthlyCharges ? '4' : '6'"
+                class="text-center"
+              >
                 <div class="overline">per person</div>
                 <div class="display-1">{{ this.mean }} €</div>
               </v-col>
@@ -84,8 +109,19 @@
       <v-divider></v-divider>
 
       <v-card-actions>
+        <v-switch
+          class="pl-2"
+          v-model="includeMonthlyCharges"
+          label="Include monthly charges"
+          @change="splitTotals"
+        ></v-switch>
         <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="finishPayments">
+        <v-btn
+          color="primary"
+          text
+          @click="finishPaymentDialog = true"
+          :disabled="empty"
+        >
           Finish payments
         </v-btn>
         <v-btn text @click="dialog = false">
@@ -97,17 +133,26 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+
 export default {
+  components: {
+    ConfirmDialog
+  },
   data: () => ({
     dialog: false,
-    memberTotals: [],
+    singleMemberTotals: [],
+    monthlyData: [],
     memberMap: {},
     total: 0,
     mean: 0,
     lastBill: "",
     debts: [],
     empty: true,
-    loading: false
+    loading: false,
+    finishPaymentDialog: false,
+    includeMonthlyCharges: false,
+    lastBillTimestamp: 0
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"]),
@@ -122,32 +167,73 @@ export default {
           (100 * Math.pow(min, 2) - 20 * min * max + 10 * Math.pow(max, 2)) /
           msq;
       return total => a * Math.pow(total, 2) + b * total + c;
+    },
+    memberTotals() {
+      let totals = JSON.parse(JSON.stringify(this.singleMemberTotals));
+      if (this.includeMonthlyCharges) {
+        let curTimestamp = Math.floor(Date.now() / 60000); //in minuten
+        let lastBill = Math.floor(this.lastBillTimestamp / 60000);
+        this.monthlyData.forEach(monEntry => {
+          totals.forEach(entry => {
+            if (monEntry.id == entry.id) {
+              let diff = Math.round(
+                (curTimestamp - lastBill) * (monEntry.total / 43800)
+              );
+              entry.total += diff;
+            }
+          });
+        });
+      }
+      totals.sort((a, b) => b.total - a.total);
+      return totals;
+    },
+    monthlyTotal() {
+      let curTimestamp = Math.floor(Date.now() / 60000); //in minuten
+      let lastBill = Math.floor(this.lastBillTimestamp / 60000);
+      let sum = 0;
+      this.monthlyData.forEach(monEntry => {
+        sum +=
+          Math.round((curTimestamp - lastBill) * (monEntry.total / 43800)) /
+          100;
+      });
+      return sum;
     }
   },
   methods: {
     async fetchNewBill() {
-      console.log("updating");
       this.dialog = true;
       this.loading = true;
       const { data } = await this.$http.get("/_/fetchnewbill");
       if (data.success) {
-        this.memberTotals = [];
+        this.singleMemberTotals = [];
         this.memberMap = {};
-        this.lastBill = this.renderDate(new Date(data.lastBill).getTime());
+        this.monthlyData = [];
+        let lastBill = new Date(data.lastBill).getTime();
+        this.lastBill = this.renderDate(lastBill);
+        this.lastBillTimestamp = lastBill;
         if (data.mainResult.length == 0) {
           this.empty = true;
+          this.loading = false;
           return;
         }
         this.empty = false;
         data.mainResult.forEach(entry => {
-          this.memberTotals.push({
+          this.singleMemberTotals.push({
             id: entry.uid,
             total: entry.amount
           });
           this.memberMap[entry.uid] = entry.amount / 100;
         });
+        data.monthlyResult.forEach(entry => {
+          if (entry.uid != -1) {
+            this.monthlyData.push({
+              id: entry.uid,
+              total: entry.amount
+            });
+          }
+        });
         this.memberTotals.sort((a, b) => b.total - a.total);
-        this.debts = this.splitTotals(this.memberMap);
+        this.splitTotals();
       } else {
         this.$store.dispatch(
           "showSnackbar",
@@ -171,7 +257,26 @@ export default {
       this.dialog = false;
     },
 
-    splitTotals(totals) {
+    splitTotals() {
+      let totals = JSON.parse(JSON.stringify(this.memberMap));
+      //optionally add monthly charges
+      if (this.includeMonthlyCharges) {
+        let curTimestamp = Math.floor(Date.now() / 60000); //in minutes
+        let lastBill = Math.floor(this.lastBillTimestamp / 60000);
+        if (this.monthlyData.length > 0) {
+          this.monthlyData.forEach(entry => {
+            let newAmount =
+              Math.round((curTimestamp - lastBill) * (entry.total / 43800)) /
+              100;
+            if (totals[entry.id] == undefined) {
+              totals[entry.id] = newAmount;
+            } else {
+              totals[entry.id] = totals[entry.id] + newAmount;
+            }
+          });
+        }
+      }
+
       const people = Object.keys(totals);
       const valuesPaid = Object.values(totals);
       let debts = [];
@@ -211,7 +316,7 @@ export default {
           j--;
         }
       }
-      return debts;
+      this.debts = debts;
     },
     renderDate(itemTimestamp) {
       if (itemTimestamp == 0) {
