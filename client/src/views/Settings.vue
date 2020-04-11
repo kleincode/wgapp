@@ -91,11 +91,11 @@ export default {
   computed: {
     darkDesign: {
       set(val) {
+        this.$store.commit("userSettings/set_dark_mode", val);
         this.$vuetify.theme.dark = val;
-        localStorage.setItem("darktheme", val);
       },
       get() {
-        return this.$vuetify.theme.dark;
+        return this.$store.state.userSettings.darkMode;
       }
     }
   },

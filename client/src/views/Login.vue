@@ -7,20 +7,20 @@
             <v-toolbar color="primary" dark flat>
               <v-toolbar-title>Welcome!</v-toolbar-title>
               <template v-slot:extension>
-                <v-tabs centered v-model="registerMode" color="white">
+                <v-tabs v-model="registerMode" centered color="white">
                   <v-tab>Login</v-tab>
                   <v-tab>Register</v-tab>
                 </v-tabs>
               </template>
             </v-toolbar>
             <v-form
-              @submit.prevent="registerMode ? register() : login()"
               ref="form"
+              @submit.prevent="registerMode ? register() : login()"
             >
               <v-card-text>
                 <v-text-field
-                  label="E-Mail"
                   v-model="email"
+                  label="E-Mail"
                   prepend-icon="person"
                   type="text"
                   outlined
@@ -28,33 +28,33 @@
                 />
                 <v-expand-transition>
                   <v-text-field
+                    v-if="registerMode"
+                    v-model="firstname"
                     label="First name"
                     prepend-icon="text_format"
-                    v-model="firstname"
                     type="text"
                     outlined
                     :rules="
                       validating && !!registerMode ? standardFieldRules : []
                     "
-                    v-if="registerMode"
                   />
                 </v-expand-transition>
                 <v-expand-transition>
                   <v-text-field
+                    v-if="registerMode"
+                    v-model="lastname"
                     label="Last name"
                     prepend-icon="text_format"
-                    v-model="lastname"
                     type="text"
                     outlined
                     :rules="
                       validating && !!registerMode ? standardFieldRules : []
                     "
-                    v-if="registerMode"
                   />
                 </v-expand-transition>
                 <v-text-field
-                  label="Password"
                   v-model="password"
+                  label="Password"
                   prepend-icon="lock"
                   type="password"
                   :rules="validating && !!registerMode ? passwordRules : []"
@@ -62,15 +62,15 @@
                 />
                 <v-expand-transition>
                   <v-text-field
-                    label="Repeat password"
+                    v-if="registerMode"
                     v-model="repeatPassword"
+                    label="Repeat password"
                     prepend-icon="replay"
                     type="password"
                     :rules="
                       validating && !!registerMode ? standardFieldRules : []
                     "
                     outlined
-                    v-if="registerMode"
                   />
                 </v-expand-transition>
               </v-card-text>
@@ -86,7 +86,7 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-snackbar :timeout="4000" v-model="showSnackbar">
+    <v-snackbar v-model="showSnackbar" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
       <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
     </v-snackbar>

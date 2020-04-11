@@ -11,7 +11,10 @@
 export default {
   name: "Widget",
   props: {
-    title: String
+    title: {
+      type: String,
+      default: "Widget"
+    }
   }
 };
 </script>

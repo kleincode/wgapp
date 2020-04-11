@@ -131,6 +131,10 @@ export default {
       "snackbarMessage"
     ])
   },
+  async created() {
+    await this.$store.dispatch("userSettings/sync");
+    this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
+  },
   methods: {
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
