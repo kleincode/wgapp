@@ -259,7 +259,7 @@
           <v-card-title>Trend Expenses</v-card-title>
           <v-card-text
             ><v-sparkline
-              :value="trendValues"
+              :value="trendCurve"
               :gradient="['#42b3f4']"
               :smooth="5"
               :padding="8"
@@ -382,6 +382,50 @@ export default {
     usedThisMonth() {
       return this.usedMonthlyBudget + this.usedIndividualBudget;
     },
+    trendCurve() {
+      let trendCurve = [];
+      let trendValues = JSON.parse(JSON.stringify(this.trendValues));
+      if (trendValues.length == 0) {
+        return trendCurve;
+      }
+      let minTimestamp = this.getMinTimestamp();
+      console.log(minTimestamp);
+      let diff;
+      switch (this.choosenTimeSpan) {
+        case 0:
+          diff = 2628000;
+          break;
+        case 1:
+          diff = 7884000;
+          break;
+        case 2:
+          diff = 31540000;
+          break;
+      }
+      let maxTimestamp = minTimestamp + diff;
+      let step = diff / 100;
+      for (let i = minTimestamp; i < maxTimestamp; i += step) {
+        let added = false;
+        trendValues.forEach(entry => {
+          if (entry.date > i && entry.date < i + step) {
+            added = true;
+            if (trendCurve.length == 0) {
+              trendCurve.push(entry.amount);
+            } else {
+              trendCurve.push(trendCurve[trendCurve.length - 1] + entry.amount);
+            }
+          }
+        });
+        if (!added) {
+          if (trendCurve.length == 0) {
+            trendCurve.push(0);
+          } else {
+            trendCurve.push(trendCurve[trendCurve.length - 1]);
+          }
+        }
+      }
+      return trendCurve;
+    },
     ...mapGetters(["getUserName", "getUserInitials"])
   },
   methods: {
@@ -396,13 +440,14 @@ export default {
             this.memberTotals = Object.entries(res.memberTotals)
               .map(([id, total]) => ({ id, total }))
               .sort((a, b) => b.total - a.total); // sort descending by total
-            this.trendValues = [0];
+            this.trendValues = [];
             res.trend.forEach(entry =>
-              this.trendValues.push(
-                this.trendValues[this.trendValues.length - 1] + entry.amount
-              )
+              this.trendValues.push({
+                date: entry.created,
+                amount: entry.amount
+              })
             );
-            this.updateTrendCurve();
+            this.trendValues.sort((a, b) => b.date - a.date);
           } else alert(res.message);
           this.tableLoading = false;
         })
@@ -433,7 +478,6 @@ export default {
         };
       } else return { success: false, message: data.message };
     },
-    updateTrendCurve() {},
     getMinTimestamp() {
       let date = new Date();
       date.setDate(1);
@@ -448,7 +492,8 @@ export default {
           date.setMonth(0);
           break;
       }
-      return Math.floor(date.getTime() / 1000);
+      let value = Math.floor(date.getTime() / 1000);
+      return value;
     },
 
     async commitDelete(fid) {

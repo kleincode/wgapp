@@ -80,7 +80,7 @@ module.exports = ({ db }) => ({
         let memberobj = {};
         memberTotals.forEach(el => memberobj[el.uid] = el.amount);
 
-        const { results: trendcurve } = await db.query("SELECT amount FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > ?", [hid, minTimestamp]);
+        const { results: trendcurve } = await db.query("SELECT UNIX_TIMESTAMP(created) as 'created', amount FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > ?", [hid, minTimestamp]);
 
         if(totalEntries == 0) {
           // The page is empty, no need to fetch entries.
