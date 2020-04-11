@@ -19,7 +19,7 @@
           <v-card-text>
             <div class="container">
               <div class="display-1">General</div>
-              <v-switch label="Dark design" v-model="darkDesign"></v-switch>
+              <v-switch v-model="darkDesign" label="Dark design"></v-switch>
               <v-divider class="mt-8 mb-8"></v-divider>
               <div class="display-1 mb-2">Integrations</div>
               <div class="title pt-2">Google Calendar</div>
@@ -32,15 +32,15 @@
                 :style="{ display: $vuetify.breakpoint.mdAndUp ? 'flex' : '' }"
               >
                 <v-btn
-                  @click="calendarSignIn"
                   v-if="signInState == 2"
                   color="primary"
+                  @click="calendarSignIn"
                   >Sign in</v-btn
                 >
                 <v-btn
-                  @click="calendarSignOut"
                   v-if="signInState == 1"
                   color="red"
+                  @click="calendarSignOut"
                   >Sign out</v-btn
                 >
                 <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
@@ -99,6 +99,18 @@ export default {
       }
     }
   },
+  created() {
+    if (!gapiLoaded) {
+      const gapiscript = document.createElement("script");
+      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
+      window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);
+      document.body.appendChild(gapiscript);
+    }
+  },
+  mounted() {
+    this.signInState = signedIn ? 1 : 2;
+    this.updateSignInDescription();
+  },
   methods: {
     calendarSignIn() {
       handleAuthClick(this.onSignIn, this.onSignOut);
@@ -126,18 +138,6 @@ export default {
       handleSignoutClick(this.onSignOut);
       this.signInState = 2;
     }
-  },
-  created() {
-    if (!gapiLoaded) {
-      const gapiscript = document.createElement("script");
-      gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
-      window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);
-      document.body.appendChild(gapiscript);
-    }
-  },
-  mounted() {
-    this.signInState = signedIn ? 1 : 2;
-    this.updateSignInDescription();
   }
 };
 </script>

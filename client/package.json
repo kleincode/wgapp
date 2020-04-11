@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "gui": "vue ui"
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
@@ -52,14 +53,13 @@
       "jest": true
     },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/recommended",
       "eslint:recommended",
       "@vue/prettier"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
     },
-    "rules": {},
     "overrides": [
       {
         "files": [

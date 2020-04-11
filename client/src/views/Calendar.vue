@@ -3,22 +3,22 @@
     <h1 class="display-2 pb-6">Calendar</h1>
 
     <v-select
+      v-show="!gapiNotSignedIn"
       v-model="choosenCalendars"
       :items="allCalendarsStrings"
-      @change="updateG"
       chips
       :label="gapiSignedIn ? 'Choose Calendars' : 'Not signed in'"
       multiple
       outlined
       :disabled="!gapiSignedIn"
-      v-show="!gapiNotSignedIn"
+      @change="updateG"
     ></v-select>
-    <v-alert type="warning" v-if="gapiNotSignedIn">
+    <v-alert v-if="gapiNotSignedIn" type="warning">
       Please refer to the <a :to="{ name: 'Settings' }">settings</a> to activate
       this feature.
     </v-alert>
 
-    <v-btn icon @click="updateG" :disabled="!gapiSignedIn"
+    <v-btn icon :disabled="!gapiSignedIn" @click="updateG"
       ><v-icon>refresh</v-icon></v-btn
     >
 
@@ -29,10 +29,10 @@
             <v-btn
               text
               :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
-              @click="setToday"
               :disabled="!gapiSignedIn"
               color="primary"
               :icon="$vuetify.breakpoint.smAndDown"
+              @click="setToday"
             >
               <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
               {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
@@ -85,6 +85,7 @@
         </v-sheet>
         <v-sheet height="600">
           <v-calendar
+            v-show="gapiSignedIn"
             ref="calendar"
             v-model="focus"
             color="primary"
@@ -97,7 +98,6 @@
             @click:more="viewDay"
             @click:date="viewDay"
             @change="updateRange"
-            v-show="gapiSignedIn"
           ></v-calendar>
           <v-menu
             v-model="selectedOpen"
@@ -107,10 +107,10 @@
           >
             <v-card min-width="350px" flat>
               <v-toolbar :color="selectedEvent.color" dark>
-                <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+                <v-toolbar-title v-text="selectedEvent.name"></v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <span v-html="selectedEvent.description"></span>
+                <span v-text="selectedEvent.description"></span>
               </v-card-text>
             </v-card>
           </v-menu>

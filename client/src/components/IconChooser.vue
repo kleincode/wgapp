@@ -17,13 +17,13 @@
           <p class="subtitle-1">Common icons</p>
           <v-row>
             <v-col
+              v-for="(icon, i) in icons.slice(0, 11)"
+              :key="'icon-' + i"
               cols="4"
               md="3"
               lg="1"
-              v-for="(icon, i) in icons.slice(0, 11)"
-              :key="'icon-' + i"
-              @click="select(i)"
               class="iconEntry"
+              @click="select(i)"
             >
               <v-hover v-slot:default="{ hover }">
                 <v-card
@@ -42,13 +42,13 @@
           <p class="subtitle-1 pt-12">All icons</p>
           <v-row>
             <v-col
+              v-for="(icon, i) in icons.slice(11, icons.length)"
+              :key="'icon-' + i"
               cols="4"
               md="3"
               lg="1"
-              v-for="(icon, i) in icons.slice(11, icons.length)"
-              :key="'icon-' + i"
-              @click="select(i + offset)"
               class="iconEntry"
+              @click="select(i + offset)"
             >
               <v-hover v-slot:default="{ hover }">
                 <v-card
@@ -80,6 +80,12 @@
 import icons from "@/assets/icons.js";
 
 export default {
+  props: {
+    value: {
+      type: Number,
+      default: 0
+    }
+  },
   data: () => {
     return {
       dialog: false,
@@ -100,12 +106,6 @@ export default {
     cancel() {
       this.$emit("cancel");
       this.dialog = false;
-    }
-  },
-  props: {
-    value: {
-      type: Number,
-      default: 0
     }
   }
 };

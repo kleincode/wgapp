@@ -11,14 +11,14 @@
       <v-card-text>
         <p>Please use this link to invite members to join this household:</p>
         <v-text-field
+          ref="addLink"
           v-model="householdLink"
           readonly
           append-icon="assignment"
-          @click:append="copyAddLink"
-          ref="addLink"
           outlined
           :loading="loading"
           :disabled="loading"
+          @click:append="copyAddLink"
         ></v-text-field>
       </v-card-text>
       <v-card-actions>
