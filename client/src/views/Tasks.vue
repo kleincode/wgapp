@@ -401,7 +401,10 @@ export default {
     computeNextDueInWeek(curDate, repDayInts, prevTempDate) {
       prevTempDate = new Date(prevTempDate);
       let day = prevTempDate.getDay();
-      if (curDate.getDay() > 0) {
+      if (curDate.getDay() == 0 && repDayInts.includes(0)) {
+        return curDate;
+      }
+      if (day > 0) {
         let minShift = 8;
         for (let i = 0; i < repDayInts.length; i++) {
           if (repDayInts[i] != 0) {
@@ -434,11 +437,7 @@ export default {
         }
         return prevTempDate;
       } else {
-        if (repDayInts.includes(0)) {
-          return curDate;
-        } else {
-          return null;
-        }
+        return null;
       }
     },
 
@@ -503,7 +502,11 @@ export default {
       let index = users.indexOf(task.assigned);
       if (!task.checked) {
         //check
-        lastExecution = new Date().toString();
+        if (task.missed) {
+          lastExecution = new Date(task.lastDueDay).toString();
+        } else {
+          lastExecution = new Date().toString();
+        }
         if (task.iteratingMode) {
           assignedMember = users[this.nextAssignedMember(users, index)];
         } else {

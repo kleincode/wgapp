@@ -31,23 +31,26 @@ module.exports = ({ db }) => ({
     // Optional sort in descending order
     desc: {
       type: "boolean"
+    },
+    minTimestamp: {
+      type: "int",
+      default: 0
     }
   },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       // Receive GET params
-      let { p: page, ps: pageSize, uid: filterUid, q, s, desc } = query;
+      let { p: page, ps: pageSize, uid: filterUid, q, s, desc, minTimestamp } = query;
       if (pageSize > 100 || pageSize < 1) pageSize = 100; // limit page size to 100
       const offset = pageSize * page,
         validSorts = ["description", "amount", "date"];
-
       // Construct queries
       let displaySelect = `SELECT finances.id AS 'fid', description, amount, uid, UNIX_TIMESTAMP(created) as 'date'`,
         totalSelect = `SELECT COUNT(*) AS 'c'`,
-        mainQuery = ` FROM finances WHERE hid = ?`,
+        mainQuery = ` FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > ?`,
         mainSuffix = ``,
-        queryParams = [hid];
+        queryParams = [hid, minTimestamp];
 
       // Filter user
       if (filterUid) {
@@ -73,17 +76,19 @@ module.exports = ({ db }) => ({
         const totalEntries = results[0].c;
 
         // Accumulate entries for all users (independently from single entries)
-        const { results: memberTotals } = await db.query("SELECT uid, SUM(amount) AS 'amount' FROM finances WHERE hid = ? GROUP BY uid", [hid]);
+        const { results: memberTotals } = await db.query("SELECT uid, SUM(amount) AS 'amount' FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > ? GROUP BY uid", [hid, minTimestamp]);
         let memberobj = {};
         memberTotals.forEach(el => memberobj[el.uid] = el.amount);
 
+        const { results: trendcurve } = await db.query("SELECT UNIX_TIMESTAMP(created) as 'created', amount FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > ?", [hid, minTimestamp]);
+
         if(totalEntries == 0) {
           // The page is empty, no need to fetch entries.
-          success({message: "Empty.", page: page, entries: 0, pages: 0, data: [], totals: memberobj });
+          success({message: "Empty.", page: page, entries: 0, pages: 0, data: [], totals: memberobj, trend: [] });
         } else {
           // Now fetch entries with sort and limit to return them as data
           const { results: expenseRows } = await db.query(displaySelect + mainQuery + mainSuffix + ` LIMIT ?, ?`, [...queryParams, offset, pageSize]);
-          success({message: "Finances received.", page: page, entries: totalEntries, pages: Math.ceil(totalEntries / pageSize), data: expenseRows, totals: memberobj });
+          success({message: "Finances received.", page: page, entries: totalEntries, pages: Math.ceil(totalEntries / pageSize), data: expenseRows, totals: memberobj , trend: trendcurve});
         }
       } catch(err) {
         error("Error while fetching finances from database", err);

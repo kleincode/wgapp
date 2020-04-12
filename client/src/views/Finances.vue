@@ -1,9 +1,22 @@
 <template>
   <v-container>
-    <h1 class="display-2 pl-12 pb-6">Finances</h1>
-    <v-row>
+    <div style="display:flex">
+      <h1 class="display-2 mb-6" style="max-width: 80%">Finances</h1>
+      <v-spacer></v-spacer>
+      <v-select
+        v-model="choosenTimeSpan"
+        :items="timespanes"
+        item-value="value"
+        label="Choose time span"
+        @change="updateTable()"
+      ></v-select>
+    </div>
+    <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
-        <v-card>
+        <v-card style="height: 100%">
+          <v-card-title>
+            Member Expenses
+          </v-card-title>
           <v-list three-line avatar>
             <v-subheader>Members</v-subheader>
             <v-list-item-group
@@ -17,7 +30,7 @@
                 three-line
                 :value="member.id"
               >
-                <v-list-item-avatar size="48" color="teal" left>
+                <v-list-item-avatar size="48" color="primary" left>
                   <span class="white--text headline">
                     {{ getUserInitials(member.id) }}
                   </span>
@@ -39,7 +52,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card>
+        <v-card style="height: 100%">
           <v-card-title>
             Expenses
             <v-spacer></v-spacer>
@@ -75,6 +88,194 @@
           </v-data-table>
         </v-card>
       </v-col>
+      <v-col cols="12" md="6" lg="4">
+        <v-card style="height: 100%">
+          <v-card-title>
+            Monthly charges
+            <v-spacer></v-spacer>
+            <v-btn
+              icon
+              :color="monCharEditMode ? 'primary' : ''"
+              @click="monCharEditMode = !monCharEditMode"
+              ><v-icon>edit</v-icon></v-btn
+            >
+            <EditMonthlyChargesDialog
+              ref="editMonthlyChargesDialog"
+              v-model="editMonthlyCharges"
+              @committed="fetchMonthlyData"
+            ></EditMonthlyChargesDialog>
+          </v-card-title>
+          <v-container>
+            <v-list>
+              <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
+                <v-list-item-icon>
+                  <v-icon>{{ getIcon(charge.icon) }}</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>{{ charge.name }}</v-list-item-title>
+                  <v-list-item-subtitle
+                    >payed by:
+                    {{ charge.responsibleUser }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  {{ charge.amount }} {{ currency }}
+                  <v-slide-x-reverse-transition>
+                    <div v-show="monCharEditMode">
+                      <v-btn
+                        small
+                        icon
+                        class="ml-2"
+                        @click="editMonChargeItem(charge)"
+                        ><v-icon>edit</v-icon></v-btn
+                      >
+                      <v-btn
+                        small
+                        icon
+                        color="error"
+                        @click="deleteMonthlyCharge(charge)"
+                        ><v-icon>delete</v-icon></v-btn
+                      >
+                    </div>
+                  </v-slide-x-reverse-transition>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list>
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="8">
+        <v-card style="height: 100%">
+          <v-card-title>
+            Shared Expenses: March 2020
+            <v-spacer></v-spacer>
+            <v-dialog v-model="editBudgetDialog" max-width="600px">
+              <template v-slot:activator="{ on }">
+                <v-btn icon color="primary" v-on="on"
+                  ><v-icon>edit</v-icon></v-btn
+                >
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Edit monthly budget</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-text-field
+                    v-model="tempTotalMonthlyBudget"
+                    label="Amount"
+                    outlined
+                    type="number"
+                    step=".01"
+                    append-icon="euro"
+                  ></v-text-field>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="primary" @click="updateFinancesTarget"
+                      >ok</v-btn
+                    >
+                    <v-btn text @click="editBudgetDialog = false">cancel</v-btn>
+                  </v-card-actions>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </v-card-title>
+          <v-container>
+            <v-row justify="center">
+              <v-col
+                cols="12"
+                md="4"
+                :class="usedThisMonth > totalMonthlyBudget ? 'red--text' : ''"
+              >
+                <div class="text-center">
+                  <div class="overline">used</div>
+                  <div class="display-1">
+                    {{ usedThisMonth }} {{ currency }}
+                  </div>
+                </div>
+              </v-col>
+              <v-col cols="1" class="text-center d-none d-md-block"
+                ><v-divider vertical></v-divider
+              ></v-col>
+              <v-col cols="12" md="4">
+                <div class="text-center">
+                  <div class="overline">target total</div>
+                  <div class="display-1">
+                    {{ totalMonthlyBudget }} {{ currency }}
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+            <v-list-item>
+              <v-list-item-avatar size="48" color="secondary" left>
+                <span class="white--text headline">
+                  <v-icon x-large>home</v-icon>
+                </span>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Monthly charges
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon
+                >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
+              >
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-avatar size="48" color="secondary" left>
+                <span class="white--text headline">
+                  <v-icon x-large>person</v-icon>
+                </span>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Member charges
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-icon
+                >{{ usedIndividualBudget }} {{ currency }}</v-list-item-icon
+              >
+            </v-list-item>
+          </v-container>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="4">
+        <v-card style="height: 100%">
+          <v-card-title>
+            Compensation Payments
+          </v-card-title>
+          <v-card-text>
+            Calculate compensation payments for all member expenses since the
+            last billing.
+            <div class="text-center pt-8 pb-4">
+              <span class="overline" style="font-size: 1em !important">
+                last Billing
+              </span>
+              <h1 class="display-1">{{ lastBill }}</h1>
+            </div>
+          </v-card-text>
+          <v-card-actions> <BillManager></BillManager></v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6" lg="8">
+        <v-card style="height: 100%">
+          <v-card-title>Trend Expenses</v-card-title>
+          <v-card-text
+            ><v-sparkline
+              :value="trendCurve"
+              :gradient="['#42b3f4']"
+              :smooth="5"
+              :padding="8"
+              :line-width="1"
+              stroke-linecap="round"
+              gradient-direction="top"
+              :fill="false"
+              type="trend"
+              :auto-line-width="false"
+              auto-draw
+            ></v-sparkline>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
     <confirm-dialog
       v-model="deleteDialogVisible"
@@ -89,15 +290,20 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import icons from "@/assets/icons.js";
 
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
+import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+import BillManager from "@/components/dialogs/BillManager.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
-    ConfirmDialog
+    ConfirmDialog,
+    EditMonthlyChargesDialog,
+    BillManager
   },
   data: () => ({
     memberTotals: [],
@@ -118,30 +324,39 @@ export default {
     },
     tableTotalItems: 2,
     tableLoading: null,
-    expenses: [
-      {
-        description: "Tiefkühlpizzaaa!",
-        member: "Felix Kleinsteuber",
-        date: 1585475790,
-        amount: 164
-      },
-      {
-        description: "Einkauf",
-        member: "Max Mustermann",
-        date: 1585375790,
-        amount: 2354
-      }
-    ],
+    expenses: [],
     editExpense: {
       description: "",
       amount: 0
     },
     deleteDialogVisible: false,
+    deleteExpenseMode: true, //false -> monthly charge
     deleteId: -1,
     deleteDescription: "",
     deleteDialogLoading: false,
     unixTimestamp: Math.floor(Date.now() / 1000),
-    filterMember: null
+    filterMember: null,
+
+    editBudgetDialog: false,
+    monthlyCharges: [],
+    monCharEditMode: false,
+    editMonthlyCharges: {
+      name: "",
+      icon: 0,
+      amount: 0,
+      uid: 0
+    },
+    totalMonthlyBudget: 1300,
+    tempTotalMonthlyBudget: 1300,
+    currency: "€",
+    timespanes: [
+      { text: "current month", value: 0 },
+      { text: "last 3 months", value: 1 },
+      { text: "current year", value: 2 }
+    ],
+    choosenTimeSpan: 0,
+    lastBill: "",
+    trendValues: []
   }),
   computed: {
     memberTotalFunction() {
@@ -156,6 +371,62 @@ export default {
           msq;
       return total => a * Math.pow(total, 2) + b * total + c;
     },
+    usedMonthlyBudget() {
+      let sum = 0;
+      this.monthlyCharges.forEach(charge => (sum += charge.amount));
+      return sum;
+    },
+    usedIndividualBudget() {
+      let sum = 0;
+      this.memberTotals.forEach(entry => (sum += entry.total / 100));
+      return sum;
+    },
+    usedThisMonth() {
+      return this.usedMonthlyBudget + this.usedIndividualBudget;
+    },
+    trendCurve() {
+      let trendCurve = [];
+      let trendValues = JSON.parse(JSON.stringify(this.trendValues));
+      if (trendValues.length == 0) {
+        return trendCurve;
+      }
+      let minTimestamp = this.getMinTimestamp();
+      let diff;
+      switch (this.choosenTimeSpan) {
+        case 0:
+          diff = 2628000;
+          break;
+        case 1:
+          diff = 7884000;
+          break;
+        case 2:
+          diff = 31540000;
+          break;
+      }
+      let maxTimestamp = minTimestamp + diff;
+      let step = diff / 100;
+      for (let i = minTimestamp; i < maxTimestamp; i += step) {
+        let added = false;
+        trendValues.forEach(entry => {
+          if (entry.date > i && entry.date < i + step) {
+            added = true;
+            if (trendCurve.length == 0) {
+              trendCurve.push(entry.amount);
+            } else {
+              trendCurve.push(trendCurve[trendCurve.length - 1] + entry.amount);
+            }
+          }
+        });
+        if (!added) {
+          if (trendCurve.length == 0) {
+            trendCurve.push(0);
+          } else {
+            trendCurve.push(trendCurve[trendCurve.length - 1]);
+          }
+        }
+      }
+      return trendCurve;
+    },
     ...mapGetters(["getUserName", "getUserInitials"])
   },
   watch: {
@@ -165,6 +436,11 @@ export default {
       },
       deep: true
     }
+  },
+  mounted() {
+    this.fetchMonthlyData();
+    this.fetchLastBilling();
+    this.fetchFinancesTarget();
   },
   methods: {
     updateTable() {
@@ -178,6 +454,14 @@ export default {
             this.memberTotals = Object.entries(res.memberTotals)
               .map(([id, total]) => ({ id, total }))
               .sort((a, b) => b.total - a.total); // sort descending by total
+            this.trendValues = [];
+            res.trend.forEach(entry =>
+              this.trendValues.push({
+                date: entry.created,
+                amount: entry.amount
+              })
+            );
+            this.trendValues.sort((a, b) => b.date - a.date);
           } else alert(res.message);
           this.tableLoading = false;
         })
@@ -193,33 +477,67 @@ export default {
           ps: this.tableOptions.itemsPerPage,
           uid: this.filterMember,
           s: this.tableOptions.sortBy[0],
-          desc: this.tableOptions.sortDesc[0] ? true : null
+          desc: this.tableOptions.sortDesc[0] ? true : null,
+          minTimestamp: this.getMinTimestamp()
         }
       });
-
       if (data.success) {
         return {
           success: true,
           data: data.data,
           page: data.page,
           totalCount: data.entries,
-          memberTotals: data.totals
+          memberTotals: data.totals,
+          trend: data.trend
         };
       } else return { success: false, message: data.message };
     },
+    getMinTimestamp() {
+      let date = new Date();
+      date.setDate(1);
+      date.setHours(0, 0, 0, 0);
+      switch (this.choosenTimeSpan) {
+        case 0:
+          break;
+        case 1:
+          date.setMonth(date.getMonth() - 2);
+          break;
+        case 2:
+          date.setMonth(0);
+          break;
+      }
+      let value = Math.floor(date.getTime() / 1000);
+      return value;
+    },
+
     async commitDelete(fid) {
-      const { data } = await this.$http.post("/_/delexpense", {
-        id: fid
-      });
-      return data;
+      if (this.deleteExpenseMode) {
+        const { data } = await this.$http.post("/_/delexpense", {
+          id: fid
+        });
+        return data;
+      } else {
+        const { data } = await this.$http.post("/_/deletemonthlycharge", {
+          id: fid
+        });
+        return data;
+      }
     },
     editItem(item) {
       this.$refs.editDialog.startEdit(item);
     },
     deleteItem(item) {
+      this.deleteExpenseMode = true;
       this.deleteId = item.fid;
       this.deleteDescription = item.description;
       this.deleteDialogVisible = true;
+    },
+    deleteMonthlyCharge(item) {
+      this.deleteExpenseMode = false;
+      this.deleteId = item.id;
+      this.deleteDescription = item.name;
+      this.deleteDialogVisible = true;
+      this.monCharEditMode = false;
     },
     async deleteConfirm() {
       this.deleteDialogLoading = true;
@@ -230,6 +548,7 @@ export default {
           this.deleteDialogVisible = false;
           this.$store.dispatch("showSnackbar", "Item deleted.");
           this.updateTable();
+          this.fetchMonthlyData();
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
         this.deleteDialogLoading = false;
@@ -240,6 +559,77 @@ export default {
         console.error(err);
       }
     },
+
+    editMonChargeItem(item) {
+      this.monCharEditMode = false;
+      this.$refs.editMonthlyChargesDialog.startEdit(item);
+    },
+
+    async fetchMonthlyData() {
+      const { data } = await this.$http.get("/_/fetchmonthlycharges");
+      if (data.success) {
+        this.monthlyCharges = [];
+        data.data.forEach(charge => {
+          let user, allMode;
+          if (charge.uid == -1) {
+            user = "ALL";
+            allMode = true;
+          } else {
+            user = this.getUserName(charge.uid);
+            allMode = false;
+          }
+          this.monthlyCharges.push({
+            id: charge.id,
+            name: charge.name,
+            amount: charge.amount / 100,
+            icon: charge.icon,
+            responsibleUser: user,
+            uid: charge.uid,
+            all: allMode
+          });
+        });
+      } else {
+        console.error("Error during fetching monthlyData");
+      }
+    },
+
+    async fetchLastBilling() {
+      const { data } = await this.$http.get("/_/fetchlastbill");
+      if (data.success) {
+        if (data.results.length == 0) {
+          this.lastBill = "----";
+        } else {
+          this.lastBill = this.renderDate(
+            new Date(data.results[0].lastBill).getTime() / 1000
+          );
+        }
+      } else {
+        console.error("Error during fetching last bill");
+      }
+    },
+
+    async fetchFinancesTarget() {
+      const { data } = await this.$http.get("/_/fetchfinancestarget");
+      if (data.success) {
+        this.totalMonthlyBudget = data.results[0].amount / 100;
+        this.tempTotalMonthlyBudget = this.totalMonthlyBudget;
+      } else {
+        console.error("Error during fetching finances target");
+      }
+      this.editBudgetDialog = false;
+    },
+
+    async updateFinancesTarget() {
+      const { data } = await this.$http.post("/_/updatefinancestarget", {
+        amount: Math.round(this.tempTotalMonthlyBudget * 100)
+      });
+      if (data.success) {
+        this.fetchFinancesTarget();
+      } else {
+        console.error("Error while updating finances target");
+      }
+    },
+
     renderDate(itemTimestamp) {
       let seconds = this.unixTimestamp - itemTimestamp;
       let sign = seconds < 0;
@@ -257,20 +647,46 @@ export default {
         if (diffMonths > 12) {
           val = Math.floor(diffMonths / 12) + " years";
         } else {
-          val = diffMonths + " months";
+          if (diffMonths == 1) {
+            val = diffMonths + " month";
+          } else {
+            val = diffMonths + " months";
+          }
         }
-      }
-      if (seconds > 60 * 60 * 24 * 7) {
-        val = Math.floor(seconds / (60 * 60 * 24 * 7)) + " weeks";
+      } else if (seconds > 60 * 60 * 24 * 7) {
+        let count = Math.floor(seconds / (60 * 60 * 24 * 7));
+        if (count == 1) {
+          val = count + " week";
+        } else {
+          val = count + " weeks";
+        }
       } else if (seconds > 60 * 60 * 24) {
-        val = Math.floor(seconds / (60 * 60 * 24)) + " days";
+        let count = Math.floor(seconds / (60 * 60 * 24));
+        if (count == 1) {
+          val = count + " day";
+        } else {
+          val = count + " days";
+        }
       } else if (seconds > 60 * 60) {
-        val = Math.floor(seconds / (60 * 60)) + " hours";
+        let count = Math.floor(seconds / (60 * 60));
+        if (count == 1) {
+          val = count + " hour";
+        } else {
+          val = count + " hours";
+        }
       } else {
-        val = Math.floor(seconds / 60) + " minutes";
+        let count = Math.floor(seconds / 60);
+        if (count == 1) {
+          val = count + " minute";
+        } else {
+          val = count + " minutes";
+        }
       }
       if (sign) return "in " + val;
       else return val + " ago";
+    },
+    getIcon(id) {
+      return icons[id];
     }
   }
 };
