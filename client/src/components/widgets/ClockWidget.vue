@@ -1,22 +1,16 @@
 <template>
   <Widget title="Clock">
-    <div class="display-3">{{ time }}</div>
-    <div class="overline">{{ date }}</div>
+    <span class="display-3">{{ time }}</span>
+    <span class="display-1" style="vertical-align: baseline;">{{
+      timeSuffix
+    }}</span>
+    <div class="overline">{{ weekday }} | {{ date }}</div>
   </Widget>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Widget from "./Widget";
-
-const weekdays = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday"
-];
 
 export default {
   name: "ClockWidget",
@@ -26,9 +20,22 @@ export default {
   data: () => ({
     time: "00:00:00",
     date: "-",
-    clockIntervalID: -1
+    weekday: "-",
+    clockIntervalID: -1,
+    timeSuffix: ""
   }),
+  computed: {
+    ...mapState("userSettings", ["locale"])
+  },
+  watch: {
+    locale(val) {
+      this.initLocale(val);
+    }
+  },
   mounted() {
+    // Initialize clock
+    this.initLocale(this.locale);
+    // Start ticking
     this.tick();
     this.clockIntervalID = setInterval(() => this.tick(), 1000);
   },
@@ -36,23 +43,38 @@ export default {
     clearInterval(this.clockIntervalID);
   },
   methods: {
+    initLocale(locale) {
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      this.timeFormatter = new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      this.dateFormatter = new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+      this.weekdayFormatter = new Intl.DateTimeFormat(locale, {
+        weekday: "long"
+      });
+      //refresh immediately
+      this.tick();
+    },
     tick() {
-      let time = new Date();
-      this.time =
-        ("0" + time.getHours()).slice(-2) +
-        ":" +
-        ("0" + time.getMinutes()).slice(-2) +
-        ":" +
-        ("0" + time.getSeconds()).slice(-2);
-      this.date =
-        weekdays[time.getDay()] +
-        " | " +
-        ("0" + time.getDate()).slice(-2) +
-        "." +
-        ("0" + (time.getMonth() + 1)).slice(-2) +
-        "." +
-        "" +
-        time.getFullYear();
+      let now = new Date();
+      let time = this.timeFormatter.format(now);
+      if (time.endsWith(" PM") || time.endsWith(" AM")) {
+        this.time = time.substr(0, time.length - 3);
+        this.timeSuffix = time.substr(time.length - 3);
+      } else {
+        this.time = time;
+        this.timeSuffix = "";
+      }
+      this.weekday = this.weekdayFormatter.format(now);
+      this.date = this.dateFormatter.format(now);
     }
   }
 };

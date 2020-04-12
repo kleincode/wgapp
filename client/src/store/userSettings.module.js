@@ -6,7 +6,8 @@ const syncEntries = {
   calendarEnabled: false,
   weatherWidgetEnabled: true,
   clockWidgetEnabled: true,
-  tasksWidgetEnabled: true
+  tasksWidgetEnabled: true,
+  locale: null
 };
 
 const vuexModule = {
@@ -18,7 +19,8 @@ const vuexModule = {
     calendarEnabled: false,
     weatherWidgetEnabled: false,
     clockWidgetEnabled: false,
-    tasksWidgetEnabled: false
+    tasksWidgetEnabled: false,
+    locale: null
   }),
   mutations: {
     // (state, arg)

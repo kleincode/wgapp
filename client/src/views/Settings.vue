@@ -18,8 +18,24 @@
         <v-card flat tile>
           <v-card-text>
             <div class="container">
-              <div class="display-1">General</div>
+              <div class="display-1">Appearance</div>
               <v-switch v-model="darkDesign" label="Dark design"></v-switch>
+              <v-divider class="mt-8 mb-8"></v-divider>
+              <div class="display-1">Locale</div>
+              The locale settings affect the way dates, times, and currencies
+              are displayed.
+              <v-switch
+                v-model="useBrowserLocale"
+                :label="`Use system locale (${browserLocale})`"
+              ></v-switch>
+              <v-combobox
+                v-model="customLocale"
+                label="Custom locale"
+                chips
+                :items="locales"
+                persistent-hint
+                hint="A locale can include a language only (like en) or a specific country (like en-US)"
+              ></v-combobox>
               <v-divider class="mt-8 mb-8"></v-divider>
 
               <div class="display-1 mb-2">Dashboard</div>
@@ -128,7 +144,37 @@ export default {
     tab: [],
     tabs: 2,
     signInDescription: "Connecting...",
-    signInState: 0
+    signInState: 0,
+    locales: [
+      "af",
+      "ar-SA",
+      "cs",
+      "da",
+      "de",
+      "el",
+      "en",
+      "en-CA",
+      "en-GB",
+      "en-IE",
+      "en-US",
+      "es",
+      "es-MX",
+      "fr",
+      "fr-CA",
+      "fi",
+      "hr",
+      "ja",
+      "ko",
+      "nl",
+      "no",
+      "pt",
+      "pt-BR",
+      "ru",
+      "tr",
+      "uk",
+      "zh-CN"
+    ],
+    browserLocale: navigator.language
   }),
   computed: {
     darkDesign: {
@@ -185,6 +231,33 @@ export default {
       },
       get() {
         return this.$store.state.userSettings.tasksWidgetEnabled;
+      }
+    },
+    useBrowserLocale: {
+      set(val) {
+        // if switched off, set custom locale to browser locale
+        if (!val && !this.customLocale) this.customLocale = navigator.language;
+        // update value in store
+        this.$store.commit("userSettings/set_key", {
+          key: "locale",
+          value: val || !this.customLocale ? null : this.customLocale
+        });
+      },
+      get() {
+        // browser locale is used if store locale is falsy
+        return !this.$store.state.userSettings.locale;
+      }
+    },
+    customLocale: {
+      set(val) {
+        // this value should only be set if browser locale is not used, so commit it to store
+        this.$store.commit("userSettings/set_key", {
+          key: "locale",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.locale;
       }
     }
   },

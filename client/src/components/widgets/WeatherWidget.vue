@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Widget from "./Widget";
 
 export default {
@@ -19,7 +20,16 @@ export default {
     lastUpdate: "Never",
     condition: "..."
   }),
+  computed: {
+    ...mapState("userSettings", ["locale"])
+  },
+  watch: {
+    locale(val) {
+      this.initLocale(val);
+    }
+  },
   mounted() {
+    this.initLocale(this.locale);
     this.update();
     this.clockIntervalID = setInterval(() => this.update(), 5 * 60 * 1000);
   },
@@ -27,6 +37,16 @@ export default {
     clearInterval(this.clockIntervalID);
   },
   methods: {
+    initLocale(locale) {
+      // Initialize locale settings
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      this.timeFormatter = new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    },
     update() {
       fetch(
         "https://api.openweathermap.org/data/2.5/weather?zip=07745,de&appid=2384b68bf977a346118c65ada1b0bd93",
@@ -40,10 +60,7 @@ export default {
           let time = new Date();
           this.temperature = Math.round(resjson.main.temp - 273.15);
           this.condition = resjson.weather[0].main;
-          this.lastUpdate =
-            ("0" + time.getHours()).slice(-2) +
-            ":" +
-            ("0" + time.getMinutes()).slice(-2);
+          this.lastUpdate = this.timeFormatter.format(time);
         });
     }
   }
