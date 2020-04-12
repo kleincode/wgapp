@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn icon v-on="on"><v-icon>add</v-icon></v-btn>
     </template>
-    <v-form v-model="formValid" @submit.prevent="save" ref="form">
+    <v-form ref="form" v-model="formValid" @submit.prevent="save">
       <v-card :loading="loading">
         <v-card-title>
           <span class="headline">{{
@@ -16,7 +16,7 @@
             <v-row>
               <v-col cols="12" sm="6" style="text-align: center">
                 <v-icon style="font-size: 10em">{{
-                  this.getIcon(value.icon)
+                  getIcon(value.icon)
                 }}</v-icon>
                 <br />
                 <IconChooser
@@ -27,35 +27,35 @@
               </v-col>
               <v-col cols="12" sm="6">
                 <v-text-field
+                  ref="name"
                   v-model="value.name"
                   label="Name"
-                  ref="name"
                   outlined
-                  @input="updateValue()"
                   counter="160"
                   maxlength="160"
                   :rules="nameRules"
+                  @input="updateValue()"
                 ></v-text-field>
                 <v-text-field
+                  ref="amount"
                   v-model="value.amount"
                   label="Amount"
-                  ref="amount"
                   outlined
                   type="number"
                   step=".01"
                   prefix="€"
-                  @input="updateValue()"
                   :rules="amountRules"
+                  @input="updateValue()"
                 ></v-text-field>
                 <v-switch
-                  class="mt-n4"
                   v-model="value.all"
+                  class="mt-n4"
                   label="Payed by all"
                 ></v-switch>
                 <v-select
+                  v-model="value.uid"
                   outlined
                   :items="getUserSelect"
-                  v-model="value.uid"
                   item-value="value"
                   label="Payed by"
                   :disabled="value.all"
@@ -94,6 +94,9 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "EditmonchargeDialog",
+  components: {
+    IconChooser
+  },
   props: {
     value: {
       type: Object,
@@ -102,9 +105,6 @@ export default {
         amount: 0
       })
     }
-  },
-  components: {
-    IconChooser
   },
   data: () => ({
     dialogShown: false,
@@ -130,6 +130,9 @@ export default {
     editId: null,
     selectedIcon: 0
   }),
+  computed: {
+    ...mapGetters(["getUserSelect"])
+  },
   methods: {
     updateValue(val) {
       this.$emit("input", val || this.value);
@@ -223,9 +226,6 @@ export default {
     getIcon(id) {
       return icons[id];
     }
-  },
-  computed: {
-    ...mapGetters(["getUserSelect"])
   }
 };
 </script>

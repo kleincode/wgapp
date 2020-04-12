@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="800">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" @click="fetchNewBill" v-on="on" block
+      <v-btn color="primary" block @click="fetchNewBill" v-on="on"
         >Open Bill Manager</v-btn
       >
     </template>
@@ -31,9 +31,9 @@
             <v-list three-line avatar>
               <v-subheader>Members</v-subheader>
               <v-list-item
-                three-line
                 v-for="member in memberTotals"
                 :key="'finmem-' + member.id"
+                three-line
                 :value="member.id"
               >
                 <v-list-item-avatar size="48" color="primary" left>
@@ -72,7 +72,7 @@
                 class="text-center primary--text"
               >
                 <div class="overline">Total</div>
-                <div class="display-1">{{ this.total }} €</div>
+                <div class="display-1">{{ total }} €</div>
               </v-col>
               <v-col
                 cols="12"
@@ -80,7 +80,7 @@
                 class="text-center"
               >
                 <div class="overline">per person</div>
-                <div class="display-1">{{ this.mean }} €</div>
+                <div class="display-1">{{ mean }} €</div>
               </v-col>
             </v-row>
             <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
@@ -110,18 +110,18 @@
 
       <v-card-actions>
         <v-switch
-          class="pl-2"
           v-model="includeMonthlyCharges"
+          class="pl-2"
           label="Include monthly charges"
           @change="splitTotals"
         ></v-switch>
         <v-spacer></v-spacer>
-        <v-btn @click="exportToHTML" text>Export</v-btn>
+        <v-btn text @click="exportToHTML">Export</v-btn>
         <v-btn
           color="primary"
           text
-          @click="finishPaymentDialog = true"
           :disabled="empty"
+          @click="finishPaymentDialog = true"
         >
           Finish payments
         </v-btn>

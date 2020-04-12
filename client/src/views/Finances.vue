@@ -4,8 +4,8 @@
       <h1 class="display-2 mb-6" style="max-width: 80%">Finances</h1>
       <v-spacer></v-spacer>
       <v-select
-        :items="timespanes"
         v-model="choosenTimeSpan"
+        :items="timespanes"
         item-value="value"
         label="Choose time span"
         @change="updateTable()"
@@ -95,14 +95,14 @@
             <v-spacer></v-spacer>
             <v-btn
               icon
-              @click="monCharEditMode = !monCharEditMode"
               :color="monCharEditMode ? 'primary' : ''"
+              @click="monCharEditMode = !monCharEditMode"
               ><v-icon>edit</v-icon></v-btn
             >
             <EditMonthlyChargesDialog
+              ref="editMonthlyChargesDialog"
               v-model="editMonthlyCharges"
               @committed="fetchMonthlyData"
-              ref="editMonthlyChargesDialog"
             ></EditMonthlyChargesDialog>
           </v-card-title>
           <v-container>
@@ -125,8 +125,8 @@
                       <v-btn
                         small
                         icon
-                        @click="editMonChargeItem(charge)"
                         class="ml-2"
+                        @click="editMonChargeItem(charge)"
                         ><v-icon>edit</v-icon></v-btn
                       >
                       <v-btn
@@ -151,7 +151,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="editBudgetDialog" max-width="600px">
               <template v-slot:activator="{ on }">
-                <v-btn icon v-on="on" color="primary"
+                <v-btn icon color="primary" v-on="on"
                   ><v-icon>edit</v-icon></v-btn
                 >
               </template>
@@ -161,8 +161,8 @@
                 </v-card-title>
                 <v-card-text>
                   <v-text-field
-                    label="Amount"
                     v-model="tempTotalMonthlyBudget"
+                    label="Amount"
                     outlined
                     type="number"
                     step=".01"
@@ -208,7 +208,7 @@
             <v-list-item>
               <v-list-item-avatar size="48" color="secondary" left>
                 <span class="white--text headline">
-                  <v-icon xLarge>home</v-icon>
+                  <v-icon x-large>home</v-icon>
                 </span>
               </v-list-item-avatar>
               <v-list-item-content>
@@ -223,7 +223,7 @@
             <v-list-item>
               <v-list-item-avatar size="48" color="secondary" left>
                 <span class="white--text headline">
-                  <v-icon xLarge>person</v-icon>
+                  <v-icon x-large>person</v-icon>
                 </span>
               </v-list-item-avatar>
               <v-list-item-content>
@@ -436,6 +436,11 @@ export default {
       },
       deep: true
     }
+  },
+  mounted() {
+    this.fetchMonthlyData();
+    this.fetchLastBilling();
+    this.fetchFinancesTarget();
   },
   methods: {
     updateTable() {
@@ -682,19 +687,6 @@ export default {
     },
     getIcon(id) {
       return icons[id];
-    }
-  },
-  mounted() {
-    this.fetchMonthlyData();
-    this.fetchLastBilling();
-    this.fetchFinancesTarget();
-  },
-  watch: {
-    tableOptions: {
-      handler() {
-        this.updateTable();
-      },
-      deep: true
     }
   }
 };
