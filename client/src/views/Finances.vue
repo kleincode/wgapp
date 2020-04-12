@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div style="display:flex">
-      <h1 class="display-2 ml-12 mb-6" style="max-width: 80%">Finances</h1>
+      <h1 class="display-2 mb-6" style="max-width: 80%">Finances</h1>
       <v-spacer></v-spacer>
       <v-select
         :items="timespanes"
@@ -193,7 +193,7 @@
                   </div>
                 </div>
               </v-col>
-              <v-col cols="1" class="text-center d-sm-none d-md-flex"
+              <v-col cols="1" class="text-center d-none d-md-block"
                 ><v-divider vertical></v-divider
               ></v-col>
               <v-col cols="12" md="4">
