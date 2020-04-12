@@ -9,9 +9,9 @@
             <v-row justify="center">
               <v-col cols="12" md="10">
                 <v-card
+                  v-if="getTodaysTasks.length > 0"
                   raised
                   class="main-task text-center"
-                  v-if="getTodaysTasks.length > 0"
                   :class="getTodaysTasks[0].missed ? 'red' : 'primary'"
                 >
                   <div class="overline">DUE TODAY</div>
@@ -38,7 +38,7 @@
                     {{ getUserName(getTodaysTasks[0].assigned) }}
                   </v-chip>
                 </v-card>
-                <v-card raised class="main-task text-center secondary" v-else>
+                <v-card v-else raised class="main-task text-center secondary">
                   <div class="overline text--disabled">DUE TODAY</div>
                   <v-icon class="text--disabled" style="font-size: 10em" x-large
                     >bathtub</v-icon
@@ -175,9 +175,9 @@
             </v-list-item>
           </v-list>
           <div
+            v-else
             style="text-align: center"
             class="text--disabled pb-12 pt-8"
-            v-else
           >
             <v-icon style="font-size: 10em" class="text--disabled"
               >hourglass_empty</v-icon
@@ -198,7 +198,17 @@ export default {
   data: () => ({
     tasks: []
   }),
-
+  computed: {
+    getTodaysTasks() {
+      return this.tasks.filter(task => {
+        return this.isToday(task.nextDueDay, new Date());
+      });
+    },
+    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
+  },
+  mounted() {
+    this.fetchTasks();
+  },
   methods: {
     async fetchTasks() {
       try {
@@ -252,6 +262,10 @@ export default {
           this.sortTasks();
         }
       } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while fetching data. Please try again later."
+        );
         console.error(err);
       }
     },
@@ -307,7 +321,7 @@ export default {
       }
       lastDueDay.setDate(lastDueDay.getDate() + (max - lastDueDay.getDay()));
 
-      lastDueDay.setHours(0, 0, 0, 1);
+      lastDueDay.setHours(0, 0, 0, 0);
       let endLastDueDay = new Date(lastDueDay);
       endLastDueDay.setHours(23, 59, 59, 0);
       if (lastExecution < lastDueDay) {
@@ -513,6 +527,10 @@ export default {
         assignedMember
       });
       if (data.success == false) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while checking task. Please try again later."
+        );
         console.error(data.message);
       }
       await this.fetchTasks();
@@ -575,20 +593,6 @@ export default {
     sortTasks() {
       this.tasks.sort((a, b) => a.nextDueDay - b.nextDueDay);
     }
-  },
-
-  mounted() {
-    this.fetchTasks();
-  },
-
-  computed: {
-    getTodaysTasks() {
-      return this.tasks.filter(task => {
-        return this.isToday(task.nextDueDay, new Date());
-      });
-    },
-
-    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
   }
 };
 </script>

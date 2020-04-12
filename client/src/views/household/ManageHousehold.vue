@@ -73,13 +73,13 @@
       </v-col>
     </v-row>
     <confirm-dialog
-      title="Leave household?"
       v-model="leaveDialogOpen"
+      title="Leave household?"
       negative-option="Leave"
       positive-option="Stay"
+      :max-width="500"
       @positive="leaveCancel"
       @negative="leaveConfirm"
-      :max-width="500"
     >
       <p>Are you sure you want to leave this household?</p>
       <v-card color="primary" class="mb-4">
@@ -118,6 +118,9 @@ export default {
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"])
+  },
+  mounted() {
+    this.fetchHousehold();
   },
   methods: {
     formatDate(strdate) {
@@ -162,9 +165,6 @@ export default {
         this.$store.dispatch("showSnackbar", "Could not connect to server.");
       }
     }
-  },
-  mounted() {
-    this.fetchHousehold();
   }
 };
 </script>

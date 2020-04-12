@@ -20,14 +20,14 @@
           <v-list three-line avatar>
             <v-subheader>Members</v-subheader>
             <v-list-item-group
-              color="primary"
               v-model="filterMember"
+              color="primary"
               @change="updateTable"
             >
               <v-list-item
-                three-line
                 v-for="member in memberTotals"
                 :key="'finmem-' + member.id"
+                three-line
                 :value="member.id"
               >
                 <v-list-item-avatar size="48" color="primary" left>
@@ -57,9 +57,9 @@
             Expenses
             <v-spacer></v-spacer>
             <edit-expense-dialog
+              ref="editDialog"
               v-model="editExpense"
               @committed="updateTable"
-              ref="editDialog"
             ></edit-expense-dialog>
           </v-card-title>
           <v-data-table
@@ -279,9 +279,9 @@
     </v-row>
     <confirm-dialog
       v-model="deleteDialogVisible"
+      :loading="deleteDialogLoading"
       @positive="deleteConfirm"
       @negative="deleteDialogVisible = false"
-      :loading="deleteDialogLoading"
       >Are you sure you want to delete "{{
         deleteDescription
       }}"?</confirm-dialog
@@ -428,6 +428,14 @@ export default {
       return trendCurve;
     },
     ...mapGetters(["getUserName", "getUserInitials"])
+  },
+  watch: {
+    tableOptions: {
+      handler() {
+        this.updateTable();
+      },
+      deep: true
+    }
   },
   methods: {
     updateTable() {

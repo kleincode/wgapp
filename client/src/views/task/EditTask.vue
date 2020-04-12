@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <div style="display: flex">
-      <v-btn exact icon color="primary" @click="back" class="mt-2 mr-2">
+      <v-btn exact icon color="primary" class="mt-2 mr-2" @click="back">
         <v-icon>keyboard_arrow_left</v-icon>
       </v-btn>
       <div v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</div>
@@ -37,8 +37,8 @@
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-select
-                    :items="getUserSelect"
                     v-model="selectedMember"
+                    :items="getUserSelect"
                     item-value="value"
                     label="Assigned to"
                     outlined
@@ -48,9 +48,7 @@
               </v-row>
             </v-col>
             <v-col cols="12" md="4" lg="4" style="text-align: center">
-              <v-icon style="font-size: 12em">{{
-                this.getIcon(this.icon)
-              }}</v-icon>
+              <v-icon style="font-size: 12em">{{ getIcon(icon) }}</v-icon>
               <br />
               <IconChooser
                 v-model="selectedIcon"
@@ -76,8 +74,8 @@
                     label="Choose your start day"
                     prepend-icon="event"
                     readonly
-                    v-on="on"
                     outlined
+                    v-on="on"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -104,8 +102,8 @@
                     label="Choose your task time"
                     prepend-icon="access_time"
                     readonly
-                    v-on="on"
                     outlined
+                    v-on="on"
                   ></v-text-field>
                 </template>
                 <v-time-picker
@@ -132,8 +130,8 @@
             </v-col>
             <v-col cols="12" lg="4" md="6">
               <v-text-field
-                type="number"
                 v-model="repetitionEvery"
+                type="number"
                 label="Repeat every"
                 required
                 outlined
@@ -155,7 +153,7 @@
           ><v-divider class="mx-4" inset vertical></v-divider>
           <v-dialog v-model="deleteDialog" width="500">
             <template v-slot:activator="{ on }">
-              <v-btn large v-on="on" outlined color="error darken-2"
+              <v-btn large outlined color="error darken-2" v-on="on"
                 >delete</v-btn
               >
             </template>
@@ -224,6 +222,16 @@ export default {
     snackText: "",
     deleteDialog: false
   }),
+  computed: {
+    ...mapGetters(["getUserSelect"])
+  },
+  mounted() {
+    this.id = this.$route.params.id;
+    this.editMode = !!this.$route.params.id;
+    if (this.editMode) {
+      this.fetch_settings(this.id);
+    }
+  },
   methods: {
     async fetch_settings(id) {
       const { data } = await this.$http.get("/_/fetchtasks", {
@@ -231,7 +239,8 @@ export default {
       });
       if (data.success) {
         if (data.data.length == 0 || data.data.length > 1) {
-          console.error(
+          this.$store.dispatch(
+            "showSnackbar",
             "Error while fetching tasks. Multiple or no task received."
           );
         }
@@ -291,36 +300,65 @@ export default {
         this.snackbar = true;
         return;
       }
-
-      if (this.editMode) {
-        await this.$http.post("/_/edittask", {
-          id,
-          name,
-          icon,
-          iteratingMode,
-          assignedMember,
-          repetitionDays,
-          time,
-          repetitionEvery,
-          repetitionUnit,
-          reminder,
-          startDate
-        });
-      } else {
-        let date = startDate;
-        const { data } = await this.$http.post("/_/addtask", {
-          name,
-          icon,
-          iteratingMode,
-          assignedMember,
-          repetitionDays,
-          repetitionEvery,
-          repetitionUnit,
-          reminder,
-          date,
-          time
-        });
-        console.log(data);
+      try {
+        if (this.editMode) {
+          const { data } = await this.$http.post("/_/edittask", {
+            id,
+            name,
+            icon,
+            iteratingMode,
+            assignedMember,
+            repetitionDays,
+            time,
+            repetitionEvery,
+            repetitionUnit,
+            reminder,
+            startDate
+          });
+          if (data.success) {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Successfully edited the task."
+            );
+          } else {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Error while editing the task."
+            );
+          }
+        } else {
+          let date = startDate;
+          const { data } = await this.$http.post("/_/addtask", {
+            name,
+            icon,
+            iteratingMode,
+            assignedMember,
+            repetitionDays,
+            repetitionEvery,
+            repetitionUnit,
+            reminder,
+            date,
+            time
+          });
+          if (data.success) {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Successfully added the new task."
+            );
+          } else {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Error while adding the new task."
+            );
+            console.error(data);
+          }
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while connecting to the server. Please try again later."
+        );
+        console.log(err);
       }
       this.$router.push({ name: "Tasks" });
     },
@@ -330,35 +368,35 @@ export default {
     newIconSelected(id) {
       this.icon = id;
       this.selectedIcon = id;
-      console.log("new Icon " + id);
     },
     noNewIconSelected() {
       this.selectedIcon = this.icon;
-      console.log("old Icon " + this.selectedIcon);
     },
-    deleteTask() {
+    async deleteTask() {
       this.deleteDialog = false;
       let id = this.id;
-      this.$http.post("/_/deletetask", {
-        id
-      });
+      try {
+        const { data } = await this.$http.post("/_/deletetask", {
+          id
+        });
+        if (data.success) {
+          this.$store.dispatch("showSnackbar", "Deleted task.");
+        } else {
+          this.$store.dispatch("showSnackbar", "Error while deleting task.");
+          console.error(data);
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while connecting to the server. Please try again later."
+        );
+      }
       this.$router.push({ name: "Tasks" });
     },
 
     back() {
       this.$router.back();
     }
-  },
-  mounted() {
-    this.id = this.$route.params.id;
-    this.editMode = !!this.$route.params.id;
-    if (this.editMode) {
-      this.fetch_settings(this.id);
-    }
-  },
-
-  computed: {
-    ...mapGetters(["getUserSelect"])
   }
 };
 </script>
