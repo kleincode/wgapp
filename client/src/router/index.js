@@ -23,6 +23,14 @@ const routes = [
       import(/* webpackChunkName: "finances" */ "../views/Finances.vue")
   },
   {
+    path: "/finances/billmanager",
+    name: "BillManager",
+    component: () =>
+      import(
+        /* webpackChunkName: "billmanager" */ "../views/finances/BillManager.vue"
+      )
+  },
+  {
     path: "/tasks",
     name: "Tasks",
     component: () =>

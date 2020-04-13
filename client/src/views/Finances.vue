@@ -251,7 +251,11 @@
               <h1 class="display-1">{{ lastBill }}</h1>
             </div>
           </v-card-text>
-          <v-card-actions> <BillManager></BillManager></v-card-actions>
+          <v-card-actions>
+            <v-btn color="primary" block :to="{ name: 'BillManager' }"
+              >Open Bill Manager</v-btn
+            ></v-card-actions
+          >
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
@@ -293,15 +297,13 @@ import icons from "@/assets/icons.js";
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
-import BillManager from "@/components/dialogs/BillManager.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
     ConfirmDialog,
-    EditMonthlyChargesDialog,
-    BillManager
+    EditMonthlyChargesDialog
   },
   data: () => ({
     memberTotals: [],

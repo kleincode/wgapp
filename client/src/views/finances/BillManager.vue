@@ -1,11 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="800">
-    <template v-slot:activator="{ on }">
-      <v-btn color="primary" block @click="fetchNewBill" v-on="on"
-        >Open Bill Manager</v-btn
-      >
-    </template>
-
+  <v-container>
     <confirm-dialog
       v-model="finishPaymentDialog"
       @positive="finishPayments"
@@ -13,135 +7,172 @@
       >Are you sure you want to finish these payments? You can't retrieve this
       information afterwards.</confirm-dialog
     >
+    <div style="display:flex">
+      <h1 class="display-1">Bill Manager</h1>
+      <v-spacer></v-spacer>
+      <div class="caption mr-2 mt-1">last bill:</div>
+      {{ lastBill }}
+    </div>
 
-    <v-card :loading="loading">
-      <v-card-title>
-        <div class="headline">Bill Manager</div>
-        <v-spacer></v-spacer>
-        <div class="caption mr-2 mt-1">last bill:</div>
-        {{ lastBill }}
-      </v-card-title>
-
-      <v-card-text>
-        <p v-if="empty" class="text-center headline pt-12 pb-12">
-          No new expenses available
-        </p>
-        <v-row v-if="!empty">
-          <v-col cols="12" md="4">
-            <v-list three-line avatar>
-              <v-subheader>Members</v-subheader>
-              <v-list-item
-                v-for="member in memberTotals"
-                :key="'finmem-' + member.id"
-                three-line
-                :value="member.id"
-              >
-                <v-list-item-avatar size="48" color="primary" left>
-                  <span class="white--text headline">
-                    {{ getUserInitials(member.id) }}
-                  </span>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ getUserName(member.id) }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ (member.total / 100).toFixed(2) }} €
-                  </v-list-item-subtitle>
-                  <v-progress-linear
-                    :value="memberTotalFunction(member.total)"
-                  ></v-progress-linear>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-col>
-          <v-col cols="12" md="8">
-            <v-row>
-              <v-col
-                v-if="includeMonthlyCharges"
-                cols="12"
-                md="4"
-                class="text-center"
-              >
-                <div class="overline">Monthly total</div>
-                <div class="display-1">{{ monthlyTotal }} €</div>
+    <v-row>
+      <v-col cols="12" lg="8">
+        <v-card :loading="loading" style="height: 100%">
+          <v-card-title class="headline">New Bill</v-card-title>
+          <v-card-text>
+            <p v-if="empty" class="text-center headline pt-12 pb-12">
+              No new expenses available
+            </p>
+            <v-row v-if="!empty">
+              <v-col cols="12" md="4">
+                <v-list three-line avatar>
+                  <v-subheader>Members</v-subheader>
+                  <v-list-item
+                    v-for="member in memberTotals"
+                    :key="'finmem-' + member.id"
+                    three-line
+                    :value="member.id"
+                  >
+                    <v-list-item-avatar size="48" color="primary" left>
+                      <span class="white--text headline">
+                        {{ getUserInitials(member.id) }}
+                      </span>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ getUserName(member.id) }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        {{ (member.total / 100).toFixed(2) }} €
+                      </v-list-item-subtitle>
+                      <v-progress-linear
+                        :value="memberTotalFunction(member.total)"
+                      ></v-progress-linear>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
               </v-col>
-              <v-col
-                cols="12"
-                :md="includeMonthlyCharges ? '4' : '6'"
-                class="text-center primary--text"
-              >
-                <div class="overline">Total</div>
-                <div class="display-1">{{ total }} €</div>
-              </v-col>
-              <v-col
-                cols="12"
-                :md="includeMonthlyCharges ? '4' : '6'"
-                class="text-center"
-              >
-                <div class="overline">per person</div>
-                <div class="display-1">{{ mean }} €</div>
+              <v-col cols="12" md="8">
+                <v-row>
+                  <v-col
+                    v-if="includeMonthlyCharges"
+                    cols="12"
+                    md="4"
+                    class="text-center"
+                  >
+                    <div class="overline">Monthly total</div>
+                    <div class="display-1">{{ monthlyTotal }} €</div>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    :md="includeMonthlyCharges ? '4' : '6'"
+                    class="text-center primary--text"
+                  >
+                    <div class="overline">Total</div>
+                    <div class="display-1">{{ total }} €</div>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    :md="includeMonthlyCharges ? '4' : '6'"
+                    class="text-center"
+                  >
+                    <div class="overline">per person</div>
+                    <div class="display-1">{{ mean }} €</div>
+                  </v-col>
+                </v-row>
+                <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
+                <v-simple-table :loading="loading">
+                  <template v-slot:default>
+                    <thead>
+                      <tr>
+                        <th class="text-left">Paying</th>
+                        <th class="text-left">Receives</th>
+                        <th class="text-left">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(debt, i) in debts" :key="i">
+                        <td>{{ getUserName(debt.paying) }}</td>
+                        <td>{{ getUserName(debt.receiving) }}</td>
+                        <td>{{ debt.amount }} €</td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
               </v-col>
             </v-row>
-            <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
-            <v-simple-table :loading="loading">
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-switch
+              v-model="includeMonthlyCharges"
+              class="pl-2"
+              label="Include monthly charges"
+              @change="splitTotals"
+            ></v-switch>
+            <v-spacer></v-spacer>
+            <v-btn text @click="exportCurrentBill">Export</v-btn>
+            <v-btn
+              color="primary"
+              text
+              :disabled="empty"
+              @click="finishPaymentDialog = true"
+            >
+              Save payments
+            </v-btn>
+            <v-btn text @click="back">
+              back
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+      <v-col cols="12" lg="4">
+        <v-card style="height: 100%">
+          <v-card-title><h1 class="headline">Bill history</h1></v-card-title>
+          <v-card-text>
+            <v-simple-table>
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left">Paying</th>
-                    <th class="text-left">Receives</th>
-                    <th class="text-left">Amount</th>
+                    <th class="text-left">From</th>
+                    <th class="text-left">To</th>
+                    <th class="text-left">Export</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(debt, i) in debts" :key="i">
-                    <td>{{ getUserName(debt.paying) }}</td>
-                    <td>{{ getUserName(debt.receiving) }}</td>
-                    <td>{{ debt.amount }} €</td>
+                  <tr v-for="bill in billhistory" :key="bill.id">
+                    <td>{{ new Date(bill.min).toLocaleDateString() }}</td>
+                    <td>{{ new Date(bill.max).toLocaleDateString() }}</td>
+                    <td>
+                      <v-btn
+                        icon
+                        @click="exportBill(bill.min, bill.max, bill.data)"
+                        ><v-icon>language</v-icon></v-btn
+                      >
+                      <v-btn icon><v-icon>table_chart</v-icon></v-btn>
+                    </td>
                   </tr>
                 </tbody>
               </template>
             </v-simple-table>
-          </v-col>
-        </v-row>
-      </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions>
-        <v-switch
-          v-model="includeMonthlyCharges"
-          class="pl-2"
-          label="Include monthly charges"
-          @change="splitTotals"
-        ></v-switch>
-        <v-spacer></v-spacer>
-        <v-btn text @click="exportToHTML">Export</v-btn>
-        <v-btn
-          color="primary"
-          text
-          :disabled="empty"
-          @click="finishPaymentDialog = true"
-        >
-          Finish payments
-        </v-btn>
-        <v-btn text @click="dialog = false">
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+
+import { exportToHTML } from "@/assets/exportToHTML.js";
 
 export default {
   components: {
     ConfirmDialog
   },
   data: () => ({
-    dialog: false,
     singleMemberTotals: [],
     monthlyData: [],
     memberMap: {},
@@ -153,7 +184,8 @@ export default {
     loading: false,
     finishPaymentDialog: false,
     includeMonthlyCharges: false,
-    lastBillTimestamp: 0
+    lastBillTimestamp: 0,
+    billhistory: []
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"]),
@@ -199,6 +231,10 @@ export default {
       });
       return sum;
     }
+  },
+  mounted() {
+    this.fetchNewBill();
+    this.fetchBillhistory();
   },
   methods: {
     async fetchNewBill() {
@@ -261,8 +297,44 @@ export default {
       this.loading = false;
     },
 
+    exportCurrentBill() {
+      exportToHTML(this.lastBillTimestamp, Date.now(), this.curToJSON());
+    },
+
+    exportBill(min, max, data) {
+      exportToHTML(min, max, data);
+    },
+
+    curToJSON() {
+      let data = {};
+      data.total = this.total;
+      data.includeMonthlyCharges = this.includeMonthlyCharges;
+      data.monthlyTotal = this.monthlyTotal;
+      data.mean = this.mean;
+      data.memberTotals = [];
+      this.memberTotals.forEach(member => {
+        data.memberTotals.push({
+          name: this.getUserName(member.id),
+          total: member.total
+        });
+      });
+      data.debts = [];
+      this.debts.forEach(debt => {
+        data.debts.push({
+          paying: this.getUserName(debt.paying),
+          receiving: this.getUserName(debt.receiving),
+          amount: debt.amount
+        });
+      });
+      return data;
+    },
+
     async finishPayments() {
-      const { data } = await this.$http.post("/_/updatelastbill");
+      const { data } = await this.$http.post("/_/updatelastbill", {
+        min: this.lastBillTimestamp,
+        max: Date.now(),
+        data: this.curToJSON()
+      });
       if (data.success) {
         this.$store.dispatch("showSnackbar", "Successfully updated last bill.");
       } else {
@@ -271,7 +343,36 @@ export default {
           "Error while updating last bill time. Please try again later."
         );
       }
-      this.dialog = false;
+      this.finishPaymentDialog = false;
+      this.back();
+    },
+
+    async fetchBillhistory() {
+      try {
+        const { data } = await this.$http.get("/_/fetchbillhistory");
+        if (data.success) {
+          this.billhistory = [];
+          data.results.forEach(bill => {
+            this.billhistory.push({
+              id: bill.id,
+              min: bill.min,
+              max: bill.max,
+              data: bill.data
+            });
+          });
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error while fetching bill history. Please try again later."
+          );
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while fetching bill history. Please try again later."
+        );
+        console.error(err);
+      }
     },
 
     splitTotals() {
@@ -336,60 +437,6 @@ export default {
       this.debts = debts;
     },
     getTimespanDiff() {},
-    exportToHTML() {
-      var myWindow = window.open(
-        "",
-        "WGApp - Compensation Payments",
-        "toolbar=yes,scrollbars=yes,resizable=yes,width=700,height=900"
-      );
-      myWindow.document.write(
-        '<html><head><link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"><title>WGApp - Compensation Payments</title></head><body><h1>Compensation Payments</h1><h3>' +
-          new Date(this.lastBillTimestamp).toLocaleDateString() +
-          " until " +
-          new Date().toLocaleDateString() +
-          '</h3><hr style="margin-bpottom: 15px">'
-      );
-      let css =
-        "<style>body { font-family: 'Roboto', sans-serif; } table, th, td { border: 1px solid black; border-collapse: collapse;} table { border-spacing: 5px; } th, td {padding: 5px;}</style>";
-      myWindow.document.write(
-        "<h2>Expenses</h2> <ul><li><b>Total: " + this.total + " €</b></li>"
-      );
-      if (this.includeMonthlyCharges) {
-        myWindow.document.write(
-          "<li>Monthly Total: " + this.monthlyTotal + " €</li>"
-        );
-      }
-      myWindow.document.write("<li> Per Person: " + this.mean + " €</li></ul>");
-      myWindow.document.write("<h2>Member Expenses</h2><ul>");
-      this.memberTotals.forEach(member => {
-        myWindow.document.write(
-          "<li>" +
-            this.getUserName(member.id) +
-            ": " +
-            member.total / 100 +
-            " €</li>"
-        );
-      });
-      myWindow.document.write("</ul>");
-      myWindow.document.write(
-        '<h2>Resulting Debts</h2><table style="width:100%"><tr><th>Paying</th><th>Receives</th><th>Amount</th></tr>'
-      );
-      this.debts.forEach(debt => {
-        myWindow.document.write(
-          "<tr><td>" +
-            this.getUserName(debt.paying) +
-            "</td><td>" +
-            this.getUserName(debt.receiving) +
-            "</td><td>" +
-            debt.amount +
-            " €</td></td>"
-        );
-      });
-      myWindow.document.write(
-        "</table><h6>WGApp, 2020</h6></body>" + css + "</html>"
-      );
-      myWindow.document.close();
-    },
 
     renderDate(itemTimestamp) {
       if (itemTimestamp == 0) {
@@ -450,6 +497,9 @@ export default {
       }
       if (sign) return "in " + val;
       else return val + " ago";
+    },
+    back() {
+      this.$router.back();
     }
   }
 };

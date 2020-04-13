@@ -8,10 +8,13 @@ module.exports = ({ db }) => ({
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       try {
-        const { results } = await db.query("SELECT lastBill FROM lastbill WHERE hid = ?", [hid]);
-        success({message: "Received last result.", results});
+        const { results } = await db.query("SELECT id, min, max, data FROM billhistory WHERE hid = ?", [hid]);
+        results.forEach((elem) => {
+          elem.data = JSON.parse(elem.data);
+        });
+        success({message: "Received bill history.", results});
       } catch(err) {
-        error("Error while fetching finances from database", err);
+        error("Error while fetching billhistory from database", err);
       }
     } else {
       fail("Please join a household to use this feature.");
