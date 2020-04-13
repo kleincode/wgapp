@@ -8,7 +8,7 @@ module.exports = ({ db }) => ({
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       try {
-        const { results } = await db.query("SELECT lastBill FROM compensationpayments WHERE hid = ?", [hid]);
+        const { results } = await db.query("SELECT lastBill FROM lastbill WHERE hid = ?", [hid]);
         let mainQuery = "SELECT uid, SUM(amount) AS 'amount' FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > UNIX_TIMESTAMP(?) GROUP BY uid";
         const { results:monthlyResult } = await db.query("SELECT uid, amount FROM monthlycharges WHERE hid = ?", [hid]);
         if (results.length == 0) {

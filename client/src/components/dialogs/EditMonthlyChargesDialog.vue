@@ -15,7 +15,7 @@
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" style="text-align: center">
-                <v-icon style="font-size: 10em">{{
+                <v-icon style="font-size: 10em" class="mb-3">{{
                   getIcon(value.icon)
                 }}</v-icon>
                 <br />
@@ -146,7 +146,7 @@ export default {
       }
       const { data } = await this.$http.post("/_/addmonthlycharge", {
         name: monchargeData.name,
-        amount: monchargeData.amount,
+        amount: Math.round(monchargeData.amount * 100),
         uid: uid,
         icon: monchargeData.icon
       });
@@ -211,7 +211,6 @@ export default {
         uid: itemData.uid,
         all: itemData.all
       });
-      console.log(itemData.uid);
       this.selectedIcon = itemData.icon;
       this.dialogShown = true;
     },

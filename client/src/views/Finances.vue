@@ -1,7 +1,9 @@
 <template>
   <v-container>
     <div style="display:flex">
-      <h1 class="display-2 mb-6" style="max-width: 80%">Finances</h1>
+      <h1 class="display-2 mb-6" style="max-width: 80%">
+        Finances
+      </h1>
       <v-spacer></v-spacer>
       <v-select
         v-model="choosenTimeSpan"
@@ -14,9 +16,7 @@
     <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
         <v-card style="height: 100%">
-          <v-card-title>
-            Member Expenses
-          </v-card-title>
+          <v-card-title> Member Expenses </v-card-title>
           <v-list three-line avatar>
             <v-subheader>Members</v-subheader>
             <v-list-item-group
@@ -147,7 +147,7 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
           <v-card-title>
-            Shared Expenses: March 2020
+            Overview Expenses: {{ intervallStr }}
             <v-spacer></v-spacer>
             <v-dialog v-model="editBudgetDialog" max-width="600px">
               <template v-slot:activator="{ on }">
@@ -184,13 +184,11 @@
               <v-col
                 cols="12"
                 md="4"
-                :class="usedThisMonth > totalMonthlyBudget ? 'red--text' : ''"
+                :class="usedTotal > relativeTotal ? 'red--text' : ''"
               >
                 <div class="text-center">
-                  <div class="overline">used</div>
-                  <div class="display-1">
-                    {{ usedThisMonth }} {{ currency }}
-                  </div>
+                  <div class="overline">currently used</div>
+                  <div class="display-1">{{ usedTotal }} {{ currency }}</div>
                 </div>
               </v-col>
               <v-col cols="1" class="text-center d-none d-md-block"
@@ -198,9 +196,9 @@
               ></v-col>
               <v-col cols="12" md="4">
                 <div class="text-center">
-                  <div class="overline">target total</div>
+                  <div class="overline">current target total</div>
                   <div class="display-1">
-                    {{ totalMonthlyBudget }} {{ currency }}
+                    {{ relativeTotal }} {{ currency }}
                   </div>
                 </div>
               </v-col>
@@ -253,7 +251,11 @@
               <h1 class="display-1">{{ lastBill }}</h1>
             </div>
           </v-card-text>
-          <v-card-actions> <BillManager></BillManager></v-card-actions>
+          <v-card-actions>
+            <v-btn color="primary" block :to="{ name: 'BillManager' }"
+              >Open Bill Manager</v-btn
+            ></v-card-actions
+          >
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
@@ -295,15 +297,13 @@ import icons from "@/assets/icons.js";
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
-import BillManager from "@/components/dialogs/BillManager.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
     ConfirmDialog,
-    EditMonthlyChargesDialog,
-    BillManager
+    EditMonthlyChargesDialog
   },
   data: () => ({
     memberTotals: [],
@@ -351,7 +351,7 @@ export default {
     currency: "€",
     timespanes: [
       { text: "current month", value: 0 },
-      { text: "last 3 months", value: 1 },
+      { text: "current and last 2 months", value: 1 },
       { text: "current year", value: 2 }
     ],
     choosenTimeSpan: 0,
@@ -373,16 +373,26 @@ export default {
     },
     usedMonthlyBudget() {
       let sum = 0;
-      this.monthlyCharges.forEach(charge => (sum += charge.amount));
-      return sum;
+      let fac = this.getFacForIntervall();
+      this.monthlyCharges.forEach(charge => (sum += fac * charge.amount));
+      return Math.round(sum * 100) / 100;
     },
     usedIndividualBudget() {
       let sum = 0;
       this.memberTotals.forEach(entry => (sum += entry.total / 100));
       return sum;
     },
-    usedThisMonth() {
-      return this.usedMonthlyBudget + this.usedIndividualBudget;
+    usedTotal() {
+      return (
+        Math.round(100 * (this.usedMonthlyBudget + this.usedIndividualBudget)) /
+        100
+      );
+    },
+    relativeTotal() {
+      return (
+        Math.round(100 * this.totalMonthlyBudget * this.getFacForIntervall()) /
+        100
+      );
     },
     trendCurve() {
       let trendCurve = [];
@@ -426,6 +436,13 @@ export default {
         }
       }
       return trendCurve;
+    },
+    intervallStr() {
+      let curDate = new Date();
+      let startDate = new Date(this.getMinTimestamp() * 1000);
+      return (
+        startDate.toLocaleDateString() + " - " + curDate.toLocaleDateString()
+      );
     },
     ...mapGetters(["getUserName", "getUserInitials"])
   },
@@ -508,6 +525,9 @@ export default {
       }
       let value = Math.floor(date.getTime() / 1000);
       return value;
+    },
+    getFacForIntervall() {
+      return (Date.now() / 60000 - this.getMinTimestamp() / 60) / 43800;
     },
 
     async commitDelete(fid) {
