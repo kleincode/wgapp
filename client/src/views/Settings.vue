@@ -1,150 +1,168 @@
 <template>
-  <v-container fluid>
-    <h1 class="display-2 pb-6">Settings</h1>
-    <v-tabs
-      v-model="tab"
-      class="elevation-2"
-      :vertical="$vuetify.breakpoint.mdAndUp"
-    >
-      <v-tabs-slider></v-tabs-slider>
-
-      <v-tab href="#tab-user">
-        User
-      </v-tab>
-      <v-tab href="#tab-household">
-        Household
-      </v-tab>
-      <v-tab-item value="tab-user">
-        <v-card flat tile>
-          <v-card-text>
-            <div class="container">
-              <div class="display-1">Appearance</div>
-              <v-switch v-model="darkDesign" label="Dark design"></v-switch>
-              <v-divider class="mt-8 mb-8"></v-divider>
-              <div class="display-1">Locale</div>
-              The locale settings affect the way dates, times, and currencies
-              are displayed.
-              <v-switch
-                v-model="useBrowserLocale"
-                :label="`Use system locale (${browserLocale})`"
-              ></v-switch>
-              <v-combobox
-                v-model="customLocale"
-                label="Custom locale"
-                chips
-                :items="locales"
-                persistent-hint
-                hint="A locale can include a language only (like en) or a specific country (like en-US)"
-                class="pt-0"
-                :return-object="false"
-              ></v-combobox>
-              <p class="pt-3">
-                Note that the currency setting only changes the symbol used for
-                displaying money amounts. No conversion is applied. If your
-                household is an international conglomerate, we apologize for the
-                inconvenience caused by this inadequacy.
-              </p>
-              <v-select
-                v-model="currency"
-                :items="currencies"
-                label="Currency"
-                class="mt-3"
-              ></v-select>
-              <p>Sample: {{ currencySample }}</p>
-              <v-divider class="mt-8 mb-8"></v-divider>
-
-              <div class="display-1 mb-2">Dashboard</div>
-              <!-- CLOCK WIDGET -->
-              <div class="title pt-2">Clock Widget</div>
-              <p>
-                A revolutionary time-telling device. Follows the laws of special
-                and general relativity.
-              </p>
-              <v-switch
-                v-model="clockWidgetEnabled"
-                label="Enable clock widget"
-              ></v-switch>
-              <!-- WEATHER WIDGET -->
-              <div class="title pt-2">Weather Widget</div>
-              <p>
-                Provides you with the latest weather data using the free
-                <a href="https://openweathermap.org/" target="_blank"
-                  >Open Weather Map</a
-                >
-                API.
-              </p>
-              <v-switch
-                v-model="weatherWidgetEnabled"
-                label="Enable weather widget"
-              ></v-switch>
-              <v-radio-group v-model="temperatureUnit" label="Temperature unit">
-                <v-radio label="°C (Celsius)" value="c"></v-radio>
-                <v-radio label="°F (Fahrenheit)" value="f"></v-radio>
-                <v-radio label="K (Kelvin)" value="k"></v-radio>
-              </v-radio-group>
-              <!-- TASKS WIDGET -->
-              <div class="title pt-2">Tasks Widget</div>
-              <p>
-                This widget makes sure things are getting done in your home. No
-                one ever dared to question its authority. (It might be useless
-                at the moment, but the authority is already implemented.)
-              </p>
-              <v-switch
-                v-model="tasksWidgetEnabled"
-                label="Enable tasks widget"
-              ></v-switch>
-
-              <v-divider class="mt-8 mb-8"></v-divider>
-
-              <div class="display-1 mb-2">Integrations</div>
-              <!-- CALENDAR -->
-              <div class="title pt-2">Calendar</div>
-              <p>
-                Keep track of your shared activites and duties using the Google
-                Calendar API. If enabled, the calendar can be reached via the
-                new link in your navigation drawer.
-              </p>
-              <v-switch
-                v-model="calendarEnabled"
-                label="Enable Google Calendar integration"
-              ></v-switch>
-              <div
-                :style="{ display: $vuetify.breakpoint.mdAndUp ? 'flex' : '' }"
-              >
-                <v-btn
-                  v-if="signInState == 2"
-                  color="primary"
-                  :disabled="!calendarEnabled"
-                  @click="calendarSignIn"
-                  >Sign in</v-btn
-                >
-                <v-btn
-                  v-if="signInState == 1"
-                  color="red"
-                  :disabled="!calendarEnabled"
-                  @click="calendarSignOut"
-                  >Sign out</v-btn
-                >
-                <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
-                  <div class="overline">Status:</div>
-                  {{ signInDescription }}
+  <v-container>
+    <v-row justify="center">
+      <v-col xl="9" lg="10" md="12">
+        <h1 class="display-2 pb-6">Settings</h1>
+        <v-tabs
+          v-model="tab"
+          class="elevation-2"
+          :vertical="$vuetify.breakpoint.mdAndUp"
+          :show-arrows="!$vuetify.breakpoint.mdAndUp"
+          center-active
+        >
+          <v-tab href="#tab-general">
+            General
+          </v-tab>
+          <v-tab href="#tab-dashboard">
+            Dashboard
+          </v-tab>
+          <v-tab href="#tab-integrations">
+            Integrations
+          </v-tab>
+          <v-tab-item value="tab-general">
+            <v-card flat tile>
+              <v-card-text>
+                <div class="container">
+                  <div class="display-1 mb-2">General</div>
+                  <div class="title pt-2">Appearance</div>
+                  <p>
+                    Vanilla or chocolate? That's a question every worthy soldier
+                    has to answer for themselves. Just be careful: The blinding
+                    light might daze you.
+                  </p>
+                  <v-switch v-model="darkDesign" label="Dark design"></v-switch>
+                  <div class="title pt-2">Locale</div>
+                  The locale settings affect the way dates, times, and
+                  currencies are displayed.
+                  <v-switch
+                    v-model="useBrowserLocale"
+                    :label="`Use system locale (${browserLocale})`"
+                  ></v-switch>
+                  <v-combobox
+                    v-model="customLocale"
+                    label="Custom locale"
+                    chips
+                    :items="locales"
+                    persistent-hint
+                    hint="A locale can include a language only (like en) or a specific country (like en-US)"
+                    class="pt-0"
+                    :return-object="false"
+                  ></v-combobox>
+                  <p class="pt-3">
+                    Note that the currency setting only changes the symbol used
+                    for displaying money amounts. No conversion is applied. If
+                    your household is an international conglomerate, we
+                    apologize for the inconvenience caused by this inadequacy.
+                  </p>
+                  <v-select
+                    v-model="currency"
+                    :items="currencies"
+                    label="Currency"
+                    class="mt-3"
+                  ></v-select>
+                  <p>Sample: {{ currencySample }}</p>
                 </div>
-              </div>
-              <!-- PHILIPS HUE -->
-              <div class="title pt-6">Philipps Hue</div>
-              Coming soon (or maybe not so soon).
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-tab-item>
-      <v-tab-item value="tab-household">
-        <v-card flat tile>
-          <v-card-text>
-            <div class="headline">Household settings</div>
-          </v-card-text>
-        </v-card>
-      </v-tab-item>
-    </v-tabs>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item value="tab-dashboard">
+            <v-card flat tile>
+              <v-card-text>
+                <div class="display-1 mb-2">Dashboard</div>
+                <!-- CLOCK WIDGET -->
+                <div class="title pt-2">Clock Widget</div>
+                <p>
+                  A revolutionary time-telling device. Follows the laws of
+                  special and general relativity.
+                </p>
+                <v-switch
+                  v-model="clockWidgetEnabled"
+                  label="Enable clock widget"
+                ></v-switch>
+                <!-- WEATHER WIDGET -->
+                <div class="title pt-2">Weather Widget</div>
+                <p>
+                  Provides you with the latest weather data using the free
+                  <a href="https://openweathermap.org/" target="_blank"
+                    >Open Weather Map</a
+                  >
+                  API.
+                </p>
+                <v-switch
+                  v-model="weatherWidgetEnabled"
+                  label="Enable weather widget"
+                ></v-switch>
+                <v-radio-group
+                  v-model="temperatureUnit"
+                  label="Temperature unit"
+                >
+                  <v-radio label="°C (Celsius)" value="c"></v-radio>
+                  <v-radio label="°F (Fahrenheit)" value="f"></v-radio>
+                  <v-radio label="K (Kelvin)" value="k"></v-radio>
+                </v-radio-group>
+                <!-- TASKS WIDGET -->
+                <div class="title pt-2">Tasks Widget</div>
+                <p>
+                  This widget makes sure things are getting done in your home.
+                  No one ever dared to question its authority. (It might be
+                  useless at the moment, but the authority is already
+                  implemented.)
+                </p>
+                <v-switch
+                  v-model="tasksWidgetEnabled"
+                  label="Enable tasks widget"
+                ></v-switch>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+          <v-tab-item value="tab-integrations">
+            <v-card flat tile>
+              <v-card-text>
+                <div class="headline">Integrations</div>
+                <!-- CALENDAR -->
+                <div class="display-1 mb-2">Calendar</div>
+                <p>
+                  Keep track of your shared activites and duties using the
+                  Google Calendar API. If enabled, the calendar can be reached
+                  via the new link in your navigation drawer.
+                </p>
+                <v-switch
+                  v-model="calendarEnabled"
+                  label="Enable Google Calendar integration"
+                ></v-switch>
+                <div
+                  :style="{
+                    display: $vuetify.breakpoint.mdAndUp ? 'flex' : ''
+                  }"
+                >
+                  <v-btn
+                    v-if="signInState == 2"
+                    color="primary"
+                    :disabled="!calendarEnabled"
+                    @click="calendarSignIn"
+                    >Sign in</v-btn
+                  >
+                  <v-btn
+                    v-if="signInState == 1"
+                    color="red"
+                    :disabled="!calendarEnabled"
+                    @click="calendarSignOut"
+                    >Sign out</v-btn
+                  >
+                  <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
+                    <div class="overline">Status:</div>
+                    {{ signInDescription }}
+                  </div>
+                </div>
+                <!-- PHILIPS HUE -->
+                <div class="title pt-6">Philipps Hue</div>
+                Coming soon (or maybe not so soon).
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
