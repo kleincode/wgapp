@@ -1,7 +1,9 @@
 <template>
   <Widget title="Weather">
-    <span class="display-3">{{ temperature }}</span>
-    <span class="display-1" style="vertical-align: top;"> °C</span>
+    <span class="display-3">{{ convertedTemperature }}</span>
+    <span class="display-1" style="vertical-align: top;">
+      {{ displayTemperatureUnit }}</span
+    >
     <div class="overline">{{ condition }} | Last update: {{ lastUpdate }}</div>
   </Widget>
 </template>
@@ -16,12 +18,32 @@ export default {
     Widget
   },
   data: () => ({
-    temperature: "...",
+    temperature: 0,
     lastUpdate: "Never",
     condition: "..."
   }),
   computed: {
-    ...mapState("userSettings", ["locale"])
+    ...mapState("userSettings", ["locale", "temperatureUnit"]),
+    displayTemperatureUnit() {
+      switch (this.temperatureUnit) {
+        case "c":
+          return "°C";
+        case "f":
+          return "°F";
+        default:
+          return "K";
+      }
+    },
+    convertedTemperature() {
+      switch (this.temperatureUnit) {
+        case "c":
+          return Math.round(this.temperature - 273.15);
+        case "f":
+          return Math.round((this.temperature * 9) / 5 - 459.67);
+        default:
+          return Math.round(this.temperature);
+      }
+    }
   },
   watch: {
     locale(val) {
@@ -58,7 +80,7 @@ export default {
         .then(res => res.json())
         .then(resjson => {
           let time = new Date();
-          this.temperature = Math.round(resjson.main.temp - 273.15);
+          this.temperature = resjson.main.temp;
           this.condition = resjson.weather[0].main;
           this.lastUpdate = this.timeFormatter.format(time);
         });

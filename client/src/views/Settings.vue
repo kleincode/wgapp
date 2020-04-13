@@ -35,14 +35,30 @@
                 :items="locales"
                 persistent-hint
                 hint="A locale can include a language only (like en) or a specific country (like en-US)"
+                class="pt-0"
+                :return-object="false"
               ></v-combobox>
+              <p class="pt-3">
+                Note that the currency setting only changes the symbol used for
+                displaying money amounts. No conversion is applied. If your
+                household is an international conglomerate, we apologize for the
+                inconvenience caused by this inadequacy.
+              </p>
+              <v-select
+                v-model="currency"
+                :items="currencies"
+                label="Currency"
+                class="mt-3"
+              ></v-select>
+              <p>Sample: {{ currencySample }}</p>
               <v-divider class="mt-8 mb-8"></v-divider>
 
               <div class="display-1 mb-2">Dashboard</div>
               <!-- CLOCK WIDGET -->
               <div class="title pt-2">Clock Widget</div>
               <p>
-                Old, but gold.
+                A revolutionary time-telling device. Follows the laws of special
+                and general relativity.
               </p>
               <v-switch
                 v-model="clockWidgetEnabled"
@@ -51,7 +67,7 @@
               <!-- WEATHER WIDGET -->
               <div class="title pt-2">Weather Widget</div>
               <p>
-                The weather widget provides current weather data using the free
+                Provides you with the latest weather data using the free
                 <a href="https://openweathermap.org/" target="_blank"
                   >Open Weather Map</a
                 >
@@ -61,6 +77,11 @@
                 v-model="weatherWidgetEnabled"
                 label="Enable weather widget"
               ></v-switch>
+              <v-radio-group v-model="temperatureUnit" label="Temperature unit">
+                <v-radio label="°C (Celsius)" value="c"></v-radio>
+                <v-radio label="°F (Fahrenheit)" value="f"></v-radio>
+                <v-radio label="K (Kelvin)" value="k"></v-radio>
+              </v-radio-group>
               <!-- TASKS WIDGET -->
               <div class="title pt-2">Tasks Widget</div>
               <p>
@@ -79,9 +100,9 @@
               <!-- CALENDAR -->
               <div class="title pt-2">Calendar</div>
               <p>
-                You can add your Google Calendar to view all your events in the
-                'Calendar'-Tab. The next events will also be displayed in the
-                Dashboard.
+                Keep track of your shared activites and duties using the Google
+                Calendar API. If enabled, the calendar can be reached via the
+                new link in your navigation drawer.
               </p>
               <v-switch
                 v-model="calendarEnabled"
@@ -111,8 +132,7 @@
               </div>
               <!-- PHILIPS HUE -->
               <div class="title pt-6">Philipps Hue</div>
-              You can add your Philipps Hue Account to control your smart home
-              devices.
+              Coming soon (or maybe not so soon).
             </div>
           </v-card-text>
         </v-card>
@@ -146,33 +166,78 @@ export default {
     signInDescription: "Connecting...",
     signInState: 0,
     locales: [
-      "af",
-      "ar-SA",
-      "cs",
-      "da",
-      "de",
-      "el",
-      "en",
-      "en-CA",
-      "en-GB",
-      "en-IE",
-      "en-US",
-      "es",
-      "es-MX",
-      "fr",
-      "fr-CA",
-      "fi",
-      "hr",
-      "ja",
-      "ko",
-      "nl",
-      "no",
-      "pt",
-      "pt-BR",
-      "ru",
-      "tr",
-      "uk",
-      "zh-CN"
+      { text: "Afrikaans (Namibia)", value: "af-NA" },
+      { text: "Afrikaans (South Africa)", value: "af-ZA" },
+      { text: "العربية (Arabic)", value: "ar-AR" },
+      { text: "Български (Bulgarian)", value: "bg-BG" },
+      { text: "Català (Catalan)", value: "ca-ES" },
+      { text: "Čeština (Czech)", value: "cs-CZ" },
+      { text: "Dansk (Danish)", value: "da-DK" },
+      { text: "Deutsch (German) (Österreich)", value: "de-AT" },
+      { text: "Deutsch (German) (Schweiz)", value: "de-CH" },
+      { text: "Deutsch (German) (Deutschland)", value: "de-DE" },
+      { text: "Esperanto", value: "es-ES" },
+      { text: "Ελληνικά (Greek)", value: "el-GR" },
+      { text: "English (Australia)", value: "en-AU" },
+      { text: "English (Canada)", value: "en-CA" },
+      { text: "English (United Kingdom)", value: "en-GB" },
+      { text: "English (Ireland)", value: "en-IE" },
+      { text: "English (Pirate)", value: "en-PI" },
+      { text: "English (United States)", value: "en-US" },
+      { text: "Español (Spanish) (España)", value: "es-ES" },
+      { text: "Español (Latinoamérica)", value: "es-LA" },
+      { text: "فارسی (Persian)", value: "fa-IR" },
+      { text: "Suomi (Finnish)", value: "fi-FI" },
+      { text: "Français (French) (Canada)", value: "fr-CA" },
+      { text: "Français (French) (France)", value: "fr-FR" },
+      { text: "Français (French) (Belgique)", value: "fr-BE" },
+      { text: "Français (French) (Suisse)", value: "fr-CH" },
+      { text: "Hrvatski (French) (Croatian)", value: "hr-HR" },
+      { text: "Magyar (Hungarian)", value: "hu-HU" },
+      { text: "Italiano (Italian)", value: "it-IT" },
+      { text: "日本語 (Japanese)", value: "ja-JP" },
+      { text: "한국어 (韩国) (Korean)", value: "ko-KR" },
+      { text: "Latin", value: "la" },
+      { text: "Lëtzebuergesch (Luxembourgish)", value: "lb" },
+      { text: "Nederlands (Dutch) (België)", value: "nl-BE" },
+      { text: "Nederlands (Dutch) (Nederland)", value: "nl-NL" },
+      { text: "Polski (Polish)", value: "pl-PL" },
+      { text: "Русский (Russian)", value: "ru-RU" },
+      { text: "Svenska (Swedish)", value: "sv-SE" },
+      { text: "tlhIngan-Hol (Klingon)", value: "tlh" },
+      { text: "Türkçe (Turkish)", value: "tr-TR" },
+      { text: "Українська (Ukrainian)", value: "uk-UA" },
+      { text: "Tiếng Việt (Vietnamese)", value: "vi-VN" },
+      { text: "中文 (Chinese)", value: "zh" },
+      { text: "中文简体 (Chinese Simplified)", value: "zh-Hans" },
+      { text: "中文繁體 (Chinese Traditional)", value: "zh-Hant" }
+    ],
+    currencies: [
+      { text: "Australian Dollar (AUD)", value: "AUD" },
+      { text: "Brazilian Real (BRL)", value: "BRL" },
+      { text: "Bulgarian Lev (BGN)", value: "BGN" },
+      { text: "Canadian Dollar (CAD)", value: "CAD" },
+      { text: "Yuan Renminbi (CNY)", value: "CNY" },
+      { text: "Cuban Peso (CUP)", value: "CUP" },
+      { text: "Czech Koruna (CZK)", value: "CZK" },
+      { text: "Danish Krone (DKK)", value: "DKK" },
+      { text: "Euro (EUR)", value: "EUR" },
+      { text: "Pound Sterling (GBP)", value: "GBP" },
+      { text: "Forint (HUF)", value: "HUF" },
+      { text: "Indian Rupee (INR)", value: "INR" },
+      { text: "Iceland Krona (ISK)", value: "ISK" },
+      { text: "Yen (JPY)", value: "JPY" },
+      { text: "North Korean Won (KPW)", value: "KPW" },
+      { text: "Won (KRW)", value: "KRW" },
+      { text: "Mexican Peso (MXN)", value: "MXN" },
+      { text: "Norwegian Krone (NOK)", value: "NOK" },
+      { text: "Romanian Leu (RON)", value: "RON" },
+      { text: "Russian Ruble (RUB)", value: "RUB" },
+      { text: "Swedish Krona (SEK)", value: "SEK" },
+      { text: "Swiss Franc (CHF)", value: "CHF" },
+      { text: "Zloty (PLN)", value: "PLN" },
+      { text: "US-Dollar (USD)", value: "USD" },
+      { text: "New-Zealand Dollar (NZD)", value: "NZD" }
     ],
     browserLocale: navigator.language
   }),
@@ -259,6 +324,37 @@ export default {
       get() {
         return this.$store.state.userSettings.locale;
       }
+    },
+    temperatureUnit: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "temperatureUnit",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.temperatureUnit;
+      }
+    },
+    currency: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "currency",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.currency;
+      }
+    },
+    currencySample() {
+      return new Intl.NumberFormat(
+        this.$store.state.userSettings.locale || undefined,
+        {
+          style: "currency",
+          currency: this.currency
+        }
+      ).format(123456.789);
     }
   },
   watch: {
