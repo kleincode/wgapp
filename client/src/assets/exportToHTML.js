@@ -1,14 +1,9 @@
 function exportToHTML(lastBillTimestamp, maxTimestamp, jsonData) {
-  console.log(lastBillTimestamp);
-  console.log(maxTimestamp);
-  console.log(jsonData);
-  console.log(jsonData.memberTotals);
   let total = jsonData.total;
   let includeMonthlyCharges = jsonData.includeMonthlyCharges;
   let monthlyTotal = jsonData.monthlyTotal;
   let mean = jsonData.mean;
   let memberTotals = jsonData.memberTotals;
-  console.log(memberTotals);
   let debts = jsonData.debts;
   var myWindow = window.open(
     "",

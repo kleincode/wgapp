@@ -150,7 +150,7 @@
                         @click="exportBill(bill.min, bill.max, bill.data)"
                         ><v-icon>language</v-icon></v-btn
                       >
-                      <v-btn icon><v-icon>table_chart</v-icon></v-btn>
+                      <v-btn icon disabled><v-icon>table_chart</v-icon></v-btn>
                     </td>
                   </tr>
                 </tbody>
@@ -249,7 +249,10 @@ export default {
         let lastBill = new Date(data.lastBill).getTime();
         this.lastBill = this.renderDate(lastBill);
         this.lastBillTimestamp = lastBill;
-        if (data.mainResult.length == 0) {
+        if (
+          data.mainResult.length == 0 &&
+          this.isToday(new Date(data.lastBill))
+        ) {
           this.empty = true;
           this.loading = false;
           return;
@@ -295,6 +298,15 @@ export default {
         this.dialog = false;
       }
       this.loading = false;
+    },
+
+    isToday(date) {
+      let cur = new Date();
+      let variable =
+        date.getDate() == cur.getDate() &&
+        date.getMonth() == cur.getMonth() &&
+        date.getFullYear() == cur.getFullYear();
+      return variable;
     },
 
     exportCurrentBill() {
