@@ -3,7 +3,7 @@
     <h1 class="display-2 pb-6">Tasks</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4">
-        <v-card outlined class="text-center">
+        <v-card outlined class="text-center" :loading="loading">
           <h2 class="title pt-8 pb-12">Today's Tasks:</h2>
           <div class="container">
             <v-row justify="center">
@@ -116,7 +116,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card outlined>
+        <v-card outlined :loading="loading">
           <v-row>
             <v-col cols="9" md="10" lg="10">
               <h2 class="title pl-8 pt-4">All Tasks:</h2>
@@ -196,7 +196,8 @@ import { mapGetters } from "vuex";
 export default {
   name: "Tasks",
   data: () => ({
-    tasks: []
+    tasks: [],
+    loading: false
   }),
   computed: {
     getTodaysTasks() {
@@ -211,6 +212,7 @@ export default {
   },
   methods: {
     async fetchTasks() {
+      this.loading = true;
       try {
         const { data } = await this.$http.get("/_/fetchtasks");
         if (data.success) {
@@ -260,6 +262,12 @@ export default {
             });
           });
           this.sortTasks();
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error while fetching data. Please try again later."
+          );
+          console.error(data);
         }
       } catch (err) {
         this.$store.dispatch(
@@ -268,6 +276,7 @@ export default {
         );
         console.error(err);
       }
+      this.loading = false;
     },
 
     //2=done today, 1=not done but okay, 0=missed
@@ -497,6 +506,7 @@ export default {
     },
 
     async checkedTasks(task) {
+      this.loading = true;
       let lastExecution, assignedMember;
       let users = this.getUserSelect.map(entry => entry.value);
       let index = users.indexOf(task.assigned);
@@ -537,6 +547,7 @@ export default {
         console.error(data.message);
       }
       await this.fetchTasks();
+      this.loading = false;
     },
 
     nextAssignedMember(users, index) {

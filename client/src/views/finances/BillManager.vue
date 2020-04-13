@@ -128,7 +128,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" lg="4">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :loading="loadingHistory">
           <v-card-title><h1 class="headline">Bill history</h1></v-card-title>
           <v-card-text>
             <v-simple-table>
@@ -182,6 +182,7 @@ export default {
     debts: [],
     empty: true,
     loading: false,
+    loadingHistory: false,
     finishPaymentDialog: false,
     includeMonthlyCharges: false,
     lastBillTimestamp: 0,
@@ -342,6 +343,7 @@ export default {
     },
 
     async finishPayments() {
+      this.loading = true;
       const { data } = await this.$http.post("/_/updatelastbill", {
         min: this.lastBillTimestamp,
         max: Date.now(),
@@ -355,12 +357,14 @@ export default {
           "Error while updating last bill time. Please try again later."
         );
       }
+      this.loadingHistory = false;
       this.finishPaymentDialog = false;
       this.back();
     },
 
     async fetchBillhistory() {
       try {
+        this.loadingHistory = true;
         const { data } = await this.$http.get("/_/fetchbillhistory");
         if (data.success) {
           this.billhistory = [];
@@ -372,13 +376,16 @@ export default {
               data: bill.data
             });
           });
+          this.loadingHistory = false;
         } else {
+          this.loadingHistory = false;
           this.$store.dispatch(
             "showSnackbar",
             "Error while fetching bill history. Please try again later."
           );
         }
       } catch (err) {
+        this.loadingHistory = false;
         this.$store.dispatch(
           "showSnackbar",
           "Error while fetching bill history. Please try again later."

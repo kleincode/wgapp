@@ -7,7 +7,7 @@
       <div v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</div>
       <div v-if="!editMode" class="display-2 pb-6">Add task - "{{ name }}"</div>
     </div>
-    <v-card outlined>
+    <v-card outlined :loading="loading">
       <div class="container">
         <v-card-text>
           <v-row>
@@ -220,7 +220,9 @@ export default {
     startTimeMenu: false,
     snackbar: false,
     snackText: "",
-    deleteDialog: false
+    deleteDialog: false,
+
+    loading: false
   }),
   computed: {
     ...mapGetters(["getUserSelect"])
@@ -234,31 +236,47 @@ export default {
   },
   methods: {
     async fetch_settings(id) {
-      const { data } = await this.$http.get("/_/fetchtasks", {
-        params: { id }
-      });
-      if (data.success) {
-        if (data.data.length == 0 || data.data.length > 1) {
+      this.loading = true;
+      try {
+        const { data } = await this.$http.get("/_/fetchtasks", {
+          params: { id }
+        });
+        if (data.success) {
+          if (data.data.length == 0 || data.data.length > 1) {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Error while fetching tasks. Multiple or no task received."
+            );
+          }
+          let task = data.data[0];
+          this.id = task.id;
+          this.name = task.name;
+          this.iterating = Boolean(parseInt(task.iteratingMode));
+          this.selectedMember = task.assignedMember;
+          this.chosenDays = task.repetitionDays.map(
+            day => day[0].toUpperCase() + day.substr(1, day.length)
+          );
+          this.icon = task.icon;
+          this.time = task.time.substr(0, 5);
+          this.date = task.startDate.substr(0, 10);
+          this.repetitionEvery = parseInt(task.repetitionEvery);
+          this.repetitionUnit = this.repetitionUnits[task.repetitionUnit];
+          this.reminder = !!task.reminder;
+        } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Error while fetching tasks. Multiple or no task received."
+            "Error while fetching settings data. Please try again later."
           );
+          console.error(data);
         }
-        let task = data.data[0];
-        this.id = task.id;
-        this.name = task.name;
-        this.iterating = Boolean(parseInt(task.iteratingMode));
-        this.selectedMember = task.assignedMember;
-        this.chosenDays = task.repetitionDays.map(
-          day => day[0].toUpperCase() + day.substr(1, day.length)
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while fetching settings data. Please try again later."
         );
-        this.icon = task.icon;
-        this.time = task.time.substr(0, 5);
-        this.date = task.startDate.substr(0, 10);
-        this.repetitionEvery = parseInt(task.repetitionEvery);
-        this.repetitionUnit = this.repetitionUnits[task.repetitionUnit];
-        this.reminder = !!task.reminder;
+        console.error(err);
       }
+      this.loading = false;
     },
 
     async postChanges() {

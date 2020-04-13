@@ -89,7 +89,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :loading="loadingMonthlyBudget">
           <v-card-title>
             Monthly charges
             <v-spacer></v-spacer>
@@ -145,7 +145,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :loading="loadingMonthlyBudget">
           <v-card-title>
             Overview Expenses: {{ intervallStr }}
             <v-spacer></v-spacer>
@@ -237,7 +237,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :loading="loadingLastBilling">
           <v-card-title>
             Compensation Payments
           </v-card-title>
@@ -346,8 +346,10 @@ export default {
       amount: 0,
       uid: 0
     },
+    loadingMonthlyCharges: false,
     totalMonthlyBudget: 1300,
     tempTotalMonthlyBudget: 1300,
+    loadingMonthlyBudget: false,
     currency: "€",
     timespanes: [
       { text: "current month", value: 0 },
@@ -356,6 +358,7 @@ export default {
     ],
     choosenTimeSpan: 0,
     lastBill: "",
+    loadingLastBilling: false,
     trendValues: []
   }),
   computed: {
@@ -586,55 +589,95 @@ export default {
     },
 
     async fetchMonthlyData() {
-      const { data } = await this.$http.get("/_/fetchmonthlycharges");
-      if (data.success) {
-        this.monthlyCharges = [];
-        data.data.forEach(charge => {
-          let user, allMode;
-          if (charge.uid == -1) {
-            user = "ALL";
-            allMode = true;
-          } else {
-            user = this.getUserName(charge.uid);
-            allMode = false;
-          }
-          this.monthlyCharges.push({
-            id: charge.id,
-            name: charge.name,
-            amount: charge.amount / 100,
-            icon: charge.icon,
-            responsibleUser: user,
-            uid: charge.uid,
-            all: allMode
+      this.loadingMonthlyCharges = true;
+      try {
+        const { data } = await this.$http.get("/_/fetchmonthlycharges");
+        if (data.success) {
+          this.monthlyCharges = [];
+          data.data.forEach(charge => {
+            let user, allMode;
+            if (charge.uid == -1) {
+              user = "ALL";
+              allMode = true;
+            } else {
+              user = this.getUserName(charge.uid);
+              allMode = false;
+            }
+            this.monthlyCharges.push({
+              id: charge.id,
+              name: charge.name,
+              amount: charge.amount / 100,
+              icon: charge.icon,
+              responsibleUser: user,
+              uid: charge.uid,
+              all: allMode
+            });
           });
-        });
-      } else {
-        console.error("Error during fetching monthlyData");
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error during fetching monthly data. Please try again later."
+          );
+          console.error("Error during fetching monthly data", data);
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error during fetching monthly data. Please try again later."
+        );
+        console.error("Error during fetching monthly data");
       }
+      this.loadingMonthlyCharges = false;
     },
 
     async fetchLastBilling() {
-      const { data } = await this.$http.get("/_/fetchlastbill");
-      if (data.success) {
-        if (data.results.length == 0) {
-          this.lastBill = "----";
+      this.loadingLastBilling = true;
+      try {
+        const { data } = await this.$http.get("/_/fetchlastbill");
+        if (data.success) {
+          if (data.results.length == 0) {
+            this.lastBill = "----";
+          } else {
+            this.lastBill = this.renderDate(
+              new Date(data.results[0].lastBill).getTime() / 1000
+            );
+          }
         } else {
-          this.lastBill = this.renderDate(
-            new Date(data.results[0].lastBill).getTime() / 1000
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error during fetching last bill. Please try again later."
           );
+          console.log("Error during fetching last bill", data);
         }
-      } else {
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Communication error. Please try again later."
+        );
         console.error("Error during fetching last bill");
       }
+      this.loadingLastBilling = false;
     },
 
     async fetchFinancesTarget() {
-      const { data } = await this.$http.get("/_/fetchfinancestarget");
-      if (data.success) {
-        this.totalMonthlyBudget = data.results[0].amount / 100;
-        this.tempTotalMonthlyBudget = this.totalMonthlyBudget;
-      } else {
-        console.error("Error during fetching finances target");
+      try {
+        const { data } = await this.$http.get("/_/fetchfinancestarget");
+        if (data.success) {
+          this.totalMonthlyBudget = data.results[0].amount / 100;
+          this.tempTotalMonthlyBudget = this.totalMonthlyBudget;
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Communication error. Please try again later."
+          );
+          console.error("Error during fetching finances target.", data);
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Communication error. Please try again later."
+        );
+        console.error("Error during fetching finances target.");
       }
       this.editBudgetDialog = false;
     },
