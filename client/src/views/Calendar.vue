@@ -4,7 +4,7 @@
 
     <v-select
       v-show="!gapiNotSignedIn"
-      v-model="choosenCalendars"
+      v-model="calendarsSelected"
       :items="allCalendarsStrings"
       chips
       :label="gapiSignedIn ? 'Choose Calendars' : 'Not signed in'"
@@ -110,13 +110,16 @@
             :close-on-content-click="false"
             :activator="selectedElement"
             offset-x
+            max-width="350px"
           >
-            <v-card min-width="350px" flat>
+            <v-card width="350px" flat>
               <v-toolbar :color="selectedEvent.color" dark>
                 <v-toolbar-title v-text="selectedEvent.name"></v-toolbar-title>
               </v-toolbar>
               <v-card-text>
-                <span v-text="selectedEvent.description"></span>
+                <span
+                  v-text="selectedEvent.description || 'No description'"
+                ></span>
               </v-card-text>
             </v-card>
           </v-menu>
@@ -159,7 +162,6 @@ export default {
     selectedOpen: false,
     eventData: [],
     events: [],
-    choosenCalendars: [],
     allCalendarsStrings: [],
     calendars: [],
     gapiSignedIn: false,
@@ -171,44 +173,45 @@ export default {
       if (!start || !end) {
         return "";
       }
-
-      const startMonth = this.monthFormatter(start);
-      const endMonth = this.monthFormatter(end);
-      const suffixMonth = startMonth === endMonth ? "" : endMonth;
-
-      const startYear = start.year;
-      const endYear = end.year;
-      const suffixYear = startYear === endYear ? "" : endYear;
-
-      const startDay = start.day + this.nth(start.day);
-      const endDay = end.day + this.nth(end.day);
-
       switch (this.type) {
         case "month":
-          return `${startMonth} ${startYear}`;
+          return this.monthFormatter.format(new Date(start.date));
         case "week":
+          return this.monthFormatter.format(new Date(start.date));
         case "4day":
-          return `${startMonth} ${startDay} ${startYear} - ${suffixMonth} ${endDay} ${suffixYear}`;
+          return (
+            this.dateFormatter.format(new Date(start.date)) +
+            " - " +
+            this.dateFormatter.format(new Date(end.date))
+          );
         case "day":
-          return `${startMonth} ${startDay} ${startYear}`;
+          return this.dateFormatter.format(new Date(start.date));
       }
       return "";
-    },
-    monthFormatter() {
-      return this.$refs.calendar.getFormatter({
-        timeZone: "UTC",
-        month: "long"
-      });
     },
     today() {
       let dat = new Date();
       return this.formatDate(dat, false);
     },
-    ...mapState("userSettings", ["calendarEnabled"])
+    calendarsSelected: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "calendarsSelected",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.calendarsSelected;
+      }
+    },
+    ...mapState("userSettings", ["calendarEnabled", "locale"])
   },
   watch: {
     calendarEnabled(val) {
       if (val && !this.gapiLoaded) this.loadGapi();
+    },
+    locale(val) {
+      this.initLocale(val);
     }
   },
   created() {
@@ -217,12 +220,32 @@ export default {
   async mounted() {
     this.gapiSignedIn = false;
     this.gapiNotSignedIn = false;
+    this.initLocale(this.locale);
     if (this.calendarEnabled && signedIn) {
       await this.updateG();
       this.$refs.calendar.checkChange();
     }
   },
   methods: {
+    initLocale(locale) {
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      this.timeFormatter = new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      this.dateFormatter = new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+      this.monthFormatter = new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "long"
+      });
+    },
     loadGapi() {
       const gapiscript = document.createElement("script");
       gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
@@ -242,7 +265,7 @@ export default {
       let calendars = await listCalendars();
       this.allCalendarsStrings = calendars.map(cal => cal.summary);
       this.allCalendars = calendars;
-      let calIds = this.choosenCalendars.map(
+      let calIds = this.calendarsSelected.map(
         cal => calendars[this.allCalendarsStrings.indexOf(cal)].id
       );
       this.eventData = await listUpcomingEvents(
@@ -273,6 +296,7 @@ export default {
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event;
+        console.log(event);
         this.selectedElement = nativeEvent.target;
         setTimeout(() => (this.selectedOpen = true), 10);
       };
@@ -330,15 +354,6 @@ export default {
           });
         }
       });
-    },
-
-    nth(d) {
-      return d > 3 && d < 21
-        ? "th"
-        : ["th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"][d % 10];
-    },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
     },
     formatDate(a, withTime) {
       let year = a.getFullYear();
