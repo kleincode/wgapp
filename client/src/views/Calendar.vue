@@ -2,22 +2,28 @@
   <v-container fluid>
     <h1 class="display-2 pb-6">Calendar</h1>
 
+    <!-- Select calendars -->
     <v-select
       v-show="!gapiNotSignedIn"
       v-model="calendarsSelected"
       :items="allCalendarsStrings"
-      chips
-      :label="gapiSignedIn ? 'Choose Calendars' : 'Not signed in'"
+      small-chips
+      :label="gapiSignedIn ? 'Select Calendars' : 'Not signed in'"
       multiple
       outlined
       :disabled="!gapiSignedIn"
+      :loading="loading"
       @change="updateG"
     ></v-select>
+
+    <!-- Warning if feature disabled -->
     <v-alert v-if="!calendarEnabled" type="warning">
       Please refer to the
       <router-link :to="{ name: 'Settings' }">settings</router-link> to activate
       this feature.
     </v-alert>
+
+    <!-- Warning if not connected to gapi -->
     <v-alert v-if="gapiNotSignedIn" type="warning">
       Please refer to the
       <router-link :to="{ name: 'Settings' }">settings</router-link> to connect
@@ -30,8 +36,10 @@
 
     <v-row class="fill-height">
       <v-col>
+        <!-- Calendar toolbar sheet -->
         <v-sheet height="64">
           <v-toolbar flat>
+            <!-- Today button -->
             <v-btn
               text
               :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
@@ -43,6 +51,8 @@
               <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
               {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
             </v-btn>
+
+            <!-- Calendar navigation and title -->
             <v-btn fab text small @click="prev">
               <v-icon small>mdi-chevron-left</v-icon>
             </v-btn>
@@ -54,6 +64,8 @@
               >{{ title }}</v-toolbar-title
             >
             <v-spacer></v-spacer>
+
+            <!-- Select display timespan -->
             <v-menu bottom right>
               <template v-slot:activator="{ on }">
                 <div v-on="on">
@@ -89,6 +101,7 @@
             </v-menu>
           </v-toolbar>
         </v-sheet>
+        <!-- Calendar sheet -->
         <v-sheet height="600">
           <v-calendar
             v-show="gapiSignedIn"
@@ -165,7 +178,8 @@ export default {
     allCalendarsStrings: [],
     calendars: [],
     gapiSignedIn: false,
-    gapiNotSignedIn: false
+    gapiNotSignedIn: false,
+    loading: false
   }),
   computed: {
     title() {
@@ -218,6 +232,7 @@ export default {
     if (this.calendarEnabled && !gapiLoaded) this.loadGapi();
   },
   async mounted() {
+    this.loading = true;
     this.gapiSignedIn = false;
     this.gapiNotSignedIn = false;
     this.initLocale(this.locale);
@@ -259,21 +274,38 @@ export default {
       this.gapiNotSignedIn = true;
     },
     async updateG() {
+      this.loading = true;
       this.gapiSignedIn = true;
       this.gapiNotSignedIn = false;
-      let startDate = new Date(this.start.date);
       let calendars = await listCalendars();
       this.allCalendarsStrings = calendars.map(cal => cal.summary);
       this.allCalendars = calendars;
+      this.updateRange({ start: this.start, end: this.end });
+    },
+    // Called to fetch all events in that range
+    async updateRange({ start, end }) {
+      if (!start || !end) return;
+      this.loading = true;
+      this.start = start;
+      this.end = end;
+      console.log(
+        "range update",
+        start ? start.date : start,
+        end ? end.date : end
+      );
       let calIds = this.calendarsSelected.map(
-        cal => calendars[this.allCalendarsStrings.indexOf(cal)].id
+        cal => this.allCalendars[this.allCalendarsStrings.indexOf(cal)].id
       );
       this.eventData = await listUpcomingEvents(
-        startDate,
+        new Date(start.date),
+        new Date(end.date),
         calIds,
         this.allCalendars
       );
-      this.updateRange({ start: this.start, end: this.end });
+      const min = new Date(`${start.date}T00:00:00`);
+      const max = new Date(`${end.date}T23:59:59`);
+      this.setEvents(min, max);
+      this.loading = false;
     },
 
     //Calendar handling
@@ -309,14 +341,6 @@ export default {
       }
 
       nativeEvent.stopPropagation();
-    },
-
-    updateRange({ start, end }) {
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      this.start = start;
-      this.end = end;
-      this.setEvents(min, max);
     },
 
     setEvents(min, max) {
