@@ -1,6 +1,15 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
+import store from "./store";
+
+// Displays an "update available" notification. When clicked by the user, the service worker is told to reload (thereby installing the update).
+const notifyUserAboutUpdate = worker => {
+  store.commit("update_available", () => {
+    worker.postMessage({ action: "skipWaiting" });
+    setTimeout(() => store.commit("update_available", null), 100);
+  });
+};
 
 if (process.env.NODE_ENV === "production") {
   register(`${process.env.BASE_URL}service-worker.js`, {
@@ -19,8 +28,9 @@ if (process.env.NODE_ENV === "production") {
     updatefound() {
       console.log("New content is downloading.");
     },
-    updated() {
+    updated(registration) {
       console.log("New content is available; please refresh.");
+      notifyUserAboutUpdate(registration.waiting);
     },
     offline() {
       console.log(
@@ -32,3 +42,10 @@ if (process.env.NODE_ENV === "production") {
     }
   });
 }
+
+var refreshing;
+navigator.serviceWorker.addEventListener("controllerchange", () => {
+  if (refreshing) return;
+  refreshing = true;
+  window.location.reload();
+});

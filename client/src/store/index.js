@@ -14,7 +14,8 @@ let store = new Vuex.Store({
     userLastName: localStorage.getItem("user_lastname"),
     snackbarShow: false,
     snackbarMessage: "",
-    householdUsers: {}
+    householdUsers: {},
+    updateAvailable: null
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -42,6 +43,9 @@ let store = new Vuex.Store({
     },
     update_household_users(state, users) {
       state.householdUsers = users;
+    },
+    update_available(state, callback) {
+      state.updateAvailable = callback;
     }
   },
   actions: {
@@ -55,7 +59,7 @@ let store = new Vuex.Store({
           commit("update_user", [data.email, data.firstname, data.lastname]);
         else commit("logout");
       } catch (err) {
-        console.err("Error while authorizing user", err);
+        console.error("Error while authorizing user", err);
         commit("logout");
       }
     },
@@ -82,7 +86,7 @@ let store = new Vuex.Store({
           return false;
         }
       } catch (err) {
-        console.err("Error while fetching household users", err);
+        console.error("Error while fetching household users", err);
       }
       return true;
     },
@@ -130,6 +134,9 @@ let store = new Vuex.Store({
         users.push({ value: parseInt(key), text: userName || "Nameless user" });
       });
       return users;
+    },
+    isUpdateAvailable: state => {
+      return !!state.updateAvailable;
     }
   },
   modules: {
