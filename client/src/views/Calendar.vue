@@ -17,14 +17,14 @@
     ></v-select>
 
     <!-- Warning if feature disabled -->
-    <v-alert v-if="!calendarEnabled" type="warning">
+    <v-alert v-if="_initialized && !calendarEnabled" type="warning">
       Please refer to the
       <router-link :to="{ name: 'Settings' }">settings</router-link> to activate
       this feature.
     </v-alert>
 
     <!-- Warning if not connected to gapi -->
-    <v-alert v-if="gapiNotSignedIn" type="warning">
+    <v-alert v-if="_initialized && gapiNotSignedIn" type="warning">
       Please refer to the
       <router-link :to="{ name: 'Settings' }">settings</router-link> to connect
       to the Google services.
@@ -75,26 +75,26 @@
                     :class="$vuetify.breakpoint.smAndDown ? 'pa-0' : ''"
                   >
                     <span v-if="!$vuetify.breakpoint.smAndDown">{{
-                      typeToLabel[type]
+                      viewToLabel[calendarView]
                     }}</span>
                     <v-icon v-if="$vuetify.breakpoint.smAndDown">{{
-                      typeToIcon[type]
+                      viewToIcon[calendarView]
                     }}</v-icon>
                     <v-icon right>mdi-menu-down</v-icon>
                   </v-btn>
                 </div>
               </template>
               <v-list>
-                <v-list-item @click="type = 'day'">
+                <v-list-item @click="calendarView = 'day'">
                   <v-list-item-title>Day</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="type = 'week'">
+                <v-list-item @click="calendarView = 'week'">
                   <v-list-item-title>Week</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="type = 'month'">
+                <v-list-item @click="calendarView = 'month'">
                   <v-list-item-title>Month</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="type = '4day'">
+                <v-list-item @click="calendarView = '4day'">
                   <v-list-item-title>4 days</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -111,7 +111,7 @@
             :events="events"
             :event-color="getEventColor"
             :now="today"
-            :type="type"
+            :type="calendarView"
             :weekdays="[1, 2, 3, 4, 5, 6, 0]"
             @click:event="showEvent"
             @click:more="viewDay"
@@ -155,14 +155,13 @@ export default {
   name: "Calendar",
   data: () => ({
     focus: "",
-    type: "month",
-    typeToLabel: {
+    viewToLabel: {
       month: "Month",
       week: "Week",
       day: "Day",
       "4day": "4 Days"
     },
-    typeToIcon: {
+    viewToIcon: {
       month: "view_module",
       week: "view_week",
       day: "view_day",
@@ -189,7 +188,7 @@ export default {
       if (!start || !end) {
         return "";
       }
-      switch (this.type) {
+      switch (this.calendarView) {
         case "month":
           return this.monthFormatter.format(new Date(start.date));
         case "week":
@@ -220,7 +219,18 @@ export default {
         return this.$store.state.userSettings.calendarsSelected;
       }
     },
-    ...mapState("userSettings", ["calendarEnabled", "locale"])
+    calendarView: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "calendarView",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.calendarView;
+      }
+    },
+    ...mapState("userSettings", ["calendarEnabled", "locale", "_initialized"])
   },
   watch: {
     calendarEnabled(val) {
@@ -372,7 +382,7 @@ export default {
     //Calendar handling
     viewDay({ date }) {
       this.focus = date;
-      this.type = "day";
+      this.calendarView = "day";
     },
     getEventColor(event) {
       return event.color;
