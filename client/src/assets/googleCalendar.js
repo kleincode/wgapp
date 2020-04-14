@@ -102,11 +102,9 @@ async function listColors() {
 }
 
 /**
- * Print the summary and start datetime/date of the next ten events in
- * the authorized user's calendar. If no events are found an
- * appropriate message is printed.
+ * Returns all events in the requested range
  */
-async function listUpcomingEvents(minDate, calIDs, allCalendars) {
+async function listUpcomingEvents(minDate, maxDate, calIDs, allCalendars) {
   let colors = await listColors();
   if (calIDs.length == 0) {
     return null;
@@ -116,9 +114,9 @@ async function listUpcomingEvents(minDate, calIDs, allCalendars) {
     const response2 = await gapi.client.calendar.events.list({
       calendarId: calIDs[i],
       timeMin: minDate.toISOString(),
+      timeMax: maxDate.toISOString(),
       showDeleted: false,
       singleEvents: true,
-      maxResults: 10,
       orderBy: "startTime"
     });
     let tempItems = response2.result.items;
