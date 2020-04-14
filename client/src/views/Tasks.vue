@@ -134,7 +134,7 @@
       <v-col cols="12" md="6">
         <v-card outlined :loading="loading" style="height: 100%">
           <v-card-title>
-            <h2 class="title">Old single tasks</h2>
+            <h2 class="title">Recently finished tasks</h2>
           </v-card-title>
           <v-card-text>
             <v-list v-if="oldSingleTasks.length > 0">
@@ -149,7 +149,9 @@
                 <v-list-item-content>
                   <v-list-item-title class="pb-2 task-entry">
                     {{ task.name }}
-                    <div class="overline pl-2 pt-1">- {{ task.day }}</div>
+                    <div class="overline pl-2 pt-1">
+                      - {{ format(new Date(task.day)) }}
+                    </div>
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     <v-chip>
@@ -246,19 +248,12 @@ export default {
           let curDate = new Date();
           curDate.setHours(12, 0, 0, 0);
           data.data.forEach(element => {
-            let lastExecution = new Date(element.lastExecution.substr(0, 19));
+            let lastExecution = new Date(element.lastExecution);
             switch (element.mode) {
               case 0: {
                 //Single
-                let correctedStartDate = new Date(
-                  element.startDate.substr(0, 19)
-                );
+                let correctedStartDate = new Date(element.startDate);
                 let time = element.time.substr(0, 5);
-                correctedStartDate.setHours(correctedStartDate.getHours() + 13);
-                correctedStartDate.setHours(
-                  parseInt(time.substr(0, 2)),
-                  parseInt(time.substr(3, 2))
-                );
                 let status = getSingleStatus(correctedStartDate, lastExecution);
                 this.tasks.push({
                   id: element.id,
@@ -266,6 +261,7 @@ export default {
                   name: element.name,
                   assigned: element.assignedMember,
                   day: formatDateString(correctedStartDate),
+                  nextDueDay: correctedStartDate,
                   dueDay: correctedStartDate,
                   time: time,
                   missed: status,
@@ -387,6 +383,7 @@ export default {
             break;
           case 2:
             assignedMember = users[this.nextAssignedMember(users, index)];
+            lastExecution = new Date().toISOString();
             break;
         }
       } else {
@@ -448,6 +445,10 @@ export default {
       } else {
         return users.length - 1;
       }
+    },
+
+    format(str) {
+      return formatDateString(str);
     },
 
     sortTasks() {

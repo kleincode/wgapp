@@ -68,7 +68,7 @@ module.exports = ({ db }) => ({
 
       //Permissions granted; perform update
       let updateVals = Helpers.copyKeysIfPresent(body,
-        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "date"]
+        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "startDate"]
       );
       if (body.repetitionDays) updateVals.repetitionDays = JSON.stringify(body.repetitionDays);
       try {

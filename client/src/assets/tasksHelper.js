@@ -190,25 +190,30 @@ function setToMonday(date) {
 }
 
 function getOnDemandStatus(curDate, lastExecution) {
+  if (lastExecution.toString() == "Invalid Date") {
+    return 0;
+  }
   curDate.setHours(curDate.getHours() - 2);
   if (curDate > lastExecution) {
-    return 1;
+    return 0;
   } else {
     return 2;
   }
 }
 
 function getSingleStatus(dueDate, lastExecution) {
+  console.log(dueDate);
+  console.log(lastExecution);
   let curDate = new Date();
   if (curDate < dueDate) {
-    if (lastExecution.getTime() < 946681200000) {
+    if (lastExecution.getTime() < 997590000000) {
       // Januar 2000
       return 0;
     } else {
       return 2;
     }
   } else {
-    if (lastExecution.getTime() < 946681200000) {
+    if (lastExecution.getTime() < 997590000000) {
       return 1;
     } else {
       return 2;

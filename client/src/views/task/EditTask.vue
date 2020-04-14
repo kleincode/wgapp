@@ -348,6 +348,14 @@ export default {
         repetitionUnit = false;
       }
       let startDate = this.date;
+      if (mode == 0) {
+        startDate = new Date(startDate);
+        startDate.setHours(
+          parseInt(time.substr(0, 2)),
+          parseInt(time.substr(3, 2))
+        );
+        startDate = startDate.toISOString();
+      }
       let reminder;
       if (this.reminder) {
         reminder = true;

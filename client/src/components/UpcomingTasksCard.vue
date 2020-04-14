@@ -32,7 +32,7 @@
                 >
               </template>
               <span>{{
-                task.mode == 0
+                task.mode == 1
                   ? "This is a repeating task"
                   : "This is a one-time task"
               }}</span>

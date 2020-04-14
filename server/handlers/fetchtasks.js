@@ -23,7 +23,7 @@ module.exports = ({ db }) => ({
       }
       try {
         const { results } = await db.query(baseQuery, baseParams);
-        const { results: oldTasks } = await db.query("SELECT id, icon, name, startDate, assignedMember FROM tasks WHERE hid = ? AND mode = 0 AND lastExecution > '2001-00-1 00:00:00'", [hid]);
+        const { results: oldTasks } = await db.query("SELECT id, icon, name, startDate, assignedMember FROM tasks WHERE hid = 27 AND mode = 0 AND lastExecution > '2001-08-12 04:20:00' ORDER BY lastExecution DESC LIMIT 0,5", [hid]);
         results.forEach((elem) => {
           elem.repetitionDays = JSON.parse(elem.repetitionDays);
         });
