@@ -44,7 +44,7 @@
                     >bathtub</v-icon
                   >
                   <div class="font-regular pt-4 display-1 text--disabled">
-                    Nothing to do
+                    Just chillin'
                   </div>
                   <div class="caption pt-2 text--disabled">--:--</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
@@ -174,6 +174,16 @@
                 </v-list-item-icon>
               </v-list-item>
             </v-list>
+            <div
+              v-else
+              style="text-align: center"
+              class="text--disabled pb-12 pt-8"
+            >
+              <v-icon style="font-size: 10em" class="text--disabled"
+                >format_list_numbered</v-icon
+              >
+              <br />You really need to start getting stuff done!
+            </div>
           </v-card-text>
         </v-card></v-col
       >
@@ -276,6 +286,13 @@ export default {
                   element.startDate.substr(0, 19)
                 );
                 correctedStartDate.setHours(correctedStartDate.getHours() + 13);
+                if (element.repetitionDays.length == 0) {
+                  this.$store.dispatch(
+                    "showSnackbar",
+                    "Error while fetching data. The repetitionDays configuration is empty. Please contact support."
+                  );
+                  return;
+                }
                 let nextDueDay = computeNextDueDay(
                   curDate,
                   correctedStartDate,

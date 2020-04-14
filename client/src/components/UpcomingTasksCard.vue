@@ -73,9 +73,9 @@
       </v-list>
       <div v-else style="text-align: center" class="text--disabled pb-12 pt-8">
         <v-icon style="font-size: 10em" class="text--disabled"
-          >hourglass_empty</v-icon
+          >golf_course</v-icon
         >
-        <br />No timed tasks added yet
+        <br />Congratulations, you've got nothing to do!
       </div>
 
       <!--ON DEMAND TASKS -->
@@ -124,9 +124,9 @@
       </v-list>
       <div v-else style="text-align: center" class="text--disabled pb-12 pt-8">
         <v-icon style="font-size: 10em" class="text--disabled"
-          >hourglass_empty</v-icon
+          >access_alarm</v-icon
         >
-        <br />No on-demand tasks added yet
+        <br />Are you sure there's really nothing you should do?
       </div>
     </v-card-text>
   </v-card>

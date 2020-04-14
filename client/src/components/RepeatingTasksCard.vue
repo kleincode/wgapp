@@ -37,10 +37,8 @@
         </v-list-item>
       </v-list>
       <div v-else style="text-align: center" class="text--disabled pb-12 pt-8">
-        <v-icon style="font-size: 10em" class="text--disabled"
-          >hourglass_empty</v-icon
-        >
-        <br />No repeating tasks added yet
+        <v-icon style="font-size: 10em" class="text--disabled">refresh</v-icon>
+        <br />This demoralizing daily routine, right?
       </div>
     </v-card-text>
   </v-card>
