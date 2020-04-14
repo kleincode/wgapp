@@ -17,7 +17,7 @@ import {
   shiftToNextIntervall,
   isSameWeek,
   mapWeekdayToInt
-} from "@/assets/repeatingTasksHelper.js";
+} from "@/assets/tasksHelper.js";
 
 describe("Tasks.vue", () => {
   let vuetify, router;

@@ -189,6 +189,78 @@ function setToMonday(date) {
   return date;
 }
 
+function getOnDemandStatus(curDate, lastExecution) {
+  curDate.setHours(curDate.getHours() - 2);
+  if (curDate > lastExecution) {
+    return 1;
+  } else {
+    return 2;
+  }
+}
+
+function getSingleStatus(dueDate, lastExecution) {
+  let curDate = new Date();
+  if (curDate < dueDate) {
+    if (lastExecution.getTime() < 946681200000) {
+      // Januar 2000
+      return 0;
+    } else {
+      return 2;
+    }
+  } else {
+    if (lastExecution.getTime() < 946681200000) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+}
+
+function formatDateString(date) {
+  let curDate = new Date();
+  if (
+    date.getDate() == curDate.getDate() &&
+    date.getMonth() == curDate.getMonth() &&
+    date.getYear() == curDate.getYear()
+  ) {
+    return "Today";
+  }
+  curDate.setDate(curDate.getDate() + 1);
+  if (
+    date.getDate() == curDate.getDate() &&
+    date.getMonth() == curDate.getMonth() &&
+    date.getYear() == curDate.getYear()
+  ) {
+    return "Tomorrow";
+  }
+  return (
+    mapIntoToWeekday(date.getDay()) +
+    ", " +
+    date.getDate() +
+    ". " +
+    (date.getMonth() + 1)
+  );
+}
+
+function mapIntoToWeekday(day) {
+  switch (day) {
+    case 1:
+      return "Monday";
+    case 2:
+      return "Tuesday";
+    case 3:
+      return "Thursday";
+    case 4:
+      return "Wednesday";
+    case 5:
+      return "Friday";
+    case 6:
+      return "Saturday";
+    case 0:
+      return "Sunday";
+  }
+}
+
 function mapWeekdayToInt(repetitionDay) {
   switch (repetitionDay) {
     case "monday":
@@ -215,5 +287,9 @@ export {
   isToday,
   shiftToNextIntervall,
   isSameWeek,
-  mapWeekdayToInt
+  mapWeekdayToInt,
+  mapIntoToWeekday,
+  getOnDemandStatus,
+  getSingleStatus,
+  formatDateString
 };

@@ -48,7 +48,7 @@
                   </div>
                   <div class="caption pt-2 text--disabled">--:--</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
-                  <v-chip style="width: 30%">
+                  <v-chip disabled style="width: 30%">
                     <v-avatar left></v-avatar>
                   </v-chip>
                 </v-card>
@@ -107,8 +107,10 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-icon>
-                <v-btn icon>
-                  <v-icon class="text--disabled">check</v-icon>
+                <v-btn icon disabled>
+                  <v-icon class="text--disabled"
+                    >check_box_outline_blank</v-icon
+                  >
                 </v-btn>
               </v-list-item-icon>
             </v-list-item>
@@ -132,8 +134,38 @@
       <v-col cols="12" md="6">
         <v-card outlined :loading="loading" style="height: 100%">
           <v-card-title>
-            <h2 class="title">Old tasks</h2>
+            <h2 class="title">Old single tasks</h2>
           </v-card-title>
+          <v-card-text>
+            <v-list v-if="oldSingleTasks.length > 0">
+              <v-list-item
+                v-for="(task, i) in oldSingleTasks"
+                :key="'task-' + i"
+                disabled
+              >
+                <v-list-item-avatar>
+                  <v-icon x-large color="grey">{{ task.icon }}</v-icon>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title class="pb-2 task-entry">
+                    {{ task.name }}
+                    <div class="overline pl-2 pt-1">- {{ task.day }}</div>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <v-chip color="grey--text">
+                      <v-avatar left>
+                        <img
+                          src="https://randomuser.me/api/portraits/men/81.jpg"
+                        />
+                      </v-avatar>
+                      {{ getUserName(task.assigned) }}
+                    </v-chip>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
         </v-card></v-col
       >
     </v-row>
@@ -147,8 +179,11 @@ import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
 import {
   checkStatus,
   computeNextDueDay,
-  isToday
-} from "@/assets/repeatingTasksHelper.js";
+  isToday,
+  getOnDemandStatus,
+  getSingleStatus,
+  formatDateString
+} from "@/assets/tasksHelper.js";
 
 export default {
   name: "Tasks",
@@ -174,7 +209,18 @@ export default {
       return this.tasks.filter(task => task.mode == 1);
     },
     timedTasks() {
-      return this.tasks.filter(task => task.mode < 2);
+      let curDate = new Date();
+      return this.tasks.filter(
+        task =>
+          task.mode == 1 ||
+          (task.mode == 0 && (task.dueDay > curDate || task.missed))
+      );
+    },
+    oldSingleTasks() {
+      let curDate = new Date();
+      return this.tasks.filter(
+        task => task.mode == 0 && task.dueDay < curDate && !task.missed
+      );
     },
     onDemandTasks() {
       return this.tasks.filter(task => task.mode == 2);
@@ -212,16 +258,13 @@ export default {
                   parseInt(time.substr(0, 2)),
                   parseInt(time.substr(3, 2))
                 );
-                let status = this.getSingleStatus(
-                  correctedStartDate,
-                  lastExecution
-                );
+                let status = getSingleStatus(correctedStartDate, lastExecution);
                 this.tasks.push({
                   id: element.id,
                   mode: element.mode,
                   name: element.name,
                   assigned: element.assignedMember,
-                  day: this.formatDateString(correctedStartDate),
+                  day: formatDateString(correctedStartDate),
                   dueDay: correctedStartDate,
                   time: time,
                   missed: !status,
@@ -259,7 +302,7 @@ export default {
                   mode: element.mode,
                   name: element.name,
                   assigned: element.assignedMember,
-                  day: this.formatDateString(nextDueDay),
+                  day: formatDateString(nextDueDay),
                   iteratingMode: element.iteratingMode,
                   nextDueDay: new Date(nextDueDay),
                   time: element.time.substr(0, 5),
@@ -279,7 +322,7 @@ export default {
                   name: element.name,
                   assigned: element.assignedMember,
                   lastExecution: lastExecution,
-                  checked: this.getOnDemandStatus(new Date(), lastExecution),
+                  checked: getOnDemandStatus(new Date(), lastExecution),
                   icon: icons[element.icon]
                 });
                 break;
@@ -302,59 +345,6 @@ export default {
         console.error(err);
       }
       this.loading = false;
-    },
-
-    getOnDemandStatus(curDate, lastExecution) {
-      curDate.setHours(curDate.getHours() - 2);
-      if (curDate > lastExecution) {
-        return 1;
-      } else {
-        return 2;
-      }
-    },
-
-    getSingleStatus(dueDate, lastExecution) {
-      let curDate = new Date();
-      if (curDate < dueDate) {
-        if (lastExecution.getTime() < 946681200000) {
-          // Januar 2000
-          return 0;
-        } else {
-          return 2;
-        }
-      } else {
-        if (lastExecution.getTime() < 946681200000) {
-          return 1;
-        } else {
-          return 2;
-        }
-      }
-    },
-
-    formatDateString(date) {
-      let curDate = new Date();
-      if (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      ) {
-        return "Today";
-      }
-      curDate.setDate(curDate.getDate() + 1);
-      if (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      ) {
-        return "Tomorrow";
-      }
-      return (
-        this.mapIntoToWeekday(date.getDay()) +
-        ", " +
-        date.getDate() +
-        ". " +
-        (date.getMonth() + 1)
-      );
     },
 
     async checkedTasks(task) {
@@ -443,25 +433,6 @@ export default {
         return index - 1;
       } else {
         return users.length - 1;
-      }
-    },
-
-    mapIntoToWeekday(day) {
-      switch (day) {
-        case 1:
-          return "Monday";
-        case 2:
-          return "Tuesday";
-        case 3:
-          return "Thursday";
-        case 4:
-          return "Wednesday";
-        case 5:
-          return "Friday";
-        case 6:
-          return "Saturday";
-        case 0:
-          return "Sunday";
       }
     },
 

@@ -133,6 +133,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import { formatDateString } from "@/assets/tasksHelper.js";
 export default {
   name: "UpcomingTasksCard",
   props: {
@@ -157,50 +158,7 @@ export default {
       if (task.lastExecution.toString() == "Invalid Date") {
         return "none";
       } else {
-        return this.formatDateString(task.lastExecution);
-      }
-    },
-    formatDateString(date) {
-      let curDate = new Date();
-      if (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      ) {
-        return "Today";
-      }
-      curDate.setDate(curDate.getDate() + 1);
-      if (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      ) {
-        return "Tomorrow";
-      }
-      return (
-        this.mapIntoToWeekday(date.getDay()) +
-        ", " +
-        date.getDate() +
-        ". " +
-        (date.getMonth() + 1)
-      );
-    },
-    mapIntoToWeekday(day) {
-      switch (day) {
-        case 1:
-          return "Monday";
-        case 2:
-          return "Tuesday";
-        case 3:
-          return "Thursday";
-        case 4:
-          return "Wednesday";
-        case 5:
-          return "Friday";
-        case 6:
-          return "Saturday";
-        case 0:
-          return "Sunday";
+        return formatDateString(task.lastExecution);
       }
     }
   }
