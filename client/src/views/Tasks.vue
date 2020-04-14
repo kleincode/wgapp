@@ -141,7 +141,6 @@
               <v-list-item
                 v-for="(task, i) in oldSingleTasks"
                 :key="'task-' + i"
-                disabled
               >
                 <v-list-item-avatar>
                   <v-icon x-large color="grey">{{ task.icon }}</v-icon>
@@ -153,7 +152,7 @@
                     <div class="overline pl-2 pt-1">- {{ task.day }}</div>
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    <v-chip color="grey--text">
+                    <v-chip>
                       <v-avatar left>
                         <img
                           src="https://randomuser.me/api/portraits/men/81.jpg"
@@ -163,6 +162,14 @@
                     </v-chip>
                   </v-list-item-subtitle>
                 </v-list-item-content>
+                <v-list-item-icon>
+                  <v-hover>
+                    <v-btn icon @click="checkedTasks(task)">
+                      <v-icon v-if="task.checked">check_box</v-icon>
+                      <v-icon v-else>check_box_outline_blank</v-icon>
+                    </v-btn>
+                  </v-hover>
+                </v-list-item-icon>
               </v-list-item>
             </v-list>
           </v-card-text>
@@ -193,6 +200,7 @@ export default {
   },
   data: () => ({
     tasks: [],
+    oldSingleTasks: [],
     loading: false
   }),
   computed: {
@@ -216,12 +224,6 @@ export default {
           (task.mode == 0 && (task.dueDay > curDate || task.missed))
       );
     },
-    oldSingleTasks() {
-      let curDate = new Date();
-      return this.tasks.filter(
-        task => task.mode == 0 && task.dueDay < curDate && !task.missed
-      );
-    },
     onDemandTasks() {
       return this.tasks.filter(task => task.mode == 2);
     },
@@ -241,7 +243,6 @@ export default {
           curDateBegin.setHours(0, 0, 1, 0);
           let curDateEnd = new Date();
           curDateEnd.setHours(12, 59, 59, 0);
-
           let curDate = new Date();
           curDate.setHours(12, 0, 0, 0);
           data.data.forEach(element => {
@@ -267,7 +268,7 @@ export default {
                   day: formatDateString(correctedStartDate),
                   dueDay: correctedStartDate,
                   time: time,
-                  missed: !status,
+                  missed: status,
                   checked: status == 2,
                   icon: icons[element.icon]
                 });
@@ -329,6 +330,18 @@ export default {
               }
             }
           });
+          this.oldSingleTasks = [];
+          data.oldTasks.forEach(task => {
+            this.oldSingleTasks.push({
+              id: task.id,
+              name: task.name,
+              day: task.startDate,
+              icon: icons[task.icon],
+              assigned: task.assignedMember,
+              checked: true,
+              mode: 0
+            });
+          });
           this.sortTasks();
         } else {
           this.$store.dispatch(
@@ -343,6 +356,7 @@ export default {
           "Error while fetching data. Please try again later."
         );
         console.error(err);
+        this.loading = false;
       }
       this.loading = false;
     },

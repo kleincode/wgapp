@@ -25,7 +25,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon
-                  :color="task.mode == 1 ? '' : 'primary'"
+                  :color="task.mode == 1 || task.missed ? '' : 'primary'"
                   x-large
                   v-on="on"
                   >{{ task.icon }}</v-icon
