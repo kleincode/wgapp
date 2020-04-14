@@ -328,8 +328,13 @@ export default {
       let id = this.id;
       let name = this.name;
       let icon = this.icon;
-      let iteratingMode = this.iterating;
       let mode = this.getIDFromMode(this.mode);
+      let iteratingMode;
+      if (mode == 2) {
+        iteratingMode = true;
+      } else {
+        iteratingMode = this.iterating;
+      }
       let assignedMember = this.selectedMember;
       let repetitionDays = this.chosenDays.map(
         day => day[0].toLowerCase() + day.substr(1, day.length)

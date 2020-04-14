@@ -116,214 +116,18 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card outlined :loading="loading" style="height: 100%">
-          <v-card-title>
-            <v-row>
-              <v-col cols="9" md="10" lg="10">
-                <h2 class="title">Upcoming Tasks</h2>
-              </v-col>
-              <v-col class="text-right" cols="3" md="2" lg="2">
-                <v-btn fab class="mx-2 primary" :to="{ name: 'AddTask' }">
-                  <v-icon>add</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card-title>
-          <v-card-text>
-            <!--TIMED TASKS -->
-            <div class="title">Timed tasks</div>
-            <v-list v-if="timedTasks.length > 0">
-              <v-list-item
-                v-for="(task, i) in timedTasks"
-                :key="'task-' + i"
-                :class="task.missed ? 'red' : ''"
-              >
-                <v-list-item-avatar>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon
-                        :color="task.mode == 1 ? '' : 'primary'"
-                        x-large
-                        v-on="on"
-                        >{{ task.icon }}</v-icon
-                      >
-                    </template>
-                    <span>{{
-                      task.mode == 0
-                        ? "This is a repeating task"
-                        : "This is a one-time task"
-                    }}</span>
-                  </v-tooltip>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="pb-2 task-entry">
-                    {{ task.name }}
-                    <div class="overline pl-2 pt-1">
-                      - {{ task.day }}, {{ task.time }}
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <v-chip>
-                      <v-avatar left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
-                      </v-avatar>
-                      {{ getUserName(task.assigned) }}
-                    </v-chip>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-icon>
-                  <v-hover>
-                    <v-btn icon @click="checkedTasks(task)">
-                      <v-icon v-if="task.checked">check_box</v-icon>
-                      <v-icon v-else>check_box_outline_blank</v-icon>
-                    </v-btn>
-                  </v-hover>
-                  <v-hover>
-                    <v-btn
-                      icon
-                      :to="{ name: 'EditTask', params: { id: task.id } }"
-                    >
-                      <v-icon>edit</v-icon>
-                    </v-btn>
-                  </v-hover>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list>
-            <div
-              v-else
-              style="text-align: center"
-              class="text--disabled pb-12 pt-8"
-            >
-              <v-icon style="font-size: 10em" class="text--disabled"
-                >hourglass_empty</v-icon
-              >
-              <br />No timed tasks added yet
-            </div>
-
-            <!--ON DEMAND TASKS -->
-            <div class="title">On-Demand Tasks</div>
-            <v-list v-if="onDemandTasks.length > 0">
-              <v-list-item
-                v-for="(task, i) in onDemandTasks"
-                :key="'task-' + i"
-                :class="task.missed ? 'red' : ''"
-              >
-                <v-list-item-avatar>
-                  <v-icon color="warning" x-large>{{ task.icon }}</v-icon>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="pb-2 task-entry">
-                    {{ task.name }}
-                    <div class="overline pl-2 pt-1">
-                      - last: {{ formatLastExecution(task) }}
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <v-chip>
-                      <v-avatar left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
-                      </v-avatar>
-                      {{ getUserName(task.assigned) }}
-                    </v-chip>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-icon>
-                  <v-hover>
-                    <v-btn icon @click="checkedTasks(task)">
-                      <v-icon v-if="task.checked">check_box</v-icon>
-                      <v-icon v-else>check_box_outline_blank</v-icon>
-                    </v-btn>
-                  </v-hover>
-                  <v-hover>
-                    <v-btn
-                      icon
-                      :to="{ name: 'EditTask', params: { id: task.id } }"
-                    >
-                      <v-icon>edit</v-icon>
-                    </v-btn>
-                  </v-hover>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list>
-            <div
-              v-else
-              style="text-align: center"
-              class="text--disabled pb-12 pt-8"
-            >
-              <v-icon style="font-size: 10em" class="text--disabled"
-                >hourglass_empty</v-icon
-              >
-              <br />No on-demand tasks added yet
-            </div>
-          </v-card-text>
-        </v-card>
+        <UpcomingTasksCard
+          :on-demand-tasks="onDemandTasks"
+          :timed-tasks="timedTasks"
+          :loading="loading"
+          @checktask="checkedTasks"
+        ></UpcomingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
-        <v-card outlined :loading="loading" style="height: 100%">
-          <v-card-title>
-            <h2 class="title">Manage repeating tasks</h2>
-          </v-card-title>
-          <v-card-text>
-            <v-list v-if="repeatingTasks.length > 0">
-              <v-list-item
-                v-for="(task, i) in repeatingTasks"
-                :key="'task-' + i"
-              >
-                <v-list-item-avatar>
-                  <v-icon x-large>{{ task.icon }}</v-icon>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="pb-2 task-entry">
-                    {{ task.name }}
-                    <div class="overline pl-2 pt-1">
-                      - {{ task.day }}, {{ task.time }}
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <v-chip>
-                      <v-avatar left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
-                      </v-avatar>
-                      {{ getUserName(task.assigned) }}
-                    </v-chip>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-icon>
-                  <v-hover>
-                    <v-btn
-                      icon
-                      :to="{ name: 'EditTask', params: { id: task.id } }"
-                    >
-                      <v-icon>edit</v-icon>
-                    </v-btn>
-                  </v-hover>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list>
-            <div
-              v-else
-              style="text-align: center"
-              class="text--disabled pb-12 pt-8"
-            >
-              <v-icon style="font-size: 10em" class="text--disabled"
-                >hourglass_empty</v-icon
-              >
-              <br />No repeating tasks added yet
-            </div>
-          </v-card-text>
-        </v-card>
+        <RepeatingTasksCard
+          :repeating-tasks="repeatingTasks"
+          :loading="loading"
+        ></RepeatingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
         <v-card outlined :loading="loading" style="height: 100%">
@@ -338,6 +142,8 @@
 <script>
 import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
+import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
+import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
 import {
   checkStatus,
   computeNextDueDay,
@@ -346,6 +152,10 @@ import {
 
 export default {
   name: "Tasks",
+  components: {
+    RepeatingTasksCard,
+    UpcomingTasksCard
+  },
   data: () => ({
     tasks: [],
     loading: false
@@ -414,7 +224,6 @@ export default {
                   day: this.formatDateString(correctedStartDate),
                   dueDay: correctedStartDate,
                   time: time,
-                  lastExecution: lastExecution,
                   missed: !status,
                   checked: status == 2,
                   icon: icons[element.icon]
@@ -470,7 +279,7 @@ export default {
                   name: element.name,
                   assigned: element.assignedMember,
                   lastExecution: lastExecution,
-                  checked: this.getOnDemandStatus(lastExecution),
+                  checked: this.getOnDemandStatus(new Date(), lastExecution),
                   icon: icons[element.icon]
                 });
                 break;
@@ -495,18 +304,9 @@ export default {
       this.loading = false;
     },
 
-    formatLastExecution(task) {
-      if (task.lastExecution.toString() == "Invalid Date") {
-        return "none";
-      } else {
-        return this.formatDateString(task.lastExecution);
-      }
-    },
-
-    getOnDemandStatus(lastExecution) {
-      let curDate = new Date();
+    getOnDemandStatus(curDate, lastExecution) {
       curDate.setHours(curDate.getHours() - 2);
-      if (curDate < lastExecution) {
+      if (curDate > lastExecution) {
         return 1;
       } else {
         return 2;
@@ -516,13 +316,14 @@ export default {
     getSingleStatus(dueDate, lastExecution) {
       let curDate = new Date();
       if (curDate < dueDate) {
-        if (lastExecution.getTime() == 0) {
+        if (lastExecution.getTime() < 946681200000) {
+          // Januar 2000
           return 0;
         } else {
           return 2;
         }
       } else {
-        if (lastExecution.getTime() == 0) {
+        if (lastExecution.getTime() < 946681200000) {
           return 1;
         } else {
           return 2;
@@ -563,25 +364,53 @@ export default {
       let index = users.indexOf(task.assigned);
       if (!task.checked) {
         //check
-        if (task.missed) {
-          lastExecution = new Date(task.lastDueDay).toString();
-        } else {
-          lastExecution = new Date().toString();
-        }
-        if (task.iteratingMode) {
-          assignedMember = users[this.nextAssignedMember(users, index)];
-        } else {
-          assignedMember = task.assigned;
+        switch (task.mode) {
+          case 0:
+            lastExecution = new Date().toString();
+            assignedMember = task.assigned;
+            break;
+          case 1:
+            if (task.missed) {
+              lastExecution = new Date(task.lastDueDay).toString();
+            } else {
+              lastExecution = new Date().toString();
+            }
+            if (task.iteratingMode) {
+              assignedMember = users[this.nextAssignedMember(users, index)];
+            } else {
+              assignedMember = task.assigned;
+            }
+            break;
+          case 2:
+            assignedMember = users[this.nextAssignedMember(users, index)];
+            break;
         }
       } else {
         //uncheck
-        let date = new Date(task.lastDueDay);
-        date.setDate(date.getDate() - 1);
-        lastExecution = date.toString();
-        if (task.iteratingMode) {
-          assignedMember = users[this.previousAssignedMember(users, index)];
-        } else {
-          assignedMember = task.assigned;
+        switch (task.mode) {
+          case 0:
+            lastExecution = "0";
+            assignedMember = task.assigned;
+            break;
+          case 1: {
+            let date = new Date(task.lastDueDay);
+            date.setDate(date.getDate() - 1);
+            lastExecution = date.toString();
+            if (task.iteratingMode) {
+              assignedMember = users[this.previousAssignedMember(users, index)];
+            } else {
+              assignedMember = task.assigned;
+            }
+            break;
+          }
+          case 2:
+            //you can't undo on-demand tasks
+            this.$store.dispatch(
+              "showSnackbar",
+              "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
+            );
+            this.loading = false;
+            return;
         }
       }
       let id = task.id;
@@ -643,19 +472,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.tasks-card {
-  min-width: 50%;
-  max-width: 90%;
-  width: 700px;
-}
-.fill-width {
-  width: 100%;
-}
-
-.fill-height {
-  height: 100%;
-}
-
 .main-task {
   padding: 2em;
   margin: 2em;

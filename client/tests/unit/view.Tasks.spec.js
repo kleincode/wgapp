@@ -10,6 +10,14 @@ import Tasks from "@/views/Tasks.vue";
 
 // Utilities
 import { shallowMount } from "@vue/test-utils";
+import {
+  checkStatus,
+  computeNextDueDay,
+  computeNextDueInWeek,
+  shiftToNextIntervall,
+  isSameWeek,
+  mapWeekdayToInt
+} from "@/assets/repeatingTasksHelper.js";
 
 describe("Tasks.vue", () => {
   let vuetify, router;
@@ -41,13 +49,13 @@ describe("Tasks.vue", () => {
       router,
       propsData: {}
     });
-    expect(wrapper.vm.mapWeekdayToInt("sunday")).toBe(0);
-    expect(wrapper.vm.mapWeekdayToInt("monday")).toBe(1);
-    expect(wrapper.vm.mapWeekdayToInt("tuesday")).toBe(2);
-    expect(wrapper.vm.mapWeekdayToInt("thursday")).toBe(3);
-    expect(wrapper.vm.mapWeekdayToInt("wednesday")).toBe(4);
-    expect(wrapper.vm.mapWeekdayToInt("friday")).toBe(5);
-    expect(wrapper.vm.mapWeekdayToInt("saturday")).toBe(6);
+    expect(mapWeekdayToInt("sunday")).toBe(0);
+    expect(mapWeekdayToInt("monday")).toBe(1);
+    expect(mapWeekdayToInt("tuesday")).toBe(2);
+    expect(mapWeekdayToInt("thursday")).toBe(3);
+    expect(mapWeekdayToInt("wednesday")).toBe(4);
+    expect(mapWeekdayToInt("friday")).toBe(5);
+    expect(mapWeekdayToInt("saturday")).toBe(6);
   });
 
   it("isSameWeek correct", () => {
@@ -57,11 +65,11 @@ describe("Tasks.vue", () => {
       router,
       propsData: {}
     });
-    expect(wrapper.vm.isSameWeek(new Date("April 2, 2020 10:00:00"), new Date("April 1, 2020 10:00:00"))).toBe(true);
-    expect(wrapper.vm.isSameWeek(new Date("April 3, 2020 10:00:00"), new Date("April 4, 2020 10:00:00"))).toBe(true);
-    expect(wrapper.vm.isSameWeek(new Date("April 1, 2020 10:00:00"), new Date("April 5, 2020 10:00:00"))).toBe(true);
-    expect(wrapper.vm.isSameWeek(new Date("April 5, 2020 10:00:00"), new Date("March 31, 2020 10:00:00"))).toBe(true);
-    expect(wrapper.vm.isSameWeek(new Date("April 5, 2020 10:00:00"), new Date("March 29, 2020 10:00:00"))).toBe(false);
+    expect(isSameWeek(new Date("April 2, 2020 10:00:00"), new Date("April 1, 2020 10:00:00"))).toBe(true);
+    expect(isSameWeek(new Date("April 3, 2020 10:00:00"), new Date("April 4, 2020 10:00:00"))).toBe(true);
+    expect(isSameWeek(new Date("April 1, 2020 10:00:00"), new Date("April 5, 2020 10:00:00"))).toBe(true);
+    expect(isSameWeek(new Date("April 5, 2020 10:00:00"), new Date("March 31, 2020 10:00:00"))).toBe(true);
+    expect(isSameWeek(new Date("April 5, 2020 10:00:00"), new Date("March 29, 2020 10:00:00"))).toBe(false);
   });
 
   it("computes nextDueDayInWeek correctly", () => {
@@ -74,7 +82,7 @@ describe("Tasks.vue", () => {
     let curDate = new Date("April 2, 2020 10:00:00");
     let prevTempDate = new Date("March 31, 2020 10:00:00");
     let repDayInts = [6];
-    let resDate = wrapper.vm.computeNextDueInWeek(
+    let resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -84,7 +92,7 @@ describe("Tasks.vue", () => {
 
     prevTempDate = new Date("March 31, 2020 10:00:00");
     repDayInts = [0];
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -94,7 +102,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [6, 0];
     prevTempDate = new Date("March 31, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -104,7 +112,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [4, 0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -114,7 +122,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [4, 0];
     prevTempDate = new Date("April 2, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -124,7 +132,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [6, 0];
     prevTempDate = new Date("March 31, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -134,7 +142,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [3, 5];
     prevTempDate = new Date("April 6, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -144,7 +152,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [3, 1];
     prevTempDate = new Date("March 31, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -153,7 +161,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [1,2,3,4,5,6,0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -165,7 +173,7 @@ describe("Tasks.vue", () => {
     curDate = new Date("April 5, 2020 10:00:00");
     repDayInts = [1,2,3,4,5,6,0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -175,7 +183,7 @@ describe("Tasks.vue", () => {
 
     repDayInts = [1,2,3,4,5,6];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = wrapper.vm.computeNextDueInWeek(
+    resDate = computeNextDueInWeek(
       curDate,
       repDayInts,
       prevTempDate
@@ -193,28 +201,28 @@ describe("Tasks.vue", () => {
     let date = new Date("April 8, 2020 10:00:00");
     let repEvery = 1;
     let repUnit = 0;
-    let res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    let res = shiftToNextIntervall(date, repEvery, repUnit);
     expect(res.getDate()).toBe(13);
     expect(res.getMonth()).toBe(3);
 
     date = new Date("April 8, 2020 10:00:00");
     repEvery = 2;
     repUnit = 0;
-    res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    res = shiftToNextIntervall(date, repEvery, repUnit);
     expect(res.getDate()).toBe(20);
     expect(res.getMonth()).toBe(3);
 
     date = new Date("April 8, 2020 10:00:00");
     repEvery = 1;
     repUnit = 1;
-    res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    res = shiftToNextIntervall(date, repEvery, repUnit);
     expect(res.getDate()).toBe(4);
     expect(res.getMonth()).toBe(4);
 
     date = new Date("April 8, 2020 10:00:00");
     repEvery = 2;
     repUnit = 1;
-    res = wrapper.vm.shiftToNextIntervall(date, repEvery, repUnit);
+    res = shiftToNextIntervall(date, repEvery, repUnit);
     expect(res.getDate()).toBe(1);
     expect(res.getMonth()).toBe(5);
   });
@@ -233,7 +241,7 @@ describe("Tasks.vue", () => {
     let repetitionDays = ["thursday", "friday"];
     let repetitionUnit = 0;
     let repetitionEvery = 1;
-    let resDate = wrapper.vm.computeNextDueDay(
+    let resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -248,7 +256,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday"];
     repetitionUnit = 0;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -263,7 +271,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["thursday", "friday"];
     repetitionUnit = 0;
     repetitionEvery = 2;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -278,7 +286,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday"];
     repetitionUnit = 0;
     repetitionEvery = 2;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -293,7 +301,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday"];
     repetitionUnit = 0;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -308,7 +316,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday", "friday"];
     repetitionUnit = 0;
     repetitionEvery = 3;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -324,7 +332,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["friday"];
     repetitionUnit = 0;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -340,7 +348,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday", "tuesday", "thursday", "wednesday", "friday", "saturday", "sunday"];
     repetitionUnit = 0;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -356,7 +364,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday", "wednesday", "friday"];
     repetitionUnit = 0;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -381,7 +389,7 @@ describe("Tasks.vue", () => {
     let repetitionDays = ["thursday", "friday"];
     let repetitionUnit = 1;
     let repetitionEvery = 1;
-    let resDate = wrapper.vm.computeNextDueDay(
+    let resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -396,7 +404,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday"];
     repetitionUnit = 1;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -411,7 +419,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["thursday", "friday"];
     repetitionUnit = 1;
     repetitionEvery = 2;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -426,7 +434,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday"];
     repetitionUnit = 1;
     repetitionEvery = 2;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -441,7 +449,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday"];
     repetitionUnit = 1;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -456,7 +464,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday", "friday"];
     repetitionUnit = 1;
     repetitionEvery = 3;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -471,7 +479,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["monday", "friday"];
     repetitionUnit = 1;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -486,7 +494,7 @@ describe("Tasks.vue", () => {
     repetitionDays = ["saturday"];
     repetitionUnit = 1;
     repetitionEvery = 1;
-    resDate = wrapper.vm.computeNextDueDay(
+    resDate = computeNextDueDay(
       curDate,
       startDateInput,
       repetitionDays,
@@ -497,14 +505,30 @@ describe("Tasks.vue", () => {
     expect(resDate.getMonth()).toBe(3);
   });
 
-  it("computes checkStatus", () => {
+  it("computes getOnDemandStatus correctly", () => {
     const wrapper = shallowMount(Tasks, {
       localVue,
       vuetify,
       router,
       propsData: {}
     });
-    let curDate = new Date("April 3, 2020 10:00:00");
+    let curDate = new Date("April 14, 2020 10:00:00");
+    let lastExecution = new Date("April 2, 2020 10:00:00");
+    expect(wrapper.vm.getOnDemandStatus(curDate, lastExecution)).toBe(1);
+
+    curDate = new Date("April 14, 2020 10:00:00");
+    lastExecution = new Date("April 14, 2020 09:00:00");
+    expect(wrapper.vm.getOnDemandStatus(curDate, lastExecution)).toBe(2);
+
+  });
+
+  it("computes checkStatus correctly", () => {
+    const wrapper = shallowMount(Tasks, {
+      localVue,
+      vuetify,
+      router,
+      propsData: {}
+    });
     let startDate = new Date("March 1, 2020 10:00:00");
     let curDateBegin = new Date("April 3, 2020 00:00:01");
     let curDateEnd = new Date("April 3, 2020 23:59:59");
@@ -512,7 +536,7 @@ describe("Tasks.vue", () => {
     //not missed bc not over
     let repDays = ["monday", "friday"];
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("March 30, 2020 10:00:00"),
         new Date("April 3, 2020 10:00:00"),
         repDays,
@@ -527,7 +551,7 @@ describe("Tasks.vue", () => {
     //not missed bc not due
     repDays = ["sunday"];
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("April 1, 2020 10:00:00"),
         new Date("April 5, 2020 10:00:00"),
         repDays,
@@ -542,7 +566,7 @@ describe("Tasks.vue", () => {
     //not missed bc second execution not over
     repDays = ["wednesday", "sunday"];
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("April 2, 2020 10:00:00"),
         new Date("April 9, 2020 10:00:00"),
         repDays,
@@ -556,7 +580,7 @@ describe("Tasks.vue", () => {
     //missed
     repDays = ["wednesday", "sunday"];
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("April 1, 2020 10:00:00"),
         new Date("April 9, 2020 10:00:00"),
         repDays,
@@ -571,7 +595,7 @@ describe("Tasks.vue", () => {
     //missed bc over
     repDays = ["wednesday"];
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("April 1, 2020 10:00:00"),
         new Date("April 9, 2020 10:00:00"),
         repDays,
@@ -584,7 +608,7 @@ describe("Tasks.vue", () => {
     ).toBe(0);
     //missed bc way over
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("April 1, 2020 10:00:00"),
         new Date("April 16, 2020 10:00:00"),
         repDays,
@@ -599,7 +623,7 @@ describe("Tasks.vue", () => {
     //okay bc start in future
     startDate = new Date("May 1, 2020 10:00:00");
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("April 3, 2020 10:00:00"),
         new Date("April 16, 2020 10:00:00"),
         repDays,
@@ -615,7 +639,7 @@ describe("Tasks.vue", () => {
     startDate = new Date("March 22, 2020 10:00:00");
     repDays = ["saturday"];
     expect(
-      wrapper.vm.checkStatus(
+      checkStatus(
         new Date("March 18, 2020 10:00:00"),
         new Date("April 18, 2020 10:00:00"),
         repDays,

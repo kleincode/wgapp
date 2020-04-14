@@ -208,4 +208,12 @@ function mapWeekdayToInt(repetitionDay) {
   }
 }
 
-export { checkStatus, computeNextDueDay, isToday };
+export {
+  checkStatus,
+  computeNextDueDay,
+  computeNextDueInWeek,
+  isToday,
+  shiftToNextIntervall,
+  isSameWeek,
+  mapWeekdayToInt
+};
