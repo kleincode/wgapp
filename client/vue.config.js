@@ -1,10 +1,14 @@
 module.exports = {
   pwa: {
-    name: "WG App",
-    themeColor: "#463ABB",
-    msTileColor: "#463ABB",
+    name: 'WG App',
+    themeColor: '#463ABB',
+    msTileColor: '#463ABB',
     manifestOptions: {
-      background_color: "#463ABB"
+      background_color: '#463ABB'
+    },
+    workboxPluginMode: 'InjectManifest',
+    workboxOptions: {
+      swSrc: 'public/service-worker.js'
     }
   },
   devServer: {
