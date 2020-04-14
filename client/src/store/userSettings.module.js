@@ -10,7 +10,8 @@ const syncEntries = {
   locale: null,
   temperatureUnit: "c",
   currency: "EUR",
-  calendarsSelected: []
+  calendarsSelected: [],
+  calendarView: "month"
 };
 
 const vuexModule = {
@@ -26,7 +27,8 @@ const vuexModule = {
     locale: null,
     temperatureUnit: "c",
     currency: "EUR",
-    calendarsSelected: []
+    calendarsSelected: [],
+    calendarView: "month"
   }),
   mutations: {
     // (state, arg)
