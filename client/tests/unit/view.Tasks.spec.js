@@ -514,7 +514,7 @@ describe("Tasks.vue", () => {
     });
     let curDate = new Date("April 14, 2020 10:00:00");
     let lastExecution = new Date("April 2, 2020 10:00:00");
-    expect(getOnDemandStatus(curDate, lastExecution)).toBe(1);
+    expect(getOnDemandStatus(curDate, lastExecution)).toBe(0);
 
     curDate = new Date("April 14, 2020 10:00:00");
     lastExecution = new Date("April 14, 2020 09:00:00");
