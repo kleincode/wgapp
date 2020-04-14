@@ -16,7 +16,8 @@ import {
   computeNextDueInWeek,
   shiftToNextIntervall,
   isSameWeek,
-  mapWeekdayToInt
+  mapWeekdayToInt,
+  getOnDemandStatus
 } from "@/assets/tasksHelper.js";
 
 describe("Tasks.vue", () => {
@@ -169,7 +170,6 @@ describe("Tasks.vue", () => {
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
 
-    console.log("###debug start");
     curDate = new Date("April 5, 2020 10:00:00");
     repDayInts = [1,2,3,4,5,6,0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
@@ -514,11 +514,11 @@ describe("Tasks.vue", () => {
     });
     let curDate = new Date("April 14, 2020 10:00:00");
     let lastExecution = new Date("April 2, 2020 10:00:00");
-    expect(wrapper.vm.getOnDemandStatus(curDate, lastExecution)).toBe(1);
+    expect(getOnDemandStatus(curDate, lastExecution)).toBe(1);
 
     curDate = new Date("April 14, 2020 10:00:00");
     lastExecution = new Date("April 14, 2020 09:00:00");
-    expect(wrapper.vm.getOnDemandStatus(curDate, lastExecution)).toBe(2);
+    expect(getOnDemandStatus(curDate, lastExecution)).toBe(2);
 
   });
 
