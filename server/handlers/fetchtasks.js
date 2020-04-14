@@ -13,15 +13,17 @@ module.exports = ({ db }) => ({
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       const { id } = query;
-      let baseQuery = `SELECT id, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
+      let baseQuery = `SELECT id, mode, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
         baseParams = [hid];
       if (id) {
         baseQuery += " AND id = ?";
         baseParams.push(id);
+      } else {
+        baseQuery += " AND (mode != 0 OR (mode = 0 AND lastExecution < '2001-00-1 00:00:00'))";
       }
       try {
         const { results } = await db.query(baseQuery, baseParams);
-
+        const { results: oldTasks } = await db.query("SELECT id, icon, name, startDate, assignedMember FROM tasks WHERE hid = 27 AND mode = 0 AND lastExecution > '2001-08-12 04:20:00' ORDER BY lastExecution DESC LIMIT 0,5", [hid]);
         results.forEach((elem) => {
           elem.repetitionDays = JSON.parse(elem.repetitionDays);
         });
@@ -31,7 +33,7 @@ module.exports = ({ db }) => ({
           } else {
             success({ message: "Empty.", data: {} });
           }
-        } else success({ message: "Tasks received", data: results });
+        } else success({ message: "Tasks received", data: results, oldTasks: oldTasks });
       } catch (err) {
         error("Error while fetching tasks from database.");
       }

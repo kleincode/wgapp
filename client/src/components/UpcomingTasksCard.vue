@@ -1,0 +1,171 @@
+<template>
+  <v-card outlined :loading="loading" style="height: 100%">
+    <v-card-title>
+      <v-row>
+        <v-col cols="9" md="10" lg="10">
+          <h2 class="title">Upcoming Tasks</h2>
+        </v-col>
+        <v-col class="text-right" cols="3" md="2" lg="2">
+          <v-btn fab class="mx-2 primary" :to="{ name: 'AddTask' }">
+            <v-icon>add</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-title>
+    <v-card-text>
+      <!--TIMED TASKS -->
+      <div class="title">Timed tasks</div>
+      <v-list v-if="timedTasks.length > 0">
+        <v-list-item
+          v-for="(task, i) in timedTasks"
+          :key="'task-' + i"
+          :class="task.missed ? 'red' : ''"
+        >
+          <v-list-item-avatar>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  :color="task.mode == 1 || task.missed ? '' : 'primary'"
+                  x-large
+                  v-on="on"
+                  >{{ task.icon }}</v-icon
+                >
+              </template>
+              <span>{{
+                task.mode == 1
+                  ? "This is a repeating task"
+                  : "This is a one-time task"
+              }}</span>
+            </v-tooltip>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title class="pb-2 task-entry">
+              {{ task.name }}
+              <div class="overline pl-2 pt-1">
+                - {{ task.day }}, {{ task.time }}
+              </div>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <v-chip>
+                <v-avatar left>
+                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                </v-avatar>
+                {{ getUserName(task.assigned) }}
+              </v-chip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-icon>
+            <v-hover>
+              <v-btn icon @click="$emit('checktask', task)">
+                <v-icon v-if="task.checked">check_box</v-icon>
+                <v-icon v-else>check_box_outline_blank</v-icon>
+              </v-btn>
+            </v-hover>
+            <v-hover>
+              <v-btn icon :to="{ name: 'EditTask', params: { id: task.id } }">
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </v-hover>
+          </v-list-item-icon>
+        </v-list-item>
+      </v-list>
+      <div v-else style="text-align: center" class="text--disabled pb-12 pt-8">
+        <v-icon style="font-size: 10em" class="text--disabled"
+          >golf_course</v-icon
+        >
+        <br />Congratulations, you've got nothing to do!
+      </div>
+
+      <!--ON DEMAND TASKS -->
+      <div class="title">On-Demand Tasks</div>
+      <v-list v-if="onDemandTasks.length > 0">
+        <v-list-item
+          v-for="(task, i) in onDemandTasks"
+          :key="'task-' + i"
+          :class="task.missed ? 'red' : ''"
+        >
+          <v-list-item-avatar>
+            <v-icon color="warning" x-large>{{ task.icon }}</v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title class="pb-2 task-entry">
+              {{ task.name }}
+              <div class="overline pl-2 pt-1">
+                - last: {{ formatLastExecution(task) }}
+              </div>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <v-chip>
+                <v-avatar left>
+                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                </v-avatar>
+                {{ getUserName(task.assigned) }}
+              </v-chip>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-icon>
+            <v-hover>
+              <v-btn icon @click="$emit('checktask', task)">
+                <v-icon v-if="task.checked">check_box</v-icon>
+                <v-icon v-else>check_box_outline_blank</v-icon>
+              </v-btn>
+            </v-hover>
+            <v-hover>
+              <v-btn icon :to="{ name: 'EditTask', params: { id: task.id } }">
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </v-hover>
+          </v-list-item-icon>
+        </v-list-item>
+      </v-list>
+      <div v-else style="text-align: center" class="text--disabled pb-12 pt-8">
+        <v-icon style="font-size: 10em" class="text--disabled"
+          >access_alarm</v-icon
+        >
+        <br />Are you sure there's really nothing you should do?
+      </div>
+    </v-card-text>
+  </v-card>
+</template>
+<script>
+import { mapGetters } from "vuex";
+import { formatDateString } from "@/assets/tasksHelper.js";
+export default {
+  name: "UpcomingTasksCard",
+  props: {
+    loading: {
+      type: Boolean,
+      default: () => false
+    },
+    onDemandTasks: {
+      type: Array,
+      default: () => []
+    },
+    timedTasks: {
+      type: Array,
+      default: () => []
+    }
+  },
+  computed: {
+    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
+  },
+  methods: {
+    formatLastExecution(task) {
+      if (task.lastExecution.toString() == "Invalid Date") {
+        return "none";
+      } else {
+        return formatDateString(task.lastExecution);
+      }
+    }
+  }
+};
+</script>
+<style>
+.task-entry {
+  display: flex;
+}
+</style>

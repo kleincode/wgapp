@@ -1,10 +1,10 @@
 <template>
   <v-container>
-    <h1 class="display-2 pb-6">Tasks</h1>
+    <h1 class="display-2">Tasks</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4">
         <v-card outlined class="text-center" :loading="loading">
-          <h2 class="title pt-8 pb-12">Today's Tasks:</h2>
+          <h2 class="title pt-8">Today's Tasks</h2>
           <div class="container">
             <v-row justify="center">
               <v-col cols="12" md="10">
@@ -44,11 +44,11 @@
                     >bathtub</v-icon
                   >
                   <div class="font-regular pt-4 display-1 text--disabled">
-                    Nothing to do
+                    Just chillin'
                   </div>
                   <div class="caption pt-2 text--disabled">--:--</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
-                  <v-chip style="width: 30%">
+                  <v-chip disabled style="width: 30%">
                     <v-avatar left></v-avatar>
                   </v-chip>
                 </v-card>
@@ -56,7 +56,7 @@
             </v-row>
           </div>
 
-          <v-divider class="mt-4 mb-4"></v-divider>
+          <v-divider class="mb-4"></v-divider>
           <div class="overline">other:</div>
           <v-list avatar class="text-left pl-4">
             <div v-if="getTodaysTasks.length > 1">
@@ -107,8 +107,10 @@
                 </v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-icon>
-                <v-btn icon>
-                  <v-icon class="text--disabled">check</v-icon>
+                <v-btn icon disabled>
+                  <v-icon class="text--disabled"
+                    >check_box_outline_blank</v-icon
+                  >
                 </v-btn>
               </v-list-item-icon>
             </v-list-item>
@@ -116,94 +118,126 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
-        <v-card outlined :loading="loading">
-          <v-row>
-            <v-col cols="9" md="10" lg="10">
-              <h2 class="title pl-8 pt-4">All Tasks:</h2>
-            </v-col>
-            <v-col class="text-right pt-5 pr-8" cols="3" md="2" lg="2">
-              <v-btn fab class="mx-2 primary" :to="{ name: 'AddTask' }">
-                <v-icon>add</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-list v-if="tasks.length > 0">
-            <v-list-item
-              v-for="(task, i) in tasks"
-              :key="'task-' + i"
-              :class="task.missed ? 'red' : ''"
-            >
-              <v-list-item-avatar>
-                <v-icon x-large>{{ task.icon }}</v-icon>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title class="pb-2 task-entry">
-                  {{ task.name }}
-                  <div class="overline pl-2 pt-1">
-                    - {{ task.day }}, {{ task.time }}
-                  </div>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  <v-chip>
-                    <v-avatar left>
-                      <img
-                        src="https://randomuser.me/api/portraits/men/81.jpg"
-                      />
-                    </v-avatar>
-                    {{ getUserName(task.assigned) }}
-                  </v-chip>
-                </v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-icon>
-                <v-hover>
-                  <v-btn icon @click="checkedTasks(task)">
-                    <v-icon v-if="task.checked">check_box</v-icon>
-                    <v-icon v-else>check_box_outline_blank</v-icon>
-                  </v-btn>
-                </v-hover>
-                <v-hover>
-                  <v-btn
-                    icon
-                    :to="{ name: 'EditTask', params: { id: task.id } }"
-                  >
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </v-hover>
-              </v-list-item-icon>
-            </v-list-item>
-          </v-list>
-          <div
-            v-else
-            style="text-align: center"
-            class="text--disabled pb-12 pt-8"
-          >
-            <v-icon style="font-size: 10em" class="text--disabled"
-              >hourglass_empty</v-icon
-            >
-            <br />No tasks added yet
-          </div>
-        </v-card>
+        <UpcomingTasksCard
+          :on-demand-tasks="onDemandTasks"
+          :timed-tasks="timedTasks"
+          :loading="loading"
+          @checktask="checkedTasks"
+        ></UpcomingTasksCard>
       </v-col>
+      <v-col cols="12" md="6">
+        <RepeatingTasksCard
+          :repeating-tasks="repeatingTasks"
+          :loading="loading"
+        ></RepeatingTasksCard>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-card outlined :loading="loading" style="height: 100%">
+          <v-card-title>
+            <h2 class="title">Recently finished tasks</h2>
+          </v-card-title>
+          <v-card-text>
+            <v-list v-if="oldSingleTasks.length > 0">
+              <v-list-item
+                v-for="(task, i) in oldSingleTasks"
+                :key="'task-' + i"
+              >
+                <v-list-item-avatar>
+                  <v-icon x-large color="grey">{{ task.icon }}</v-icon>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title class="pb-2 task-entry">
+                    {{ task.name }}
+                    <div class="overline pl-2 pt-1">
+                      - {{ format(new Date(task.day)) }}
+                    </div>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <v-chip>
+                      <v-avatar left>
+                        <img
+                          src="https://randomuser.me/api/portraits/men/81.jpg"
+                        />
+                      </v-avatar>
+                      {{ getUserName(task.assigned) }}
+                    </v-chip>
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-icon>
+                  <v-hover>
+                    <v-btn icon @click="checkedTasks(task)">
+                      <v-icon v-if="task.checked">check_box</v-icon>
+                      <v-icon v-else>check_box_outline_blank</v-icon>
+                    </v-btn>
+                  </v-hover>
+                </v-list-item-icon>
+              </v-list-item>
+            </v-list>
+            <div
+              v-else
+              style="text-align: center"
+              class="text--disabled pb-12 pt-8"
+            >
+              <v-icon style="font-size: 10em" class="text--disabled"
+                >format_list_numbered</v-icon
+              >
+              <br />You really need to start getting stuff done!
+            </div>
+          </v-card-text>
+        </v-card></v-col
+      >
     </v-row>
   </v-container>
 </template>
 <script>
 import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
+import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
+import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
+import {
+  checkStatus,
+  computeNextDueDay,
+  isToday,
+  getOnDemandStatus,
+  getSingleStatus,
+  formatDateString
+} from "@/assets/tasksHelper.js";
 
 export default {
   name: "Tasks",
+  components: {
+    RepeatingTasksCard,
+    UpcomingTasksCard
+  },
   data: () => ({
     tasks: [],
+    oldSingleTasks: [],
     loading: false
   }),
   computed: {
     getTodaysTasks() {
-      return this.tasks.filter(task => {
-        return this.isToday(task.nextDueDay, new Date());
+      return this.timedTasks.filter(task => {
+        if (task.mode == 0) {
+          return isToday(task.dueDay, new Date());
+        } else {
+          return isToday(task.nextDueDay, new Date());
+        }
       });
+    },
+    repeatingTasks() {
+      return this.tasks.filter(task => task.mode == 1);
+    },
+    timedTasks() {
+      let curDate = new Date();
+      return this.tasks.filter(
+        task =>
+          task.mode == 1 ||
+          (task.mode == 0 && (task.dueDay > curDate || task.missed))
+      );
+    },
+    onDemandTasks() {
+      return this.tasks.filter(task => task.mode == 2);
     },
     ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
   },
@@ -221,44 +255,104 @@ export default {
           curDateBegin.setHours(0, 0, 1, 0);
           let curDateEnd = new Date();
           curDateEnd.setHours(12, 59, 59, 0);
-
           let curDate = new Date();
           curDate.setHours(12, 0, 0, 0);
           data.data.forEach(element => {
-            let correctedStartDate = new Date(element.startDate.substr(0, 19));
-            correctedStartDate.setHours(correctedStartDate.getHours() + 13);
-            let nextDueDay = this.computeNextDueDay(
-              curDate,
-              correctedStartDate,
-              element.repetitionDays,
-              element.repetitionUnit,
-              element.repetitionEvery
-            );
-            let lastExecution = new Date(element.lastExecution.substr(0, 19));
-            lastExecution.setHours(lastExecution.getHours() + 2);
-            let taskStatus = this.checkStatus(
-              lastExecution,
-              nextDueDay,
-              element.repetitionDays,
-              element.repetitionEvery,
-              element.repetitionUnit,
-              correctedStartDate,
-              curDateBegin,
-              curDateEnd
-            );
-            this.tasks.push({
-              id: element.id,
-              name: element.name,
-              assigned: element.assignedMember,
-              day: this.formatDateString(nextDueDay),
-              iteratingMode: element.iteratingMode,
-              nextDueDay: new Date(nextDueDay),
-              time: element.time.substr(0, 5),
-              lastExecution: lastExecution,
-              missed: !taskStatus[0],
-              checked: taskStatus[0] == 2,
-              icon: icons[element.icon],
-              lastDueDay: taskStatus[1]
+            let lastExecution = new Date(element.lastExecution);
+            switch (element.mode) {
+              case 0: {
+                //Single
+                let correctedStartDate = new Date(element.startDate);
+                let time = element.time.substr(0, 5);
+                let status = getSingleStatus(correctedStartDate, lastExecution);
+                this.tasks.push({
+                  id: element.id,
+                  mode: element.mode,
+                  name: element.name,
+                  assigned: element.assignedMember,
+                  day: formatDateString(correctedStartDate),
+                  nextDueDay: correctedStartDate,
+                  dueDay: correctedStartDate,
+                  time: time,
+                  missed: status,
+                  checked: status == 2,
+                  icon: icons[element.icon]
+                });
+                break;
+              }
+              case 1: {
+                //Repeating
+                let correctedStartDate = new Date(
+                  element.startDate.substr(0, 19)
+                );
+                correctedStartDate.setHours(correctedStartDate.getHours() + 13);
+                if (element.repetitionDays.length == 0) {
+                  this.$store.dispatch(
+                    "showSnackbar",
+                    "Error while fetching data. The repetitionDays configuration is empty. Please contact support."
+                  );
+                  return;
+                }
+                let nextDueDay = computeNextDueDay(
+                  curDate,
+                  correctedStartDate,
+                  element.repetitionDays,
+                  element.repetitionUnit,
+                  element.repetitionEvery
+                );
+                lastExecution.setHours(lastExecution.getHours() + 2);
+                let taskStatus = checkStatus(
+                  lastExecution,
+                  nextDueDay,
+                  element.repetitionDays,
+                  element.repetitionEvery,
+                  element.repetitionUnit,
+                  correctedStartDate,
+                  curDateBegin,
+                  curDateEnd
+                );
+                this.tasks.push({
+                  id: element.id,
+                  mode: element.mode,
+                  name: element.name,
+                  assigned: element.assignedMember,
+                  day: formatDateString(nextDueDay),
+                  iteratingMode: element.iteratingMode,
+                  nextDueDay: new Date(nextDueDay),
+                  time: element.time.substr(0, 5),
+                  lastExecution: lastExecution,
+                  missed: !taskStatus[0],
+                  checked: taskStatus[0] == 2,
+                  icon: icons[element.icon],
+                  lastDueDay: taskStatus[1]
+                });
+                break;
+              }
+              case 2: {
+                //On-Demand
+                this.tasks.push({
+                  id: element.id,
+                  mode: element.mode,
+                  name: element.name,
+                  assigned: element.assignedMember,
+                  lastExecution: lastExecution,
+                  checked: getOnDemandStatus(new Date(), lastExecution),
+                  icon: icons[element.icon]
+                });
+                break;
+              }
+            }
+          });
+          this.oldSingleTasks = [];
+          data.oldTasks.forEach(task => {
+            this.oldSingleTasks.push({
+              id: task.id,
+              name: task.name,
+              day: task.startDate,
+              icon: icons[task.icon],
+              assigned: task.assignedMember,
+              checked: true,
+              mode: 0
             });
           });
           this.sortTasks();
@@ -275,234 +369,9 @@ export default {
           "Error while fetching data. Please try again later."
         );
         console.error(err);
+        this.loading = false;
       }
       this.loading = false;
-    },
-
-    //2=done today, 1=not done but okay, 0=missed
-    checkStatus(
-      lastExecution,
-      nextDueDay,
-      repDays,
-      repEvery,
-      repUnit,
-      startDate,
-      curDateBegin,
-      curDateEnd
-    ) {
-      let repDayInts = repDays.map(day => this.mapWeekdayToInt(day));
-      nextDueDay = new Date(nextDueDay);
-      if (curDateEnd < startDate) {
-        //in the future
-        if (
-          curDateBegin < lastExecution ||
-          this.isToday(curDateBegin, lastExecution)
-        ) {
-          return [2, new Date()];
-        }
-        return [1, null];
-      }
-      if (
-        curDateBegin < lastExecution ||
-        this.isToday(curDateBegin, lastExecution)
-      ) {
-        return [2, new Date()];
-      }
-      let max = -1;
-      let lastDueDay = new Date(curDateBegin);
-      for (let i = 0; i < repDayInts.length; i++) {
-        if (repDayInts[i] > max && repDayInts[i] < curDateBegin.getDay()) {
-          max = repDayInts[i];
-        }
-      }
-      if (max == -1) {
-        //change intervall
-        lastDueDay = this.shiftIntervall(nextDueDay, -repEvery, repUnit);
-        max = -1;
-        for (let i = 0; i < repDayInts.length; i++) {
-          if (repDayInts[i] > max) {
-            max = repDayInts[i];
-          }
-        }
-      }
-      if (max == -1) {
-        return;
-      }
-      lastDueDay.setDate(lastDueDay.getDate() + (max - lastDueDay.getDay()));
-
-      lastDueDay.setHours(0, 0, 0, 0);
-      let endLastDueDay = new Date(lastDueDay);
-      endLastDueDay.setHours(23, 59, 59, 0);
-      if (lastExecution < lastDueDay) {
-        return [0, lastDueDay];
-      }
-      return [1, lastDueDay];
-    },
-
-    isToday(date, curDate) {
-      return (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      );
-    },
-
-    computeNextDueDay(
-      curDate,
-      startDateInput,
-      repetitionDays,
-      repetitionUnit,
-      repetitionEvery
-    ) {
-      let repDayInts = repetitionDays.map(day => this.mapWeekdayToInt(day));
-      let startDate = new Date(startDateInput);
-      if (curDate < startDate) {
-        let res = this.computeNextDueInWeek(curDate, repDayInts, startDate);
-        if (res == null) {
-          startDate = this.shiftToNextIntervall(
-            startDate,
-            repetitionEvery,
-            repetitionUnit
-          );
-          res = this.computeNextDueInWeek(curDate, repDayInts, startDate);
-        }
-        return res;
-      } else {
-        let tempDate = new Date(startDate);
-        let prevTempDate;
-        while (curDate > tempDate) {
-          prevTempDate = new Date(tempDate);
-          tempDate = this.shiftToNextIntervall(
-            tempDate,
-            repetitionEvery,
-            repetitionUnit
-          );
-        }
-        let res = this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
-        if (res == null) {
-          startDate = this.shiftToNextIntervall(
-            prevTempDate,
-            repetitionEvery,
-            repetitionUnit
-          );
-          res = this.computeNextDueInWeek(curDate, repDayInts, prevTempDate);
-        }
-        return res;
-      }
-    },
-
-    isSameWeek(d1, d2) {
-      let date1 = new Date(d1),
-        date2 = new Date(d2);
-      if (date1.getDay() == 0) {
-        date1.setDate(date1.getDate() - 6);
-      } else {
-        date1.setDate(date1.getDate() - date1.getDay() + 1);
-      }
-      if (date2.getDay() == 0) {
-        date2.setDate(date2.getDate() - 6);
-      } else {
-        date2.setDate(date2.getDate() - date2.getDay() + 1);
-      }
-      return this.isToday(date1, date2);
-    },
-
-    computeNextDueInWeek(curDate, repDayInts, prevTempDate) {
-      prevTempDate = new Date(prevTempDate);
-      let day = prevTempDate.getDay();
-      if (curDate.getDay() == 0 && repDayInts.includes(0)) {
-        return curDate;
-      }
-      if (day > 0) {
-        let minShift = 8;
-        for (let i = 0; i < repDayInts.length; i++) {
-          if (repDayInts[i] != 0) {
-            if (repDayInts[i] >= day && repDayInts[i] < minShift) {
-              let sameWeek = this.isSameWeek(curDate, prevTempDate);
-              if (
-                (sameWeek && repDayInts[i] >= curDate.getDay()) ||
-                !sameWeek
-              ) {
-                minShift = repDayInts[i];
-              }
-            }
-          } else {
-            if (7 < minShift) {
-              minShift = 7;
-            }
-          }
-        }
-        if (minShift == 7) {
-          prevTempDate.setDate(
-            prevTempDate.getDate() + (6 - prevTempDate.getDay() + 1)
-          );
-          return prevTempDate;
-        }
-        prevTempDate.setDate(
-          prevTempDate.getDate() + (minShift - prevTempDate.getDay())
-        );
-        if (prevTempDate < curDate || minShift == 8) {
-          return null;
-        }
-        return prevTempDate;
-      } else {
-        return null;
-      }
-    },
-
-    shiftToNextIntervall(date, repEvery, repUnit) {
-      if (repUnit == 0) {
-        date.setDate(date.getDate() + 7 * repEvery);
-        return this.setToMonday(date);
-      } else {
-        date.setDate(date.getDate() + 28 * repEvery);
-        return this.setToMonday(date);
-      }
-    },
-
-    shiftIntervall(date, repEvery, repUnit) {
-      if (repUnit == 0) {
-        date.setDate(date.getDate() + 7 * repEvery);
-        return date;
-      } else {
-        date.setDate(date.getDate() + 28 * repEvery);
-        return date;
-      }
-    },
-
-    setToMonday(date) {
-      if (date.getDay() == 0) {
-        date.setDate(date.getDate() - 6);
-      } else {
-        date.setDate(date.getDate() - date.getDay() + 1);
-      }
-      return date;
-    },
-
-    formatDateString(date) {
-      let curDate = new Date();
-      if (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      ) {
-        return "Today";
-      }
-      curDate.setDate(curDate.getDate() + 1);
-      if (
-        date.getDate() == curDate.getDate() &&
-        date.getMonth() == curDate.getMonth() &&
-        date.getYear() == curDate.getYear()
-      ) {
-        return "Tomorrow";
-      }
-      return (
-        this.mapIntoToWeekday(date.getDay()) +
-        ", " +
-        date.getDate() +
-        ". " +
-        (date.getMonth() + 1)
-      );
     },
 
     async checkedTasks(task) {
@@ -512,25 +381,54 @@ export default {
       let index = users.indexOf(task.assigned);
       if (!task.checked) {
         //check
-        if (task.missed) {
-          lastExecution = new Date(task.lastDueDay).toString();
-        } else {
-          lastExecution = new Date().toString();
-        }
-        if (task.iteratingMode) {
-          assignedMember = users[this.nextAssignedMember(users, index)];
-        } else {
-          assignedMember = task.assigned;
+        switch (task.mode) {
+          case 0:
+            lastExecution = new Date().toString();
+            assignedMember = task.assigned;
+            break;
+          case 1:
+            if (task.missed) {
+              lastExecution = new Date(task.lastDueDay).toString();
+            } else {
+              lastExecution = new Date().toString();
+            }
+            if (task.iteratingMode) {
+              assignedMember = users[this.nextAssignedMember(users, index)];
+            } else {
+              assignedMember = task.assigned;
+            }
+            break;
+          case 2:
+            assignedMember = users[this.nextAssignedMember(users, index)];
+            lastExecution = new Date().toISOString();
+            break;
         }
       } else {
         //uncheck
-        let date = new Date(task.lastDueDay);
-        date.setDate(date.getDate() - 1);
-        lastExecution = date.toString();
-        if (task.iteratingMode) {
-          assignedMember = users[this.previousAssignedMember(users, index)];
-        } else {
-          assignedMember = task.assigned;
+        switch (task.mode) {
+          case 0:
+            lastExecution = "0";
+            assignedMember = task.assigned;
+            break;
+          case 1: {
+            let date = new Date(task.lastDueDay);
+            date.setDate(date.getDate() - 1);
+            lastExecution = date.toString();
+            if (task.iteratingMode) {
+              assignedMember = users[this.previousAssignedMember(users, index)];
+            } else {
+              assignedMember = task.assigned;
+            }
+            break;
+          }
+          case 2:
+            //you can't undo on-demand tasks
+            this.$store.dispatch(
+              "showSnackbar",
+              "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
+            );
+            this.loading = false;
+            return;
         }
       }
       let id = task.id;
@@ -566,42 +464,8 @@ export default {
       }
     },
 
-    mapWeekdayToInt(repetitionDay) {
-      switch (repetitionDay) {
-        case "monday":
-          return 1;
-        case "tuesday":
-          return 2;
-        case "thursday":
-          return 3;
-        case "wednesday":
-          return 4;
-        case "friday":
-          return 5;
-        case "saturday":
-          return 6;
-        case "sunday":
-          return 0;
-      }
-    },
-
-    mapIntoToWeekday(day) {
-      switch (day) {
-        case 1:
-          return "Monday";
-        case 2:
-          return "Tuesday";
-        case 3:
-          return "Thursday";
-        case 4:
-          return "Wednesday";
-        case 5:
-          return "Friday";
-        case 6:
-          return "Saturday";
-        case 0:
-          return "Sunday";
-      }
+    format(str) {
+      return formatDateString(str);
     },
 
     sortTasks() {
@@ -611,19 +475,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.tasks-card {
-  min-width: 50%;
-  max-width: 90%;
-  width: 700px;
-}
-.fill-width {
-  width: 100%;
-}
-
-.fill-height {
-  height: 100%;
-}
-
 .main-task {
   padding: 2em;
   margin: 2em;
