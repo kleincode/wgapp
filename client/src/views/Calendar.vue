@@ -170,6 +170,8 @@ export default {
     },
     start: null,
     end: null,
+    fetchStart: null,
+    fetchEnd: null,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -280,32 +282,91 @@ export default {
       let calendars = await listCalendars();
       this.allCalendarsStrings = calendars.map(cal => cal.summary);
       this.allCalendars = calendars;
-      this.updateRange({ start: this.start, end: this.end });
+      this.updateRange({
+        start: this.start,
+        end: this.end,
+        forceRefetch: true
+      });
     },
     // Called to fetch all events in that range
-    async updateRange({ start, end }) {
+    async updateRange({ start, end, forceRefetch }) {
       if (!start || !end) return;
-      this.loading = true;
       this.start = start;
       this.end = end;
-      console.log(
-        "range update",
-        start ? start.date : start,
-        end ? end.date : end
-      );
+      if (!gapiLoaded) return;
+      const startDate = new Date(start.date),
+        endDate = new Date(end.date);
+      // Check if the date range was already fetched
+      if (
+        !forceRefetch &&
+        this.fetchStart &&
+        this.fetchEnd &&
+        startDate >= this.fetchStart &&
+        endDate <= this.fetchEnd
+      )
+        return;
+      // Out of fetched range --> refetch
+      this.loading = true;
       let calIds = this.calendarsSelected.map(
         cal => this.allCalendars[this.allCalendarsStrings.indexOf(cal)].id
       );
-      this.eventData = await listUpcomingEvents(
-        new Date(start.date),
-        new Date(end.date),
+      // We will fetch around two months before and after the current timespan as buffer (date constructor takes care of changing year appropriately)
+      this.fetchStart = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth() - 3,
+        1
+      );
+      this.fetchEnd = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth() + 3,
+        31
+      );
+      // Now fetch the calculated timespan
+      console.log("fetching", this.fetchStart, this.fetchEnd);
+      const eventData = await listUpcomingEvents(
+        this.fetchStart,
+        this.fetchEnd,
         calIds,
         this.allCalendars
       );
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      this.setEvents(min, max);
+      // Finally, update the calendar events
+      this.updateCalendarEvents(eventData);
       this.loading = false;
+    },
+
+    updateCalendarEvents(eventData) {
+      this.events = [];
+      if (eventData == null || eventData.length == 0) {
+        return;
+      }
+      eventData.forEach(env => {
+        let startStr = env.start.dateTime;
+        let endStr = env.end.dateTime;
+        let start, end, allDay;
+        if (startStr == undefined) {
+          allDay = true;
+          start = new Date();
+          start.setFullYear(env.start.date.substring(0, 4));
+          start.setMonth(parseInt(env.start.date.substring(5, 7)) - 1);
+          start.setDate(env.start.date.substring(8, 10));
+          end = new Date();
+          end.setFullYear(env.end.date.substring(0, 4));
+          end.setMonth(parseInt(env.end.date.substring(5, 7)) - 1);
+          end.setDate(parseInt(env.end.date.substring(8, 10)) - 1);
+        } else {
+          allDay = false;
+          start = new Date(startStr);
+          end = new Date(endStr);
+        }
+        this.events.push({
+          name: env.summary,
+          start: this.formatDate(start, !allDay),
+          end: this.formatDate(end, !allDay),
+          colorID: env.colorId,
+          color: env.color,
+          description: env.description
+        });
+      });
     },
 
     //Calendar handling
@@ -341,43 +402,6 @@ export default {
       }
 
       nativeEvent.stopPropagation();
-    },
-
-    setEvents(min, max) {
-      this.events = [];
-      if (this.eventData == null || this.eventData.length == 0) {
-        return;
-      }
-      this.eventData.forEach(env => {
-        let startStr = env.start.dateTime;
-        let endStr = env.end.dateTime;
-        let start, end, allDay;
-        if (startStr == undefined) {
-          allDay = true;
-          start = new Date();
-          start.setFullYear(env.start.date.substring(0, 4));
-          start.setMonth(parseInt(env.start.date.substring(5, 7)) - 1);
-          start.setDate(env.start.date.substring(8, 10));
-          end = new Date();
-          end.setFullYear(env.end.date.substring(0, 4));
-          end.setMonth(parseInt(env.end.date.substring(5, 7)) - 1);
-          end.setDate(parseInt(env.end.date.substring(8, 10)) - 1);
-        } else {
-          allDay = false;
-          start = new Date(startStr);
-          end = new Date(endStr);
-        }
-        if (start > min && end < max) {
-          this.events.push({
-            name: env.summary,
-            start: this.formatDate(start, !allDay),
-            end: this.formatDate(end, !allDay),
-            colorID: env.colorId,
-            color: env.color,
-            description: env.description
-          });
-        }
-      });
     },
     formatDate(a, withTime) {
       let year = a.getFullYear();
