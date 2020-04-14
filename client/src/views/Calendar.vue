@@ -1,142 +1,172 @@
 <template>
-  <v-container fluid>
-    <h1 class="display-2 pb-6">Calendar</h1>
-
-    <!-- Select calendars -->
-    <v-select
-      v-show="!gapiNotSignedIn"
-      v-model="calendarsSelected"
-      :items="allCalendarsStrings"
-      small-chips
-      :label="gapiSignedIn ? 'Select Calendars' : 'Not signed in'"
-      multiple
-      outlined
-      :disabled="!gapiSignedIn"
-      :loading="loading"
-      @change="updateG"
-    ></v-select>
-
-    <!-- Warning if feature disabled -->
-    <v-alert v-if="_initialized && !calendarEnabled" type="warning">
-      Please refer to the
-      <router-link :to="{ name: 'Settings' }">settings</router-link> to activate
-      this feature.
-    </v-alert>
-
-    <!-- Warning if not connected to gapi -->
-    <v-alert v-if="_initialized && gapiNotSignedIn" type="warning">
-      Please refer to the
-      <router-link :to="{ name: 'Settings' }">settings</router-link> to connect
-      to the Google services.
-    </v-alert>
-
-    <v-btn icon :disabled="!gapiSignedIn" @click="updateG"
-      ><v-icon>refresh</v-icon></v-btn
-    >
-
-    <v-row class="fill-height">
-      <v-col>
-        <!-- Calendar toolbar sheet -->
-        <v-sheet height="64">
-          <v-toolbar flat>
-            <!-- Today button -->
-            <v-btn
-              text
-              :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
-              :disabled="!gapiSignedIn"
-              color="primary"
-              :icon="$vuetify.breakpoint.smAndDown"
-              @click="setToday"
-            >
-              <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
-              {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
-            </v-btn>
-
-            <!-- Calendar navigation and title -->
-            <v-btn fab text small @click="prev">
-              <v-icon small>mdi-chevron-left</v-icon>
-            </v-btn>
-            <v-btn fab text small @click="next">
-              <v-icon small>mdi-chevron-right</v-icon>
-            </v-btn>
-            <v-toolbar-title
-              :class="$vuetify.breakpoint.smAndDown ? '' : 'ml-4'"
-              >{{ title }}</v-toolbar-title
-            >
-            <v-spacer></v-spacer>
-
-            <!-- Select display timespan -->
-            <v-menu bottom right>
-              <template v-slot:activator="{ on }">
-                <div v-on="on">
-                  <v-btn
-                    text
-                    :disabled="!gapiSignedIn"
-                    :class="$vuetify.breakpoint.smAndDown ? 'pa-0' : ''"
-                  >
-                    <span v-if="!$vuetify.breakpoint.smAndDown">{{
-                      viewToLabel[calendarView]
-                    }}</span>
-                    <v-icon v-if="$vuetify.breakpoint.smAndDown">{{
-                      viewToIcon[calendarView]
-                    }}</v-icon>
-                    <v-icon right>mdi-menu-down</v-icon>
-                  </v-btn>
-                </div>
-              </template>
-              <v-list>
-                <v-list-item @click="calendarView = 'day'">
-                  <v-list-item-title>Day</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="calendarView = 'week'">
-                  <v-list-item-title>Week</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="calendarView = 'month'">
-                  <v-list-item-title>Month</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="calendarView = '4day'">
-                  <v-list-item-title>4 days</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </v-toolbar>
-        </v-sheet>
-        <!-- Calendar sheet -->
-        <v-sheet height="600">
-          <v-calendar
-            v-show="gapiSignedIn"
-            ref="calendar"
-            v-model="focus"
-            color="primary"
-            :events="events"
-            :event-color="getEventColor"
-            :now="today"
-            :type="calendarView"
-            :weekdays="[1, 2, 3, 4, 5, 6, 0]"
-            @click:event="showEvent"
-            @click:more="viewDay"
-            @click:date="viewDay"
-            @change="updateRange"
-          ></v-calendar>
-          <v-menu
-            v-model="selectedOpen"
-            :close-on-content-click="false"
-            :activator="selectedElement"
-            offset-x
-            max-width="350px"
+  <v-container>
+    <v-row justify="center">
+      <v-col xl="9" lg="10" md="12">
+        <div class="pb-6">
+          <span class="display-2">Calendar</span>
+          <v-btn
+            icon
+            :disabled="!gapiSignedIn"
+            style="float: right;"
+            class="mt-3"
+            @click="updateG"
+            ><v-icon>refresh</v-icon></v-btn
           >
-            <v-card width="350px" flat>
-              <v-toolbar :color="selectedEvent.color" dark>
-                <v-toolbar-title v-text="selectedEvent.name"></v-toolbar-title>
+        </div>
+
+        <!-- Select calendars -->
+        <v-select
+          v-show="!gapiNotSignedIn"
+          v-model="calendarsSelected"
+          :items="allCalendarsStrings"
+          small-chips
+          :label="gapiSignedIn ? 'Select Calendars' : 'Not signed in'"
+          multiple
+          outlined
+          :disabled="!gapiSignedIn"
+          :loading="loading"
+          @change="updateG"
+        >
+          <template v-slot:selection="{ item, index }">
+            <v-chip
+              v-if="index < ($vuetify.breakpoint.smAndDown ? 1 : 3)"
+              small
+            >
+              <span>{{ item }}</span>
+            </v-chip>
+            <span
+              v-if="index === ($vuetify.breakpoint.smAndDown ? 1 : 3)"
+              class="grey--text caption"
+              >(+{{
+                calendarsSelected.length -
+                  ($vuetify.breakpoint.smAndDown ? 1 : 3)
+              }}
+              others)</span
+            >
+          </template>
+        </v-select>
+
+        <!-- Warning if feature disabled -->
+        <v-alert v-if="_initialized && !calendarEnabled" type="warning">
+          Please refer to the
+          <router-link :to="{ name: 'Settings' }">settings</router-link> to
+          activate this feature.
+        </v-alert>
+
+        <!-- Warning if not connected to gapi -->
+        <v-alert v-if="_initialized && gapiNotSignedIn" type="warning">
+          Please refer to the
+          <router-link :to="{ name: 'Settings' }">settings</router-link> to
+          connect to the Google services.
+        </v-alert>
+
+        <v-row>
+          <v-col>
+            <!-- Calendar toolbar sheet -->
+            <v-sheet>
+              <v-toolbar flat>
+                <!-- Today button -->
+                <v-btn
+                  text
+                  :class="$vuetify.breakpoint.smAndDown ? '' : 'mr-4'"
+                  :disabled="!gapiSignedIn"
+                  color="primary"
+                  :icon="$vuetify.breakpoint.smAndDown"
+                  @click="setToday"
+                >
+                  <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
+                  {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
+                </v-btn>
+
+                <!-- Calendar navigation and title -->
+                <v-btn fab text small @click="prev">
+                  <v-icon small>mdi-chevron-left</v-icon>
+                </v-btn>
+                <v-btn fab text small @click="next">
+                  <v-icon small>mdi-chevron-right</v-icon>
+                </v-btn>
+                <v-toolbar-title
+                  :class="$vuetify.breakpoint.smAndDown ? '' : 'ml-4'"
+                  >{{ title }}</v-toolbar-title
+                >
+                <v-spacer></v-spacer>
+
+                <!-- Select display timespan -->
+                <v-menu bottom right>
+                  <template v-slot:activator="{ on }">
+                    <div v-on="on">
+                      <v-btn
+                        text
+                        :disabled="!gapiSignedIn"
+                        :class="$vuetify.breakpoint.smAndDown ? 'pa-0' : ''"
+                      >
+                        <span v-if="!$vuetify.breakpoint.smAndDown">{{
+                          viewToLabel[calendarView]
+                        }}</span>
+                        <v-icon v-if="$vuetify.breakpoint.smAndDown">{{
+                          viewToIcon[calendarView]
+                        }}</v-icon>
+                        <v-icon right>mdi-menu-down</v-icon>
+                      </v-btn>
+                    </div>
+                  </template>
+                  <v-list>
+                    <v-list-item @click="calendarView = 'day'">
+                      <v-list-item-title>Day</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="calendarView = 'week'">
+                      <v-list-item-title>Week</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="calendarView = 'month'">
+                      <v-list-item-title>Month</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="calendarView = '4day'">
+                      <v-list-item-title>4 days</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </v-toolbar>
-              <v-card-text>
-                <span
-                  v-text="selectedEvent.description || 'No description'"
-                ></span>
-              </v-card-text>
-            </v-card>
-          </v-menu>
-        </v-sheet>
+            </v-sheet>
+            <!-- Calendar sheet -->
+            <v-sheet>
+              <v-calendar
+                v-show="gapiSignedIn"
+                ref="calendar"
+                v-model="focus"
+                color="primary"
+                :events="events"
+                :event-color="getEventColor"
+                :now="today"
+                :type="calendarView"
+                :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+                @click:event="showEvent"
+                @click:more="viewDay"
+                @click:date="viewDay"
+                @change="updateRange"
+              ></v-calendar>
+              <v-menu
+                v-model="selectedOpen"
+                :close-on-content-click="false"
+                :activator="selectedElement"
+                offset-x
+                max-width="350px"
+              >
+                <v-card width="350px" flat>
+                  <v-toolbar :color="selectedEvent.color" dark>
+                    <v-toolbar-title
+                      v-text="selectedEvent.name"
+                    ></v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-text>
+                    <span
+                      v-text="selectedEvent.description || 'No description'"
+                    ></span>
+                  </v-card-text>
+                </v-card>
+              </v-menu>
+            </v-sheet>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
