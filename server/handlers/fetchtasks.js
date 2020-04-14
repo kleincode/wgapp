@@ -13,7 +13,7 @@ module.exports = ({ db }) => ({
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       const { id } = query;
-      let baseQuery = `SELECT id, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
+      let baseQuery = `SELECT id, mode, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, lastExecution FROM tasks WHERE hid = ?`,
         baseParams = [hid];
       if (id) {
         baseQuery += " AND id = ?";

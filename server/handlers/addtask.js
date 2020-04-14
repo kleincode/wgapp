@@ -16,6 +16,11 @@ module.exports = ({ db }) => ({
       type: "int",
       default: 0
     },
+    mode: {
+      type: "int",
+      required: true,
+      message: "Please provide a task mode."
+    },
     // Iterating mode (false...single member, true...iterating through household members)
     iteratingMode: {
       type: "boolean",
@@ -58,7 +63,7 @@ module.exports = ({ db }) => ({
 
     // default values
     let genDate = new Date();
-    let { name, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, date } = body;
+    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, date } = body;
     time = time || genDate.getHours() + ":" + genDate.getMinutes() + ":" + genDate.getSeconds(); genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
     date = date || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
 
@@ -71,8 +76,8 @@ module.exports = ({ db }) => ({
         fail("The specifed user does not exist or does not belong to this household.");
       } else try {
         await db.query(
-          "INSERT INTO tasks (hid, name, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [assignedHid, name, icon, iteratingMode, assignedUid, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, date]
+          "INSERT INTO tasks (hid, name, mode, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [assignedHid, name, mode, icon, iteratingMode, assignedUid, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, date]
         );
         success("Task inserted successfully.");
       } catch (err) {

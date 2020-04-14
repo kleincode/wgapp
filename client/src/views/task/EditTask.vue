@@ -10,6 +10,13 @@
     <v-card outlined :loading="loading">
       <div class="container">
         <v-card-text>
+          <v-select
+            v-model="mode"
+            :items="modes"
+            item-value="value"
+            label="Task Mode"
+            outlined
+          ></v-select>
           <v-row>
             <v-col cols="12" md="8" lg="8">
               <v-text-field
@@ -22,10 +29,14 @@
               <div class="title">Member mode</div>
               <v-row>
                 <v-col cols="12" md="6">
-                  <v-radio-group v-model="iterating">
+                  <v-radio-group
+                    v-model="iterating"
+                    :disabled="mode == 'Single'"
+                  >
                     <v-radio
                       :key="0"
                       :label="'Single'"
+                      :disabled="mode == 'On-Demand'"
                       :value="false"
                     ></v-radio>
                     <v-radio
@@ -57,7 +68,7 @@
               ></IconChooser>
             </v-col>
           </v-row>
-          <div class="title">Time & Date</div>
+          <div v-show="mode != 'On-Demand'" class="title">Time & Date</div>
           <v-row>
             <v-col cols="12" lg="4" md="6">
               <v-menu
@@ -70,6 +81,7 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
+                    v-show="mode != 'On-Demand'"
                     v-model="date"
                     label="Choose your start day"
                     prepend-icon="event"
@@ -98,6 +110,7 @@
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
+                    v-show="mode != 'On-Demand'"
                     v-model="time"
                     label="Choose your task time"
                     prepend-icon="access_time"
@@ -116,10 +129,15 @@
               </v-menu>
             </v-col>
             <v-col cols="12" lg="4" md="6">
-              <v-switch v-model="reminder" label="Toggle Reminder"></v-switch>
+              <v-switch
+                v-show="mode != 'On-Demand'"
+                v-model="reminder"
+                label="Toggle Reminder"
+              ></v-switch>
             </v-col>
             <v-col cols="12" lg="4" md="6">
               <v-select
+                v-show="mode == 'Repeating'"
                 v-model="chosenDays"
                 :items="days"
                 chips
@@ -130,6 +148,7 @@
             </v-col>
             <v-col cols="12" lg="4" md="6">
               <v-text-field
+                v-show="mode == 'Repeating'"
                 v-model="repetitionEvery"
                 type="number"
                 label="Repeat every"
@@ -139,6 +158,7 @@
             </v-col>
             <v-col cols="12" lg="4" md="6">
               <v-select
+                v-show="mode == 'Repeating'"
                 v-model="repetitionUnit"
                 :items="repetitionUnits"
                 label="Repetition unit"
@@ -194,6 +214,7 @@ export default {
   data: () => ({
     editMode: false,
     id: -1,
+    mode: "Singqle",
     name: "",
     iterating: true,
     icon: 0,
@@ -215,6 +236,7 @@ export default {
     repetitionEvery: "",
     repetitionUnit: "",
     repetitionUnits: ["Weeks", "Months"],
+    modes: ["Single", "Repeating", "On-Demand"],
 
     startDateMenu: false,
     startTimeMenu: false,
@@ -250,6 +272,7 @@ export default {
           }
           let task = data.data[0];
           this.id = task.id;
+          this.mode = this.getMode(task.mode);
           this.name = task.name;
           this.iterating = Boolean(parseInt(task.iteratingMode));
           this.selectedMember = task.assignedMember;
@@ -279,11 +302,34 @@ export default {
       this.loading = false;
     },
 
+    getMode(mode) {
+      switch (mode) {
+        case 0:
+          return "Single";
+        case 1:
+          return "Repeating";
+        case 2:
+          return "On-Demand";
+      }
+    },
+
+    getIDFromMode(mode) {
+      switch (mode) {
+        case "Single":
+          return 0;
+        case "Repeating":
+          return 1;
+        case "On-Demand":
+          return 2;
+      }
+    },
+
     async postChanges() {
       let id = this.id;
       let name = this.name;
       let icon = this.icon;
       let iteratingMode = this.iterating;
+      let mode = this.getIDFromMode(this.mode);
       let assignedMember = this.selectedMember;
       let repetitionDays = this.chosenDays.map(
         day => day[0].toLowerCase() + day.substr(1, day.length)
@@ -308,12 +354,12 @@ export default {
         this.snackbar = true;
         return;
       }
-      if (!repetitionEvery || repetitionEvery == 0) {
+      if ((!repetitionEvery || repetitionEvery == 0) && mode != 2) {
         this.snackText = "You need to specify a valid intervall.";
         this.snackbar = true;
         return;
       }
-      if (repetitionDays.length == 0) {
+      if (repetitionDays.length == 0 && mode != 2) {
         this.snackText = "You need to specify at least one weekday.";
         this.snackbar = true;
         return;
@@ -323,6 +369,7 @@ export default {
           const { data } = await this.$http.post("/_/edittask", {
             id,
             name,
+            mode,
             icon,
             iteratingMode,
             assignedMember,
@@ -349,6 +396,7 @@ export default {
           const { data } = await this.$http.post("/_/addtask", {
             name,
             icon,
+            mode,
             iteratingMode,
             assignedMember,
             repetitionDays,

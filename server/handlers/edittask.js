@@ -20,6 +20,9 @@ module.exports = ({ db }) => ({
     icon: {
       type: "int"
     },
+    mode: {
+      type: "int",
+    },
     // Iterating mode (false...single member, true...iterating through household members) (not updated if not provided)
     iteratingMode: {
       type: "boolean"
@@ -57,8 +60,7 @@ module.exports = ({ db }) => ({
     try {
       const assignedUid = body.assignedMember || uid, // assign to sending user by default
         requestHid = await Helpers.fetchHouseholdID(db, uid),
-        assignedHid = uid == assignedUid ? requestHid : Helpers.fetchHouseholdID(db, assignedUid);
-      
+        assignedHid = (uid == assignedUid) ? requestHid : await Helpers.fetchHouseholdID(db, assignedUid);
       if(assignedHid != requestHid) {
         fail("The assigned member does not belong to your household");
         return;
@@ -66,7 +68,7 @@ module.exports = ({ db }) => ({
 
       //Permissions granted; perform update
       let updateVals = Helpers.copyKeysIfPresent(body,
-        ["name", "icon", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "date"]
+        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "date"]
       );
       if (body.repetitionDays) updateVals.repetitionDays = JSON.stringify(body.repetitionDays);
       try {
