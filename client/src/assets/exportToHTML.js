@@ -4,6 +4,7 @@ function exportToHTML(lastBillTimestamp, maxTimestamp, jsonData) {
   let monthlyTotal = jsonData.monthlyTotal;
   let mean = jsonData.mean;
   let memberTotals = jsonData.memberTotals;
+  let memberDebts = jsonData.memberDebts;
   let debts = jsonData.debts;
   var myWindow = window.open(
     "",
@@ -33,8 +34,19 @@ function exportToHTML(lastBillTimestamp, maxTimestamp, jsonData) {
     );
   });
   myWindow.document.write("</ul>");
+
+  if (memberDebts != undefined) {
+    myWindow.document.write("<h2>Member Debts</h2><ul>");
+    memberDebts.forEach(member => {
+      myWindow.document.write(
+        "<li>" + member.name + ": " + member.total / 100 + " €</li>"
+      );
+    });
+    myWindow.document.write("</ul>");
+  }
+
   myWindow.document.write(
-    '<h2>Resulting Debts</h2><table style="width:100%"><tr><th>Paying</th><th>Receives</th><th>Amount</th></tr>'
+    '<h2>Resulting Compensation Payments</h2><table style="width:100%"><tr><th>Paying</th><th>Receives</th><th>Amount</th></tr>'
   );
   debts.forEach(debt => {
     myWindow.document.write(

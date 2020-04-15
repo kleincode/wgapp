@@ -401,46 +401,39 @@ export default {
       });
 
       let minTimestamp = this.getMinTimestamp() * 1000;
-      let diff;
+      let diff, fac;
       switch (this.choosenTimeSpan) {
         case 0:
           diff = 2628000000;
+          fac = 15;
           break;
         case 1:
           diff = 7884000000;
+          fac = 18;
           break;
         case 2:
           diff = 31540000000;
+          fac = 12;
           break;
       }
       let maxTimestamp = minTimestamp + diff;
-      let step = diff / 12;
+      let step = diff / fac;
       let sum = 0;
       let curTimestamp = Date.now();
       for (let i = minTimestamp; i < maxTimestamp; i += step) {
-        let added = false;
         this.trendValues.forEach(entry => {
           let date = entry.date * 1000;
           if (date > i && date < i + step) {
-            added = true;
-            data.labels.push(
-              new Date(date).toLocaleDateString(
-                this.$store.state.userSettings.locale || undefined
-              )
-            );
             sum += entry.amount / 100;
-            data.datasets[0].data.push(sum);
           }
         });
-        if (!added) {
-          data.labels.push(
-            new Date(i).toLocaleDateString(
-              this.$store.state.userSettings.locale || undefined
-            )
-          );
-          if (i < curTimestamp) {
-            data.datasets[0].data.push(sum);
-          }
+        data.labels.push(
+          new Date(i).toLocaleDateString(
+            this.$store.state.userSettings.locale || undefined
+          )
+        );
+        if (i < curTimestamp) {
+          data.datasets[0].data.push(sum);
         }
       }
 

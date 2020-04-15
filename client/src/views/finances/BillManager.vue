@@ -26,36 +26,46 @@
               <v-col cols="12" md="4">
                 <v-list three-line avatar>
                   <v-subheader>Members</v-subheader>
-                  <v-list-item
-                    v-for="member in memberTotals"
-                    :key="'finmem-' + member.id"
-                    three-line
-                    :value="member.id"
-                  >
-                    <v-list-item-avatar size="48" color="primary" left>
-                      <span class="white--text headline">
-                        {{ getUserInitials(member.id) }}
-                      </span>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ getUserName(member.id) }}
-                      </v-list-item-title>
-                      <v-list-item-subtitle>
-                        {{
-                          getCurrency(
-                            (memberDebt(member.total) / 100).toFixed(2)
-                          )
-                        }}
-                      </v-list-item-subtitle>
-                      <v-progress-linear
-                        :value="memberProgress(member.total)"
-                        :color="
-                          negativeMember(member.total) ? 'red' : 'primary'
-                        "
-                      ></v-progress-linear>
-                    </v-list-item-content>
-                  </v-list-item>
+                  <template v-for="(member, index) in memberTotals">
+                    <v-divider :key="index"></v-divider>
+                    <v-list-item
+                      :key="'finmem-' + member.id"
+                      three-line
+                      :value="member.id"
+                      class="text-center"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          {{ getUserName(member.id) }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                          {{
+                            getCurrency(
+                              (memberDebt(member.total) / 100).toFixed(2)
+                            )
+                          }}
+                        </v-list-item-subtitle>
+                        <v-progress-linear
+                          :value="memberProgress(member.total)"
+                          color="transparent"
+                          style="max-width: 50%"
+                          :background-color="
+                            negativeMember(member.total) ? 'red' : 'transparent'
+                          "
+                        ></v-progress-linear>
+                        <v-progress-linear
+                          :value="memberProgress(member.total)"
+                          :color="
+                            negativeMember(member.total)
+                              ? 'transparent'
+                              : 'primary'
+                          "
+                          style="max-width: 50%"
+                        ></v-progress-linear>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  <v-divider></v-divider>
                 </v-list>
               </v-col>
               <v-col cols="12" md="8">
@@ -328,14 +338,13 @@ export default {
     memberProgress(total) {
       total = total / 100;
       const max = this.memberTotals[0].total / 100,
-        mean = this.mean,
-        min = this.memberTotals[this.memberTotals.length - 1].total - mean;
+        mean = this.mean;
       if (total >= mean) {
         //+
         return (100 * (total - mean)) / (max - mean);
       } else {
         //-
-        return (200 * (total - mean)) / (min - mean);
+        return 100 - Math.abs(100 * (total - mean)) / (max - mean);
       }
     },
 
@@ -354,10 +363,15 @@ export default {
       data.monthlyTotal = this.monthlyTotal;
       data.mean = this.mean;
       data.memberTotals = [];
+      data.memberDebts = [];
       this.memberTotals.forEach(member => {
         data.memberTotals.push({
           name: this.getUserName(member.id),
-          total: member.total
+          total: Math.round(100 * member.total) / 100
+        });
+        data.memberDebts.push({
+          name: this.getUserName(member.id),
+          total: Math.round(100 * this.memberDebt(member.total)) / 100
         });
       });
       data.debts = [];
