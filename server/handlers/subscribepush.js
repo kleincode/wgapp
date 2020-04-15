@@ -6,19 +6,52 @@ webpush.setVapidDetails('mailto:dev@kleinco.de', process.env.PUSH_PUBLIC_KEY, pr
 module.exports = ({ db }) => ({
   type: "POST",
   public: false,
+  body: {
+    endpoint: {
+      type: "string",
+      required: true,
+      maxlength: 512
+    },
+    p256dh: {
+      type: "string",
+      required: true,
+      maxlength: 128
+    },
+    auth: {
+      type: "string",
+      required: true,
+      maxlength: 128
+    }
+  },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      const { results } = await db.query("SELECT firstname FROM users WHERE ?", { id: uid });
+      const { results } = await db.query("SELECT firstname, lastname FROM users WHERE ?", { id: uid });
       if(results.length == 0) {
         error("Error: User not found.");
       } else {
-        const subscription = body, firstname = results[0].firstname;
-        const payload = `Hello, ${firstname}!`;
+        const { endpoint, p256dh, auth } = body;
+        const subscription = {
+          endpoint,
+          keys: {
+            p256dh,
+            auth
+          }
+        };
+        const payload = `Push notifications enabled for ${results[0].firstname} ${results[0].lastname}.`;
         try {
           await webpush.sendNotification(subscription, payload);
-          success("Push message sent");
+          try {
+            await db.query(
+              "INSERT INTO pushclients (`uid`, `endpoint`, `p256dh`, `auth`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE ?",
+              [uid, endpoint, p256dh, auth, { p256dh, auth }]
+            );
+            success("Push notifications setup.");
+          } catch(err) {
+            fail("Failed.");
+          }
         } catch(err) {
-          error("Could not send push message.", err);
+          if(err.statusCode == 410) fail("Subscription expired.");
+          else error("Error while sending test notification.", err);
         }
       }
     } catch(err) {
