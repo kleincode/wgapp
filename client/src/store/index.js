@@ -15,7 +15,8 @@ let store = new Vuex.Store({
     snackbarShow: false,
     snackbarMessage: "",
     householdUsers: {},
-    updateAvailable: null
+    updateAvailable: null,
+    serviceWorker: null
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -46,6 +47,9 @@ let store = new Vuex.Store({
     },
     update_available(state, callback) {
       state.updateAvailable = callback;
+    },
+    set_service_worker(state, sw) {
+      state.serviceWorker = sw;
     }
   },
   actions: {
@@ -137,6 +141,9 @@ let store = new Vuex.Store({
     },
     isUpdateAvailable: state => {
       return !!state.updateAvailable;
+    },
+    isServiceWorkerRegistered: state => {
+      return !!state.serviceWorker;
     }
   },
   modules: {
