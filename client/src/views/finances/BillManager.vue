@@ -129,7 +129,12 @@
               @change="splitTotals"
             ></v-switch>
             <v-spacer></v-spacer>
-            <v-btn text @click="exportCurrentBill">Export</v-btn>
+            <v-btn icon @click="exportCurrentBillHTML"
+              ><v-icon>language</v-icon></v-btn
+            >
+            <v-btn icon @click="exportCurrentBillXLSX"
+              ><v-icon>table_chart</v-icon></v-btn
+            >
             <v-btn
               color="primary"
               text
@@ -176,10 +181,14 @@
                     <td>
                       <v-btn
                         icon
-                        @click="exportBill(bill.min, bill.max, bill.data)"
+                        @click="exportHTMLBill(bill.min, bill.max, bill.data)"
                         ><v-icon>language</v-icon></v-btn
                       >
-                      <v-btn icon disabled><v-icon>table_chart</v-icon></v-btn>
+                      <v-btn
+                        icon
+                        @click="exportXLSXBill(bill.min, bill.max, bill.data)"
+                        ><v-icon>table_chart</v-icon></v-btn
+                      >
                     </td>
                   </tr>
                 </tbody>
@@ -196,6 +205,7 @@ import { mapGetters } from "vuex";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 
 import { exportToHTML } from "@/assets/exportToHTML.js";
+import { exportXLSX } from "@/assets/exportToXLSX.js";
 
 export default {
   components: {
@@ -348,12 +358,60 @@ export default {
       }
     },
 
-    exportCurrentBill() {
-      exportToHTML(this.lastBillTimestamp, Date.now(), this.curToJSON());
+    exportCurrentBillHTML() {
+      exportToHTML(
+        new Date(this.lastBillTimestamp).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date().toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        this.curToJSON()
+      );
     },
 
-    exportBill(min, max, data) {
-      exportToHTML(min, max, data);
+    exportCurrentBillXLSX() {
+      exportXLSX(
+        new Date(this.lastBillTimestamp).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date().toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        this.curToJSON()
+      );
+    },
+
+    exportHTMLBill(min, max, data) {
+      exportToHTML(
+        new Date(min).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date(max).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        data
+      );
+    },
+
+    exportXLSXBill(min, max, data) {
+      exportXLSX(
+        new Date(min).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date(max).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        data
+      );
     },
 
     curToJSON() {
