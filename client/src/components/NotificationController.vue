@@ -125,6 +125,7 @@ export default {
     },
     async updateSubscriptionOnServer(subscription) {
       console.log(subscription);
+      await this.$http.post("/_/subscribepush", subscription);
     }
   }
 };
