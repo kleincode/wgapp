@@ -264,20 +264,8 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
           <v-card-title>Trend Expenses</v-card-title>
-          <v-card-text
-            ><v-sparkline
-              :value="trendCurve"
-              :gradient="['#42b3f4']"
-              :smooth="5"
-              :padding="8"
-              :line-width="1"
-              stroke-linecap="round"
-              gradient-direction="top"
-              :fill="false"
-              type="trend"
-              :auto-line-width="false"
-              auto-draw
-            ></v-sparkline>
+          <v-card-text>
+            <ExpenseChart ref="chart" :chart-data="getChartData"></ExpenseChart>
           </v-card-text>
         </v-card>
       </v-col>
@@ -300,13 +288,15 @@ import icons from "@/assets/icons.js";
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+import ExpenseChart from "@/components/charts/ExpenseChart.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
     ConfirmDialog,
-    EditMonthlyChargesDialog
+    EditMonthlyChargesDialog,
+    ExpenseChart
   },
   data: () => ({
     memberTotals: [],
@@ -399,49 +389,64 @@ export default {
         100
       );
     },
-    trendCurve() {
-      let trendCurve = [];
-      let trendValues = JSON.parse(JSON.stringify(this.trendValues));
-      if (trendValues.length == 0) {
-        return trendCurve;
+    getChartData() {
+      if (this.trendValues == undefined || this.trendValues.length == 0) {
+        return {};
       }
-      let minTimestamp = this.getMinTimestamp();
+      let data = { labels: [], datasets: [] };
+      data.datasets.push({
+        label: "Expenses",
+        backgroundColor: this.$vuetify.theme.themes.dark.primary,
+        data: []
+      });
+
+      let minTimestamp = this.getMinTimestamp() * 1000;
       let diff;
       switch (this.choosenTimeSpan) {
         case 0:
-          diff = 2628000;
+          diff = 2628000000;
           break;
         case 1:
-          diff = 7884000;
+          diff = 7884000000;
           break;
         case 2:
-          diff = 31540000;
+          diff = 31540000000;
           break;
       }
       let maxTimestamp = minTimestamp + diff;
-      let step = diff / 100;
+      let step = diff / 12;
+      let sum = 0;
+      let curTimestamp = Date.now();
       for (let i = minTimestamp; i < maxTimestamp; i += step) {
         let added = false;
-        trendValues.forEach(entry => {
-          if (entry.date > i && entry.date < i + step) {
+        this.trendValues.forEach(entry => {
+          let date = entry.date * 1000;
+          if (date > i && date < i + step) {
             added = true;
-            if (trendCurve.length == 0) {
-              trendCurve.push(entry.amount);
-            } else {
-              trendCurve.push(trendCurve[trendCurve.length - 1] + entry.amount);
-            }
+            data.labels.push(
+              new Date(date).toLocaleDateString(
+                this.$store.state.userSettings.locale || undefined
+              )
+            );
+            sum += entry.amount / 100;
+            data.datasets[0].data.push(sum);
           }
         });
         if (!added) {
-          if (trendCurve.length == 0) {
-            trendCurve.push(0);
-          } else {
-            trendCurve.push(trendCurve[trendCurve.length - 1]);
+          data.labels.push(
+            new Date(i).toLocaleDateString(
+              this.$store.state.userSettings.locale || undefined
+            )
+          );
+          if (i < curTimestamp) {
+            data.datasets[0].data.push(sum);
           }
         }
       }
-      return trendCurve;
+
+      return data;
     },
+
     intervallStr() {
       let curDate = new Date();
       let startDate = new Date(this.getMinTimestamp() * 1000);

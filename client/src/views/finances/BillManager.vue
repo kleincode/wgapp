@@ -335,7 +335,7 @@ export default {
         return (100 * (total - mean)) / (max - mean);
       } else {
         //-
-        return (100 * Math.abs(total - mean)) / Math.abs(min - mean);
+        return (200 * (total - mean)) / (min - mean);
       }
     },
 
