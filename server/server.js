@@ -27,7 +27,7 @@ const db = new Database({
 // Express middleware
 app.use(cookieParser());
 app.use(BodyParser.json());
-app.use(Express.static(Path.join(__dirname, "public")));
+app.use(Express.static(Path.join(__dirname, process.env.PUBLIC_FOLDER || "public")));
 
 // Start express server
 app.listen(port, () => console.log(`Listening on port ${port}`));
@@ -39,4 +39,4 @@ FS.readdirSync(handlersPath).forEach(file =>
 );
 
 //Default: Provide index.html from build files
-app.get("/", (req, res)  => res.sendFile(Path.join(__dirname, "public", "index.html")));
+app.get("/*", (req, res)  => res.sendFile(Path.join(__dirname, process.env.PUBLIC_FOLDER || "public", "index.html")));
