@@ -95,7 +95,19 @@ export default {
             userVisibleOnly: true,
             applicationServerKey
           });
-          await this.updateSubscriptionOnServer(subscription);
+          // Send subscription credentials to server
+          const {
+            endpoint,
+            keys: { p256dh, auth }
+          } = subscription.toJSON();
+          const { data } = await this.$http.post("/_/subscribepush", {
+            endpoint,
+            p256dh,
+            auth
+          });
+          if (!data.success) {
+            this.$store.dispatch("showSnackbar", data.message);
+          }
           this.notificationsEnabled = true;
           this.loading = false;
         } catch (err) {
@@ -115,6 +127,20 @@ export default {
         try {
           const subscription = await this.serviceWorker.pushManager.getSubscription();
           if (subscription) {
+            // First remove subscription from database
+            const {
+              endpoint,
+              keys: { p256dh, auth }
+            } = subscription.toJSON();
+            const { data } = await this.$http.post("/_/unsubscribepush", {
+              endpoint,
+              p256dh,
+              auth
+            });
+            if (!data.success) {
+              this.$store.dispatch("showSnackbar", data.message);
+            }
+            // Then unlink it
             await subscription.unsubscribe();
           }
         } catch (err) {
@@ -122,10 +148,6 @@ export default {
         }
         this.loading = false;
       }
-    },
-    async updateSubscriptionOnServer(subscription) {
-      console.log(subscription);
-      await this.$http.post("/_/subscribepush", subscription);
     }
   }
 };
