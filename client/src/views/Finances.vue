@@ -40,7 +40,7 @@
                     {{ getUserName(member.id) }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{ (member.total / 100).toFixed(2) }} €
+                    {{ getCurrency((member.total / 100).toFixed(2)) }}
                   </v-list-item-subtitle>
                   <v-progress-linear
                     :value="memberTotalFunction(member.total)"
@@ -77,9 +77,12 @@
               {{ renderDate(item.date) }}
             </template>
             <template v-slot:item.amount="{ item }">
-              {{ (item.amount / 100).toFixed(2) }} €
+              {{ getCurrency((item.amount / 100).toFixed(2)) }}
             </template>
             <template v-slot:item.actions="{ item }">
+              <v-btn small icon class="mr-2"
+                ><v-icon>add_a_photo</v-icon></v-btn
+              >
               <v-icon small class="mr-2" @click="editItem(item)"
                 >mdi-pencil</v-icon
               >
@@ -119,7 +122,7 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon>
-                  {{ charge.amount }} {{ currency }}
+                  {{ getCurrency(charge.amount) }}
                   <v-slide-x-reverse-transition>
                     <div v-show="monCharEditMode">
                       <v-btn
@@ -188,7 +191,7 @@
               >
                 <div class="text-center">
                   <div class="overline">currently used</div>
-                  <div class="display-1">{{ usedTotal }} {{ currency }}</div>
+                  <div class="display-1">{{ getCurrency(usedTotal) }}</div>
                 </div>
               </v-col>
               <v-col cols="1" class="text-center d-none d-md-block"
@@ -198,7 +201,7 @@
                 <div class="text-center">
                   <div class="overline">current target total</div>
                   <div class="display-1">
-                    {{ relativeTotal }} {{ currency }}
+                    {{ getCurrency(relativeTotal) }}
                   </div>
                 </div>
               </v-col>
@@ -214,9 +217,9 @@
                   Monthly charges
                 </v-list-item-title>
               </v-list-item-content>
-              <v-list-item-icon
-                >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
-              >
+              <v-list-item-icon>{{
+                getCurrency(usedMonthlyBudget)
+              }}</v-list-item-icon>
             </v-list-item>
             <v-list-item>
               <v-list-item-avatar size="48" color="secondary" left>
@@ -229,9 +232,9 @@
                   Member charges
                 </v-list-item-title>
               </v-list-item-content>
-              <v-list-item-icon
-                >{{ usedIndividualBudget }} {{ currency }}</v-list-item-icon
-              >
+              <v-list-item-icon>{{
+                getCurrency(usedIndividualBudget)
+              }}</v-list-item-icon>
             </v-list-item>
           </v-container>
         </v-card>
@@ -350,7 +353,6 @@ export default {
     totalMonthlyBudget: 1300,
     tempTotalMonthlyBudget: 1300,
     loadingMonthlyBudget: false,
-    currency: "€",
     timespanes: [
       { text: "current month", value: 0 },
       { text: "current and last 2 months", value: 1 },
@@ -444,7 +446,13 @@ export default {
       let curDate = new Date();
       let startDate = new Date(this.getMinTimestamp() * 1000);
       return (
-        startDate.toLocaleDateString() + " - " + curDate.toLocaleDateString()
+        startDate.toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ) +
+        " - " +
+        curDate.toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        )
       );
     },
     ...mapGetters(["getUserName", "getUserInitials"])
@@ -750,6 +758,18 @@ export default {
     },
     getIcon(id) {
       return icons[id];
+    },
+    getCurrency(val) {
+      if (val == 0) {
+        val = 0.0;
+      }
+      return new Intl.NumberFormat(
+        this.$store.state.userSettings.locale || undefined,
+        {
+          style: "currency",
+          currency: this.$store.state.userSettings.currency
+        }
+      ).format(val);
     }
   }
 };

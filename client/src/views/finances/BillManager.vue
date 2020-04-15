@@ -42,10 +42,17 @@
                         {{ getUserName(member.id) }}
                       </v-list-item-title>
                       <v-list-item-subtitle>
-                        {{ (member.total / 100).toFixed(2) }} €
+                        {{
+                          getCurrency(
+                            (memberDebt(member.total) / 100).toFixed(2)
+                          )
+                        }}
                       </v-list-item-subtitle>
                       <v-progress-linear
-                        :value="memberTotalFunction(member.total)"
+                        :value="memberProgress(member.total)"
+                        :color="
+                          negativeMember(member.total) ? 'red' : 'primary'
+                        "
                       ></v-progress-linear>
                     </v-list-item-content>
                   </v-list-item>
@@ -60,7 +67,7 @@
                     class="text-center"
                   >
                     <div class="overline">Monthly total</div>
-                    <div class="display-1">{{ monthlyTotal }} €</div>
+                    <div class="display-1">{{ getCurrency(monthlyTotal) }}</div>
                   </v-col>
                   <v-col
                     cols="12"
@@ -68,7 +75,7 @@
                     class="text-center primary--text"
                   >
                     <div class="overline">Total</div>
-                    <div class="display-1">{{ total }} €</div>
+                    <div class="display-1">{{ getCurrency(total) }}</div>
                   </v-col>
                   <v-col
                     cols="12"
@@ -76,7 +83,7 @@
                     class="text-center"
                   >
                     <div class="overline">per person</div>
-                    <div class="display-1">{{ mean }} €</div>
+                    <div class="display-1">{{ getCurrency(mean) }}</div>
                   </v-col>
                 </v-row>
                 <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
@@ -93,7 +100,7 @@
                       <tr v-for="(debt, i) in debts" :key="i">
                         <td>{{ getUserName(debt.paying) }}</td>
                         <td>{{ getUserName(debt.receiving) }}</td>
-                        <td>{{ debt.amount }} €</td>
+                        <td>{{ getCurrency(debt.amount) }}</td>
                       </tr>
                     </tbody>
                   </template>
@@ -142,8 +149,20 @@
                 </thead>
                 <tbody>
                   <tr v-for="bill in billhistory" :key="bill.id">
-                    <td>{{ new Date(bill.min).toLocaleDateString() }}</td>
-                    <td>{{ new Date(bill.max).toLocaleDateString() }}</td>
+                    <td>
+                      {{
+                        new Date(bill.min).toLocaleDateString(
+                          $store.state.userSettings.locale || undefined
+                        )
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        new Date(bill.max).toLocaleDateString(
+                          $store.state.userSettings.locale || undefined
+                        )
+                      }}
+                    </td>
                     <td>
                       <v-btn
                         icon
@@ -190,18 +209,6 @@ export default {
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"]),
-    memberTotalFunction() {
-      const max = this.memberTotals[0].total,
-        min = this.memberTotals[this.memberTotals.length - 1].total;
-      //This function maps a progress value to every total using squared interpolation
-      const msq = Math.pow(min - max, 2),
-        a = 90 / msq,
-        b = (-180 * min) / msq,
-        c =
-          (100 * Math.pow(min, 2) - 20 * min * max + 10 * Math.pow(max, 2)) /
-          msq;
-      return total => a * Math.pow(total, 2) + b * total + c;
-    },
     memberTotals() {
       let totals = JSON.parse(JSON.stringify(this.singleMemberTotals));
       if (this.includeMonthlyCharges) {
@@ -308,6 +315,28 @@ export default {
         date.getMonth() == cur.getMonth() &&
         date.getFullYear() == cur.getFullYear();
       return variable;
+    },
+
+    negativeMember(total) {
+      return total < this.mean * 100;
+    },
+
+    memberDebt(total) {
+      return total - this.mean * 100;
+    },
+
+    memberProgress(total) {
+      total = total / 100;
+      const max = this.memberTotals[0].total / 100,
+        mean = this.mean,
+        min = this.memberTotals[this.memberTotals.length - 1].total - mean;
+      if (total >= mean) {
+        //+
+        return (100 * (total - mean)) / (max - mean);
+      } else {
+        //-
+        return (100 * Math.abs(total - mean)) / Math.abs(min - mean);
+      }
     },
 
     exportCurrentBill() {
@@ -516,6 +545,18 @@ export default {
       }
       if (sign) return "in " + val;
       else return val + " ago";
+    },
+    getCurrency(val) {
+      if (val == 0) {
+        val = 0.0;
+      }
+      return new Intl.NumberFormat(
+        this.$store.state.userSettings.locale || undefined,
+        {
+          style: "currency",
+          currency: this.$store.state.userSettings.currency
+        }
+      ).format(val);
     },
     back() {
       this.$router.back();
