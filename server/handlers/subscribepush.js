@@ -1,7 +1,5 @@
 /*  Handler for "/_/subscribepush". Purpose: Subscribing user to push notifications. */
-const webpush = require('web-push');
-
-webpush.setVapidDetails('mailto:dev@kleinco.de', process.env.PUSH_PUBLIC_KEY, process.env.PUSH_PRIVATE_KEY);
+const Helpers = require("../components/Helpers");
 
 module.exports = ({ db }) => ({
   type: "POST",
@@ -39,7 +37,7 @@ module.exports = ({ db }) => ({
         };
         const payload = `Push notifications enabled for ${results[0].firstname} ${results[0].lastname}.`;
         try {
-          await webpush.sendNotification(subscription, payload);
+          await Helpers.sendNotification(subscription, payload);
           try {
             await db.query(
               "INSERT INTO pushclients (`uid`, `endpoint`, `p256dh`, `auth`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE ?",

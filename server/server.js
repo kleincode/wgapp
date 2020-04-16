@@ -32,11 +32,18 @@ app.use(Express.static(Path.join(__dirname, process.env.PUBLIC_FOLDER || "public
 // Start express server
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-//Register handlers
+// Register handlers
 const handlersPath = Path.join(__dirname, "handlers");
 FS.readdirSync(handlersPath).forEach(file => 
     registerRequestHandler(handlersPath, file.substring(0, file.lastIndexOf(".")), app, { db })
 );
 
-//Default: Provide index.html from build files
+// Default: Provide index.html from build files
 app.get("/*", (req, res)  => res.sendFile(Path.join(__dirname, process.env.PUBLIC_FOLDER || "public", "index.html")));
+
+
+// Push notifications
+const webpush = require('web-push');
+webpush.setVapidDetails('mailto:dev@kleinco.de', process.env.PUSH_PUBLIC_KEY, process.env.PUSH_PRIVATE_KEY);
+
+require("./components/PushScheduler").registerJobs(db);
