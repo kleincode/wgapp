@@ -79,10 +79,10 @@
             <template v-slot:item.amount="{ item }">
               {{ getCurrency((item.amount / 100).toFixed(2)) }}
             </template>
+            <template v-slot:item.receipt="{ item }">
+              <ReceiptDialog :expense="item"></ReceiptDialog>
+            </template>
             <template v-slot:item.actions="{ item }">
-              <v-btn small icon class="mr-2"
-                ><v-icon>add_a_photo</v-icon></v-btn
-              >
               <v-icon small class="mr-2" @click="editItem(item)"
                 >mdi-pencil</v-icon
               >
@@ -289,6 +289,7 @@ import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 import ExpenseChart from "@/components/charts/ExpenseChart.vue";
+import ReceiptDialog from "@/components/dialogs/ReceiptDialog.vue";
 
 export default {
   name: "Finances",
@@ -296,7 +297,8 @@ export default {
     EditExpenseDialog,
     ConfirmDialog,
     EditMonthlyChargesDialog,
-    ExpenseChart
+    ExpenseChart,
+    ReceiptDialog
   },
   data: () => ({
     memberTotals: [],
@@ -309,6 +311,7 @@ export default {
       { text: "Member", value: "uid", sortable: false },
       { text: "Date", value: "date" },
       { text: "Amount", value: "amount" },
+      { text: "Receipt", value: "receipt", sortable: false },
       { text: "Actions", value: "actions", sortable: false }
     ],
     tableOptions: {
@@ -433,7 +436,7 @@ export default {
           )
         );
         if (i < curTimestamp) {
-          data.datasets[0].data.push(sum);
+          data.datasets[0].data.push(Math.round(100 * sum) / 100);
         }
       }
 
@@ -665,6 +668,8 @@ export default {
       this.loadingLastBilling = false;
     },
 
+    //FINANCES TARGET
+
     async fetchFinancesTarget() {
       try {
         const { data } = await this.$http.get("/_/fetchfinancestarget");
@@ -698,6 +703,8 @@ export default {
         console.error("Error while updating finances target");
       }
     },
+
+    //HELPER
 
     renderDate(itemTimestamp) {
       let seconds = this.unixTimestamp - itemTimestamp;
