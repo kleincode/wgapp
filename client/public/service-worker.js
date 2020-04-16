@@ -10,12 +10,13 @@ self.addEventListener("message", msg => {
 
 // Push Notifications
 self.addEventListener("push", e => {
+  const payload = e.data.json();
   console.log("[Service Worker] Push Received.");
-  console.log(`[Service Worker] Push had this data: "${e.data.text()}"`);
+  console.log(`[Service Worker] Push had this data: "${payload}"`);
 
   const title = 'WG App';
   const options = {
-    body: e.data.text(),
+    body: payload.text,
     icon: "img/icons/android-chrome-192x192.png",
     badge: "img/icons/android-chrome-192x192.png"
   };
