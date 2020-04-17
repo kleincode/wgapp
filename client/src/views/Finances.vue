@@ -40,7 +40,7 @@
                     {{ getUserName(member.id) }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
-                    {{ (member.total / 100).toFixed(2) }} €
+                    {{ getCurrency((member.total / 100).toFixed(2)) }}
                   </v-list-item-subtitle>
                   <v-progress-linear
                     :value="memberTotalFunction(member.total)"
@@ -59,7 +59,7 @@
             <edit-expense-dialog
               ref="editDialog"
               v-model="editExpense"
-              @committed="updateTable"
+              @committed="onExpenseCommit"
             ></edit-expense-dialog>
           </v-card-title>
           <v-data-table
@@ -77,9 +77,20 @@
               {{ renderDate(item.date) }}
             </template>
             <template v-slot:item.amount="{ item }">
-              {{ (item.amount / 100).toFixed(2) }} €
+              {{ getCurrency((item.amount / 100).toFixed(2)) }}
             </template>
             <template v-slot:item.actions="{ item }">
+              <v-icon
+                v-if="item.receipt"
+                small
+                class="mr-2"
+                color="primary"
+                @click="openReceipt(item)"
+                >camera_alt</v-icon
+              >
+              <v-icon v-else small class="mr-2" @click="openReceipt(item)"
+                >add_a_photo</v-icon
+              >
               <v-icon small class="mr-2" @click="editItem(item)"
                 >mdi-pencil</v-icon
               >
@@ -119,7 +130,7 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon>
-                  {{ charge.amount }} {{ currency }}
+                  {{ getCurrency(charge.amount) }}
                   <v-slide-x-reverse-transition>
                     <div v-show="monCharEditMode">
                       <v-btn
@@ -147,7 +158,7 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%" :loading="loadingMonthlyBudget">
           <v-card-title>
-            Overview Expenses: {{ intervallStr }}
+            Overview Expenses: {{ intervalStr }}
             <v-spacer></v-spacer>
             <v-dialog v-model="editBudgetDialog" max-width="600px">
               <template v-slot:activator="{ on }">
@@ -188,7 +199,7 @@
               >
                 <div class="text-center">
                   <div class="overline">currently used</div>
-                  <div class="display-1">{{ usedTotal }} {{ currency }}</div>
+                  <div class="display-1">{{ getCurrency(usedTotal) }}</div>
                 </div>
               </v-col>
               <v-col cols="1" class="text-center d-none d-md-block"
@@ -198,7 +209,7 @@
                 <div class="text-center">
                   <div class="overline">current target total</div>
                   <div class="display-1">
-                    {{ relativeTotal }} {{ currency }}
+                    {{ getCurrency(relativeTotal) }}
                   </div>
                 </div>
               </v-col>
@@ -214,9 +225,9 @@
                   Monthly charges
                 </v-list-item-title>
               </v-list-item-content>
-              <v-list-item-icon
-                >{{ usedMonthlyBudget }} {{ currency }}</v-list-item-icon
-              >
+              <v-list-item-icon>{{
+                getCurrency(usedMonthlyBudget)
+              }}</v-list-item-icon>
             </v-list-item>
             <v-list-item>
               <v-list-item-avatar size="48" color="secondary" left>
@@ -229,9 +240,9 @@
                   Member charges
                 </v-list-item-title>
               </v-list-item-content>
-              <v-list-item-icon
-                >{{ usedIndividualBudget }} {{ currency }}</v-list-item-icon
-              >
+              <v-list-item-icon>{{
+                getCurrency(usedIndividualBudget)
+              }}</v-list-item-icon>
             </v-list-item>
           </v-container>
         </v-card>
@@ -261,24 +272,13 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
           <v-card-title>Trend Expenses</v-card-title>
-          <v-card-text
-            ><v-sparkline
-              :value="trendCurve"
-              :gradient="['#42b3f4']"
-              :smooth="5"
-              :padding="8"
-              :line-width="1"
-              stroke-linecap="round"
-              gradient-direction="top"
-              :fill="false"
-              type="trend"
-              :auto-line-width="false"
-              auto-draw
-            ></v-sparkline>
+          <v-card-text>
+            <ExpenseChart ref="chart" :chart-data="getChartData"></ExpenseChart>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+    <receipt-dialog ref="receiptDialog"></receipt-dialog>
     <confirm-dialog
       v-model="deleteDialogVisible"
       :loading="deleteDialogLoading"
@@ -297,13 +297,17 @@ import icons from "@/assets/icons.js";
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
+import ExpenseChart from "@/components/charts/ExpenseChart.vue";
+import ReceiptDialog from "@/components/dialogs/ReceiptDialog.vue";
 
 export default {
   name: "Finances",
   components: {
     EditExpenseDialog,
     ConfirmDialog,
-    EditMonthlyChargesDialog
+    EditMonthlyChargesDialog,
+    ExpenseChart,
+    ReceiptDialog
   },
   data: () => ({
     memberTotals: [],
@@ -350,7 +354,6 @@ export default {
     totalMonthlyBudget: 1300,
     tempTotalMonthlyBudget: 1300,
     loadingMonthlyBudget: false,
-    currency: "€",
     timespanes: [
       { text: "current month", value: 0 },
       { text: "current and last 2 months", value: 1 },
@@ -397,54 +400,68 @@ export default {
         100
       );
     },
-    trendCurve() {
-      let trendCurve = [];
-      let trendValues = JSON.parse(JSON.stringify(this.trendValues));
-      if (trendValues.length == 0) {
-        return trendCurve;
+    getChartData() {
+      if (this.trendValues == undefined || this.trendValues.length == 0) {
+        return {};
       }
-      let minTimestamp = this.getMinTimestamp();
-      let diff;
+      let data = { labels: [], datasets: [] };
+      data.datasets.push({
+        label: "Expenses",
+        backgroundColor: this.$vuetify.theme.themes.dark.primary,
+        data: []
+      });
+
+      let minTimestamp = this.getMinTimestamp() * 1000;
+      let diff, fac;
       switch (this.choosenTimeSpan) {
         case 0:
-          diff = 2628000;
+          diff = 2628000000;
+          fac = 15;
           break;
         case 1:
-          diff = 7884000;
+          diff = 7884000000;
+          fac = 18;
           break;
         case 2:
-          diff = 31540000;
+          diff = 31540000000;
+          fac = 12;
           break;
       }
       let maxTimestamp = minTimestamp + diff;
-      let step = diff / 100;
+      let step = diff / fac;
+      let sum = 0;
+      let curTimestamp = Date.now();
       for (let i = minTimestamp; i < maxTimestamp; i += step) {
-        let added = false;
-        trendValues.forEach(entry => {
-          if (entry.date > i && entry.date < i + step) {
-            added = true;
-            if (trendCurve.length == 0) {
-              trendCurve.push(entry.amount);
-            } else {
-              trendCurve.push(trendCurve[trendCurve.length - 1] + entry.amount);
-            }
+        this.trendValues.forEach(entry => {
+          let date = entry.date * 1000;
+          if (date > i && date < i + step) {
+            sum += entry.amount / 100;
           }
         });
-        if (!added) {
-          if (trendCurve.length == 0) {
-            trendCurve.push(0);
-          } else {
-            trendCurve.push(trendCurve[trendCurve.length - 1]);
-          }
+        data.labels.push(
+          new Date(i).toLocaleDateString(
+            this.$store.state.userSettings.locale || undefined
+          )
+        );
+        if (i < curTimestamp) {
+          data.datasets[0].data.push(Math.round(100 * sum) / 100);
         }
       }
-      return trendCurve;
+
+      return data;
     },
-    intervallStr() {
+
+    intervalStr() {
       let curDate = new Date();
       let startDate = new Date(this.getMinTimestamp() * 1000);
       return (
-        startDate.toLocaleDateString() + " - " + curDate.toLocaleDateString()
+        startDate.toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ) +
+        " - " +
+        curDate.toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        )
       );
     },
     ...mapGetters(["getUserName", "getUserInitials"])
@@ -659,6 +676,8 @@ export default {
       this.loadingLastBilling = false;
     },
 
+    //FINANCES TARGET
+
     async fetchFinancesTarget() {
       try {
         const { data } = await this.$http.get("/_/fetchfinancestarget");
@@ -692,6 +711,8 @@ export default {
         console.error("Error while updating finances target");
       }
     },
+
+    //HELPER
 
     renderDate(itemTimestamp) {
       let seconds = this.unixTimestamp - itemTimestamp;
@@ -750,6 +771,25 @@ export default {
     },
     getIcon(id) {
       return icons[id];
+    },
+    getCurrency(val) {
+      if (val == 0) {
+        val = 0.0;
+      }
+      return new Intl.NumberFormat(
+        this.$store.state.userSettings.locale || undefined,
+        {
+          style: "currency",
+          currency: this.$store.state.userSettings.currency
+        }
+      ).format(val);
+    },
+    openReceipt(item) {
+      this.$refs.receiptDialog.open(item);
+    },
+    onExpenseCommit(receiptItem) {
+      if (receiptItem) this.openReceipt(receiptItem);
+      this.updateTable();
     }
   }
 };

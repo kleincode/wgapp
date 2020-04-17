@@ -135,7 +135,7 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
     }
 
     try {
-      await handlerProps.handler(req, { success, fail, error });
+      await handlerProps.handler(req, { success, fail, error, res });
     } catch (err) {
       console.error(`FATAL: AN UNHANDLED SERVER EXCEPTION OCCURED (${handlerName})`);
       error("Internal server exception", err);

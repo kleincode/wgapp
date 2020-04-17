@@ -26,29 +26,46 @@
               <v-col cols="12" md="4">
                 <v-list three-line avatar>
                   <v-subheader>Members</v-subheader>
-                  <v-list-item
-                    v-for="member in memberTotals"
-                    :key="'finmem-' + member.id"
-                    three-line
-                    :value="member.id"
-                  >
-                    <v-list-item-avatar size="48" color="primary" left>
-                      <span class="white--text headline">
-                        {{ getUserInitials(member.id) }}
-                      </span>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ getUserName(member.id) }}
-                      </v-list-item-title>
-                      <v-list-item-subtitle>
-                        {{ (member.total / 100).toFixed(2) }} €
-                      </v-list-item-subtitle>
-                      <v-progress-linear
-                        :value="memberTotalFunction(member.total)"
-                      ></v-progress-linear>
-                    </v-list-item-content>
-                  </v-list-item>
+                  <template v-for="(member, index) in memberTotals">
+                    <v-divider :key="index"></v-divider>
+                    <v-list-item
+                      :key="'finmem-' + member.id"
+                      three-line
+                      :value="member.id"
+                      class="text-center"
+                    >
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          {{ getUserName(member.id) }}
+                        </v-list-item-title>
+                        <v-list-item-subtitle>
+                          {{
+                            getCurrency(
+                              (memberDebt(member.total) / 100).toFixed(2)
+                            )
+                          }}
+                        </v-list-item-subtitle>
+                        <v-progress-linear
+                          :value="memberProgress(member.total)"
+                          color="transparent"
+                          style="max-width: 50%"
+                          :background-color="
+                            negativeMember(member.total) ? 'red' : 'transparent'
+                          "
+                        ></v-progress-linear>
+                        <v-progress-linear
+                          :value="memberProgress(member.total)"
+                          :color="
+                            negativeMember(member.total)
+                              ? 'transparent'
+                              : 'primary'
+                          "
+                          style="max-width: 50%"
+                        ></v-progress-linear>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                  <v-divider></v-divider>
                 </v-list>
               </v-col>
               <v-col cols="12" md="8">
@@ -60,7 +77,7 @@
                     class="text-center"
                   >
                     <div class="overline">Monthly total</div>
-                    <div class="display-1">{{ monthlyTotal }} €</div>
+                    <div class="display-1">{{ getCurrency(monthlyTotal) }}</div>
                   </v-col>
                   <v-col
                     cols="12"
@@ -68,7 +85,7 @@
                     class="text-center primary--text"
                   >
                     <div class="overline">Total</div>
-                    <div class="display-1">{{ total }} €</div>
+                    <div class="display-1">{{ getCurrency(total) }}</div>
                   </v-col>
                   <v-col
                     cols="12"
@@ -76,7 +93,7 @@
                     class="text-center"
                   >
                     <div class="overline">per person</div>
-                    <div class="display-1">{{ mean }} €</div>
+                    <div class="display-1">{{ getCurrency(mean) }}</div>
                   </v-col>
                 </v-row>
                 <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
@@ -93,7 +110,7 @@
                       <tr v-for="(debt, i) in debts" :key="i">
                         <td>{{ getUserName(debt.paying) }}</td>
                         <td>{{ getUserName(debt.receiving) }}</td>
-                        <td>{{ debt.amount }} €</td>
+                        <td>{{ getCurrency(debt.amount) }}</td>
                       </tr>
                     </tbody>
                   </template>
@@ -112,7 +129,12 @@
               @change="splitTotals"
             ></v-switch>
             <v-spacer></v-spacer>
-            <v-btn text @click="exportCurrentBill">Export</v-btn>
+            <v-btn icon @click="exportCurrentBillHTML"
+              ><v-icon>language</v-icon></v-btn
+            >
+            <v-btn icon @click="exportCurrentBillXLSX"
+              ><v-icon>table_chart</v-icon></v-btn
+            >
             <v-btn
               color="primary"
               text
@@ -142,15 +164,31 @@
                 </thead>
                 <tbody>
                   <tr v-for="bill in billhistory" :key="bill.id">
-                    <td>{{ new Date(bill.min).toLocaleDateString() }}</td>
-                    <td>{{ new Date(bill.max).toLocaleDateString() }}</td>
+                    <td>
+                      {{
+                        new Date(bill.min).toLocaleDateString(
+                          $store.state.userSettings.locale || undefined
+                        )
+                      }}
+                    </td>
+                    <td>
+                      {{
+                        new Date(bill.max).toLocaleDateString(
+                          $store.state.userSettings.locale || undefined
+                        )
+                      }}
+                    </td>
                     <td>
                       <v-btn
                         icon
-                        @click="exportBill(bill.min, bill.max, bill.data)"
+                        @click="exportHTMLBill(bill.min, bill.max, bill.data)"
                         ><v-icon>language</v-icon></v-btn
                       >
-                      <v-btn icon disabled><v-icon>table_chart</v-icon></v-btn>
+                      <v-btn
+                        icon
+                        @click="exportXLSXBill(bill.min, bill.max, bill.data)"
+                        ><v-icon>table_chart</v-icon></v-btn
+                      >
                     </td>
                   </tr>
                 </tbody>
@@ -167,6 +205,7 @@ import { mapGetters } from "vuex";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 
 import { exportToHTML } from "@/assets/exportToHTML.js";
+import { exportXLSX } from "@/assets/exportToXLSX.js";
 
 export default {
   components: {
@@ -190,18 +229,6 @@ export default {
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"]),
-    memberTotalFunction() {
-      const max = this.memberTotals[0].total,
-        min = this.memberTotals[this.memberTotals.length - 1].total;
-      //This function maps a progress value to every total using squared interpolation
-      const msq = Math.pow(min - max, 2),
-        a = 90 / msq,
-        b = (-180 * min) / msq,
-        c =
-          (100 * Math.pow(min, 2) - 20 * min * max + 10 * Math.pow(max, 2)) /
-          msq;
-      return total => a * Math.pow(total, 2) + b * total + c;
-    },
     memberTotals() {
       let totals = JSON.parse(JSON.stringify(this.singleMemberTotals));
       if (this.includeMonthlyCharges) {
@@ -310,12 +337,81 @@ export default {
       return variable;
     },
 
-    exportCurrentBill() {
-      exportToHTML(this.lastBillTimestamp, Date.now(), this.curToJSON());
+    negativeMember(total) {
+      return total < this.mean * 100;
     },
 
-    exportBill(min, max, data) {
-      exportToHTML(min, max, data);
+    memberDebt(total) {
+      return total - this.mean * 100;
+    },
+
+    memberProgress(total) {
+      total = total / 100;
+      const max = this.memberTotals[0].total / 100,
+        mean = this.mean;
+      if (total >= mean) {
+        //+
+        return (100 * (total - mean)) / (max - mean);
+      } else {
+        //-
+        return 100 - Math.abs(100 * (total - mean)) / (max - mean);
+      }
+    },
+
+    exportCurrentBillHTML() {
+      exportToHTML(
+        new Date(this.lastBillTimestamp).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date().toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        this.curToJSON()
+      );
+    },
+
+    exportCurrentBillXLSX() {
+      exportXLSX(
+        new Date(this.lastBillTimestamp).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date().toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        this.curToJSON()
+      );
+    },
+
+    exportHTMLBill(min, max, data) {
+      exportToHTML(
+        new Date(min).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date(max).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        data
+      );
+    },
+
+    exportXLSXBill(min, max, data) {
+      exportXLSX(
+        new Date(min).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        new Date(max).toLocaleDateString(
+          this.$store.state.userSettings.locale || undefined
+        ),
+        this.$store.state.userSettings.currency,
+        this.$store.state.userSettings.locale,
+        data
+      );
     },
 
     curToJSON() {
@@ -325,10 +421,15 @@ export default {
       data.monthlyTotal = this.monthlyTotal;
       data.mean = this.mean;
       data.memberTotals = [];
+      data.memberDebts = [];
       this.memberTotals.forEach(member => {
         data.memberTotals.push({
           name: this.getUserName(member.id),
-          total: member.total
+          total: Math.round(100 * member.total) / 100
+        });
+        data.memberDebts.push({
+          name: this.getUserName(member.id),
+          total: Math.round(100 * this.memberDebt(member.total)) / 100
         });
       });
       data.debts = [];
@@ -516,6 +617,18 @@ export default {
       }
       if (sign) return "in " + val;
       else return val + " ago";
+    },
+    getCurrency(val) {
+      if (val == 0) {
+        val = 0.0;
+      }
+      return new Intl.NumberFormat(
+        this.$store.state.userSettings.locale || undefined,
+        {
+          style: "currency",
+          currency: this.$store.state.userSettings.currency
+        }
+      ).format(val);
     },
     back() {
       this.$router.back();

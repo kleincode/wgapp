@@ -46,7 +46,7 @@ module.exports = ({ db }) => ({
       const offset = pageSize * page,
         validSorts = ["description", "amount", "date"];
       // Construct queries
-      let displaySelect = `SELECT finances.id AS 'fid', description, amount, uid, UNIX_TIMESTAMP(created) as 'date'`,
+      let displaySelect = `SELECT finances.id AS 'fid', description, amount, uid, UNIX_TIMESTAMP(created) as 'date', receipt`,
         totalSelect = `SELECT COUNT(*) AS 'c'`,
         mainQuery = ` FROM finances WHERE hid = ? AND UNIX_TIMESTAMP(created) > ?`,
         mainSuffix = ``,
