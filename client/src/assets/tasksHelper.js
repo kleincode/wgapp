@@ -203,15 +203,18 @@ function getOnDemandStatus(curDate, lastExecution) {
 
 function getSingleStatus(dueDate, lastExecution) {
   let curDate = new Date();
+
   if (curDate < dueDate) {
     if (lastExecution.getTime() < 997590000000) {
       // Januar 2000
       return 0;
     } else {
+      //done
       return 2;
     }
   } else {
     if (lastExecution.getTime() < 997590000000) {
+      //missed
       return 1;
     } else {
       return 2;

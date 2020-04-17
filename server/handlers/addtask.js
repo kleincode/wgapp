@@ -18,8 +18,7 @@ module.exports = ({ db }) => ({
     },
     mode: {
       type: "int",
-      required: true,
-      message: "Please provide a task mode."
+      default: 0
     },
     // Iterating mode (false...single member, true...iterating through household members)
     iteratingMode: {
@@ -68,9 +67,9 @@ module.exports = ({ db }) => ({
 
     // default values
     let genDate = new Date();
-    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, date, due } = body;
+    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, due } = body;
     time = time || genDate.getHours() + ":" + genDate.getMinutes() + ":" + genDate.getSeconds(); genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
-    date = date || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
+    startDate = startDate || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
 
     try {
       const assignedUid = body.assignedMember || uid, // assign to sending user by default

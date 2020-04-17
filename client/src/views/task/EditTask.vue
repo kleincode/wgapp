@@ -53,7 +53,7 @@
                     item-value="value"
                     label="Assigned to"
                     outlined
-                    :disabled="iterating"
+                    :disabled="iterating && mode != 'Single'"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -216,7 +216,7 @@ export default {
   data: () => ({
     editMode: false,
     id: -1,
-    mode: "Singqle",
+    mode: "Single",
     name: "",
     iterating: true,
     icon: 0,
@@ -367,12 +367,12 @@ export default {
         this.snackbar = true;
         return;
       }
-      if ((!repetitionEvery || repetitionEvery == 0) && mode != 2) {
+      if ((!repetitionEvery || repetitionEvery == 0) && mode == 1) {
         this.snackText = "You need to specify a valid intervall.";
         this.snackbar = true;
         return;
       }
-      if (repetitionDays.length == 0 && mode != 2) {
+      if (repetitionDays.length == 0 && mode == 1) {
         this.snackText = "You need to specify at least one weekday.";
         this.snackbar = true;
         return;
@@ -397,7 +397,6 @@ export default {
           due = "";
           break;
       }
-      console.log(due);
       try {
         if (this.editMode) {
           const { data } = await this.$http.post("/_/edittask", {

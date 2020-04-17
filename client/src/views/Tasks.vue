@@ -259,6 +259,10 @@ export default {
           curDate.setHours(12, 0, 0, 0);
           data.data.forEach(element => {
             let lastExecution = new Date(element.lastExecution);
+            if (isNaN(lastExecution.getTime())) {
+              lastExecution = new Date(0);
+            }
+            console.log(lastExecution);
             switch (element.mode) {
               case 0: {
                 //Single
@@ -275,7 +279,7 @@ export default {
                   startDate: correctedStartDate,
                   dueDay: correctedStartDate,
                   time: time,
-                  missed: status,
+                  missed: status == 1,
                   checked: status == 2,
                   icon: icons[element.icon]
                 });
