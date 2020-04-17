@@ -27,6 +27,12 @@ AUTH_TOKEN_SECRET=(random token)
 AUTH_SALT_ROUNDS=10
 
 AES_HOUSEHOLD_PASSPHRASE=(random token)
+
+# Folder to compiled client assets (this is the default client build folder)
+PUBLIC_FOLDER='../client/dist'
+
+PUSH_PUBLIC_KEY=(public key for push notifications)
+PUSH_PRIVATE_KEY=(private key for push notifications)
 ```
 
 ### Run back-end
