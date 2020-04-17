@@ -6,7 +6,7 @@
       >
     </template>
 
-    <v-card>
+    <v-card :loading="loading">
       <v-card-title class="headline" primary-title>
         Receipt - {{ expense.description }} -
         {{ getCurrency(expense.amount / 100) }}
@@ -16,7 +16,7 @@
         <v-row>
           <v-col cols="12" md="6">
             <v-card
-              class="ml-4 mr-4"
+              class="ml-8 mr-8"
               color="grey darken-4"
               style="text-align: center"
             >
@@ -28,7 +28,6 @@
           <v-col cols="12" md="6">
             <v-file-input
               v-model="receiptFile"
-              :rules="rules"
               type="file"
               accept="image/png, image/jpeg, image/bmp"
               placeholder="Upload your receipt"
@@ -40,14 +39,13 @@
               text
               block
               :disabled="receiptExists"
-              @click="upload"
+              @click="triggerUpload"
             >
               upload
             </v-btn>
-            <v-btn text block :disabled="!receiptExists">
+            <v-btn text block :disabled="!receiptExists" @click="deleteReceipt">
               delete receipt
             </v-btn>
-            {{ expense }}
           </v-col>
         </v-row>
       </v-card-text>
@@ -64,6 +62,8 @@
   </v-dialog>
 </template>
 <script>
+import Compressor from "compressorjs";
+
 export default {
   name: "ReceiptDialog",
   props: {
@@ -75,24 +75,38 @@ export default {
   data: () => ({
     receiptFile: null,
     dialog: false,
-    receiptExists: false,
-    rules: [
-      value =>
-        !value ||
-        value.size < 1000000 ||
-        "Avatar size should be less than 1 MB!"
-    ]
+    loading: false,
+    receiptExists: true
   }),
   methods: {
-    async upload() {
-      const formData = new FormData();
+    async triggerUpload() {
+      this.loading = true;
       if (!this.receiptFile) {
         this.$store.dispatch("showSnackbar", "Please specify an image");
         return;
       }
-      console.log(this.receiptFile);
+      new Compressor(this.receiptFile, {
+        quality: 0.6,
+        convertSize: 500000, //0.5MB png => converted to jpg
+        async success(result) {
+          await this.upload(result);
+          this.loading = false;
+        },
+        error(err) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error while compressing the image."
+          );
+          console.log(err.message);
+          this.loading = false;
+        }
+      });
+    },
+
+    async upload(result) {
+      let formData = new FormData();
       formData.append("fid", this.expense.fid);
-      formData.append("receiptPicture", this.receiptFile);
+      formData.append("receiptPicture", result);
       try {
         await this.$http.post("/_/uploadreceipt", formData, {
           headers: {
@@ -103,8 +117,25 @@ export default {
       } catch (err) {
         this.$store.dispatch("showSnackbar", "Error while uploading receipt.");
         console.error(err);
+        this.loading = false;
       }
     },
+
+    async deleteReceipt() {
+      try {
+        this.loading = true;
+        const { data } = await this.$http.post("/_/deletereceipt", {
+          fid: this.expense.fid
+        });
+        this.$store.dispatch("showSnackbar", data.message);
+        this.loading = false;
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", "Error while deleting receipt.");
+        console.error(err);
+        this.loading = false;
+      }
+    },
+
     getCurrency(val) {
       if (val == 0) {
         val = 0.0;
