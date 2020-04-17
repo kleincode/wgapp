@@ -79,10 +79,8 @@
             <template v-slot:item.amount="{ item }">
               {{ getCurrency((item.amount / 100).toFixed(2)) }}
             </template>
-            <template v-slot:item.receipt="{ item }">
-              <ReceiptDialog :expense="item"></ReceiptDialog>
-            </template>
             <template v-slot:item.actions="{ item }">
+              <ReceiptDialog :expense="item"></ReceiptDialog>
               <v-icon small class="mr-2" @click="editItem(item)"
                 >mdi-pencil</v-icon
               >
@@ -311,7 +309,6 @@ export default {
       { text: "Member", value: "uid", sortable: false },
       { text: "Date", value: "date" },
       { text: "Amount", value: "amount" },
-      { text: "Receipt", value: "receipt", sortable: false },
       { text: "Actions", value: "actions", sortable: false }
     ],
     tableOptions: {

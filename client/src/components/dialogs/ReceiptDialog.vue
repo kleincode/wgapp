@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" width="800">
     <template v-slot:activator="{ on }">
       <v-btn small icon class="mr-2" v-on="on"
-        ><v-icon>camera_alt</v-icon></v-btn
+        ><v-icon small>camera_alt</v-icon></v-btn
       >
     </template>
 
@@ -19,10 +19,21 @@
               class="ml-8 mr-8"
               color="grey darken-4"
               style="text-align: center"
+              :loading="imageLoading"
             >
-              <div class="pt-12 pb-12 grey--text">
-                No receipt uploaded yet
+              <div v-if="!receiptExists" class="pt-12 pb-12 grey--text">
+                {{
+                  imageLoading
+                    ? "Loading receipt..."
+                    : "No receipt uploaded yet"
+                }}
               </div>
+              <v-img
+                v-if="receiptExists"
+                :src="imageSource"
+                height="400"
+                contain
+              ></v-img>
             </v-card>
           </v-col>
           <v-col cols="12" md="6">
@@ -36,15 +47,19 @@
             ></v-file-input>
             <v-btn
               color="primary"
-              text
-              block
-              :disabled="receiptExists"
+              class="mt-3"
+              :disabled="!receiptFile"
               @click="triggerUpload"
             >
-              upload
+              {{ receiptExists ? "Replace" : "Upload" }}
             </v-btn>
-            <v-btn text block :disabled="!receiptExists" @click="deleteReceipt">
-              delete receipt
+            <v-btn
+              text
+              class="ml-3 mt-3"
+              :disabled="!receiptExists"
+              @click="deleteReceipt"
+            >
+              Delete receipt
             </v-btn>
           </v-col>
         </v-row>
@@ -76,12 +91,14 @@ export default {
     receiptFile: null,
     dialog: false,
     loading: false,
-    receiptExists: false
+    imageSource: "",
+    receiptExists: false,
+    imageLoading: true
   }),
   watch: {
     dialog(val) {
       if (val) {
-        this.fetchImage();
+        this.fetchReceipt();
       }
     }
   },
@@ -113,6 +130,7 @@ export default {
     },
 
     async upload(result) {
+      this.loading = true;
       let formData = new FormData();
       formData.append("fid", this.expense.fid);
       formData.append("receiptPicture", result);
@@ -124,9 +142,11 @@ export default {
         });
         if (data.success) {
           this.$store.dispatch("showSnackbar", "Receipt uploaded");
+          setTimeout(() => this.fetchReceipt(), 200);
         } else {
           this.$store.dispatch("showSnackbar", data.message || "Upload error");
         }
+        this.loading = false;
       } catch (err) {
         this.$store.dispatch("showSnackbar", "Error while uploading receipt.");
         console.error(err);
@@ -135,13 +155,20 @@ export default {
     },
 
     async deleteReceipt() {
+      this.loading = true;
       try {
-        this.loading = true;
-        const { data } = await this.$http.post("/_/deletereceipt", {
+        const { data } = await this.$http.post("/_/delreceipt", {
           fid: this.expense.fid
         });
-        this.$store.dispatch("showSnackbar", data.message);
+        if (data.success) {
+          this.$store.dispatch("showSnackbar", "Receipt deleted.");
+        } else
+          this.$store.dispatch(
+            "showSnackbar",
+            data.message || "Could not delete receipt."
+          );
         this.loading = false;
+        setTimeout(() => this.fetchReceipt(), 200);
       } catch (err) {
         this.$store.dispatch("showSnackbar", "Error while deleting receipt.");
         console.error(err);
@@ -149,7 +176,27 @@ export default {
       }
     },
 
-    fetchImage() {},
+    async fetchReceipt() {
+      this.receiptExists = false;
+      this.imageLoading = true;
+      try {
+        const { data, headers } = await this.$http.get("/_/fetchreceipt", {
+          params: {
+            fid: this.expense.fid
+          },
+          responseType: "arraybuffer"
+        });
+        if (headers["content-type"] !== "application/json; charset=utf-8") {
+          const buffer = Buffer.from(data, "binary").toString("base64");
+          this.imageSource = `data:${headers["content-type"]};base64,${buffer}`;
+          this.receiptExists = true;
+        }
+        this.imageLoading = false;
+      } catch (err) {
+        console.error(err);
+        this.imageLoading = false;
+      }
+    },
 
     getCurrency(val) {
       if (val == 0) {
