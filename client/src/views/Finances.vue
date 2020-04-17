@@ -150,7 +150,7 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%" :loading="loadingMonthlyBudget">
           <v-card-title>
-            Overview Expenses: {{ intervallStr }}
+            Overview Expenses: {{ intervalStr }}
             <v-spacer></v-spacer>
             <v-dialog v-model="editBudgetDialog" max-width="600px">
               <template v-slot:activator="{ on }">
@@ -443,7 +443,7 @@ export default {
       return data;
     },
 
-    intervallStr() {
+    intervalStr() {
       let curDate = new Date();
       let startDate = new Date(this.getMinTimestamp() * 1000);
       return (

@@ -38,7 +38,6 @@ FS.readdirSync(handlersPath).forEach(file =>
     registerRequestHandler(handlersPath, file.substring(0, file.lastIndexOf(".")), app, { db })
 );
 
-require("./components/UploadReceiptHandler").registerHandler(app);
 require("./components/FetchReceiptImageHandler").registerHandler(app);
 
 //Default: Provide index.html from build files

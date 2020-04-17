@@ -87,14 +87,16 @@ export default {
   },
   methods: {
     async triggerUpload() {
-      this.loading = true;
       if (!this.receiptFile) {
         this.$store.dispatch("showSnackbar", "Please specify an image");
         return;
       }
+      this.loading = true;
       new Compressor(this.receiptFile, {
         quality: 0.6,
-        convertSize: 500000, //0.5MB png => converted to jpg
+        convertSize: 0, // always convert to jpeg
+        maxWidth: 800,
+        maxHeight: 800,
         success: async result => {
           await this.upload(result);
           this.loading = false;
@@ -115,12 +117,16 @@ export default {
       formData.append("fid", this.expense.fid);
       formData.append("receiptPicture", result);
       try {
-        await this.$http.post("/_/uploadreceipt", formData, {
+        const { data } = await this.$http.post("/_/uploadreceipt", formData, {
           headers: {
             "content-type": "multipart/form-data"
           }
         });
-        this.$store.dispatch("showSnackbar", "Receipt uploaded");
+        if (data.success) {
+          this.$store.dispatch("showSnackbar", "Receipt uploaded");
+        } else {
+          this.$store.dispatch("showSnackbar", data.message || "Upload error");
+        }
       } catch (err) {
         this.$store.dispatch("showSnackbar", "Error while uploading receipt.");
         console.error(err);
