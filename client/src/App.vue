@@ -70,13 +70,17 @@
       <span>{{ snackbarMessage }}</span>
       <v-btn text small color="red" @click="snackbarShow = false">Close</v-btn>
     </v-snackbar>
+    <v-snackbar v-model="isUpdateAvailable" :timeout="0">
+      <span>A new update was installed. Please refresh.</span>
+      <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
 <style lang="scss"></style>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "App",
@@ -138,8 +142,10 @@ export default {
       "userEmail",
       "userFirstName",
       "userLastName",
-      "snackbarMessage"
-    ])
+      "snackbarMessage",
+      "updateAvailable"
+    ]),
+    ...mapGetters(["isUpdateAvailable"])
   },
   async created() {
     await this.$store.dispatch("userSettings/sync");

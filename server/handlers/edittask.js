@@ -52,8 +52,13 @@ module.exports = ({ db }) => ({
       type: "string"
     },
     // Date (not updated if not provided)
-    date: {
+    startDate: {
       type: "string"
+    },
+    due: {
+      type: "string",
+      required: true,
+      message: "Please specify the new due date"
     }
   },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
@@ -68,7 +73,7 @@ module.exports = ({ db }) => ({
 
       //Permissions granted; perform update
       let updateVals = Helpers.copyKeysIfPresent(body,
-        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "startDate"]
+        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "startDate", "due"]
       );
       if (body.repetitionDays) updateVals.repetitionDays = JSON.stringify(body.repetitionDays);
       try {

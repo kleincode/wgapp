@@ -61,6 +61,11 @@
                     class="mt-3"
                   ></v-select>
                   <p>Sample: {{ currencySample }}</p>
+
+                  <!-- Notifications -->
+                  <div class="title pt-2">Notifications</div>
+                  <p>Notifications remind you of important upcoming tasks.</p>
+                  <notification-controller></notification-controller>
                 </div>
               </v-card-text>
             </v-card>
@@ -176,8 +181,13 @@ import {
   handleSignoutClick
 } from "@/assets/googleCalendar.js";
 
+import NotificationController from "@/components/NotificationController.vue";
+
 export default {
   name: "Settings",
+  components: {
+    NotificationController
+  },
   data: () => ({
     tab: [],
     tabs: 2,

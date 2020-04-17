@@ -68,6 +68,11 @@
                 <v-icon>edit</v-icon>
               </v-btn>
             </v-hover>
+            <v-hover
+              ><v-btn icon @click="$emit('reminder', task)"
+                ><v-icon>notifications_active</v-icon></v-btn
+              ></v-hover
+            >
           </v-list-item-icon>
         </v-list-item>
       </v-list>
@@ -119,6 +124,11 @@
                 <v-icon>edit</v-icon>
               </v-btn>
             </v-hover>
+            <v-hover
+              ><v-btn icon @click="$emit('reminder', task)"
+                ><v-icon>notifications_active</v-icon></v-btn
+              ></v-hover
+            >
           </v-list-item-icon>
         </v-list-item>
       </v-list>
