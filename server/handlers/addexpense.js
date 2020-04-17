@@ -26,8 +26,20 @@ module.exports = ({ db }) => ({
       if (requestHid !== assignedHid) {
         fail("The specifed user does not exist or does not belong to this household.");
       } else try {
-        await db.query("INSERT INTO finances (hid, uid, description, amount) VALUES (?, ?, ?, ?)", [assignedHid, assignedUid, body.description, body.amount]);
-        success("Expense inserted successfully.");
+        const { results: { insertId } } = await db.query(
+          "INSERT INTO finances (hid, uid, description, amount) VALUES (?, ?, ?, ?)",
+          [assignedHid, assignedUid, body.description, body.amount]
+        );
+        success({
+          message: "Expense inserted successfully.",
+          item: {
+            fid: insertId,
+            uid: assignedUid,
+            description: body.description,
+            amount: body.amount,
+            receipt: false
+          }
+        });
       } catch (err) {
         error("Error while inserting expense into database.", err);
       }

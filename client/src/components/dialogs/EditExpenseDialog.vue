@@ -46,9 +46,15 @@
         </v-card-text>
 
         <v-card-actions>
+          <v-checkbox
+            v-if="!editMode"
+            v-model="addReceipt"
+            label="Add receipt"
+            class="ma-0"
+          ></v-checkbox>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="reset">Cancel</v-btn>
-          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid"
+          <v-btn color="red" text @click="reset">Cancel</v-btn>
+          <v-btn color="green" text type="submit" :disabled="!formValid"
             >Save</v-btn
           >
         </v-card-actions>
@@ -89,7 +95,8 @@ export default {
     ],
     loading: false,
     editMode: false,
-    editId: null
+    editId: null,
+    addReceipt: false
   }),
   methods: {
     updateValue(val) {
@@ -125,7 +132,11 @@ export default {
               ? "Expense updated successfully."
               : "Expense added successfully."
           );
-          this.$emit("committed");
+          // Item committed, open receipt dialog with new item data if 'add receipt' was checked
+          this.$emit(
+            "committed",
+            !this.editMode && this.addReceipt ? data.item : null
+          );
           this.reset();
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
@@ -145,6 +156,7 @@ export default {
       });
       this.$refs.form.resetValidation();
       this.editMode = false;
+      this.addReceipt = false;
     },
     startEdit(itemData) {
       this.editMode = true;

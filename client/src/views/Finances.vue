@@ -59,7 +59,7 @@
             <edit-expense-dialog
               ref="editDialog"
               v-model="editExpense"
-              @committed="updateTable"
+              @committed="onExpenseCommit"
             ></edit-expense-dialog>
           </v-card-title>
           <v-data-table
@@ -80,8 +80,16 @@
               {{ getCurrency((item.amount / 100).toFixed(2)) }}
             </template>
             <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="openReceipt(item)"
+              <v-icon
+                v-if="item.receipt"
+                small
+                class="mr-2"
+                color="primary"
+                @click="openReceipt(item)"
                 >camera_alt</v-icon
+              >
+              <v-icon v-else small class="mr-2" @click="openReceipt(item)"
+                >add_a_photo</v-icon
               >
               <v-icon small class="mr-2" @click="editItem(item)"
                 >mdi-pencil</v-icon
@@ -778,6 +786,10 @@ export default {
     },
     openReceipt(item) {
       this.$refs.receiptDialog.open(item);
+    },
+    onExpenseCommit(receiptItem) {
+      if (receiptItem) this.openReceipt(receiptItem);
+      this.updateTable();
     }
   }
 };

@@ -53,7 +53,7 @@
           Delete receipt
         </v-btn>
         <v-spacer></v-spacer>
-        <v-btn text @click="dialog = false">
+        <v-btn text @click="dialogShown = false">
           close
         </v-btn>
       </v-card-actions>
