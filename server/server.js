@@ -39,6 +39,7 @@ FS.readdirSync(handlersPath).forEach(file =>
 );
 
 require("./components/UploadReceiptHandler").registerHandler(app);
+require("./components/FetchReceiptImageHandler").registerHandler(app);
 
 //Default: Provide index.html from build files
 app.get("/", (req, res)  => res.sendFile(Path.join(__dirname, "public", "index.html")));

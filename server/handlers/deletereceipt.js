@@ -42,7 +42,6 @@ module.exports = ({ db }) => ({
             error("Error while deleting receipt in folder.", err);
             console.error(err);
           }
-          console.log(results);
         }
       } catch (err) {
         error("Error while deleting receipt in database.", err);

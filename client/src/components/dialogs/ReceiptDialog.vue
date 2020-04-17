@@ -76,8 +76,15 @@ export default {
     receiptFile: null,
     dialog: false,
     loading: false,
-    receiptExists: true
+    receiptExists: false
   }),
+  watch: {
+    dialog(val) {
+      if (val) {
+        this.fetchImage();
+      }
+    }
+  },
   methods: {
     async triggerUpload() {
       this.loading = true;
@@ -88,11 +95,11 @@ export default {
       new Compressor(this.receiptFile, {
         quality: 0.6,
         convertSize: 500000, //0.5MB png => converted to jpg
-        async success(result) {
+        success: async result => {
           await this.upload(result);
           this.loading = false;
         },
-        error(err) {
+        error: err => {
           this.$store.dispatch(
             "showSnackbar",
             "Error while compressing the image."
@@ -135,6 +142,8 @@ export default {
         this.loading = false;
       }
     },
+
+    fetchImage() {},
 
     getCurrency(val) {
       if (val == 0) {
