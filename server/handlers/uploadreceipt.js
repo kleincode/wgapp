@@ -2,6 +2,7 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const Helpers = require("../components/Helpers");
 
 const receiptFolder = path.join(__dirname, "..", "images", "receipts");
 
@@ -25,10 +26,26 @@ const limits = {
   fileSize: 5368709120 // maximum file size: 5 MB
 };
 
-const fileFilter = (req, file, cb) => {
+let dbInstance;
+
+const fileFilter = async (req, file, cb) => {
   if(file.mimetype == "image/jpeg") {
-    cb(null, true); // accept file
+    const hid = await Helpers.fetchHouseholdID(dbInstance, req.uid);
+    if(hid) {
+      const { results: { affectedRows } } = await dbInstance.query(
+        "UPDATE finances SET ? WHERE ? AND ?",
+        [{receipt: true}, { id: parseInt(req.body.fid) }, { hid }]
+      );
+      if(affectedRows == 0) {
+        cb(new Error("Invalid expense id."));
+      } else {
+        cb(null, true); //accept
+      }
+    } else {
+      cb(new Error("Please join a household to use this feature."));
+    }
   } else {
+    // do not accept non-jpeg files
     cb(new Error("Only jpeg files are accepted."));
   }
 };
@@ -39,6 +56,7 @@ module.exports = ({ db }) => ({
   type: "POST",
   public: false,
   handler: async (req, { success, fail, error, res }) => {
+    dbInstance = db;
     upload(req, res, (err) => {
       if(err) {
         fail(err.message);
