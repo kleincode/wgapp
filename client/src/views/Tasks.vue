@@ -26,6 +26,9 @@
                       >
                       <v-icon v-else>check_box_outline_blank</v-icon>
                     </v-btn>
+                    <v-btn icon @click="reminder(getTodaysTasks[0])"
+                      ><v-icon>notifications_active</v-icon></v-btn
+                    >
                   </div>
                   <div class="caption pt-2">{{ getTodaysTasks[0].time }}</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
@@ -91,6 +94,9 @@
                     <v-icon v-if="task.checked">check_box</v-icon>
                     <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
+                  <v-btn icon @click="reminder(task)"
+                    ><v-icon>notifications_active</v-icon></v-btn
+                  >
                 </v-list-item-icon>
               </v-list-item>
             </div>
@@ -122,6 +128,7 @@
           :on-demand-tasks="onDemandTasks"
           :timed-tasks="timedTasks"
           :loading="loading"
+          @reminder="reminder"
           @checktask="checkedTasks"
         ></UpcomingTasksCard>
       </v-col>
@@ -262,7 +269,6 @@ export default {
             if (isNaN(lastExecution.getTime())) {
               lastExecution = new Date(0);
             }
-            console.log(lastExecution);
             switch (element.mode) {
               case 0: {
                 //Single
@@ -496,6 +502,32 @@ export default {
         return index - 1;
       } else {
         return users.length - 1;
+      }
+    },
+
+    async reminder(task) {
+      try {
+        let id = task.id;
+        const { data } = await this.$http.post("/_/pushreminder", {
+          id
+        });
+        if (data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "You've reminded " +
+              this.getUserName(task.assigned) +
+              " of " +
+              task.name
+          );
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error triggering the reminder."
+          );
+        }
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", "Server Error.");
+        console.log(err);
       }
     },
 

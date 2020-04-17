@@ -8,7 +8,7 @@ module.exports = {
     Helpers.sendNotificationToUser(db, 8, "It works!!!");
     console.log("Registering push jobs");
 
-    let tasksPushJob = Schedule.scheduleJob("*/10 * * * * *", async () => {
+    let tasksPushJob = Schedule.scheduleJob("* * * * *", async () => {
       try {
         let curTime = new Date();
         let max = new Date(curTime);
