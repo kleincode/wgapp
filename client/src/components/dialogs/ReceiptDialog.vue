@@ -1,11 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" width="800">
-    <template v-slot:activator="{ on }">
-      <v-btn small icon class="mr-2" v-on="on"
-        ><v-icon small>camera_alt</v-icon></v-btn
-      >
-    </template>
-
+  <v-dialog v-model="dialogShown" max-width="800" scrollable>
     <v-card :loading="loading">
       <v-card-title class="headline" primary-title>
         Receipt - {{ expense.description }} -
@@ -13,30 +7,18 @@
       </v-card-title>
 
       <v-card-text>
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-card
-              class="ml-8 mr-8"
-              color="grey darken-4"
-              style="text-align: center"
-              :loading="imageLoading"
-            >
-              <div v-if="!receiptExists" class="pt-12 pb-12 grey--text">
-                {{
-                  imageLoading
-                    ? "Loading receipt..."
-                    : "No receipt uploaded yet"
-                }}
-              </div>
-              <v-img
-                v-if="receiptExists"
-                :src="imageSource"
-                height="400"
-                contain
-              ></v-img>
-            </v-card>
-          </v-col>
-          <v-col cols="12" md="6">
+        <div v-if="!receiptExists" class="pt-12 pb-12 grey--text">
+          {{ loading ? "Loading receipt..." : "No receipt uploaded yet" }}
+        </div>
+        <v-row justify="center">
+          <img
+            v-if="receiptExists"
+            :src="imageSource"
+            style="max-width: 100%; max-height: 600px;"
+          />
+        </v-row>
+        <v-row v-if="!receiptExists">
+          <v-col cols="12" md="8" lg="9">
             <v-file-input
               v-model="receiptFile"
               type="file"
@@ -45,29 +27,31 @@
               prepend-icon="mdi-camera"
               label="Receipt"
             ></v-file-input>
+          </v-col>
+          <v-col cols="12" md="4" lg="3">
             <v-btn
               color="primary"
               class="mt-3"
+              :block="$vuetify.breakpoint.mdAndUp"
               :disabled="!receiptFile"
               @click="triggerUpload"
             >
-              {{ receiptExists ? "Replace" : "Upload" }}
-            </v-btn>
-            <v-btn
-              text
-              class="ml-3 mt-3"
-              :disabled="!receiptExists"
-              @click="deleteReceipt"
-            >
-              Delete receipt
+              Upload
             </v-btn>
           </v-col>
         </v-row>
       </v-card-text>
 
-      <v-divider></v-divider>
-
       <v-card-actions>
+        <v-btn
+          v-if="receiptExists"
+          text
+          class="ml-3 mt-3"
+          color="red"
+          @click="deleteReceipt"
+        >
+          Delete receipt
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="dialog = false">
           close
@@ -81,28 +65,21 @@ import Compressor from "compressorjs";
 
 export default {
   name: "ReceiptDialog",
-  props: {
-    expense: {
-      type: Object,
-      default: () => ({})
-    }
-  },
   data: () => ({
+    expense: {},
     receiptFile: null,
-    dialog: false,
+    dialogShown: false,
     loading: false,
     imageSource: "",
-    receiptExists: false,
-    imageLoading: true
+    receiptExists: false
   }),
-  watch: {
-    dialog(val) {
-      if (val) {
-        this.fetchReceipt();
-      }
-    }
-  },
   methods: {
+    open(expense) {
+      this.expense = expense;
+      this.receiptFile = null;
+      this.fetchReceipt();
+      this.dialogShown = true;
+    },
     async triggerUpload() {
       if (!this.receiptFile) {
         this.$store.dispatch("showSnackbar", "Please specify an image");
@@ -178,7 +155,7 @@ export default {
 
     async fetchReceipt() {
       this.receiptExists = false;
-      this.imageLoading = true;
+      this.loading = true;
       try {
         const { data, headers } = await this.$http.get("/_/fetchreceipt", {
           params: {
@@ -186,15 +163,18 @@ export default {
           },
           responseType: "arraybuffer"
         });
-        if (headers["content-type"] !== "application/json; charset=utf-8") {
+        if (
+          headers &&
+          headers["content-type"] !== "application/json; charset=utf-8"
+        ) {
           const buffer = Buffer.from(data, "binary").toString("base64");
           this.imageSource = `data:${headers["content-type"]};base64,${buffer}`;
           this.receiptExists = true;
         }
-        this.imageLoading = false;
+        this.loading = false;
       } catch (err) {
         console.error(err);
-        this.imageLoading = false;
+        this.loading = false;
       }
     },
 

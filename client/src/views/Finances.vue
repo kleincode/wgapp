@@ -80,7 +80,9 @@
               {{ getCurrency((item.amount / 100).toFixed(2)) }}
             </template>
             <template v-slot:item.actions="{ item }">
-              <ReceiptDialog :expense="item"></ReceiptDialog>
+              <v-icon small class="mr-2" @click="openReceipt(item)"
+                >camera_alt</v-icon
+              >
               <v-icon small class="mr-2" @click="editItem(item)"
                 >mdi-pencil</v-icon
               >
@@ -268,6 +270,7 @@
         </v-card>
       </v-col>
     </v-row>
+    <receipt-dialog ref="receiptDialog"></receipt-dialog>
     <confirm-dialog
       v-model="deleteDialogVisible"
       :loading="deleteDialogLoading"
@@ -772,6 +775,9 @@ export default {
           currency: this.$store.state.userSettings.currency
         }
       ).format(val);
+    },
+    openReceipt(item) {
+      this.$refs.receiptDialog.open(item);
     }
   }
 };
