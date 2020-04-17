@@ -272,6 +272,7 @@ export default {
                   assigned: element.assignedMember,
                   day: formatDateString(correctedStartDate),
                   nextDueDay: correctedStartDate,
+                  startDate: correctedStartDate,
                   dueDay: correctedStartDate,
                   time: time,
                   missed: status,
@@ -315,6 +316,10 @@ export default {
                   id: element.id,
                   mode: element.mode,
                   name: element.name,
+                  startDate: correctedStartDate,
+                  repetitionDays: element.repetitionDays,
+                  repetitionEvery: element.repetitionEvery,
+                  repetitionUnit: element.repetitionUnit,
                   assigned: element.assignedMember,
                   day: formatDateString(nextDueDay),
                   iteratingMode: element.iteratingMode,
@@ -376,7 +381,7 @@ export default {
 
     async checkedTasks(task) {
       this.loading = true;
-      let lastExecution, assignedMember;
+      let lastExecution, assignedMember, due;
       let users = this.getUserSelect.map(entry => entry.value);
       let index = users.indexOf(task.assigned);
       if (!task.checked) {
@@ -385,8 +390,9 @@ export default {
           case 0:
             lastExecution = new Date().toString();
             assignedMember = task.assigned;
+            due = task.dueDay;
             break;
-          case 1:
+          case 1: {
             if (task.missed) {
               lastExecution = new Date(task.lastDueDay).toString();
             } else {
@@ -397,10 +403,28 @@ export default {
             } else {
               assignedMember = task.assigned;
             }
+            let curDate = new Date();
+            if (new Date() < task.nextDueDay) {
+              due = task.nextDueDay;
+            } else {
+              curDate.setDate(curDate.getDate() + 1);
+              due = computeNextDueDay(
+                curDate,
+                task.startDate,
+                task.repetitionDays,
+                task.repetitionUnit == "Weeks" ? 0 : 1,
+                task.repetitionEvery
+              );
+            }
+            due = new Date(
+              due.toISOString().substr(0, 10) + "T" + task.time + ":00.000Z"
+            ).toISOString();
             break;
+          }
           case 2:
             assignedMember = users[this.nextAssignedMember(users, index)];
             lastExecution = new Date().toISOString();
+            due = "";
             break;
         }
       } else {
@@ -419,6 +443,12 @@ export default {
             } else {
               assignedMember = task.assigned;
             }
+            due = new Date(
+              task.lastDueDay.toISOString().substr(0, 10) +
+                "T" +
+                task.time +
+                ":00.000Z"
+            ).toISOString();
             break;
           }
           case 2:
@@ -435,7 +465,8 @@ export default {
       const { data } = await this.$http.post("/_/checktask", {
         id,
         lastExecution,
-        assignedMember
+        assignedMember,
+        due
       });
       if (data.success == false) {
         this.$store.dispatch(

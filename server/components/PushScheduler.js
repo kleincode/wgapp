@@ -9,7 +9,7 @@ module.exports = {
         console.log("Registering push jobs");
 
         let tasksPushJob = Schedule.scheduleJob("*/10 * * * * *", () => {
-            console.log("This is executed every 10 s", new Date());
+            //console.log("This is executed every 10 s", new Date());
         });
     }
 };

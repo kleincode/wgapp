@@ -202,8 +202,6 @@ function getOnDemandStatus(curDate, lastExecution) {
 }
 
 function getSingleStatus(dueDate, lastExecution) {
-  console.log(dueDate);
-  console.log(lastExecution);
   let curDate = new Date();
   if (curDate < dueDate) {
     if (lastExecution.getTime() < 997590000000) {

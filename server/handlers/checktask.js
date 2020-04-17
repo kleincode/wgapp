@@ -19,6 +19,9 @@ module.exports = ({ db }) => ({
       type: "int",
       required: true,
       message: "Please specify the new assigned Member"
+    },
+    due: {
+      type: "string",
     }
   },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
@@ -29,7 +32,7 @@ module.exports = ({ db }) => ({
       if (results[0].c < 1) {
         fail("You do not have permission to perform this operation.");
       } else try {
-        await db.query("UPDATE tasks SET lastExecution = ?, assignedMember = ? WHERE id = ?", [date, body.assignedMember, body.id]);
+        await db.query("UPDATE tasks SET lastExecution = ?, assignedMember = ?, due = ? WHERE id = ?", [date, body.assignedMember, body.due, body.id]);
         success("Update successful.");
       } catch (err) {
         error("Error while updating task in database.", err);
