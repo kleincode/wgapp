@@ -78,6 +78,9 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
           } else if (typeof req.query[param] === "number" && handlerProps.params[param].unsigned && req.query[param] < 0) {
             res.status(400).send({ message: `Parameter '${param}' out of range (expected unsigned ${handlerProps.params[param].type})`, success: false }).end();
             return;
+          } else if (typeof req.query[param] === "string" && typeof handlerProps.params[param].maxlength === "number" && req.query[param].length > handlerProps.params[param].maxlength) {
+            res.status(400).send({ message: `Parameter '${elem}' too long (${req.query[param].length} characters)`, success: false }).end();
+            return;
           }
         } else if (handlerProps.params[param].required) {
           // required but not provided
@@ -115,6 +118,9 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
             return;
           } else if (typeof req.body[elem] === "number" && handlerProps.body[elem].unsigned && req.body[elem] < 0) {
             res.status(400).send({ message: `Parameter '${elem}' out of range (expected unsigned ${handlerProps.body[elem].type})`, success: false }).end();
+            return;
+          } else if (typeof req.body[elem] === "string" && typeof handlerProps.body[elem].maxlength === "number" && req.body[elem].length > handlerProps.body[elem].maxlength) {
+            res.status(400).send({ message: `Parameter '${elem}' too long (${req.body[elem].length} characters)`, success: false }).end();
             return;
           }
         } else if (handlerProps.body[elem].required) {

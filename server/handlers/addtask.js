@@ -18,8 +18,7 @@ module.exports = ({ db }) => ({
     },
     mode: {
       type: "int",
-      required: true,
-      message: "Please provide a task mode."
+      default: 0
     },
     // Iterating mode (false...single member, true...iterating through household members)
     iteratingMode: {
@@ -55,17 +54,22 @@ module.exports = ({ db }) => ({
       type: "string"
     },
     // Date
-    date: {
+    startDate: {
       type: "string"
+    },
+    due: {
+      type: "string",
+      required: true,
+      message: "Please specify the new due date"
     }
   },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
 
     // default values
     let genDate = new Date();
-    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, date } = body;
+    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, due } = body;
     time = time || genDate.getHours() + ":" + genDate.getMinutes() + ":" + genDate.getSeconds(); genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
-    date = date || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
+    startDate = startDate || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
 
     try {
       const assignedUid = body.assignedMember || uid, // assign to sending user by default
@@ -76,8 +80,8 @@ module.exports = ({ db }) => ({
         fail("The specifed user does not exist or does not belong to this household.");
       } else try {
         await db.query(
-          "INSERT INTO tasks (hid, name, mode, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [assignedHid, name, mode, icon, iteratingMode, assignedUid, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, date]
+          "INSERT INTO tasks (hid, name, mode, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, due) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+          [assignedHid, name, mode, icon, iteratingMode, assignedUid, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, startDate, due]
         );
         success("Task inserted successfully.");
       } catch (err) {

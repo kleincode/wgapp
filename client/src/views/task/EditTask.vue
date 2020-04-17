@@ -53,7 +53,7 @@
                     item-value="value"
                     label="Assigned to"
                     outlined
-                    :disabled="iterating"
+                    :disabled="iterating && mode != 'Single'"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -206,6 +206,8 @@ import IconChooser from "@/components/IconChooser.vue";
 import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
 
+import { computeNextDueDay } from "@/assets/tasksHelper.js";
+
 export default {
   name: "EditTask",
   components: {
@@ -214,7 +216,7 @@ export default {
   data: () => ({
     editMode: false,
     id: -1,
-    mode: "Singqle",
+    mode: "Single",
     name: "",
     iterating: true,
     icon: 0,
@@ -282,6 +284,8 @@ export default {
           this.icon = task.icon;
           this.time = task.time.substr(0, 5);
           this.date = task.startDate.substr(0, 10);
+          this.datelong = task.startDate;
+          console.log(task);
           this.repetitionEvery = parseInt(task.repetitionEvery);
           this.repetitionUnit = this.repetitionUnits[task.repetitionUnit];
           this.reminder = !!task.reminder;
@@ -349,11 +353,7 @@ export default {
       }
       let startDate = this.date;
       if (mode == 0) {
-        startDate = new Date(startDate);
-        startDate.setHours(
-          parseInt(time.substr(0, 2)),
-          parseInt(time.substr(3, 2))
-        );
+        startDate = new Date(startDate + "T" + time);
         startDate = startDate.toISOString();
       }
       let reminder;
@@ -367,15 +367,35 @@ export default {
         this.snackbar = true;
         return;
       }
-      if ((!repetitionEvery || repetitionEvery == 0) && mode != 2) {
+      if ((!repetitionEvery || repetitionEvery == 0) && mode == 1) {
         this.snackText = "You need to specify a valid intervall.";
         this.snackbar = true;
         return;
       }
-      if (repetitionDays.length == 0 && mode != 2) {
+      if (repetitionDays.length == 0 && mode == 1) {
         this.snackText = "You need to specify at least one weekday.";
         this.snackbar = true;
         return;
+      }
+      let due;
+      switch (mode) {
+        case 0:
+          due = new Date(startDate);
+          break;
+        case 1:
+          due = computeNextDueDay(
+            new Date(),
+            this.datelong,
+            repetitionDays,
+            this.repetitionUnit == "Weeks" ? 0 : 1,
+            this.repetitionEvery
+          );
+          due.setHours(time.substr(0, 2), time.substr(3, 2));
+          due = due.toISOString();
+          break;
+        case 2:
+          due = "";
+          break;
       }
       try {
         if (this.editMode) {
@@ -391,7 +411,8 @@ export default {
             repetitionEvery,
             repetitionUnit,
             reminder,
-            startDate
+            startDate,
+            due
           });
           if (data.success) {
             this.$store.dispatch(
@@ -405,7 +426,6 @@ export default {
             );
           }
         } else {
-          let date = startDate;
           const { data } = await this.$http.post("/_/addtask", {
             name,
             icon,
@@ -416,8 +436,9 @@ export default {
             repetitionEvery,
             repetitionUnit,
             reminder,
-            date,
-            time
+            startDate,
+            time,
+            due
           });
           if (data.success) {
             this.$store.dispatch(
