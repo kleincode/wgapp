@@ -4,8 +4,8 @@
       v-model="finishPaymentDialog"
       @positive="finishPayments"
       @negative="finishPaymentDialog = false"
-      >Are you sure you want to finish these payments? You can't retrieve this
-      information afterwards.</confirm-dialog
+      >Are you sure you want to finish these payments? You can't undo this
+      action.</confirm-dialog
     >
     <div style="display:flex">
       <h1 class="display-1">Bill Manager</h1>
@@ -232,15 +232,15 @@ export default {
     memberTotals() {
       let totals = JSON.parse(JSON.stringify(this.singleMemberTotals));
       if (this.includeMonthlyCharges) {
-        let curTimestamp = Math.floor(Date.now() / 60000); //in minuten
-        let lastBill = Math.floor(this.lastBillTimestamp / 60000);
         this.monthlyData.forEach(monEntry => {
           totals.forEach(entry => {
             if (monEntry.id == entry.id) {
-              let diff = Math.round(
-                (curTimestamp - lastBill) * (monEntry.total / 43800)
+              entry.total += Math.round(
+                this.getMonthlyFac(
+                  new Date(),
+                  new Date(this.lastBillTimestamp)
+                ) * monEntry.total
               );
-              entry.total += diff;
             }
           });
         });
@@ -249,13 +249,13 @@ export default {
       return totals;
     },
     monthlyTotal() {
-      let curTimestamp = Math.floor(Date.now() / 60000); //in minuten
-      let lastBill = Math.floor(this.lastBillTimestamp / 60000);
       let sum = 0;
       this.monthlyData.forEach(monEntry => {
         sum +=
-          Math.round((curTimestamp - lastBill) * (monEntry.total / 43800)) /
-          100;
+          Math.round(
+            this.getMonthlyFac(new Date(), new Date(this.lastBillTimestamp)) *
+              monEntry.total
+          ) / 100;
       });
       return sum;
     }
@@ -343,6 +343,14 @@ export default {
 
     memberDebt(total) {
       return total - this.mean * 100;
+    },
+
+    getMonthlyFac(start, end) {
+      var months;
+      months = (end.getFullYear() - start.getFullYear()) * 12;
+      months -= start.getMonth();
+      months += end.getMonth();
+      return months <= 0 ? 0 : months;
     },
 
     memberProgress(total) {

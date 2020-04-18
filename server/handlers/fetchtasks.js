@@ -22,8 +22,8 @@ module.exports = ({ db }) => ({
         baseQuery += " AND (mode != 0 OR (mode = 0 AND lastExecution < '2001-00-1 00:00:00'))";
       }
       try {
+        const { results: loggedTasks } = await db.query("SELECT assignedMember, time, name, icon FROM tasklog WHERE hid = ?", [hid]);
         const { results } = await db.query(baseQuery, baseParams);
-        const { results: oldTasks } = await db.query("SELECT id, icon, name, startDate, assignedMember FROM tasks WHERE hid = ? AND mode = 0 AND lastExecution > '2001-08-12 04:20:00' ORDER BY lastExecution DESC LIMIT 0,5", [hid]);
         results.forEach((elem) => {
           elem.repetitionDays = JSON.parse(elem.repetitionDays);
         });
@@ -33,7 +33,7 @@ module.exports = ({ db }) => ({
           } else {
             success({ message: "Empty.", data: {} });
           }
-        } else success({ message: "Tasks received", data: results, oldTasks: oldTasks });
+        } else success({ message: "Tasks received", data: results, loggedTasks: loggedTasks });
       } catch (err) {
         error("Error while fetching tasks from database.");
       }

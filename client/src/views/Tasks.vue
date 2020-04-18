@@ -16,10 +16,11 @@
                 >
                   <div class="overline">DUE TODAY</div>
                   <v-icon style="font-size: 10em" x-large>
-                    {{ getTodaysTasks[0].icon }}
+                    {{ getIcons()[getTodaysTasks[0].icon] }}
                   </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
+                    <br />
                     <v-btn icon @click="checkedTasks(getTodaysTasks[0])">
                       <v-icon v-if="getTodaysTasks[0].checked"
                         >check_box</v-icon
@@ -69,9 +70,10 @@
                   getTodaysTasks.length
                 )"
                 :key="'task-' + i"
+                :class="RepeatingTasksCard.missed ? 'red' : 'primary'"
               >
                 <v-list-item-avatar>
-                  <v-icon>{{ task.icon }}</v-icon>
+                  <v-icon>{{ getIcons()[task.icon] }}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title class="task-entry">
@@ -139,62 +141,15 @@
         ></RepeatingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
-        <v-card outlined :loading="loading" style="height: 100%">
-          <v-card-title>
-            <h2 class="title">Recently finished tasks</h2>
-          </v-card-title>
-          <v-card-text>
-            <v-list v-if="oldSingleTasks.length > 0">
-              <v-list-item
-                v-for="(task, i) in oldSingleTasks"
-                :key="'task-' + i"
-              >
-                <v-list-item-avatar>
-                  <v-icon x-large color="grey">{{ task.icon }}</v-icon>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="pb-2 task-entry">
-                    {{ task.name }}
-                    <div class="overline pl-2 pt-1">
-                      - {{ format(new Date(task.day)) }}
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <v-chip>
-                      <v-avatar left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
-                      </v-avatar>
-                      {{ getUserName(task.assigned) }}
-                    </v-chip>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-icon>
-                  <v-hover>
-                    <v-btn icon @click="checkedTasks(task)">
-                      <v-icon v-if="task.checked">check_box</v-icon>
-                      <v-icon v-else>check_box_outline_blank</v-icon>
-                    </v-btn>
-                  </v-hover>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list>
-            <div
-              v-else
-              style="text-align: center"
-              class="text--disabled pb-12 pt-8"
-            >
-              <v-icon style="font-size: 10em" class="text--disabled"
-                >format_list_numbered</v-icon
-              >
-              <br />You really need to start getting stuff done!
-            </div>
-          </v-card-text>
-        </v-card></v-col
-      >
+        <TasksLogCard :tasks="loggedTasks" :loading="loading"></TasksLogCard
+      ></v-col>
     </v-row>
+    <v-snackbar v-model="taskCheckSnack">
+      Checked {{ checkedTask.name }}
+      <v-btn color="primary" text @click="undoSingleTask(checkedTask)">
+        undo
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -202,6 +157,7 @@ import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
 import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
 import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
+import TasksLogCard from "@/components/TasksLogCard.vue";
 import {
   checkStatus,
   computeNextDueDay,
@@ -215,12 +171,15 @@ export default {
   name: "Tasks",
   components: {
     RepeatingTasksCard,
-    UpcomingTasksCard
+    UpcomingTasksCard,
+    TasksLogCard
   },
   data: () => ({
     tasks: [],
-    oldSingleTasks: [],
-    loading: false
+    loggedTasks: [],
+    loading: false,
+    checkedTask: {},
+    taskCheckSnack: false
   }),
   computed: {
     getTodaysTasks() {
@@ -287,7 +246,7 @@ export default {
                   time: time,
                   missed: status == 1,
                   checked: status == 2,
-                  icon: icons[element.icon]
+                  icon: element.icon
                 });
                 break;
               }
@@ -338,7 +297,7 @@ export default {
                   lastExecution: lastExecution,
                   missed: !taskStatus[0],
                   checked: taskStatus[0] == 2,
-                  icon: icons[element.icon],
+                  icon: element.icon,
                   lastDueDay: taskStatus[1]
                 });
                 break;
@@ -352,22 +311,19 @@ export default {
                   assigned: element.assignedMember,
                   lastExecution: lastExecution,
                   checked: getOnDemandStatus(new Date(), lastExecution),
-                  icon: icons[element.icon]
+                  icon: element.icon
                 });
                 break;
               }
             }
           });
-          this.oldSingleTasks = [];
-          data.oldTasks.forEach(task => {
-            this.oldSingleTasks.push({
-              id: task.id,
+          this.loggedTasks = [];
+          data.loggedTasks.forEach(task => {
+            this.loggedTasks.push({
               name: task.name,
-              day: task.startDate,
-              icon: icons[task.icon],
-              assigned: task.assignedMember,
-              checked: true,
-              mode: 0
+              time: task.time,
+              icon: task.icon,
+              assigned: task.assignedMember
             });
           });
           this.sortTasks();
@@ -390,18 +346,17 @@ export default {
     },
 
     async checkedTasks(task) {
-      this.loading = true;
       let lastExecution, assignedMember, due;
       let users = this.getUserSelect.map(entry => entry.value);
       let index = users.indexOf(task.assigned);
+      if (task.mode == 0) {
+        //single task
+        this.checkSingleTask(task);
+        return;
+      }
       if (!task.checked) {
         //check
         switch (task.mode) {
-          case 0:
-            lastExecution = new Date().toString();
-            assignedMember = task.assigned;
-            due = task.dueDay;
-            break;
           case 1: {
             if (task.missed) {
               lastExecution = new Date(task.lastDueDay).toString();
@@ -440,10 +395,6 @@ export default {
       } else {
         //uncheck
         switch (task.mode) {
-          case 0:
-            lastExecution = "0";
-            assignedMember = task.assigned;
-            break;
           case 1: {
             let date = new Date(task.lastDueDay);
             date.setDate(date.getDate() - 1);
@@ -472,6 +423,49 @@ export default {
         }
       }
       let id = task.id;
+      this.pushNewTaskAction(task);
+      this.finishCheck(id, lastExecution, assignedMember, due);
+    },
+
+    async checkSingleTask(task) {
+      if (!task.checked) {
+        this.checkedTask = task;
+        this.taskCheckSnack = true;
+        let lastExecution = new Date().toString();
+        let assignedMember = task.assigned;
+        let due = task.dueDay;
+        await this.pushNewTaskAction(task);
+        await this.finishCheck(task.id, lastExecution, assignedMember, due);
+      }
+    },
+
+    async pushNewTaskAction(task) {
+      console.log(task);
+      let id = task.id;
+      let time = new Date().toISOString();
+      let name = task.name;
+      let assignedMember = task.assigned;
+      let icon = task.icon;
+      let done = !task.checked;
+      try {
+        await this.$http.post("/_/pushtaskaction", {
+          id,
+          time,
+          name,
+          assignedMember,
+          icon,
+          done
+        });
+      } catch (err) {
+        console.log(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while pushing to task log."
+        );
+      }
+    },
+
+    async finishCheck(id, lastExecution, assignedMember, due) {
       const { data } = await this.$http.post("/_/checktask", {
         id,
         lastExecution,
@@ -487,6 +481,15 @@ export default {
       }
       await this.fetchTasks();
       this.loading = false;
+    },
+
+    async undoSingleTask(task) {
+      this.taskCheckSnack = false;
+      let lastExecution = "0";
+      let assignedMember = task.assigned;
+      let due = task.dueDay;
+      this.pushNewTaskAction(task);
+      this.finishCheck(task.id, lastExecution, assignedMember, due);
     },
 
     nextAssignedMember(users, index) {
@@ -537,6 +540,11 @@ export default {
 
     sortTasks() {
       this.tasks.sort((a, b) => a.nextDueDay - b.nextDueDay);
+      this.loggedTasks.sort((a, b) => new Date(b.time) - new Date(a.time));
+    },
+
+    getIcons() {
+      return icons;
     }
   }
 };

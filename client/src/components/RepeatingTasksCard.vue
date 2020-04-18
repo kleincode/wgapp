@@ -7,7 +7,7 @@
       <v-list v-if="repeatingTasks.length > 0">
         <v-list-item v-for="(task, i) in repeatingTasks" :key="'task-' + i">
           <v-list-item-avatar>
-            <v-icon x-large>{{ task.icon }}</v-icon>
+            <v-icon x-large>{{ getIcons()[task.icon] }}</v-icon>
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -45,6 +45,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import icons from "@/assets/icons.js";
 export default {
   name: "RepeatingTasksCard",
   props: {
@@ -59,6 +60,11 @@ export default {
   },
   computed: {
     ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
+  },
+  methods: {
+    getIcons() {
+      return icons;
+    }
   }
 };
 </script>
