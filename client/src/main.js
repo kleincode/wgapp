@@ -10,7 +10,7 @@ import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 
 //Axios
-import axios from "axios";
+import axios from "./store/axios";
 import VueAxios from "vue-axios";
 
 Vue.config.productionTip = false;

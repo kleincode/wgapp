@@ -11,7 +11,10 @@ const syncEntries = {
   temperatureUnit: "c",
   currency: "EUR",
   calendarsSelected: [],
-  calendarView: "month"
+  calendarView: "month",
+  weatherZip: "10115",
+  weatherCountryCode: "de",
+  weatherAPIKey: ""
 };
 
 const vuexModule = {
@@ -28,7 +31,10 @@ const vuexModule = {
     temperatureUnit: "c",
     currency: "EUR",
     calendarsSelected: [],
-    calendarView: "month"
+    calendarView: "month",
+    weatherZip: "10115",
+    weatherCountryCode: "de",
+    weatherAPIKey: ""
   }),
   mutations: {
     // (state, arg)

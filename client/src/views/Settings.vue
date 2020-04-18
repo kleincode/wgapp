@@ -17,7 +17,9 @@
             {{ tab.name }}
           </v-tab>
           <v-tabs-items>
-            <router-view></router-view>
+            <transition name="fade-transition" mode="out-in">
+              <router-view></router-view>
+            </transition>
           </v-tabs-items>
         </v-tabs>
       </v-col>
