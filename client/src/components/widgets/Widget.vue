@@ -1,6 +1,13 @@
 <template>
-  <v-card outlined class="widget-card">
-    <v-card-title>{{ title }} </v-card-title>
+  <v-card
+    outlined
+    class="widget-card"
+    :loading="loading"
+    :color="error ? 'red' : null"
+  >
+    <v-card-title
+      >{{ title }} <v-spacer></v-spacer> <v-icon v-if="error">error</v-icon>
+    </v-card-title>
     <v-card-text>
       <slot></slot>
     </v-card-text>
@@ -14,6 +21,14 @@ export default {
     title: {
       type: String,
       default: "Widget"
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    error: {
+      type: Boolean,
+      default: false
     }
   }
 };

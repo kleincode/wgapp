@@ -1,14 +1,23 @@
 <template>
-  <Widget title="Weather">
-    <span class="display-3">{{ convertedTemperature }}</span>
-    <span class="display-1" style="vertical-align: top;">
-      {{ displayTemperatureUnit }}</span
-    >
-    <div class="overline">{{ condition }} | Last update: {{ lastUpdate }}</div>
+  <Widget title="Weather" :loading="loading" :error="!display">
+    <template v-if="display">
+      <span class="display-3">{{ convertedTemperature }}</span>
+      <span class="display-1" style="vertical-align: top;">
+        {{ displayTemperatureUnit }}</span
+      >
+      <div class="overline">
+        {{ condition }} | Last update: {{ lastUpdate }}
+      </div>
+    </template>
+    <template v-else>
+      <p>This widget is not configured correctly.</p>
+      <v-btn text to="/settings/dashboard">Settings</v-btn>
+    </template>
   </Widget>
 </template>
 
 <script>
+import axios from "axios";
 import { mapState } from "vuex";
 import Widget from "./Widget";
 
@@ -20,10 +29,19 @@ export default {
   data: () => ({
     temperature: 0,
     lastUpdate: "Never",
-    condition: "..."
+    condition: "...",
+    display: true,
+    loading: false
   }),
   computed: {
-    ...mapState("userSettings", ["locale", "temperatureUnit"]),
+    ...mapState("userSettings", [
+      "_initialized",
+      "locale",
+      "temperatureUnit",
+      "weatherZip",
+      "weatherCountryCode",
+      "weatherAPIKey"
+    ]),
     displayTemperatureUnit() {
       switch (this.temperatureUnit) {
         case "c":
@@ -46,13 +64,18 @@ export default {
     }
   },
   watch: {
-    locale(val) {
-      this.initLocale(val);
+    _initialized(val) {
+      if (val) {
+        this.initLocale(this.locale);
+        this.update();
+      }
     }
   },
   mounted() {
-    this.initLocale(this.locale);
-    this.update();
+    if (this._initialized) {
+      this.initLocale(this.locale);
+      this.update();
+    }
     this.clockIntervalID = setInterval(() => this.update(), 5 * 60 * 1000);
   },
   beforeDestroy() {
@@ -69,21 +92,32 @@ export default {
         minute: "2-digit"
       });
     },
-    update() {
-      fetch(
-        "https://api.openweathermap.org/data/2.5/weather?zip=07745,de&appid=2384b68bf977a346118c65ada1b0bd93",
-        {
-          method: "GET",
-          cache: "no-cache"
-        }
-      )
-        .then(res => res.json())
-        .then(resjson => {
+    async update() {
+      this.loading = true;
+      try {
+        const { data } = await axios.get(
+          "https://api.openweathermap.org/data/2.5/weather",
+          {
+            params: {
+              zip: this.weatherZip + "," + this.weatherCountryCode,
+              appid: this.weatherAPIKey
+            },
+            validateStatus: () => true
+          }
+        );
+        if (data.cod == 200) {
           let time = new Date();
-          this.temperature = resjson.main.temp;
-          this.condition = resjson.weather[0].main;
+          this.temperature = data.main.temp;
+          this.condition = data.weather[0].main;
           this.lastUpdate = this.timeFormatter.format(time);
-        });
+          this.display = true;
+        } else {
+          this.display = false;
+        }
+      } catch (err) {
+        // ignore, offline
+      }
+      this.loading = false;
     }
   }
 };
