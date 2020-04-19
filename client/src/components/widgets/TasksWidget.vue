@@ -1,8 +1,21 @@
 <template>
-  <Widget title="Tasks">
-    <div class="body-1">1. Einkaufen - Matti</div>
-    <div class="body-2">2. Müll rausbringen - Matti</div>
-    <div class="body-2">3. Bad putzen - Matti</div>
+  <Widget title="Tasks" :content-pad="false">
+    <v-carousel
+      cycle
+      hide-delimiter-background
+      :show-arrows="false"
+      height="100"
+      delimiter-icon="fiber_manual_record"
+      class="bottom-carousel"
+    >
+      <v-carousel-item class="pl-5 pr-5">
+        <p>1. Aufgabe - Max</p>
+      </v-carousel-item>
+      <v-carousel-item class="pl-5 pr-5">
+        <p>2. Aufgabe - Gundula</p>
+      </v-carousel-item>
+    </v-carousel>
+    <div style="height: 100px;"></div>
   </Widget>
 </template>
 
@@ -16,3 +29,9 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.bottom-carousel {
+  position: absolute;
+  bottom: 0;
+}
+</style>

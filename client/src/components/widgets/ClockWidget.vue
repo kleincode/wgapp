@@ -1,10 +1,10 @@
 <template>
-  <Widget title="Clock">
+  <Widget title="Clock" with-footer>
     <span class="display-3">{{ time }}</span>
     <span class="display-1" style="vertical-align: baseline;">{{
       timeSuffix
     }}</span>
-    <div class="overline">{{ weekday }} | {{ date }}</div>
+    <template #footer>{{ weekday }} | {{ date }}</template>
   </Widget>
 </template>
 

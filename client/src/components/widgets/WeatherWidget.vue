@@ -1,17 +1,17 @@
 <template>
-  <Widget title="Weather" :loading="loading" :error="!display">
+  <Widget title="Weather" :loading="loading" :error="!display" with-footer>
     <template v-if="display">
       <span class="display-3">{{ convertedTemperature }}</span>
       <span class="display-1" style="vertical-align: top;">
         {{ displayTemperatureUnit }}</span
       >
-      <div class="overline">
-        {{ condition }} | Last update: {{ lastUpdate }}
-      </div>
     </template>
     <template v-else>
       <p>This widget is not configured correctly.</p>
       <v-btn text to="/settings/dashboard">Settings</v-btn>
+    </template>
+    <template #footer>
+      {{ condition }} | Last update: {{ lastUpdate }}
     </template>
   </Widget>
 </template>
