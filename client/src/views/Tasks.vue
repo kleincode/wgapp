@@ -440,7 +440,6 @@ export default {
     },
 
     async pushNewTaskAction(task) {
-      console.log(task);
       let id = task.id;
       let time = new Date().toISOString();
       let name = task.name;

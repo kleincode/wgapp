@@ -28,7 +28,7 @@
                   :color="task.mode == 1 || task.missed ? '' : 'primary'"
                   x-large
                   v-on="on"
-                  >{{ task.icon }}</v-icon
+                  >{{ getIcons()[task.icon] }}</v-icon
                 >
               </template>
               <span>{{
@@ -92,7 +92,7 @@
           :class="task.missed ? 'red' : ''"
         >
           <v-list-item-avatar>
-            <v-icon color="warning" x-large>{{ task.icon }}</v-icon>
+            <v-icon color="warning" x-large>{{ getIcons()[task.icon] }}</v-icon>
           </v-list-item-avatar>
 
           <v-list-item-content>
@@ -143,6 +143,7 @@
 </template>
 <script>
 import { mapGetters } from "vuex";
+import icons from "@/assets/icons.js";
 import { formatDateString } from "@/assets/tasksHelper.js";
 export default {
   name: "UpcomingTasksCard",
@@ -170,6 +171,9 @@ export default {
       } else {
         return formatDateString(task.lastExecution);
       }
+    },
+    getIcons() {
+      return icons;
     }
   }
 };
