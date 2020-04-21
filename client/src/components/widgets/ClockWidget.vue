@@ -1,5 +1,10 @@
 <template>
-  <Widget title="Clock" with-footer>
+  <Widget
+    title="Clock"
+    with-footer
+    :context-items="contextItems"
+    @context-action="contextAction"
+  >
     <span class="display-3">{{ time }}</span>
     <span class="display-1" style="vertical-align: baseline;">{{
       timeSuffix
@@ -22,7 +27,14 @@ export default {
     date: "-",
     weekday: "-",
     clockIntervalID: -1,
-    timeSuffix: ""
+    timeSuffix: "",
+    contextItems: [
+      {
+        action: "settings",
+        text: "Widget Settings",
+        icon: "settings"
+      }
+    ]
   }),
   computed: {
     ...mapState("userSettings", ["locale"])
@@ -75,6 +87,12 @@ export default {
       }
       this.weekday = this.weekdayFormatter.format(now);
       this.date = this.dateFormatter.format(now);
+    },
+    contextAction(item) {
+      switch (item.action) {
+        case "settings":
+          this.$router.push({ name: "DashboardSettings", hash: "#clock" });
+      }
     }
   }
 };

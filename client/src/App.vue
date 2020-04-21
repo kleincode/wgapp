@@ -54,12 +54,11 @@
       <v-toolbar-title>WG App</v-toolbar-title>
     </v-app-bar>
 
-    <!-- Sizes your content based upon application components -->
     <v-content>
-      <!-- Provides the application the proper gutter -->
       <v-container fluid>
-        <!-- If using vue-router -->
-        <router-view></router-view>
+        <transition name="fade-transition" mode="out-in">
+          <router-view></router-view>
+        </transition>
       </v-container>
     </v-content>
 

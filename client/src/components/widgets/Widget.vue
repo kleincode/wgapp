@@ -15,13 +15,18 @@
             <v-icon>more_vert</v-icon>
           </v-btn>
         </template>
-        <v-list>
+        <v-list dense>
           <v-list-item
             v-for="(item, index) in contextItems"
             :key="index"
             @click="$emit('context-action', item)"
           >
-            <v-list-item-title>{{ item.text }}</v-list-item-title>
+            <v-list-item-icon class="mr-4">
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-menu>

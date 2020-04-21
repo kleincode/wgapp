@@ -3,14 +3,14 @@
     <v-card-text>
       <div class="container">
         <div class="display-1 mb-2">General</div>
-        <div class="title pt-2">Appearance</div>
+        <div id="appearance" class="title pt-2">Appearance</div>
         <p>
           Vanilla or chocolate? That's a question every worthy soldier has to
           answer for themselves. Just be careful: The blinding light might daze
           you.
         </p>
         <v-switch v-model="darkDesign" label="Dark design"></v-switch>
-        <div class="title pt-2">Locale</div>
+        <div id="locale" class="title pt-2">Locale</div>
         The locale settings affect the way dates, times, and currencies are
         displayed.
         <v-switch
@@ -42,7 +42,7 @@
         <p>Sample: {{ currencySample }}</p>
 
         <!-- Notifications -->
-        <div class="title pt-2">Notifications</div>
+        <div id="notifications" class="title pt-2">Notifications</div>
         <p>Notifications remind you of important upcoming tasks.</p>
         <notification-controller></notification-controller>
       </div>

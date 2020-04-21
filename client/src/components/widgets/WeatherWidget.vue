@@ -1,5 +1,12 @@
 <template>
-  <Widget title="Weather" :loading="loading" :error="!display" with-footer>
+  <Widget
+    title="Weather"
+    :loading="loading"
+    :error="!display"
+    with-footer
+    :context-items="contextItems"
+    @context-action="contextAction"
+  >
     <template v-if="display">
       <span class="display-3">{{ convertedTemperature }}</span>
       <span class="display-1" style="vertical-align: top;">
@@ -31,7 +38,14 @@ export default {
     lastUpdate: "Never",
     condition: "...",
     display: true,
-    loading: false
+    loading: false,
+    contextItems: [
+      {
+        action: "settings",
+        text: "Widget Settings",
+        icon: "settings"
+      }
+    ]
   }),
   computed: {
     ...mapState("userSettings", [
@@ -118,6 +132,12 @@ export default {
         // ignore, offline
       }
       this.loading = false;
+    },
+    contextAction(item) {
+      switch (item.action) {
+        case "settings":
+          this.$router.push({ name: "DashboardSettings", hash: "#weather" });
+      }
     }
   }
 };

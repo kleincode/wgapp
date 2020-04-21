@@ -12,6 +12,12 @@
         v-model="clockWidgetEnabled"
         label="Enable clock widget"
       ></v-switch>
+      <p>
+        <b>Note:</b> The clock widget displays time according to your
+        <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }"
+          >locale settings</router-link
+        >.
+      </p>
       <!-- WEATHER WIDGET -->
       <div id="weather" class="title pt-2">Weather Widget</div>
       <p>
