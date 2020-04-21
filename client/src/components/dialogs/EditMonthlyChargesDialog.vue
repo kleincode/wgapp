@@ -55,7 +55,7 @@
                 <v-select
                   v-model="value.uid"
                   outlined
-                  :items="getUserSelect"
+                  :items="getHouseholdUsersAsItemList"
                   item-value="value"
                   label="Payed by"
                   :disabled="value.all"
@@ -131,7 +131,7 @@ export default {
     selectedIcon: 0
   }),
   computed: {
-    ...mapGetters(["getUserSelect"])
+    ...mapGetters(["getHouseholdUsersAsItemList"])
   },
   methods: {
     updateValue(val) {

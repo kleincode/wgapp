@@ -58,7 +58,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
+    ...mapGetters(["getUserName", "getUserInitials"])
   }
 };
 </script>

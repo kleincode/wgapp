@@ -4,7 +4,7 @@
       <v-col
         v-if="clockWidgetEnabled"
         cols="12"
-        md="6"
+        sm="6"
         lg="4"
         xl="3"
         class="widget-col"
@@ -14,7 +14,7 @@
       <v-col
         v-if="weatherWidgetEnabled"
         cols="12"
-        md="6"
+        sm="6"
         lg="4"
         xl="3"
         class="widget-col"
@@ -24,7 +24,7 @@
       <v-col
         v-if="tasksWidgetEnabled"
         cols="12"
-        md="6"
+        sm="6"
         lg="4"
         xl="3"
         class="widget-col"
