@@ -16,7 +16,7 @@
                 >
                   <div class="overline">DUE TODAY</div>
                   <v-icon style="font-size: 10em" x-large>
-                    {{ getIcons()[getTodaysTasks[0].icon] }}
+                    {{ getIcon(getTodaysTasks[0].icon) }}
                   </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
@@ -73,7 +73,7 @@
                 :class="task.missed ? 'red' : ''"
               >
                 <v-list-item-avatar>
-                  <v-icon>{{ getIcons()[task.icon] }}</v-icon>
+                  <v-icon>{{ getIcon(task.icon) }}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title class="task-entry">
@@ -145,18 +145,20 @@
       </v-col>
     </v-row>
     <v-snackbar v-model="taskCheckSnack">
-      Checked {{ checkedTask.name }}
-      <v-btn color="primary" text @click="undoSingleTask(checkedTask)">
+      Checked {{ checkedTask ? checkedTask.name : "" }}
+      <v-btn color="primary" text @click="undoCheckTask">
         undo
       </v-btn>
     </v-snackbar>
   </v-container>
 </template>
 <script>
+import icons from "@/assets/icons.js";
 import { mapState, mapGetters } from "vuex";
 import { formatDateString } from "@/assets/tasksHelper";
 import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
 import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
+import TasksLogCard from "@/components/TasksLogCard.vue";
 
 export default {
   name: "Tasks",
@@ -166,10 +168,12 @@ export default {
     TasksLogCard
   },
   data: () => ({
-    loading: false
+    loading: false,
+    taskCheckSnack: false,
+    checkedTask: null
   }),
   computed: {
-    ...mapState("tasks", ["oldSingleTasks"]),
+    ...mapState("tasks", ["loggedTasks"]),
     ...mapGetters("tasks", [
       "getTodaysTasks",
       "repeatingTasks",
@@ -201,8 +205,17 @@ export default {
     },
     async checkTask(task) {
       this.loading = true;
+      // if this is a single task, show 'undo' snackbar
+      if (task.mode == 0) {
+        this.checkedTask = task;
+        this.taskCheckSnack = true;
+      }
+      // Perform check task
       try {
-        await this.$store.dispatch("tasks/checkTask", task);
+        await this.$store.dispatch("tasks/updateTaskChecked", {
+          task,
+          checked: !task.checked
+        });
         await this.fetchTasks();
       } catch (err) {
         this.$store.dispatch(
@@ -211,6 +224,23 @@ export default {
         );
         console.warn(err);
       }
+      this.loading = false;
+    },
+    async undoCheckTask() {
+      if (!this.checkedTask) return;
+      this.loading = true;
+      this.taskCheckSnack = false;
+      try {
+        await this.$store.dispatch("tasks/updateTaskChecked", {
+          task: this.checkedTask,
+          checked: false
+        });
+        await this.fetchTasks();
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", err || "Undo failed :/");
+        console.warn(err);
+      }
+      this.checkedTask = null;
       this.loading = false;
     },
     async triggerReminder(task) {
@@ -232,7 +262,8 @@ export default {
       }
       this.loading = false;
     },
-    format: formatDateString
+    format: formatDateString,
+    getIcon: index => icons[index]
   }
 };
 </script>

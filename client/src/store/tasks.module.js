@@ -1,5 +1,4 @@
 import axios from "./axios";
-import icons from "@/assets/icons.js";
 import {
   checkStatus,
   computeNextDueDay,
@@ -16,15 +15,17 @@ const vuexModule = {
   namespaced: true,
   state: () => ({
     tasks: [],
-    oldSingleTasks: []
+    loggedTasks: []
   }),
   mutations: {
     // (state, arg)
     set_tasks(state, tasks) {
       state.tasks = tasks.sort((a, b) => a.nextDueDay - b.nextDueDay);
     },
-    set_old_single_tasks(state, old_single_tasks) {
-      state.oldSingleTasks = old_single_tasks;
+    set_logged_tasks(state, logged_tasks) {
+      state.loggedTasks = logged_tasks.sort(
+        (a, b) => new Date(b.time) - new Date(a.time)
+      );
     }
   },
   actions: {
@@ -63,7 +64,7 @@ const vuexModule = {
                 time: time,
                 missed: status == 1,
                 checked: status == 2,
-                icon: icons[element.icon]
+                icon: element.icon
               });
               break;
             }
@@ -111,7 +112,7 @@ const vuexModule = {
                 lastExecution: lastExecution,
                 missed: !taskStatus[0],
                 checked: taskStatus[0] == 2,
-                icon: icons[element.icon],
+                icon: element.icon,
                 lastDueDay: taskStatus[1]
               });
               break;
@@ -125,33 +126,30 @@ const vuexModule = {
                 assigned: element.assignedMember,
                 lastExecution: lastExecution,
                 checked: getOnDemandStatus(new Date(), lastExecution),
-                icon: icons[element.icon]
+                icon: element.icon
               });
               break;
             }
           }
         });
         commit("set_tasks", tasks);
-        let oldSingleTasks = data.oldTasks
-          ? data.oldTasks.map(task => ({
-              id: task.id,
+        let loggedTasks = data.loggedTasks
+          ? data.loggedTasks.map(task => ({
               name: task.name,
-              day: task.startDate,
-              icon: icons[task.icon],
-              assigned: task.assignedMember,
-              checked: true,
-              mode: 0
+              time: task.time,
+              icon: task.icon,
+              assigned: task.assignedMember
             }))
           : [];
-        commit("set_old_single_tasks", oldSingleTasks);
+        commit("set_logged_tasks", loggedTasks);
       } else throw data.message;
     },
-    // Marks specific task as checked
-    async checkTask({ rootGetters }, task) {
+    // Marks a task as checked or unchecked and updates it on the server
+    async updateTaskChecked({ rootGetters }, { task, checked }) {
       let lastExecution, assignedMember, due;
       let users = rootGetters.getHouseholdUserIDs;
       let index = users.indexOf(task.assigned);
-      if (!task.checked) {
+      if (checked) {
         //check
         switch (task.mode) {
           case 0:
@@ -200,6 +198,7 @@ const vuexModule = {
           case 0:
             lastExecution = "0";
             assignedMember = task.assigned;
+            due = task.dueDay;
             break;
           case 1: {
             let date = new Date(task.lastDueDay);
@@ -222,6 +221,7 @@ const vuexModule = {
             throw "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked.";
         }
       }
+      // Perform checking on server
       const { data } = await axios.post("/_/checktask", {
         id: task.id,
         lastExecution,
@@ -229,6 +229,16 @@ const vuexModule = {
         due
       });
       if (!data.success) throw data.message;
+      // In case of uncheck, log to server
+      const { data: data2 } = await axios.post("/_/pushtaskaction", {
+        id: task.id,
+        time: new Date().toISOString(),
+        name: task.name,
+        assignedMember: task.assigned,
+        icon: task.icon,
+        done: checked
+      });
+      if (!data2.success) throw data.message;
     },
     // Triggers a reminder (push notification) for the user assigned to the task
     async triggerReminder(instance, task) {
