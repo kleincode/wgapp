@@ -53,6 +53,14 @@
                   </v-avatar>
                   {{ getUserName(task.assigned) }}
                 </v-chip>
+                <v-btn
+                  v-if="task.missed"
+                  icon
+                  class="ml-2 mt-1"
+                  @click="triggerReminder(task)"
+                >
+                  <v-icon>notifications_active</v-icon>
+                </v-btn>
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -114,6 +122,19 @@ export default {
         if (typeof err === "string") {
           this.$store.dispatch("showSnackbar", err);
         }
+      }
+      this.loading = false;
+    },
+    async triggerReminder(task) {
+      this.loading = true;
+      try {
+        await this.$store.dispatch("tasks/triggerReminder", task);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Notification sent to " + this.getUserName(task.assigned)
+        );
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", err);
       }
       this.loading = false;
     },
