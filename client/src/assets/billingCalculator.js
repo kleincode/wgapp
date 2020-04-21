@@ -1,10 +1,3 @@
-const payments = {
-    John: 400,
-    Jane: 1000,
-    Bob: 100,
-    Dave: 900,
-  };
-
 function splitPayments(payments) {
     const people = Object.keys(payments);
     const valuesPaid = Object.values(payments);

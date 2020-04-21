@@ -116,7 +116,8 @@
               @committed="fetchMonthlyData"
             ></EditMonthlyChargesDialog>
           </v-card-title>
-          <v-container>
+          <v-card-text>
+            Monthly charges are billed at the first day of every month.
             <v-list>
               <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
                 <v-list-item-icon>
@@ -152,7 +153,7 @@
                 </v-list-item-icon>
               </v-list-item>
             </v-list>
-          </v-container>
+          </v-card-text>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
@@ -271,7 +272,7 @@
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
-          <v-card-title>Trend Expenses</v-card-title>
+          <v-card-title>Member Trend Expenses</v-card-title>
           <v-card-text>
             <ExpenseChart ref="chart" :chart-data="getChartData"></ExpenseChart>
           </v-card-text>
@@ -547,7 +548,14 @@ export default {
       return value;
     },
     getFacForIntervall() {
-      return (Date.now() / 60000 - this.getMinTimestamp() / 60) / 43800;
+      switch (this.choosenTimeSpan) {
+        case 0:
+          return 1; //one monthly budget
+        case 1:
+          return 3; //3 monthly budgets
+        case 2:
+          return new Date().getMonth() + 1;
+      }
     },
 
     async commitDelete(fid) {

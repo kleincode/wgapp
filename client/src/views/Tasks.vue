@@ -16,11 +16,12 @@
                 >
                   <div class="overline">DUE TODAY</div>
                   <v-icon style="font-size: 10em" x-large>
-                    {{ getTodaysTasks[0].icon }}
+                    {{ getIcons()[getTodaysTasks[0].icon] }}
                   </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
-                    <v-btn icon @click="checkTask(getTodaysTasks[0])">
+                    <br />
+                    <v-btn icon @click="checkedTasks(getTodaysTasks[0])">
                       <v-icon v-if="getTodaysTasks[0].checked"
                         >check_box</v-icon
                       >
@@ -69,9 +70,10 @@
                   getTodaysTasks.length
                 )"
                 :key="'task-' + i"
+                :class="task.missed ? 'red' : ''"
               >
                 <v-list-item-avatar>
-                  <v-icon>{{ task.icon }}</v-icon>
+                  <v-icon>{{ getIcons()[task.icon] }}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title class="task-entry">
@@ -139,62 +141,15 @@
         ></RepeatingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
-        <v-card outlined :loading="loading" style="height: 100%">
-          <v-card-title>
-            <h2 class="title">Recently finished tasks</h2>
-          </v-card-title>
-          <v-card-text>
-            <v-list v-if="oldSingleTasks.length > 0">
-              <v-list-item
-                v-for="(task, i) in oldSingleTasks"
-                :key="'task-' + i"
-              >
-                <v-list-item-avatar>
-                  <v-icon x-large color="grey">{{ task.icon }}</v-icon>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="pb-2 task-entry">
-                    {{ task.name }}
-                    <div class="overline pl-2 pt-1">
-                      - {{ format(new Date(task.day)) }}
-                    </div>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <v-chip>
-                      <v-avatar left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
-                      </v-avatar>
-                      {{ getUserName(task.assigned) }}
-                    </v-chip>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-icon>
-                  <v-hover>
-                    <v-btn icon @click="checkTask(task)">
-                      <v-icon v-if="task.checked">check_box</v-icon>
-                      <v-icon v-else>check_box_outline_blank</v-icon>
-                    </v-btn>
-                  </v-hover>
-                </v-list-item-icon>
-              </v-list-item>
-            </v-list>
-            <div
-              v-else
-              style="text-align: center"
-              class="text--disabled pb-12 pt-8"
-            >
-              <v-icon style="font-size: 10em" class="text--disabled"
-                >format_list_numbered</v-icon
-              >
-              <br />You really need to start getting stuff done!
-            </div>
-          </v-card-text>
-        </v-card></v-col
-      >
+        <TasksLogCard :tasks="loggedTasks" :loading="loading"></TasksLogCard>
+      </v-col>
     </v-row>
+    <v-snackbar v-model="taskCheckSnack">
+      Checked {{ checkedTask.name }}
+      <v-btn color="primary" text @click="undoSingleTask(checkedTask)">
+        undo
+      </v-btn>
+    </v-snackbar>
   </v-container>
 </template>
 <script>
@@ -207,7 +162,8 @@ export default {
   name: "Tasks",
   components: {
     RepeatingTasksCard,
-    UpcomingTasksCard
+    UpcomingTasksCard,
+    TasksLogCard
   },
   data: () => ({
     loading: false
