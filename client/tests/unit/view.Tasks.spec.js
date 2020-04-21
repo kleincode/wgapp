@@ -3,13 +3,8 @@
 // Libraries
 import Vuetify from "vuetify";
 import VueRouter from "vue-router";
-import localVue from "./setup";
-
-// Components
-import Tasks from "@/views/Tasks.vue";
 
 // Utilities
-import { shallowMount } from "@vue/test-utils";
 import {
   checkStatus,
   computeNextDueDay,
@@ -20,7 +15,7 @@ import {
   getOnDemandStatus
 } from "@/assets/tasksHelper.js";
 
-describe("Tasks.vue", () => {
+describe("tasksHelper.js", () => {
   let vuetify, router;
 
   beforeEach(() => {
@@ -28,28 +23,7 @@ describe("Tasks.vue", () => {
     router = new VueRouter();
   });
 
-  // Two simple test cases below
-
-  it("has the right title", () => {
-    //Shallow mount: child components get stubbed
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
-    const title = wrapper.find("h1.display-2");
-
-    expect(title.text()).toBe("Tasks");
-  });
-
   it("computes weekdays correctly", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     expect(mapWeekdayToInt("sunday")).toBe(0);
     expect(mapWeekdayToInt("monday")).toBe(1);
     expect(mapWeekdayToInt("tuesday")).toBe(2);
@@ -60,12 +34,6 @@ describe("Tasks.vue", () => {
   });
 
   it("isSameWeek correct", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     expect(isSameWeek(new Date("April 2, 2020 10:00:00"), new Date("April 1, 2020 10:00:00"))).toBe(true);
     expect(isSameWeek(new Date("April 3, 2020 10:00:00"), new Date("April 4, 2020 10:00:00"))).toBe(true);
     expect(isSameWeek(new Date("April 1, 2020 10:00:00"), new Date("April 5, 2020 10:00:00"))).toBe(true);
@@ -74,12 +42,6 @@ describe("Tasks.vue", () => {
   });
 
   it("computes nextDueDayInWeek correctly", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     let curDate = new Date("April 2, 2020 10:00:00");
     let prevTempDate = new Date("March 31, 2020 10:00:00");
     let repDayInts = [6];
@@ -192,12 +154,6 @@ describe("Tasks.vue", () => {
   });
 
   it("shift to next intervall ", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     let date = new Date("April 8, 2020 10:00:00");
     let repEvery = 1;
     let repUnit = 0;
@@ -228,12 +184,6 @@ describe("Tasks.vue", () => {
   });
 
   it("computes computeNextDueDay with weeks correctly", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     let curDate = new Date("April 3, 2020 10:00:00");
 
     //in the future 1 - 1 week
@@ -376,12 +326,6 @@ describe("Tasks.vue", () => {
   });
 
   it("computes computeNextDueDay with months correctly", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     let curDate = new Date("April 3, 2020 10:00:00");
 
     //in the future 1 - 1 month
@@ -506,12 +450,6 @@ describe("Tasks.vue", () => {
   });
 
   it("computes getOnDemandStatus correctly", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     let curDate = new Date("April 14, 2020 10:00:00");
     let lastExecution = new Date("April 2, 2020 10:00:00");
     expect(getOnDemandStatus(curDate, lastExecution)).toBe(0);
@@ -523,12 +461,6 @@ describe("Tasks.vue", () => {
   });
 
   it("computes checkStatus correctly", () => {
-    const wrapper = shallowMount(Tasks, {
-      localVue,
-      vuetify,
-      router,
-      propsData: {}
-    });
     let startDate = new Date("March 1, 2020 10:00:00");
     let curDateBegin = new Date("April 3, 2020 00:00:01");
     let curDateEnd = new Date("April 3, 2020 23:59:59");
