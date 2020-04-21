@@ -1,18 +1,164 @@
 <template>
-  <Widget title="Tasks">
-    <div class="body-1">1. Einkaufen - Matti</div>
-    <div class="body-2">2. Müll rausbringen - Matti</div>
-    <div class="body-2">3. Bad putzen - Matti</div>
+  <Widget
+    title="Tasks"
+    :content-pad="false"
+    :context-items="contextItems"
+    :loading="loading"
+    @context-action="contextAction"
+  >
+    <template v-if="getTodaysTasks.length">
+      <v-carousel
+        cycle
+        hide-delimiter-background
+        :show-arrows="false"
+        height="120"
+        delimiter-icon="fiber_manual_record"
+        class="bottom-carousel"
+        :interval="10000"
+      >
+        <v-carousel-item
+          v-for="(task, i) in getTodaysTasks"
+          :key="i"
+          class="pl-5 pr-5"
+        >
+          <v-list-item class="mb-4">
+            <v-list-item-avatar>
+              <v-icon large :color="task.missed ? 'red' : ''">{{
+                task.icon || "event_note"
+              }}</v-icon>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title
+                class="task-entry"
+                :color="task.missed ? 'red' : ''"
+              >
+                {{ task.name || "Unnamed task" }}
+                <div
+                  class="overline pl-2 pt-1"
+                  :class="task.missed ? 'red--text' : ''"
+                >
+                  - {{ task.time || "Today" }}
+                </div>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                <v-chip class="mt-1">
+                  <v-avatar
+                    style="max-height: 80%; max-width: 90%"
+                    left
+                    color="green"
+                  >
+                    <span class="white--text">{{
+                      getUserInitials(task.assigned)
+                    }}</span>
+                  </v-avatar>
+                  {{ getUserName(task.assigned) }}
+                </v-chip>
+                <v-btn
+                  v-if="task.missed"
+                  icon
+                  class="ml-2 mt-1"
+                  @click="triggerReminder(task)"
+                >
+                  <v-icon>notifications_active</v-icon>
+                </v-btn>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-carousel-item>
+      </v-carousel>
+      <div style="height: 120px;"></div>
+    </template>
+    <div v-else style="text-align: center" class="text--disabled pb-2">
+      <v-icon style="font-size: 4em" class="text--disabled"
+        >access_alarm</v-icon
+      >
+      <br />You're done for today!
+    </div>
   </Widget>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Widget from "./Widget";
 
 export default {
   name: "TasksWidget",
   components: {
     Widget
+  },
+  data: () => ({
+    loading: false,
+    contextItems: [
+      {
+        action: "refresh",
+        text: "Refresh",
+        icon: "refresh"
+      },
+      {
+        action: "tasks",
+        text: "Tasks page",
+        icon: "list"
+      },
+      {
+        action: "settings",
+        text: "Widget Settings",
+        icon: "settings"
+      }
+    ]
+  }),
+  computed: {
+    ...mapGetters("tasks", ["getTodaysTasks"]),
+    ...mapGetters(["getUserName", "getUserInitials"])
+  },
+  mounted() {
+    this.update();
+  },
+  methods: {
+    async update() {
+      this.loading = true;
+      try {
+        await this.$store.dispatch("tasks/fetchTasks");
+      } catch (err) {
+        if (typeof err === "string") {
+          this.$store.dispatch("showSnackbar", err);
+        }
+      }
+      this.loading = false;
+    },
+    async triggerReminder(task) {
+      this.loading = true;
+      try {
+        await this.$store.dispatch("tasks/triggerReminder", task);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Notification sent to " + this.getUserName(task.assigned)
+        );
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", err);
+      }
+      this.loading = false;
+    },
+    contextAction(item) {
+      switch (item.action) {
+        case "refresh":
+          this.update();
+          break;
+        case "tasks":
+          this.$router.push({ name: "Tasks" });
+          break;
+        case "settings":
+          this.$router.push({ name: "DashboardSettings", hash: "#tasks" });
+      }
+    }
   }
 };
 </script>
+<style lang="scss" scoped>
+.bottom-carousel {
+  position: absolute;
+  bottom: 0;
+}
+.task-entry {
+  display: flex;
+}
+</style>

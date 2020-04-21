@@ -1,8 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
+import axios from "./axios";
 
 import UserSettingsModule from "./userSettings.module";
+import TasksModule from "./tasks.module";
 
 Vue.use(Vuex);
 
@@ -127,7 +128,11 @@ let store = new Vuex.Store({
       if (user.lastname) userName += user.lastname.substr(0, 1).toUpperCase();
       return userName;
     },
-    getUserSelect: state => {
+    //Returns IDs of all household users
+    getHouseholdUserIDs: state =>
+      Object.keys(state.householdUsers).map(id => parseInt(id)),
+    // Returns an array of objects suitable for items in a vuetify select
+    getHouseholdUsersAsItemList: state => {
       let users = [];
       Object.entries(state.householdUsers).forEach(([key, user]) => {
         if (!user) return "Unknown user";
@@ -147,7 +152,8 @@ let store = new Vuex.Store({
     }
   },
   modules: {
-    userSettings: UserSettingsModule
+    userSettings: UserSettingsModule,
+    tasks: TasksModule
   }
 });
 

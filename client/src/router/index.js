@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Dashboard from "../views/Dashboard.vue";
 import Login from "../views/Login.vue";
 import store from "../store";
 
@@ -14,7 +13,8 @@ const routes = [
   {
     path: "/dashboard",
     name: "Dashboard",
-    component: Dashboard
+    component: () =>
+      import(/* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
   },
   {
     path: "/finances",
@@ -27,7 +27,7 @@ const routes = [
     name: "BillManager",
     component: () =>
       import(
-        /* webpackChunkName: "billmanager" */ "../views/finances/BillManager.vue"
+        /* webpackChunkName: "finances" */ "../views/finances/BillManager.vue"
       )
   },
   {
@@ -40,19 +40,46 @@ const routes = [
     path: "/tasks/edit/:id",
     name: "EditTask",
     component: () =>
-      import(/* webpackChunkName: "edittask" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
   },
   {
     path: "/tasks/add",
     name: "AddTask",
     component: () =>
-      import(/* webpackChunkName: "addtask" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
   },
   {
     path: "/settings",
     name: "Settings",
     component: () =>
-      import(/* webpackChunkName: "settings" */ "../views/Settings.vue")
+      import(/* webpackChunkName: "settings" */ "../views/Settings.vue"),
+    children: [
+      {
+        path: "general",
+        component: () =>
+          import(
+            /* webpackChunkName: "settings" */ "../views/settings/GeneralSettings.vue"
+          ),
+        alias: "",
+        name: "GeneralSettings"
+      },
+      {
+        path: "dashboard",
+        component: () =>
+          import(
+            /* webpackChunkName: "settings" */ "../views/settings/DashboardSettings.vue"
+          ),
+        name: "DashboardSettings"
+      },
+      {
+        path: "integrations",
+        component: () =>
+          import(
+            /* webpackChunkName: "settings" */ "../views/settings/IntegrationsSettings.vue"
+          ),
+        name: "IntegrationsSettings"
+      }
+    ]
   },
   {
     path: "/login",
@@ -64,7 +91,7 @@ const routes = [
     name: "Manage Household",
     component: () =>
       import(
-        /* webpackChunkName: "managehousehold" */ "../views/household/ManageHousehold.vue"
+        /* webpackChunkName: "household" */ "../views/household/ManageHousehold.vue"
       )
   },
   {
@@ -72,7 +99,7 @@ const routes = [
     name: "Join Household",
     component: () =>
       import(
-        /* webpackChunkName: "addhousehold" */ "../views/household/JoinHousehold.vue"
+        /* webpackChunkName: "joinhousehold" */ "../views/household/JoinHousehold.vue"
       )
   },
   {
@@ -94,6 +121,13 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
+  scrollBehavior(to) {
+    if (to.hash) {
+      return { selector: to.hash };
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
   routes
 });
 

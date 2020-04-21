@@ -49,7 +49,7 @@
                 <v-col cols="12" md="4">
                   <v-select
                     v-model="selectedMember"
-                    :items="getUserSelect"
+                    :items="getHouseholdUsersAsItemList"
                     item-value="value"
                     label="Assigned to"
                     outlined
@@ -249,7 +249,7 @@ export default {
     loading: false
   }),
   computed: {
-    ...mapGetters(["getUserSelect"])
+    ...mapGetters(["getHouseholdUsersAsItemList"])
   },
   mounted() {
     this.id = this.$route.params.id;

@@ -16,7 +16,7 @@
                 >
                   <div class="overline">DUE TODAY</div>
                   <v-icon style="font-size: 10em" x-large>
-                    {{ getIcons()[getTodaysTasks[0].icon] }}
+                    {{ getIcon(getTodaysTasks[0].icon) }}
                   </v-icon>
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
@@ -27,7 +27,7 @@
                       >
                       <v-icon v-else>check_box_outline_blank</v-icon>
                     </v-btn>
-                    <v-btn icon @click="reminder(getTodaysTasks[0])"
+                    <v-btn icon @click="triggerReminder(getTodaysTasks[0])"
                       ><v-icon>notifications_active</v-icon></v-btn
                     >
                   </div>
@@ -70,10 +70,10 @@
                   getTodaysTasks.length
                 )"
                 :key="'task-' + i"
-                :class="RepeatingTasksCard.missed ? 'red' : 'primary'"
+                :class="task.missed ? 'red' : ''"
               >
                 <v-list-item-avatar>
-                  <v-icon>{{ getIcons()[task.icon] }}</v-icon>
+                  <v-icon>{{ getIcon(task.icon) }}</v-icon>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title class="task-entry">
@@ -92,11 +92,11 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-icon>
-                  <v-btn icon @click="checkedTasks(task)">
+                  <v-btn icon @click="checkTask(task)">
                     <v-icon v-if="task.checked">check_box</v-icon>
                     <v-icon v-else>check_box_outline_blank</v-icon>
                   </v-btn>
-                  <v-btn icon @click="reminder(task)"
+                  <v-btn icon @click="triggerReminder(task)"
                     ><v-icon>notifications_active</v-icon></v-btn
                   >
                 </v-list-item-icon>
@@ -130,8 +130,8 @@
           :on-demand-tasks="onDemandTasks"
           :timed-tasks="timedTasks"
           :loading="loading"
-          @reminder="reminder"
-          @checktask="checkedTasks"
+          @reminder="triggerReminder"
+          @checktask="checkTask"
         ></UpcomingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
@@ -141,12 +141,12 @@
         ></RepeatingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
-        <TasksLogCard :tasks="loggedTasks" :loading="loading"></TasksLogCard
-      ></v-col>
+        <TasksLogCard :tasks="loggedTasks" :loading="loading"></TasksLogCard>
+      </v-col>
     </v-row>
     <v-snackbar v-model="taskCheckSnack">
-      Checked {{ checkedTask.name }}
-      <v-btn color="primary" text @click="undoSingleTask(checkedTask)">
+      Checked {{ checkedTask ? checkedTask.name : "" }}
+      <v-btn color="primary" text @click="undoCheckTask">
         undo
       </v-btn>
     </v-snackbar>
@@ -154,18 +154,11 @@
 </template>
 <script>
 import icons from "@/assets/icons.js";
-import { mapGetters } from "vuex";
+import { mapState, mapGetters } from "vuex";
+import { formatDateString } from "@/assets/tasksHelper";
 import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
 import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
 import TasksLogCard from "@/components/TasksLogCard.vue";
-import {
-  checkStatus,
-  computeNextDueDay,
-  isToday,
-  getOnDemandStatus,
-  getSingleStatus,
-  formatDateString
-} from "@/assets/tasksHelper.js";
 
 export default {
   name: "Tasks",
@@ -175,37 +168,23 @@ export default {
     TasksLogCard
   },
   data: () => ({
-    tasks: [],
-    loggedTasks: [],
     loading: false,
-    checkedTask: {},
-    taskCheckSnack: false
+    taskCheckSnack: false,
+    checkedTask: null
   }),
   computed: {
-    getTodaysTasks() {
-      return this.timedTasks.filter(task => {
-        if (task.mode == 0) {
-          return isToday(task.dueDay, new Date());
-        } else {
-          return isToday(task.nextDueDay, new Date());
-        }
-      });
-    },
-    repeatingTasks() {
-      return this.tasks.filter(task => task.mode == 1);
-    },
-    timedTasks() {
-      let curDate = new Date();
-      return this.tasks.filter(
-        task =>
-          task.mode == 1 ||
-          (task.mode == 0 && (task.dueDay > curDate || task.missed))
-      );
-    },
-    onDemandTasks() {
-      return this.tasks.filter(task => task.mode == 2);
-    },
-    ...mapGetters(["getUserName", "getUserInitials", "getUserSelect"])
+    ...mapState("tasks", ["loggedTasks"]),
+    ...mapGetters("tasks", [
+      "getTodaysTasks",
+      "repeatingTasks",
+      "timedTasks",
+      "onDemandTasks"
+    ]),
+    ...mapGetters([
+      "getUserName",
+      "getUserInitials",
+      "getHouseholdUsersAsItemList"
+    ])
   },
   mounted() {
     this.fetchTasks();
@@ -214,337 +193,77 @@ export default {
     async fetchTasks() {
       this.loading = true;
       try {
-        const { data } = await this.$http.get("/_/fetchtasks");
-        if (data.success) {
-          this.tasks = [];
-          let curDateBegin = new Date();
-          curDateBegin.setHours(0, 0, 1, 0);
-          let curDateEnd = new Date();
-          curDateEnd.setHours(12, 59, 59, 0);
-          let curDate = new Date();
-          curDate.setHours(12, 0, 0, 0);
-          data.data.forEach(element => {
-            let lastExecution = new Date(element.lastExecution);
-            if (isNaN(lastExecution.getTime())) {
-              lastExecution = new Date(0);
-            }
-            switch (element.mode) {
-              case 0: {
-                //Single
-                let correctedStartDate = new Date(element.startDate);
-                let time = element.time.substr(0, 5);
-                let status = getSingleStatus(correctedStartDate, lastExecution);
-                this.tasks.push({
-                  id: element.id,
-                  mode: element.mode,
-                  name: element.name,
-                  assigned: element.assignedMember,
-                  day: formatDateString(correctedStartDate),
-                  nextDueDay: correctedStartDate,
-                  startDate: correctedStartDate,
-                  dueDay: correctedStartDate,
-                  time: time,
-                  missed: status == 1,
-                  checked: status == 2,
-                  icon: element.icon
-                });
-                break;
-              }
-              case 1: {
-                //Repeating
-                let correctedStartDate = new Date(
-                  element.startDate.substr(0, 19)
-                );
-                correctedStartDate.setHours(correctedStartDate.getHours() + 13);
-                if (element.repetitionDays.length == 0) {
-                  this.$store.dispatch(
-                    "showSnackbar",
-                    "Error while fetching data. The repetitionDays configuration is empty. Please contact support."
-                  );
-                  return;
-                }
-                let nextDueDay = computeNextDueDay(
-                  curDate,
-                  correctedStartDate,
-                  element.repetitionDays,
-                  element.repetitionUnit,
-                  element.repetitionEvery
-                );
-                lastExecution.setHours(lastExecution.getHours() + 2);
-                let taskStatus = checkStatus(
-                  lastExecution,
-                  nextDueDay,
-                  element.repetitionDays,
-                  element.repetitionEvery,
-                  element.repetitionUnit,
-                  correctedStartDate,
-                  curDateBegin,
-                  curDateEnd
-                );
-                this.tasks.push({
-                  id: element.id,
-                  mode: element.mode,
-                  name: element.name,
-                  startDate: correctedStartDate,
-                  repetitionDays: element.repetitionDays,
-                  repetitionEvery: element.repetitionEvery,
-                  repetitionUnit: element.repetitionUnit,
-                  assigned: element.assignedMember,
-                  day: formatDateString(nextDueDay),
-                  iteratingMode: element.iteratingMode,
-                  nextDueDay: new Date(nextDueDay),
-                  time: element.time.substr(0, 5),
-                  lastExecution: lastExecution,
-                  missed: !taskStatus[0],
-                  checked: taskStatus[0] == 2,
-                  icon: element.icon,
-                  lastDueDay: taskStatus[1]
-                });
-                break;
-              }
-              case 2: {
-                //On-Demand
-                this.tasks.push({
-                  id: element.id,
-                  mode: element.mode,
-                  name: element.name,
-                  assigned: element.assignedMember,
-                  lastExecution: lastExecution,
-                  checked: getOnDemandStatus(new Date(), lastExecution),
-                  icon: element.icon
-                });
-                break;
-              }
-            }
-          });
-          this.loggedTasks = [];
-          data.loggedTasks.forEach(task => {
-            this.loggedTasks.push({
-              name: task.name,
-              time: task.time,
-              icon: task.icon,
-              assigned: task.assignedMember
-            });
-          });
-          this.sortTasks();
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Error while fetching data. Please try again later."
-          );
-          console.error(data);
-        }
+        await this.$store.dispatch("tasks/fetchTasks");
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          "Error while fetching data. Please try again later."
+          err || "Could not fetch tasks. Please try again later."
         );
-        console.error(err);
-        this.loading = false;
+        console.warn(err);
       }
       this.loading = false;
     },
-
-    async checkedTasks(task) {
-      let lastExecution, assignedMember, due;
-      let users = this.getUserSelect.map(entry => entry.value);
-      let index = users.indexOf(task.assigned);
+    async checkTask(task) {
+      this.loading = true;
+      // if this is a single task, show 'undo' snackbar
       if (task.mode == 0) {
-        //single task
-        this.checkSingleTask(task);
-        return;
-      }
-      if (!task.checked) {
-        //check
-        switch (task.mode) {
-          case 1: {
-            if (task.missed) {
-              lastExecution = new Date(task.lastDueDay).toString();
-            } else {
-              lastExecution = new Date().toString();
-            }
-            if (task.iteratingMode) {
-              assignedMember = users[this.nextAssignedMember(users, index)];
-            } else {
-              assignedMember = task.assigned;
-            }
-            let curDate = new Date();
-            if (new Date() < task.nextDueDay) {
-              due = task.nextDueDay;
-            } else {
-              curDate.setDate(curDate.getDate() + 1);
-              due = computeNextDueDay(
-                curDate,
-                task.startDate,
-                task.repetitionDays,
-                task.repetitionUnit == "Weeks" ? 0 : 1,
-                task.repetitionEvery
-              );
-            }
-            due = new Date(
-              due.toISOString().substr(0, 10) + "T" + task.time + ":00.000Z"
-            ).toISOString();
-            break;
-          }
-          case 2:
-            assignedMember = users[this.nextAssignedMember(users, index)];
-            lastExecution = new Date().toISOString();
-            due = "";
-            break;
-        }
-      } else {
-        //uncheck
-        switch (task.mode) {
-          case 1: {
-            let date = new Date(task.lastDueDay);
-            date.setDate(date.getDate() - 1);
-            lastExecution = date.toString();
-            if (task.iteratingMode) {
-              assignedMember = users[this.previousAssignedMember(users, index)];
-            } else {
-              assignedMember = task.assigned;
-            }
-            due = new Date(
-              task.lastDueDay.toISOString().substr(0, 10) +
-                "T" +
-                task.time +
-                ":00.000Z"
-            ).toISOString();
-            break;
-          }
-          case 2:
-            //you can't undo on-demand tasks
-            this.$store.dispatch(
-              "showSnackbar",
-              "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
-            );
-            this.loading = false;
-            return;
-        }
-      }
-      let id = task.id;
-      this.pushNewTaskAction(task);
-      this.finishCheck(id, lastExecution, assignedMember, due);
-    },
-
-    async checkSingleTask(task) {
-      if (!task.checked) {
         this.checkedTask = task;
         this.taskCheckSnack = true;
-        let lastExecution = new Date().toString();
-        let assignedMember = task.assigned;
-        let due = task.dueDay;
-        await this.pushNewTaskAction(task);
-        await this.finishCheck(task.id, lastExecution, assignedMember, due);
       }
-    },
-
-    async pushNewTaskAction(task) {
-      let id = task.id;
-      let time = new Date().toISOString();
-      let name = task.name;
-      let assignedMember = task.assigned;
-      let icon = task.icon;
-      let done = !task.checked;
+      // Perform check task
       try {
-        await this.$http.post("/_/pushtaskaction", {
-          id,
-          time,
-          name,
-          assignedMember,
-          icon,
-          done
+        await this.$store.dispatch("tasks/updateTaskChecked", {
+          task,
+          checked: !task.checked
         });
+        await this.fetchTasks();
       } catch (err) {
-        console.log(err);
         this.$store.dispatch(
           "showSnackbar",
-          "Error while pushing to task log."
+          err || "Could not check task. Please try again later."
         );
+        console.warn(err);
       }
-    },
-
-    async finishCheck(id, lastExecution, assignedMember, due) {
-      const { data } = await this.$http.post("/_/checktask", {
-        id,
-        lastExecution,
-        assignedMember,
-        due
-      });
-      if (data.success == false) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error while checking task. Please try again later."
-        );
-        console.error(data.message);
-      }
-      await this.fetchTasks();
       this.loading = false;
     },
-
-    async undoSingleTask(task) {
+    async undoCheckTask() {
+      if (!this.checkedTask) return;
+      this.loading = true;
       this.taskCheckSnack = false;
-      let lastExecution = "0";
-      let assignedMember = task.assigned;
-      let due = task.dueDay;
-      this.pushNewTaskAction(task);
-      this.finishCheck(task.id, lastExecution, assignedMember, due);
-    },
-
-    nextAssignedMember(users, index) {
-      if (users.length > index + 1) {
-        return index + 1;
-      } else {
-        return 0;
-      }
-    },
-
-    previousAssignedMember(users, index) {
-      if (0 < index) {
-        return index - 1;
-      } else {
-        return users.length - 1;
-      }
-    },
-
-    async reminder(task) {
       try {
-        let id = task.id;
-        const { data } = await this.$http.post("/_/pushreminder", {
-          id
+        await this.$store.dispatch("tasks/updateTaskChecked", {
+          task: this.checkedTask,
+          checked: false
         });
-        if (data.success) {
-          this.$store.dispatch(
-            "showSnackbar",
-            "You've reminded " +
-              this.getUserName(task.assigned) +
-              " of " +
-              task.name
-          );
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Error triggering the reminder."
-          );
-        }
+        await this.fetchTasks();
       } catch (err) {
-        this.$store.dispatch("showSnackbar", "Server Error.");
-        console.log(err);
+        this.$store.dispatch("showSnackbar", err || "Undo failed :/");
+        console.warn(err);
       }
+      this.checkedTask = null;
+      this.loading = false;
     },
-
-    format(str) {
-      return formatDateString(str);
+    async triggerReminder(task) {
+      this.loading = true;
+      try {
+        await this.$store.dispatch("tasks/triggerReminder", task);
+        this.$store.dispatch(
+          "showSnackbar",
+          "You've reminded " +
+            this.getUserName(task.assigned) +
+            " of " +
+            task.name
+        );
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          err || "Error triggering the reminder."
+        );
+      }
+      this.loading = false;
     },
-
-    sortTasks() {
-      this.tasks.sort((a, b) => a.nextDueDay - b.nextDueDay);
-      this.loggedTasks.sort((a, b) => new Date(b.time) - new Date(a.time));
-    },
-
-    getIcons() {
-      return icons;
-    }
+    format: formatDateString,
+    getIcon: index => icons[index]
   }
 };
 </script>

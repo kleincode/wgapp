@@ -286,6 +286,22 @@ function mapWeekdayToInt(repetitionDay) {
   }
 }
 
+function nextAssignedMember(users, index) {
+  if (users.length > index + 1) {
+    return index + 1;
+  } else {
+    return 0;
+  }
+}
+
+function previousAssignedMember(users, index) {
+  if (0 < index) {
+    return index - 1;
+  } else {
+    return users.length - 1;
+  }
+}
+
 export {
   checkStatus,
   computeNextDueDay,
@@ -297,5 +313,7 @@ export {
   mapIntoToWeekday,
   getOnDemandStatus,
   getSingleStatus,
-  formatDateString
+  formatDateString,
+  nextAssignedMember,
+  previousAssignedMember
 };
