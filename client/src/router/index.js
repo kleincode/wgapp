@@ -60,21 +60,24 @@ const routes = [
           import(
             /* webpackChunkName: "settings" */ "../views/settings/GeneralSettings.vue"
           ),
-        alias: ""
+        alias: "",
+        name: "GeneralSettings"
       },
       {
         path: "dashboard",
         component: () =>
           import(
             /* webpackChunkName: "settings" */ "../views/settings/DashboardSettings.vue"
-          )
+          ),
+        name: "DashboardSettings"
       },
       {
         path: "integrations",
         component: () =>
           import(
             /* webpackChunkName: "settings" */ "../views/settings/IntegrationsSettings.vue"
-          )
+          ),
+        name: "IntegrationsSettings"
       }
     ]
   },
@@ -118,6 +121,13 @@ const routes = [
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
+  scrollBehavior(to) {
+    if (to.hash) {
+      return { selector: to.hash };
+    } else {
+      return { x: 0, y: 0 };
+    }
+  },
   routes
 });
 

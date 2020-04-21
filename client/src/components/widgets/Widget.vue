@@ -5,8 +5,26 @@
     :loading="loading"
     :color="error ? 'red' : null"
   >
-    <v-card-title
-      >{{ title }} <v-spacer></v-spacer> <v-icon v-if="error">error</v-icon>
+    <v-card-title>
+      {{ title }}
+      <v-spacer></v-spacer>
+      <v-icon v-if="error">error</v-icon>
+      <v-menu v-if="!error && contextItems.length">
+        <template #activator="{ on }">
+          <v-btn icon small v-on="on">
+            <v-icon>more_vert</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in contextItems"
+            :key="index"
+            @click="$emit('context-action', item)"
+          >
+            <v-list-item-title>{{ item.text }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-card-title>
     <v-card-text :class="{ 'pa-0': !contentPad, 'mb-6': withFooter }">
       <slot></slot>
@@ -40,6 +58,10 @@ export default {
     withFooter: {
       type: Boolean,
       default: false
+    },
+    contextItems: {
+      type: Array,
+      default: () => []
     }
   }
 };

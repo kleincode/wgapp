@@ -3,7 +3,7 @@
     <v-card-text>
       <div class="display-1 mb-2">Dashboard</div>
       <!-- CLOCK WIDGET -->
-      <div class="title pt-2">Clock Widget</div>
+      <div id="clock" class="title pt-2">Clock Widget</div>
       <p>
         A revolutionary time-telling device. Follows the laws of special and
         general relativity.
@@ -13,7 +13,7 @@
         label="Enable clock widget"
       ></v-switch>
       <!-- WEATHER WIDGET -->
-      <div class="title pt-2">Weather Widget</div>
+      <div id="weather" class="title pt-2">Weather Widget</div>
       <p>
         Provides you with the latest weather data using the free
         <a href="https://openweathermap.org/" target="_blank"
@@ -86,7 +86,7 @@
         <v-radio label="K (Kelvin)" value="k"></v-radio>
       </v-radio-group>
       <!-- TASKS WIDGET -->
-      <div class="title pt-2">Tasks Widget</div>
+      <div id="tasks" class="title pt-2">Tasks Widget</div>
       <p>
         This widget makes sure things are getting done in your home. No one ever
         dared to question its authority. (It might be useless at the moment, but
