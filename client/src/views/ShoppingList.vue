@@ -60,12 +60,13 @@
               ><v-list-item v-for="(item, i) in itemlist" :key="i">
                 <v-list-item-content>
                   <v-list-item-title
-                    ><v-text-field
-                      v-model="itemlist[i].item"
+                    ><v-combobox
+                      v-model="item.item"
                       :single-line="true"
-                      :disabled="itemlist[i].disabledProp"
-                      @blur="onClickDeleteCancel(i)"
-                    ></v-text-field
+                      :items="getAutocompletionItems()"
+                      :disabled="item.disabledProp"
+                      @blur="onClickDeleteCancel(item)"
+                    ></v-combobox
                   ></v-list-item-title>
                 </v-list-item-content>
 
@@ -73,15 +74,15 @@
                   <v-btn icon>
                     <v-icon
                       color="grey lighten-1"
-                      @click="onClickEditSave(i)"
-                      >{{ itemlist[i].icon }}</v-icon
+                      @click="onClickEditSave(item)"
+                      >{{ item.icon }}</v-icon
                     >
                   </v-btn>
                   <v-btn icon>
                     <v-icon
                       color="grey lighten-1"
-                      @click="onClickDeleteCancel(i)"
-                      >{{ itemlist[i].cancelIcon }}</v-icon
+                      @click="onClickDeleteCancel(item)"
+                      >{{ item.cancelIcon }}</v-icon
                     >
                   </v-btn>
                 </v-list-item-action>
@@ -121,6 +122,10 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+import en_autoItems from "@/assets/en_shoppingitems.js";
+import de_autoItems from "@/assets/de_shoppingitems.js";
+
 export default {
   name: "ShoppingList",
   data: () => ({
@@ -152,6 +157,10 @@ export default {
     this.fetchShoppingItems();
   },
 
+  computed: {
+    ...mapState("userSettings", ["locale"])
+  },
+
   methods: {
     clickCreateList() {
       //Methodencode
@@ -172,68 +181,61 @@ export default {
       this.createShoppingslist();
       this.addList = false;
     },
-    clickSaveItem() {
-      this.createItem();
-      this.addItem = false;
-    },
     clickCancel() {
       this.addList = false;
       this.addItem = false;
     },
-    onClickDeleteCancel(i) {
+    onClickDeleteCancel(item) {
       //Alten content des textfeldes speichern und bei cancel restore
       //handeln was passiert wenn deleted / cancelled wird
-      if (this.selectedItem != i) {
+      if (this.selectedItem != item) {
         this.setDefaultIcons(this.selectedItem);
-        if (i < 0) {
-          //kein neues Item gefocused sondern durch blur event getriggert
-          this.selectedItem = i;
-        } else {
-          this.selectedItem = i;
-        }
       }
 
-      if (this.itemlist[i].disabledProp == true) {
+      if (item.disabledProp == true) {
         //item löschen
         //Methode zum löschen eines Items aufrufen
       } else {
         //cancel methode
-        this.setDefaultIcons(i);
+        this.setDefaultIcons(item);
       }
     },
-    onClickEditSave(i) {
+    onClickEditSave(item) {
       //Alten content des textfeldes speichern und bei cancel restore
       //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
-      if (this.selectedItem != i) {
-        this.setDefaultIcons(this.selectedItem);
-        this.selectedItem = i;
+      if (this.selectedItem != item.id) {
+        this.setDefaultIcons(this.itemlist[this.selectedItem]);
+        this.selectedItem = item;
         //TODO: Save methode ausführen für altes item
       }
-
-      if (this.itemlist[i].disabledProp == true) {
+      if (item.disabledProp == true) {
         //edit Mode
-        this.setEditIcons(i);
+        this.setEditIcons(item);
       } else {
         //save
-        this.setDefaultIcons(i);
-        this.editItem(
-          this.itemlist[i].item,
-          this.itemlist[i].id,
-          this.itemlist[i].checked
-        );
+        if (isNaN(item.id)) {
+          this.createItem(item);
+        } else {
+          this.editItem(item.item, item.id, item.checked);
+        }
+        this.setDefaultIcons(item);
       }
     },
-    setEditIcons(index) {
+    setEditIcons(item) {
       //setzt nur icons
-      this.itemlist[index].disabledProp = false;
-      this.itemlist[index].icon = this.shoppingIcons[1];
-      this.itemlist[index].cancelIcon = this.shoppingIcons[3];
+      item.disabledProp = false;
+      item.icon = this.shoppingIcons[1];
+      item.cancelIcon = this.shoppingIcons[3];
     },
-    setDefaultIcons(index) {
+    setDefaultIcons(item) {
       //setzt nur icons
-      this.itemlist[index].disabledProp = true;
-      this.itemlist[index].icon = this.shoppingIcons[0];
-      this.itemlist[index].cancelIcon = this.shoppingIcons[2];
+      try {
+        item.disabledProp = true;
+        item.icon = this.shoppingIcons[0];
+        item.cancelIcon = this.shoppingIcons[2];
+      } catch (err) {
+        //ignore
+      }
     },
 
     //Shoppinglist editieren
@@ -293,11 +295,9 @@ export default {
     async fetchShoppinglists() {
       try {
         const { data } = await this.$http.get("/_/fetchshoppinglists");
-        console.log(data);
 
         if (data.success) {
           this.shoppingLists = [];
-
           data.data.forEach(list => {
             this.shoppingLists.push({
               name: list.name,
@@ -308,14 +308,21 @@ export default {
               id: list.id
             });
           });
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't fetch shopping lists. Please try again later."
+          );
         }
       } catch (error) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error during fetching shopping lists. Please try again later."
+        );
         console.error(error);
       }
     },
     async fetchShoppingItems() {
-      console.log("Shoppinglists: " + this.shoppingLists);
-
       if (this.shoppingLists[this.selectedList].id == -1) {
         //Keine Liste ist ausgewählt
         this.itemlist = [];
@@ -341,46 +348,110 @@ export default {
               cancelIcon: this.shoppingIcons[2]
             });
           });
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't fetch shopping items. Please try again later."
+          );
         }
       } catch (error) {
         console.error(error);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error during fetching shopping items. Please try again later."
+        );
       }
     },
     async createShoppingslist() {
       //icon hinzufügen
-      var icon = 120;
-      var name = this.textFieldNewList;
-      const { data } = await this.$http.post("/_/createshoppinglist", {
-        name,
-        icon
-      });
-      console.log(data);
-      this.fetchShoppinglists();
+      try {
+        var icon = 120;
+        var name = this.textFieldNewList;
+        const { data } = await this.$http.post("/_/createshoppinglist", {
+          name,
+          icon
+        });
+        if (!data.success) {
+          console.error(data);
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't create shopping list. Please try again later."
+          );
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Successfully created your new shopping list."
+          );
+        }
+        this.fetchShoppinglists();
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error creating shopping list. Please try again later."
+        );
+      }
     },
 
-    async createItem() {
-      //icon hinzufügen
-      var item = "";
-      var listid = this.shoppingLists[this.selectedList].id;
-      const { data } = await this.$http.post("/_/createShoppingItem", {
-        item,
-        listid
-      });
-      console.log(data);
-      this.fetchShoppingItems();
+    async createItem(i) {
+      try {
+        //icon hinzufügen
+        var item = this.itemlist[i].item;
+        var listid = this.shoppingLists[this.selectedList].id;
+        const { data } = await this.$http.post("/_/createShoppingItem", {
+          item,
+          listid
+        });
+        if (!data.success) {
+          console.error(data);
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't create new shopping list item. Please try again later."
+          );
+        }
+        this.fetchShoppingItems();
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error creating shopping list item. Please try again later."
+        );
+      }
     },
     async editItem(newItemName, itemid, checked) {
-      //icon hinzufügen
-      var item = this.textFieldNewItemName;
-      var listid = this.shoppingLists[this.selectedList].id;
-      const { data } = await this.$http.post("/_/editShoppingItem", {
-        item,
-        listid,
-        itemid,
-        checked
-      });
-      console.log(data);
-      this.fetchShoppingItems();
+      try {
+        //icon hinzufügen
+        var item = newItemName;
+        var listid = this.shoppingLists[this.selectedList].id;
+        const { data } = await this.$http.post("/_/editShoppingItem", {
+          item,
+          listid,
+          itemid,
+          checked
+        });
+        if (!data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Error editing shopping list item. Please try again later."
+          );
+        }
+        this.fetchShoppingItems();
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error editing shopping list item. Please try again later."
+        );
+      }
+    },
+
+    //Helpers
+    getAutocompletionItems() {
+      let locale = this.locale;
+      if (locale) locale = [locale, "en-US"];
+      if (locale.toString().substr(0, 2) == "de") {
+        return de_autoItems;
+      } else {
+        return en_autoItems;
+      }
     }
   }
 };

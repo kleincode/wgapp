@@ -22,21 +22,16 @@ module.exports = ({ db }) => ({
       }
     },
     handler: async ({ body, query, uid }, { success, fail, error }) => {
-  
-      // default values
-      let { item, listid, checked } = body;
-     
-  
+
       try {
         const requestHid = await Helpers.fetchHouseholdID(db, uid);
-        
         await db.query(
-          "UPDATE shoppingitems SET (item, checked, hid) VALUES (?, ?, ?) WHERE id = ?",
+          "UPDATE shoppingitems SET item = ?, checked = ?, hid = ? WHERE id = ?",
           [body.item, body.checked, requestHid, body.itemid]
         );
         success("Shoppinglistitem added successfully.");
       } catch (err) {
-        error("Error while fetching specified user from database.", err);
+        error("Error while editing shopping item.", err);
       }
     }
   });
