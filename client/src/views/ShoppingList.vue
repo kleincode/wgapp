@@ -12,18 +12,35 @@
             >
           </v-card-title>
           <v-list>
-            <v-list-item-group v-model="selectedList" color="primary">
-              <v-list-item
-                @click="selectList(list)"
-                v-for="(list, i) in shoppingLists"
-                :key="i"
+            <v-list-item-group
+              v-model="selectedList"
+              color="primary"
+              @change="selectList"
+            >
+              <v-list-item v-for="(list, i) in shoppingLists" :key="i"
                 ><v-list-item-icon>
                   <v-icon v-text="list.icon"></v-icon> </v-list-item-icon
                 ><v-list-item-content
-                  ><v-list-item-title
-                    v-text="list.name"
-                  ></v-list-item-title></v-list-item-content
-              ></v-list-item>
+                  ><v-list-item-title v-text="list.name"></v-list-item-title
+                ></v-list-item-content>
+
+                <v-list-item-action style="display: block" class="pt-3">
+                  <v-btn icon>
+                    <v-icon
+                      color="grey lighten-1"
+                      @click="onClickEditSaveList(i)"
+                      >{{ shoppingLists[i].editIcon }}</v-icon
+                    >
+                  </v-btn>
+                  <v-btn icon>
+                    <v-icon
+                      color="grey lighten-1"
+                      @click="onClickDeleteCancelList(i)"
+                      >{{ shoppingLists[i].cancelIcon }}</v-icon
+                    >
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
             </v-list-item-group>
           </v-list>
         </v-card>
@@ -38,14 +55,39 @@
             ></v-card-title
           >
 
-          <v-data-table
-            :headers="headers"
-            :items="itemlist"
-            item-key="item"
-            show-select
+          <v-card-text>
+            <v-list dense
+              ><v-list-item v-for="(item, i) in itemlist" :key="i">
+                <v-list-item-content>
+                  <v-list-item-title
+                    ><v-text-field
+                      v-model="itemlist[i].item"
+                      :single-line="true"
+                      :disabled="itemlist[i].disabledProp"
+                      @blur="onClickDeleteCancel(i)"
+                    ></v-text-field
+                  ></v-list-item-title>
+                </v-list-item-content>
+
+                <v-list-item-action style="display: block" class="pt-3">
+                  <v-btn icon>
+                    <v-icon
+                      color="grey lighten-1"
+                      @click="onClickEditSave(i)"
+                      >{{ itemlist[i].icon }}</v-icon
+                    >
+                  </v-btn>
+                  <v-btn icon>
+                    <v-icon
+                      color="grey lighten-1"
+                      @click="onClickDeleteCancel(i)"
+                      >{{ itemlist[i].cancelIcon }}</v-icon
+                    >
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list></v-card-text
           >
-            <template v-slot:top> </template>
-          </v-data-table>
         </v-card>
       </v-col>
     </v-row>
@@ -75,41 +117,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <v-dialog v-model="addItem" max-width="550px" overlay-opacity="1">
-      <v-card>
-        <v-card-title>
-          Add Item to Shoppinglist
-        </v-card-title>
-        <v-card-text>
-          <v-text-field
-            v-model="textFieldNewItemName"
-            required
-            class="my-3 mx-3"
-            hint="What do you want to buy?"
-            placeholder="Beer & other Drugs"
-            clearable
-          >
-          </v-text-field>
-          <v-text-field
-            v-model="textFieldNewItemAmount"
-            required
-            class="my-3 mx-3"
-            hint="How much?"
-            placeholder="Beer & other Drugs"
-            clearable
-          >
-          </v-text-field>
-        </v-card-text>
-
-        <v-card-actions>
-          <!--spacer sorgt dafür dass buttons rechts sind-->
-          <v-spacer></v-spacer>
-          <v-btn outlined @click="clickSaveItem">Save</v-btn>
-          <v-btn outlined @click="clickCancel">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -118,12 +125,14 @@ export default {
   name: "ShoppingList",
   data: () => ({
     //Variablen einfügen
+    disabledTest: true,
     addList: false,
     addItem: false,
     textFieldNewList: "",
     textFieldNewItemName: "",
     textFieldNewItemAmount: 0,
     selected: [],
+    shoppingIcons: ["edit", "check", "delete", "cancel"],
     headers: [
       {
         text: "Item",
@@ -133,16 +142,13 @@ export default {
       },
       { text: "Amount", value: "amount" }
     ],
-    itemlist: [
-      { item: "Milch", amount: "6L" },
-      { item: "Brot", amount: "ne Scheibe" },
-      { item: "was anderes", amount: "kein plan" }
-    ],
+    itemlist: [],
     shoppingLists: [{ name: "", icon: "", id: -1 }],
-    selectedList: 0
+    selectedList: 0,
+    selectedItem: 0
   }),
-  mounted() {
-    this.fetchShoppinglists();
+  async mounted() {
+    await this.fetchShoppinglists();
     this.fetchShoppingItems();
   },
 
@@ -153,27 +159,136 @@ export default {
     },
     clickCreateItem() {
       //Methodencode
-      this.createItem();
-      this.addItem = true;
+      this.itemlist.push({
+        item: "",
+        checked: false,
+        listid: this.shoppingLists[this.selectedList].id,
+        disabledProp: false,
+        icon: this.shoppingIcons[1],
+        cancelIcon: this.shoppingIcons[2]
+      });
     },
     clickSaveList() {
-      //Speichern über MySQL interface
       this.createShoppingslist();
       this.addList = false;
     },
     clickSaveItem() {
       this.createItem();
-      this.addList = false;
+      this.addItem = false;
     },
     clickCancel() {
       this.addList = false;
       this.addItem = false;
     },
-    selectList(list) {
+    onClickDeleteCancel(i) {
+      //Alten content des textfeldes speichern und bei cancel restore
+      //handeln was passiert wenn deleted / cancelled wird
+      if (this.selectedItem != i) {
+        this.setDefaultIcons(this.selectedItem);
+        if (i < 0) {
+          //kein neues Item gefocused sondern durch blur event getriggert
+          this.selectedItem = i;
+        } else {
+          this.selectedItem = i;
+        }
+      }
+
+      if (this.itemlist[i].disabledProp == true) {
+        //item löschen
+        //Methode zum löschen eines Items aufrufen
+      } else {
+        //cancel methode
+        this.setDefaultIcons(i);
+      }
+    },
+    onClickEditSave(i) {
+      //Alten content des textfeldes speichern und bei cancel restore
+      //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
+      if (this.selectedItem != i) {
+        this.setDefaultIcons(this.selectedItem);
+        this.selectedItem = i;
+        //TODO: Save methode ausführen für altes item
+      }
+
+      if (this.itemlist[i].disabledProp == true) {
+        //edit Mode
+        this.setEditIcons(i);
+      } else {
+        //save
+        this.setDefaultIcons(i);
+        this.editItem(
+          this.itemlist[i].item,
+          this.itemlist[i].id,
+          this.itemlist[i].checked
+        );
+      }
+    },
+    setEditIcons(index) {
+      //setzt nur icons
+      this.itemlist[index].disabledProp = false;
+      this.itemlist[index].icon = this.shoppingIcons[1];
+      this.itemlist[index].cancelIcon = this.shoppingIcons[3];
+    },
+    setDefaultIcons(index) {
+      //setzt nur icons
+      this.itemlist[index].disabledProp = true;
+      this.itemlist[index].icon = this.shoppingIcons[0];
+      this.itemlist[index].cancelIcon = this.shoppingIcons[2];
+    },
+
+    //Shoppinglist editieren
+    onClickDeleteCancelList(i) {
+      //handeln was passiert wenn deleted / cancelled wird
+      if (this.selectedList != i) {
+        this.setDefaultListIcons(this.selectedList);
+        if (i < 0) {
+          //kein neues Item gefocused sondern durch blur event getriggert
+          this.selectedList = i;
+        } else {
+          this.selectedList = i;
+        }
+      }
+
+      if (this.selectedList[i].disabledProp == true) {
+        //item löschen
+        //Methode zum löschen eines Items aufrufen
+      } else {
+        //cancel methode
+        this.setDefaultIcons(i);
+      }
+    },
+    onClickEditSaveList(i) {
+      //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
+      if (this.selectedList != i) {
+        this.setDefaultIcons(this.selectedList);
+        this.selectedList = i;
+        //TODO: Save methode ausführen für altes item
+      }
+
+      if (this.shoppingLists[i].disabledProp == true) {
+        //edit Mode
+        this.setEditIcons(i);
+      } else {
+        //save
+        this.setDefaultIcons(i);
+      }
+    },
+    setEditListIcons(index) {
+      //setzt nur icons
+      this.shoppingLists[index].disabledProp = false;
+      this.shoppingLists[index].editIcon = this.shoppingIcons[1];
+      this.shoppingLists[index].cancelIcon = this.shoppingIcons[3];
+    },
+    setDefaultListIcons(index) {
+      //setzt nur icons
+      this.shoppingLists[index].disabledProp = true;
+      this.shoppingLists[index].editIcon = this.shoppingIcons[0];
+      this.shoppingLists[index].cancelIcon = this.shoppingIcons[2];
+    },
+    selectList() {
       //Methode fetchShoppingList aufrufen um daten abzurufen aus mysql
       this.fetchShoppinglists();
       this.fetchShoppingItems();
-      list;
     },
     async fetchShoppinglists() {
       try {
@@ -187,6 +302,9 @@ export default {
             this.shoppingLists.push({
               name: list.name,
               icon: "bathtub",
+              editIcon: this.shoppingIcons[0],
+              cancelIcon: this.shoppingIcons[2],
+              disabledProp: true,
               id: list.id
             });
           });
@@ -196,30 +314,31 @@ export default {
       }
     },
     async fetchShoppingItems() {
-      var listid = this.shoppingLists[this.selectedList].id;
-      if (!listid >= 0) {
+      console.log("Shoppinglists: " + this.shoppingLists);
+
+      if (this.shoppingLists[this.selectedList].id == -1) {
         //Keine Liste ist ausgewählt
         this.itemlist = [];
         return;
       }
-
+      var id = this.shoppingLists[this.selectedList].id;
       try {
-        console.log("ID: " + listid);
         const { data } = await this.$http.get("/_/fetchshoppinglistitems", {
-          //TODO Listid
-          listid
+          params: { listid: id }
         });
-        console.log(data);
 
         if (data.success) {
           this.itemlist = [];
-
+          //TODO: Überprüfen ob liste leer ist
           data.data.forEach(list => {
             this.itemlist.push({
-              itemName: list.item,
-              amount: list.amount,
+              id: list.id,
+              item: list.item,
               checked: list.checked,
-              listid: this.shoppingLists[this.selectedList].id
+              listid: this.shoppingLists[this.selectedList].id,
+              disabledProp: true,
+              icon: this.shoppingIcons[0],
+              cancelIcon: this.shoppingIcons[2]
             });
           });
         }
@@ -241,13 +360,24 @@ export default {
 
     async createItem() {
       //icon hinzufügen
-      var amount = this.textFieldNewItemAmount;
-      var item = this.textFieldNewItemName;
+      var item = "";
       var listid = this.shoppingLists[this.selectedList].id;
       const { data } = await this.$http.post("/_/createShoppingItem", {
         item,
-        amount,
         listid
+      });
+      console.log(data);
+      this.fetchShoppingItems();
+    },
+    async editItem(newItemName, itemid, checked) {
+      //icon hinzufügen
+      var item = this.textFieldNewItemName;
+      var listid = this.shoppingLists[this.selectedList].id;
+      const { data } = await this.$http.post("/_/editShoppingItem", {
+        item,
+        listid,
+        itemid,
+        checked
       });
       console.log(data);
       this.fetchShoppingItems();
