@@ -1,4 +1,6 @@
 /*  Handler for "/_/createshoppinglist". Purpose: Creating new shoppinglistitem */
+const Helpers = require("../components/Helpers");
+
 module.exports = ({ db }) => ({
     type: "POST",
     public: false,
@@ -8,11 +10,6 @@ module.exports = ({ db }) => ({
         type: "string",
         required: true,
         message: "Please name your item."
-      },
-      amount: {
-        type: "int",
-        required: true,
-        message: "Please enter the amount."
       },
       //associated shoppinglist
       listid: {
@@ -25,26 +22,20 @@ module.exports = ({ db }) => ({
         default: false
       }
     },
-    handler: async ({ body, query, user }, { success, fail, error }) => {
+    handler: async ({ body, query, uid }, { success, fail, error }) => {
   
       // default values
-      let { item, amount, listid, checked } = body;
+      let { item,  listid, checked } = body;
      
   
       try {
-        const { results } = await db.query("SELECT COUNT(*) AS 'c' FROM users WHERE id = ? AND hid = ? AND listid = ?", [user.uid, user.hid, body.listid]);
-  
-        if (results[0].c < 1) {
-          fail("The specifed user does not exist or does not belong to this household.");
-        } else try {
-          await db.query(
-            "INSERT INTO shoppinglists (item, amount, checked, listid, hid) VALUES (?, ?, ?, ?, ?)",
-            [body.item, body.amount, body.checked, body.listid, user.hid]
-          );
-          success("Shoppinglist added successfully.");
-        } catch (err) {
-          error("Error while adding Shoppinglist into database.", err);
-        }
+        const requestHid = await Helpers.fetchHouseholdID(db, uid);
+        
+        await db.query(
+          "INSERT INTO shoppingitems (item, checked, listid, hid) VALUES (?, ?, ?, ?)",
+          [body.item, body.checked, body.listid, requestHid]
+        );
+        success("Shoppinglistitem added successfully.");
       } catch (err) {
         error("Error while fetching specified user from database.", err);
       }
