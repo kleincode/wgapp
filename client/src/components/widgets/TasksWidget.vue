@@ -68,7 +68,7 @@
       </v-carousel>
       <div style="height: 120px;"></div>
     </template>
-    <div v-else style="text-align: center" class="text--disabled pb-2">
+    <div v-else style="text-align: center" class="text--disabled pb-4">
       <v-icon style="font-size: 4em" class="text--disabled"
         >access_alarm</v-icon
       >

@@ -31,6 +31,16 @@
       >
         <TasksWidget />
       </v-col>
+      <v-col
+        v-if="financesWidgetEnabled"
+        cols="12"
+        sm="6"
+        lg="4"
+        xl="3"
+        class="widget-col"
+      >
+        <FinancesWidget />
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -41,19 +51,22 @@ import { mapState } from "vuex";
 import ClockWidget from "@/components/widgets/ClockWidget.vue";
 import WeatherWidget from "@/components/widgets/WeatherWidget.vue";
 import TasksWidget from "@/components/widgets/TasksWidget.vue";
+import FinancesWidget from "@/components/widgets/FinancesWidget.vue";
 
 export default {
   name: "Dashboard",
   components: {
     ClockWidget,
     WeatherWidget,
-    TasksWidget
+    TasksWidget,
+    FinancesWidget
   },
   computed: {
     ...mapState("userSettings", [
       "clockWidgetEnabled",
       "weatherWidgetEnabled",
-      "tasksWidgetEnabled"
+      "tasksWidgetEnabled",
+      "financesWidgetEnabled"
     ])
   }
 };

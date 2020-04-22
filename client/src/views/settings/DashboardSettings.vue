@@ -95,12 +95,21 @@
       <div id="tasks" class="title pt-2">Tasks Widget</div>
       <p>
         This widget makes sure things are getting done in your home. No one ever
-        dared to question its authority. (It might be useless at the moment, but
-        the authority is already implemented.)
+        dared to question its authority.
       </p>
       <v-switch
         v-model="tasksWidgetEnabled"
         label="Enable tasks widget"
+      ></v-switch>
+      <!-- FINANCES WIDGET -->
+      <div id="finances" class="title pt-2">Finances Widget</div>
+      <p>
+        Never lose track of your household expenses so not a single penny will
+        go missing.
+      </p>
+      <v-switch
+        v-model="financesWidgetEnabled"
+        label="Enable finances widget"
       ></v-switch>
     </v-card-text>
   </v-card>
@@ -166,6 +175,17 @@ export default {
       },
       get() {
         return this.$store.state.userSettings.tasksWidgetEnabled;
+      }
+    },
+    financesWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "financesWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.financesWidgetEnabled;
       }
     },
     temperatureUnit: {
