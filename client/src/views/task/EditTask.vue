@@ -206,7 +206,11 @@ import IconChooser from "@/components/IconChooser.vue";
 import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
 
-import { computeNextDueDay } from "@/assets/tasksHelper.js";
+import {
+  computeNextDueDay,
+  dateToLocalTime,
+  dateToLocalDate
+} from "@/assets/tasksHelper.js";
 
 export default {
   name: "EditTask",
@@ -282,10 +286,10 @@ export default {
             day => day[0].toUpperCase() + day.substr(1, day.length)
           );
           this.icon = task.icon;
-          this.time = task.time.substr(0, 5);
-          this.date = task.startDate.substr(0, 10);
-          this.datelong = task.startDate;
-          console.log(task);
+          let date = new Date(task.startDate * 1000);
+          this.time = dateToLocalTime(date);
+          this.date = dateToLocalDate(date);
+          this.datelong = date;
           this.repetitionEvery = parseInt(task.repetitionEvery);
           this.repetitionUnit = this.repetitionUnits[task.repetitionUnit];
           this.reminder = !!task.reminder;
@@ -343,7 +347,6 @@ export default {
       let repetitionDays = this.chosenDays.map(
         day => day[0].toLowerCase() + day.substr(1, day.length)
       );
-      let time = this.time;
       let repetitionEvery = parseInt(this.repetitionEvery);
       let repetitionUnit;
       if (this.repetitionUnits.indexOf(this.repetitionUnit)) {
@@ -351,11 +354,11 @@ export default {
       } else {
         repetitionUnit = false;
       }
-      let startDate = this.date;
-      if (mode == 0) {
-        startDate = new Date(startDate + "T" + time);
-        startDate = startDate.toISOString();
-      }
+
+      let startDate = new Date(this.date);
+      startDate.setHours(this.time.substr(0, 2));
+      startDate.setMinutes(this.time.substr(3, 2));
+
       let reminder;
       if (this.reminder) {
         reminder = true;
@@ -385,13 +388,11 @@ export default {
         case 1:
           due = computeNextDueDay(
             new Date(),
-            this.datelong,
+            new Date(startDate),
             repetitionDays,
             this.repetitionUnit == "Weeks" ? 0 : 1,
             this.repetitionEvery
           );
-          due.setHours(time.substr(0, 2), time.substr(3, 2));
-          due = due.toISOString();
           break;
         case 2:
           due = "";
@@ -407,11 +408,10 @@ export default {
             iteratingMode,
             assignedMember,
             repetitionDays,
-            time,
             repetitionEvery,
             repetitionUnit,
             reminder,
-            startDate,
+            startDate: Math.floor(startDate.getTime() / 1000),
             due
           });
           if (data.success) {
@@ -436,8 +436,7 @@ export default {
             repetitionEvery,
             repetitionUnit,
             reminder,
-            startDate,
-            time,
+            startDate: Math.floor(startDate.getTime() / 1000),
             due
           });
           if (data.success) {

@@ -7,7 +7,8 @@ import {
   getSingleStatus,
   formatDateString,
   nextAssignedMember,
-  previousAssignedMember
+  previousAssignedMember,
+  dateToLocalTime
 } from "@/assets/tasksHelper.js";
 
 // Vuex module storing task data (for use in tasks page and widget)
@@ -42,26 +43,27 @@ const vuexModule = {
         let curDate = new Date();
         curDate.setHours(12, 0, 0, 0);
         data.data.forEach(element => {
-          let lastExecution = new Date(element.lastExecution);
+          let lastExecution = new Date(element.lastExecution * 1000);
           if (isNaN(lastExecution.getTime())) {
             lastExecution = new Date(0);
           }
           switch (element.mode) {
             case 0: {
               //Single
-              let correctedStartDate = new Date(element.startDate);
-              let time = element.time.substr(0, 5);
-              let status = getSingleStatus(correctedStartDate, lastExecution);
+              let startDate = new Date(element.startDate * 1000);
+              let time = dateToLocalTime(startDate);
+
+              let status = getSingleStatus(startDate, lastExecution);
               tasks.push({
                 id: element.id,
                 mode: element.mode,
                 name: element.name,
                 assigned: element.assignedMember,
-                day: formatDateString(correctedStartDate),
-                nextDueDay: correctedStartDate,
-                startDate: correctedStartDate,
-                dueDay: correctedStartDate,
-                time: time,
+                day: formatDateString(startDate),
+                nextDueDay: startDate,
+                startDate: startDate,
+                dueDay: startDate,
+                time: time.substr(0, 5),
                 missed: status == 1,
                 checked: status == 2,
                 icon: element.icon
@@ -70,29 +72,25 @@ const vuexModule = {
             }
             case 1: {
               //Repeating
-              let correctedStartDate = new Date(
-                element.startDate.substr(0, 19)
-              );
-              correctedStartDate.setHours(correctedStartDate.getHours() + 13);
+              let startDate = new Date(element.startDate * 1000);
               if (element.repetitionDays.length == 0) {
                 console.warn("Empty repetitionDays configuration for", element);
                 return;
               }
               let nextDueDay = computeNextDueDay(
                 curDate,
-                correctedStartDate,
+                startDate,
                 element.repetitionDays,
                 element.repetitionUnit,
                 element.repetitionEvery
               );
-              lastExecution.setHours(lastExecution.getHours() + 2);
               let taskStatus = checkStatus(
                 lastExecution,
                 nextDueDay,
                 element.repetitionDays,
                 element.repetitionEvery,
                 element.repetitionUnit,
-                correctedStartDate,
+                startDate,
                 curDateBegin,
                 curDateEnd
               );
@@ -100,7 +98,7 @@ const vuexModule = {
                 id: element.id,
                 mode: element.mode,
                 name: element.name,
-                startDate: correctedStartDate,
+                startDate: startDate,
                 repetitionDays: element.repetitionDays,
                 repetitionEvery: element.repetitionEvery,
                 repetitionUnit: element.repetitionUnit,
@@ -108,7 +106,7 @@ const vuexModule = {
                 day: formatDateString(nextDueDay),
                 iteratingMode: element.iteratingMode,
                 nextDueDay: new Date(nextDueDay),
-                time: element.time.substr(0, 5),
+                time: dateToLocalTime(startDate).substr(0, 5),
                 lastExecution: lastExecution,
                 missed: !taskStatus[0],
                 checked: taskStatus[0] == 2,
@@ -175,7 +173,7 @@ const vuexModule = {
               curDate.setDate(curDate.getDate() + 1);
               due = computeNextDueDay(
                 curDate,
-                task.startDate,
+                new Date(task.startDate),
                 task.repetitionDays,
                 task.repetitionUnit == "Weeks" ? 0 : 1,
                 task.repetitionEvery

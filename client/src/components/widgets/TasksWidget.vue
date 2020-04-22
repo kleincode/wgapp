@@ -24,7 +24,7 @@
           <v-list-item class="mb-4">
             <v-list-item-avatar>
               <v-icon large :color="task.missed ? 'red' : ''">{{
-                task.icon || "event_note"
+                getIcon(task.icon) || "event_note"
               }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
@@ -78,6 +78,7 @@
 </template>
 
 <script>
+import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
 import Widget from "./Widget";
 
@@ -149,7 +150,8 @@ export default {
         case "settings":
           this.$router.push({ name: "DashboardSettings", hash: "#tasks" });
       }
-    }
+    },
+    getIcon: index => icons[index]
   }
 };
 </script>

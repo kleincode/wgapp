@@ -21,7 +21,7 @@
                   <div class="font-regular pt-4 display-1">
                     {{ getTodaysTasks[0].name }}
                     <br />
-                    <v-btn icon @click="checkedTasks(getTodaysTasks[0])">
+                    <v-btn icon @click="checkTask(getTodaysTasks[0])">
                       <v-icon v-if="getTodaysTasks[0].checked"
                         >check_box</v-icon
                       >

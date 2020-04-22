@@ -49,13 +49,9 @@ module.exports = ({ db }) => ({
       type: "boolean",
       default: true
     },
-    // Time
-    time: {
-      type: "string"
-    },
     // Date
     startDate: {
-      type: "string"
+      type: "int"
     },
     due: {
       type: "string",
@@ -67,9 +63,8 @@ module.exports = ({ db }) => ({
 
     // default values
     let genDate = new Date();
-    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, due } = body;
-    time = time || genDate.getHours() + ":" + genDate.getMinutes() + ":" + genDate.getSeconds(); genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
-    startDate = startDate || genDate.getFullYear() + "." + genDate.getMonth() + "." + genDate.getDay();
+    let { name, mode, icon, iteratingMode, repetitionDays, repetitionEvery, repetitionUnit, reminder, startDate, due } = body;
+    startDate = startDate || Math.floor(genDate.getTime() / 1000);
 
     try {
       const assignedUid = body.assignedMember || uid, // assign to sending user by default
@@ -80,8 +75,8 @@ module.exports = ({ db }) => ({
         fail("The specifed user does not exist or does not belong to this household.");
       } else try {
         await db.query(
-          "INSERT INTO tasks (hid, name, mode, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, time, startDate, due) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [assignedHid, name, mode, icon, iteratingMode, assignedUid, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, time, startDate, due]
+          "INSERT INTO tasks (hid, name, mode, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, startDate, due) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?), ?)",
+          [assignedHid, name, mode, icon, iteratingMode, assignedUid, JSON.stringify(repetitionDays), repetitionEvery, repetitionUnit, reminder, startDate, due]
         );
         success("Task inserted successfully.");
       } catch (err) {

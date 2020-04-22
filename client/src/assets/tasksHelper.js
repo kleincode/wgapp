@@ -62,13 +62,12 @@ function isToday(date, curDate) {
 
 function computeNextDueDay(
   curDate,
-  startDateInput,
+  startDate,
   repetitionDays,
   repetitionUnit,
   repetitionEvery
 ) {
   let repDayInts = repetitionDays.map(day => mapWeekdayToInt(day));
-  let startDate = new Date(startDateInput);
   if (curDate < startDate) {
     let res = computeNextDueInWeek(curDate, repDayInts, startDate);
     if (res == null) {
@@ -286,6 +285,31 @@ function mapWeekdayToInt(repetitionDay) {
   }
 }
 
+function pad(num) {
+  let norm = Math.floor(Math.abs(num));
+  return (norm < 10 ? "0" : "") + norm;
+}
+
+function dateToLocalTime(date) {
+  return (
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes()) +
+    ":" +
+    pad(date.getSeconds())
+  );
+}
+
+function dateToLocalDate(date) {
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate())
+  );
+}
+
 function nextAssignedMember(users, index) {
   if (users.length > index + 1) {
     return index + 1;
@@ -315,5 +339,7 @@ export {
   getSingleStatus,
   formatDateString,
   nextAssignedMember,
+  dateToLocalTime,
+  dateToLocalDate,
   previousAssignedMember
 };

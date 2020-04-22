@@ -47,13 +47,9 @@ module.exports = ({ db }) => ({
     reminder: {
       type: "boolean"
     },
-    // Time (not updated if not provided)
-    time: {
-      type: "string"
-    },
     // Date (not updated if not provided)
     startDate: {
-      type: "string"
+      type: "int"
     },
     due: {
       type: "string",
@@ -73,12 +69,16 @@ module.exports = ({ db }) => ({
 
       //Permissions granted; perform update
       let updateVals = Helpers.copyKeysIfPresent(body,
-        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "time", "startDate", "due"]
+        ["name", "icon", "mode", "iteratingMode", "assignedMember", "repetitionEvery", "repetitionUnit", "reminder", "due"]
       );
+      let updateSuffix = "";
+      if (body.startDate) {
+        updateSuffix = ", startDate = FROM_UNIXTIME(" + body.startDate + ")";
+      }
       if (body.repetitionDays) updateVals.repetitionDays = JSON.stringify(body.repetitionDays);
       try {
         const { results: { affectedRows, changedRows } } = await db.query(
-          "UPDATE tasks SET ? WHERE id = ? AND hid = ?",
+          `UPDATE tasks SET ?${updateSuffix} WHERE id = ? AND hid = ?`,
           [updateVals, body.id, requestHid]
         );
         if(affectedRows == 0) {
