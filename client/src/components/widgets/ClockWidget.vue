@@ -9,12 +9,14 @@
     <span class="display-1" style="vertical-align: baseline;">{{
       timeSuffix
     }}</span>
-    <template #footer>{{ weekday }} | {{ date }}</template>
+    <template #footer
+      >{{ formatWeekday(now) }} | {{ formatDateYMD(now) }}</template
+    >
   </Widget>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import Widget from "./Widget";
 
 export default {
@@ -23,11 +25,8 @@ export default {
     Widget
   },
   data: () => ({
-    time: "00:00:00",
-    date: "-",
-    weekday: "-",
+    now: new Date(),
     clockIntervalID: -1,
-    timeSuffix: "",
     contextItems: [
       {
         action: "settings",
@@ -37,16 +36,27 @@ export default {
     ]
   }),
   computed: {
-    ...mapState("userSettings", ["locale"])
-  },
-  watch: {
-    locale(val) {
-      this.initLocale(val);
+    ...mapState("userSettings", ["locale"]),
+    ...mapGetters("userSettings", [
+      "formatTimeHMS",
+      "formatDateYMD",
+      "formatWeekday"
+    ]),
+    fullTime() {
+      return this.formatTimeHMS(this.now);
+    },
+    time() {
+      return this.fullTime.endsWith(" PM") || this.fullTime.endsWith(" AM")
+        ? this.fullTime.substr(0, this.fullTime.length - 3)
+        : this.fullTime;
+    },
+    timeSuffix() {
+      return this.fullTime.endsWith(" PM") || this.fullTime.endsWith(" AM")
+        ? this.fullTime.substr(this.fullTime.length - 3)
+        : "";
     }
   },
   mounted() {
-    // Initialize clock
-    this.initLocale(this.locale);
     // Start ticking
     this.tick();
     this.clockIntervalID = setInterval(() => this.tick(), 1000);
@@ -55,38 +65,8 @@ export default {
     clearInterval(this.clockIntervalID);
   },
   methods: {
-    initLocale(locale) {
-      if (locale) locale = [locale, "en-US"];
-      // in case the saved locale is invalid, en-US is backup
-      else locale = undefined;
-      this.timeFormatter = new Intl.DateTimeFormat(locale, {
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      this.dateFormatter = new Intl.DateTimeFormat(locale, {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      });
-      this.weekdayFormatter = new Intl.DateTimeFormat(locale, {
-        weekday: "long"
-      });
-      //refresh immediately
-      this.tick();
-    },
     tick() {
-      let now = new Date();
-      let time = this.timeFormatter.format(now);
-      if (time.endsWith(" PM") || time.endsWith(" AM")) {
-        this.time = time.substr(0, time.length - 3);
-        this.timeSuffix = time.substr(time.length - 3);
-      } else {
-        this.time = time;
-        this.timeSuffix = "";
-      }
-      this.weekday = this.weekdayFormatter.format(now);
-      this.date = this.dateFormatter.format(now);
+      this.now = new Date();
     },
     contextAction(item) {
       switch (item.action) {

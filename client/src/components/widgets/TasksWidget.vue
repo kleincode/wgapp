@@ -89,27 +89,34 @@ export default {
   },
   data: () => ({
     loading: false,
-    contextItems: [
-      {
-        action: "refresh",
-        text: "Refresh",
-        icon: "refresh"
-      },
-      {
-        action: "tasks",
-        text: "Tasks page",
-        icon: "list"
-      },
-      {
-        action: "settings",
-        text: "Widget Settings",
-        icon: "settings"
-      }
-    ]
+    lastUpdate: null
   }),
   computed: {
+    contextItems() {
+      return [
+        {
+          action: "refresh",
+          text: "Refresh",
+          icon: "refresh",
+          subtext:
+            "Updated " +
+            (this.lastUpdate ? this.formatTimeHM(this.lastUpdate) : "never")
+        },
+        {
+          action: "tasks",
+          text: "Tasks page",
+          icon: "list"
+        },
+        {
+          action: "settings",
+          text: "Widget Settings",
+          icon: "settings"
+        }
+      ];
+    },
+    ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapGetters("tasks", ["getTodaysTasks"]),
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters("userSettings", ["formatTimeHM"])
   },
   mounted() {
     this.update();
@@ -119,6 +126,7 @@ export default {
       this.loading = true;
       try {
         await this.$store.dispatch("tasks/fetchTasks");
+        this.lastUpdate = new Date();
       } catch (err) {
         if (typeof err === "string") {
           this.$store.dispatch("showSnackbar", err);

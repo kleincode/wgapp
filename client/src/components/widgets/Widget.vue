@@ -26,6 +26,9 @@
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>{{ item.text }}</v-list-item-title>
+              <v-list-item-subtitle v-if="item.subtext">{{
+                item.subtext
+              }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>

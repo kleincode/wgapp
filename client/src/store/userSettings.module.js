@@ -62,7 +62,58 @@ const vuexModule = {
       ).then(() => commit("set_initialized", true));
     }
   },
-  getters: {} // (state, getters, rootState, rootGetters)
+  getters: {
+    // (state, getters, rootState, rootGetters)
+    formatTimeHM(state) {
+      // Initialize locale settings
+      let { locale } = state;
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      const timeFormatter = new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+      return date => timeFormatter.format(date);
+    },
+    formatTimeHMS(state) {
+      // Initialize locale settings
+      let { locale } = state;
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      const timeFormatter = new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+      return date => timeFormatter.format(date);
+    },
+    formatDateYMD(state) {
+      // Initialize locale settings
+      let { locale } = state;
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      const timeFormatter = new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+      return date => timeFormatter.format(date);
+    },
+    formatWeekday(state) {
+      // Initialize locale settings
+      let { locale } = state;
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      const timeFormatter = new Intl.DateTimeFormat(locale, {
+        weekday: "long"
+      });
+      return date => timeFormatter.format(date);
+    }
+  }
 };
 
 export default vuexModule;
