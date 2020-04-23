@@ -3,7 +3,7 @@
     <h1 class="display-2 pb-6">Shopping List</h1>
     <v-row class="ml-4" cols="12">
       <v-col>
-        <v-card>
+        <v-card :loading="loadingLists">
           <v-card-title
             >Shoppinglists
             <v-spacer></v-spacer>
@@ -47,7 +47,7 @@
       </v-col>
 
       <v-col>
-        <v-card>
+        <v-card :loading="loadingItems">
           <v-card-title
             >{{ shoppingLists[selectedList].name }} <v-spacer></v-spacer
             ><v-btn color="primary" text @click="clickCreateItem"
@@ -57,7 +57,11 @@
 
           <v-card-text>
             <v-list dense
-              ><v-list-item v-for="(item, i) in itemlist" :key="i">
+              ><v-list-item
+                v-for="(item, i) in itemlist"
+                :key="i"
+                @blur="onSave(item)"
+              >
                 <v-list-item-content>
                   <v-list-item-title
                     ><v-combobox
@@ -65,25 +69,23 @@
                       :single-line="true"
                       :items="getAutocompletionItems()"
                       :disabled="item.disabledProp"
-                      @blur="onClickDeleteCancel(item)"
+                      auto-select-first
+                      @blur="onSave(item)"
                     ></v-combobox
                   ></v-list-item-title>
                 </v-list-item-content>
 
                 <v-list-item-action style="display: block" class="pt-3">
-                  <v-btn icon>
-                    <v-icon
-                      color="grey lighten-1"
-                      @click="onClickEditSave(item)"
-                      >{{ item.icon }}</v-icon
-                    >
+                  <v-btn v-if="item.disabledProp" icon @click="onEdit(item)">
+                    <v-icon color="grey lighten-1">{{ item.icon }}</v-icon>
                   </v-btn>
-                  <v-btn icon>
-                    <v-icon
-                      color="grey lighten-1"
-                      @click="onClickDeleteCancel(item)"
-                      >{{ item.cancelIcon }}</v-icon
-                    >
+                  <v-btn v-else icon @click="onSave(item)">
+                    <v-icon color="grey lighten-1">{{ item.icon }}</v-icon>
+                  </v-btn>
+                  <v-btn icon @click="onClickDeleteCancel(item)">
+                    <v-icon color="grey lighten-1">{{
+                      item.cancelIcon
+                    }}</v-icon>
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
@@ -150,7 +152,9 @@ export default {
     itemlist: [],
     shoppingLists: [{ name: "", icon: "", id: -1 }],
     selectedList: 0,
-    selectedItem: 0
+    selectedItem: 0,
+    loadingItems: false,
+    loadingLists: false
   }),
   async mounted() {
     await this.fetchShoppinglists();
@@ -186,12 +190,12 @@ export default {
       this.addItem = false;
     },
     onClickDeleteCancel(item) {
+      console.log("## cancelling");
       //Alten content des textfeldes speichern und bei cancel restore
       //handeln was passiert wenn deleted / cancelled wird
-      if (this.selectedItem != item) {
-        this.setDefaultIcons(this.selectedItem);
+      if (this.selectedItem != item.id) {
+        this.setDefaultIcons(this.itemlist[this.selectedItem]);
       }
-
       if (item.disabledProp == true) {
         //item löschen
         //Methode zum löschen eines Items aufrufen
@@ -200,25 +204,22 @@ export default {
         this.setDefaultIcons(item);
       }
     },
-    onClickEditSave(item) {
+    onSave(item) {
+      console.log("### save", item);
+      if (isNaN(item.id)) {
+        this.createItem(item);
+      } else {
+        this.editItem(item.item, item.id, item.checked);
+      }
+      this.setDefaultIcons(item);
+    },
+    onEdit(item) {
+      console.log("### edit", item);
       //Alten content des textfeldes speichern und bei cancel restore
       //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
-      if (this.selectedItem != item.id) {
-        this.setDefaultIcons(this.itemlist[this.selectedItem]);
-        this.selectedItem = item;
-        //TODO: Save methode ausführen für altes item
-      }
       if (item.disabledProp == true) {
         //edit Mode
         this.setEditIcons(item);
-      } else {
-        //save
-        if (isNaN(item.id)) {
-          this.createItem(item);
-        } else {
-          this.editItem(item.item, item.id, item.checked);
-        }
-        this.setDefaultIcons(item);
       }
     },
     setEditIcons(item) {
@@ -234,7 +235,7 @@ export default {
         item.icon = this.shoppingIcons[0];
         item.cancelIcon = this.shoppingIcons[2];
       } catch (err) {
-        //ignore
+        console.error(err);
       }
     },
 
@@ -294,6 +295,7 @@ export default {
     },
     async fetchShoppinglists() {
       try {
+        this.loadingLists = true;
         const { data } = await this.$http.get("/_/fetchshoppinglists");
 
         if (data.success) {
@@ -314,12 +316,14 @@ export default {
             "Couldn't fetch shopping lists. Please try again later."
           );
         }
+        this.loadingLists = false;
       } catch (error) {
         this.$store.dispatch(
           "showSnackbar",
           "Error during fetching shopping lists. Please try again later."
         );
         console.error(error);
+        this.loadingLists = false;
       }
     },
     async fetchShoppingItems() {
@@ -328,6 +332,7 @@ export default {
         this.itemlist = [];
         return;
       }
+      this.loadingItems = true;
       var id = this.shoppingLists[this.selectedList].id;
       try {
         const { data } = await this.$http.get("/_/fetchshoppinglistitems", {
@@ -354,12 +359,14 @@ export default {
             "Couldn't fetch shopping items. Please try again later."
           );
         }
+        this.loadingItems = false;
       } catch (error) {
         console.error(error);
         this.$store.dispatch(
           "showSnackbar",
           "Error during fetching shopping items. Please try again later."
         );
+        this.loadingItems = false;
       }
     },
     async createShoppingslist() {
@@ -393,13 +400,14 @@ export default {
       }
     },
 
-    async createItem(i) {
+    async createItem(item) {
       try {
-        //icon hinzufügen
-        var item = this.itemlist[i].item;
-        var listid = this.shoppingLists[this.selectedList].id;
+        console.log(item);
+        let itemName = item.item;
+        console.log(itemName);
+        let listid = item.listid;
         const { data } = await this.$http.post("/_/createShoppingItem", {
-          item,
+          item: itemName,
           listid
         });
         if (!data.success) {
