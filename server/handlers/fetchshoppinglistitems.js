@@ -14,8 +14,6 @@ module.exports = ({ db }) => ({
     handler: async ({ body, query, uid }, { success, fail, error }) => {
 
       const { listid } = query;
-
-      console.log("Parameter listid: " + listid)
       //Default wert zuweisen
       const requestHid = await Helpers.fetchHouseholdID(db, uid);
 
@@ -24,10 +22,9 @@ module.exports = ({ db }) => ({
 
       try {
         const { results } = await db.query(baseQuery, baseParams);
-        console.log(results)
         if (results.length == 0) {
 
-          success({ message: "Results.", data: {} });
+          success({ message: "Results.", data: [] });
           
         } else success({ message: "Shoppinglistitems received", data: results });
       } catch (err) {

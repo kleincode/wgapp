@@ -7,7 +7,7 @@
           <v-card-title
             >Shoppinglists
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="clickCreateList"
+            <v-btn color="primary" text @click="openCreateListDialog"
               >New Shoppinglist</v-btn
             >
           </v-card-title>
@@ -15,11 +15,11 @@
             <v-list-item-group
               v-model="selectedList"
               color="primary"
-              @change="selectList"
+              @change="update"
             >
               <v-list-item v-for="(list, i) in shoppingLists" :key="i"
                 ><v-list-item-icon>
-                  <v-icon v-text="list.icon"></v-icon> </v-list-item-icon
+                  <v-icon>{{ getIcon(list.icon) }}</v-icon> </v-list-item-icon
                 ><v-list-item-content
                   ><v-list-item-title v-text="list.name"></v-list-item-title
                 ></v-list-item-content>
@@ -28,15 +28,15 @@
                   <v-btn icon>
                     <v-icon
                       color="grey lighten-1"
-                      @click="onClickEditSaveList(i)"
-                      >{{ shoppingLists[i].editIcon }}</v-icon
+                      @click="openEditListDialog(list)"
+                      >{{ shoppingIcons[0] }}</v-icon
                     >
                   </v-btn>
                   <v-btn icon>
                     <v-icon
                       color="grey lighten-1"
-                      @click="onClickDeleteCancelList(i)"
-                      >{{ shoppingLists[i].cancelIcon }}</v-icon
+                      @click="deleteShoppingsList(list)"
+                      >{{ shoppingIcons[2] }}</v-icon
                     >
                   </v-btn>
                 </v-list-item-action>
@@ -49,8 +49,12 @@
       <v-col>
         <v-card :loading="loadingItems">
           <v-card-title
-            >{{ shoppingLists[selectedList].name }} <v-spacer></v-spacer
-            ><v-btn color="primary" text @click="clickCreateItem"
+            >{{ getSelectListName() }} <v-spacer></v-spacer
+            ><v-btn
+              color="primary"
+              text
+              :disabled="!isListSelected"
+              @click="clickCreateItem"
               >New Item</v-btn
             ></v-card-title
           >
@@ -95,14 +99,17 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="addList" max-width="550px" overlay-opacity="1">
+    <v-dialog v-model="addListDialog" max-width="550px" overlay-opacity="1">
       <v-card>
-        <v-card-title>
-          Create a new Shoppinglist
+        <v-card-title v-if="!editListMode">
+          Create a new shopping list
+        </v-card-title>
+        <v-card-title v-else>
+          Edit your shopping list
         </v-card-title>
         <v-card-text>
           <v-text-field
-            v-model="textFieldNewList"
+            v-model="editList.name"
             required
             class="my-3 mx-3"
             hint="Enter a name"
@@ -125,6 +132,7 @@
 
 <script>
 import { mapState } from "vuex";
+import icons from "@/assets/icons.js";
 import en_autoItems from "@/assets/en_shoppingitems.js";
 import de_autoItems from "@/assets/de_shoppingitems.js";
 
@@ -133,9 +141,10 @@ export default {
   data: () => ({
     //Variablen einfügen
     disabledTest: true,
-    addList: false,
+    addListDialog: false,
     addItem: false,
-    textFieldNewList: "",
+    editListMode: false,
+    editList: {},
     textFieldNewItemName: "",
     textFieldNewItemAmount: 0,
     selected: [],
@@ -150,7 +159,7 @@ export default {
       { text: "Amount", value: "amount" }
     ],
     itemlist: [],
-    shoppingLists: [{ name: "", icon: "", id: -1 }],
+    shoppingLists: [],
     selectedList: 0,
     selectedItem: 0,
     loadingItems: false,
@@ -162,16 +171,23 @@ export default {
   },
 
   computed: {
-    ...mapState("userSettings", ["locale"])
+    ...mapState("userSettings", ["locale"]),
+    isListSelected() {
+      console.log(this.selectedList + " " + this.shoppingLists.length);
+      return !(
+        this.selectedList < 0 || this.selectedList >= this.shoppingLists.length
+      );
+    }
   },
 
   methods: {
-    clickCreateList() {
+    openCreateListDialog() {
       //Methodencode
-      this.addList = true;
+      this.addListDialog = true;
+      this.editListMode = false;
+      this.editList = {};
     },
     clickCreateItem() {
-      //Methodencode
       this.itemlist.push({
         item: "",
         checked: false,
@@ -182,13 +198,24 @@ export default {
       });
     },
     clickSaveList() {
-      this.createShoppingslist();
-      this.addList = false;
+      if (this.editListMode) {
+        this.editShoppingsList(this.editList);
+      } else {
+        this.createShoppingsList(this.editList);
+      }
+      this.addListDialog = false;
+      this.update();
     },
     clickCancel() {
-      this.addList = false;
+      this.addListDialog = false;
       this.addItem = false;
     },
+    openEditListDialog(list) {
+      this.editListMode = true;
+      this.editList = list;
+      this.addListDialog = true;
+    },
+
     onClickDeleteCancel(item) {
       console.log("## cancelling");
       //Alten content des textfeldes speichern und bei cancel restore
@@ -239,60 +266,8 @@ export default {
       }
     },
 
-    //Shoppinglist editieren
-    onClickDeleteCancelList(i) {
-      //handeln was passiert wenn deleted / cancelled wird
-      if (this.selectedList != i) {
-        this.setDefaultListIcons(this.selectedList);
-        if (i < 0) {
-          //kein neues Item gefocused sondern durch blur event getriggert
-          this.selectedList = i;
-        } else {
-          this.selectedList = i;
-        }
-      }
+    //Shopping lists
 
-      if (this.selectedList[i].disabledProp == true) {
-        //item löschen
-        //Methode zum löschen eines Items aufrufen
-      } else {
-        //cancel methode
-        this.setDefaultIcons(i);
-      }
-    },
-    onClickEditSaveList(i) {
-      //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
-      if (this.selectedList != i) {
-        this.setDefaultIcons(this.selectedList);
-        this.selectedList = i;
-        //TODO: Save methode ausführen für altes item
-      }
-
-      if (this.shoppingLists[i].disabledProp == true) {
-        //edit Mode
-        this.setEditIcons(i);
-      } else {
-        //save
-        this.setDefaultIcons(i);
-      }
-    },
-    setEditListIcons(index) {
-      //setzt nur icons
-      this.shoppingLists[index].disabledProp = false;
-      this.shoppingLists[index].editIcon = this.shoppingIcons[1];
-      this.shoppingLists[index].cancelIcon = this.shoppingIcons[3];
-    },
-    setDefaultListIcons(index) {
-      //setzt nur icons
-      this.shoppingLists[index].disabledProp = true;
-      this.shoppingLists[index].editIcon = this.shoppingIcons[0];
-      this.shoppingLists[index].cancelIcon = this.shoppingIcons[2];
-    },
-    selectList() {
-      //Methode fetchShoppingList aufrufen um daten abzurufen aus mysql
-      this.fetchShoppinglists();
-      this.fetchShoppingItems();
-    },
     async fetchShoppinglists() {
       try {
         this.loadingLists = true;
@@ -303,7 +278,7 @@ export default {
           data.data.forEach(list => {
             this.shoppingLists.push({
               name: list.name,
-              icon: "bathtub",
+              icon: list.icon,
               editIcon: this.shoppingIcons[0],
               cancelIcon: this.shoppingIcons[2],
               disabledProp: true,
@@ -326,14 +301,118 @@ export default {
         this.loadingLists = false;
       }
     },
+    async createShoppingsList(list) {
+      //icon hinzufügen
+      try {
+        var icon = 120;
+        let name = list.name;
+        const { data } = await this.$http.post("/_/createshoppinglist", {
+          name,
+          icon
+        });
+        if (!data.success) {
+          console.error(data);
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't create shopping list. Please try again later."
+          );
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Successfully created your new shopping list."
+          );
+        }
+        this.update();
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error creating shopping list. Please try again later."
+        );
+      }
+    },
+
+    async editShoppingsList(list) {
+      //icon hinzufügen
+      try {
+        let id = list.id;
+        let icon = 120;
+        let name = list.name;
+        const { data } = await this.$http.post("/_/editshoppinglist", {
+          id,
+          name,
+          icon
+        });
+        if (!data.success) {
+          console.error(data);
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't edit shopping list. Please try again later."
+          );
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Successfully edited your shopping list."
+          );
+        }
+        this.update();
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error editing shopping list. Please try again later."
+        );
+      }
+    },
+
+    async deleteShoppingsList(list) {
+      //icon hinzufügen
+      try {
+        if (
+          this.shoppingLists.indexOf(list) == this.shoppingLists.length - 1 &&
+          this.shoppingLists.length - 1 == this.selectedList
+        ) {
+          this.selectedList = 0;
+        }
+        let id = list.id;
+        const { data } = await this.$http.post("/_/deleteshoppinglist", {
+          id
+        });
+        if (!data.success) {
+          console.error(data);
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't edit shopping list. Please try again later."
+          );
+        } else {
+          this.$store.dispatch("showSnackbar", data.message);
+        }
+        this.update();
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error editing shopping list. Please try again later."
+        );
+      }
+    },
+
+    //Shopping items
+
     async fetchShoppingItems() {
-      if (this.shoppingLists[this.selectedList].id == -1) {
+      if (!this.isListSelected) {
         //Keine Liste ist ausgewählt
+        console.log("nothing selected");
         this.itemlist = [];
         return;
       }
       this.loadingItems = true;
-      var id = this.shoppingLists[this.selectedList].id;
+      try {
+        var id = this.shoppingLists[this.selectedList].id;
+      } catch (err) {
+        return;
+        //igonore
+      }
       try {
         const { data } = await this.$http.get("/_/fetchshoppinglistitems", {
           params: { listid: id }
@@ -367,36 +446,6 @@ export default {
           "Error during fetching shopping items. Please try again later."
         );
         this.loadingItems = false;
-      }
-    },
-    async createShoppingslist() {
-      //icon hinzufügen
-      try {
-        var icon = 120;
-        var name = this.textFieldNewList;
-        const { data } = await this.$http.post("/_/createshoppinglist", {
-          name,
-          icon
-        });
-        if (!data.success) {
-          console.error(data);
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't create shopping list. Please try again later."
-          );
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Successfully created your new shopping list."
-          );
-        }
-        this.fetchShoppinglists();
-      } catch (err) {
-        console.error(err);
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error creating shopping list. Please try again later."
-        );
       }
     },
 
@@ -460,6 +509,22 @@ export default {
       } else {
         return en_autoItems;
       }
+    },
+
+    getIcon(index) {
+      return icons[index];
+    },
+    getSelectListName() {
+      if (!this.isListSelected) {
+        return "";
+      } else {
+        return this.shoppingLists[this.selectedList].name;
+      }
+    },
+    async update() {
+      //Methode fetchShoppingList aufrufen um daten abzurufen aus mysql
+      await this.fetchShoppinglists();
+      await this.fetchShoppingItems();
     }
   }
 };
