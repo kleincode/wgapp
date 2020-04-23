@@ -10,13 +10,13 @@ module.exports = ({ db }) => ({
     handler: async ({ body, query, uid }, { success, fail, error }) => {
       const requestHid = await Helpers.fetchHouseholdID(db, uid);
 
-      let baseQuery = `SELECT id, name FROM shoppinglists WHERE hid = ?`,
+      let baseQuery = `SELECT id, name, icon FROM shoppinglists WHERE hid = ?`,
         baseParams = [requestHid];
       try {
         const { results } = await db.query(baseQuery, baseParams);
         if (results.length == 0) {
 
-          success({ message: "Results.", data: {} });
+          success({ message: "Results.", data: [] });
           
         } else success({ message: "Shoppinglist received", data: results });
       } catch (err) {

@@ -1,4 +1,4 @@
-/*  Handler for "/_/editShoppingItem". Purpose: Edit shoppinglistitem */
+/*  Handler for "/_/editshoppinglist". Purpose: Edit shoppinglist */
 const Helpers = require("../components/Helpers");
 
 module.exports = ({ db }) => ({
@@ -6,19 +6,18 @@ module.exports = ({ db }) => ({
     public: false,
     body: {
       // item name
-      item: {
+      name: {
         type: "string",
         required: true,
-        message: "Please name your item."
+        message: "Please name your list."
       },
-      //associated shoppinglist
-      itemid: {
+      id: {
         type: "int",
         required: true
       },
-      checked: {
-        type: "boolean",
-        default: false
+      icon: {
+        type: "int",
+        default: 0
       }
     },
     handler: async ({ body, query, uid }, { success, fail, error }) => {
@@ -26,8 +25,8 @@ module.exports = ({ db }) => ({
       try {
         const requestHid = await Helpers.fetchHouseholdID(db, uid);
         await db.query(
-          "UPDATE shoppingitems SET item = ?, checked = ? WHERE hid = ? AND id = ?",
-          [body.item, body.checked, requestHid, body.itemid]
+          "UPDATE shoppinglists SET name = ?, icon = ? WHERE id = ? AND hid = ?",
+          [body.name, body.icon, body.id, requestHid]
         );
         success("Shoppinglistitem added successfully.");
       } catch (err) {
