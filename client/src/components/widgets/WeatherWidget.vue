@@ -18,7 +18,7 @@
       <v-btn text to="/settings/dashboard">Settings</v-btn>
     </template>
     <template #footer>
-      {{ condition }} | Last update:
+      {{ condition }} | {{ cityName }}
       {{ lastUpdate ? formatTimeHM(lastUpdate) : "Never" }}
     </template>
   </Widget>
@@ -38,15 +38,9 @@ export default {
     temperature: 0,
     lastUpdate: null,
     condition: "...",
+    cityName: "",
     display: true,
-    loading: false,
-    contextItems: [
-      {
-        action: "settings",
-        text: "Widget Settings",
-        icon: "settings"
-      }
-    ]
+    loading: false
   }),
   computed: {
     ...mapState("userSettings", [
@@ -77,6 +71,23 @@ export default {
         default:
           return Math.round(this.temperature);
       }
+    },
+    contextItems() {
+      return [
+        {
+          action: "refresh",
+          text: "Refresh",
+          icon: "refresh",
+          subtext:
+            "Updated " +
+            (this.lastUpdate ? this.formatTimeHM(this.lastUpdate) : "never")
+        },
+        {
+          action: "settings",
+          text: "Widget Settings",
+          icon: "settings"
+        }
+      ];
     }
   },
   watch: {
@@ -108,6 +119,7 @@ export default {
         if (data.cod == 200) {
           this.temperature = data.main.temp;
           this.condition = data.weather[0].main;
+          this.cityName = data.name;
           this.lastUpdate = new Date();
           this.display = true;
         } else {
@@ -120,6 +132,9 @@ export default {
     },
     contextAction(item) {
       switch (item.action) {
+        case "refresh":
+          this.update();
+          break;
         case "settings":
           this.$router.push({ name: "DashboardSettings", hash: "#weather" });
       }

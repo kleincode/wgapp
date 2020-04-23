@@ -120,6 +120,10 @@ export default {
   },
   mounted() {
     this.update();
+    this.clockIntervalID = setInterval(() => this.update(), 5 * 60 * 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.clockIntervalID);
   },
   methods: {
     async update() {

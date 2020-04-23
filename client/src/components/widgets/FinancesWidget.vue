@@ -22,16 +22,30 @@
           class="pl-5 pr-5"
         >
           <v-list-item class="mb-4">
-            <v-list-item-avatar>
-              <v-icon large>event_note</v-icon>
-            </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="task-entry">
-                {{ expense.name || "Unnamed expense" }}
+                {{ expense.description || "Unnamed expense" }}
                 <div class="overline pl-2 pt-1">
-                  - {{ expense.date || "Today" }}
+                  - {{ formatDateRelative(expense.date) || "Today" }}
                 </div>
               </v-list-item-title>
+              <v-list-item-subtitle>
+                <v-chip class="mt-1" :color="expense.receipt ? 'primary' : ''">
+                  {{ formatCurrency(expense.amount / 100) }}
+                </v-chip>
+                <v-chip class="mt-1 ml-3">
+                  <v-avatar
+                    style="max-height: 80%; max-width: 90%"
+                    left
+                    color="green"
+                  >
+                    <span class="white--text">{{
+                      getUserInitials(expense.uid)
+                    }}</span>
+                  </v-avatar>
+                  {{ getUserName(expense.uid) }}
+                </v-chip>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-carousel-item>
@@ -84,21 +98,38 @@ export default {
       ];
     },
     ...mapGetters(["getUserName", "getUserInitials"]),
-    ...mapGetters("userSettings", ["formatTimeHM"])
+    ...mapGetters("userSettings", [
+      "formatTimeHM",
+      "formatCurrency",
+      "formatDateRelative"
+    ])
   },
   mounted() {
     this.update();
+    this.clockIntervalID = setInterval(() => this.update(), 5 * 60 * 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.clockIntervalID);
   },
   methods: {
     async update() {
       this.loading = true;
       try {
-        console.log("[TODO] update");
-        this.lastUpdate = new Date();
+        const now = new Date();
+        console.log("update");
+        const { data } = await this.$http.get("/_/fetchexpenses", {
+          params: {
+            mintime: now.setDate(now.getDate() - 3) / 1000
+          }
+        });
+        if (data.success) {
+          this.expenses = data.data;
+          this.lastUpdate = new Date();
+        } else throw data.message;
       } catch (err) {
         if (typeof err === "string") {
           this.$store.dispatch("showSnackbar", err);
-        }
+        } else console.warn(err);
       }
       this.loading = false;
     },

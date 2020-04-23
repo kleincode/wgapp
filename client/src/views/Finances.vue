@@ -74,7 +74,7 @@
               {{ getUserName(item.uid) }}
             </template>
             <template v-slot:item.date="{ item }">
-              {{ renderDate(item.date) }}
+              {{ formatDateRelative(item.date) }}
             </template>
             <template v-slot:item.amount="{ item }">
               {{ getCurrency((item.amount / 100).toFixed(2)) }}
@@ -465,7 +465,8 @@ export default {
         )
       );
     },
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters(["getUserName", "getUserInitials"]),
+    ...mapGetters("userSettings", ["formatDateRelative"])
   },
   watch: {
     tableOptions: {
@@ -721,62 +722,6 @@ export default {
     },
 
     //HELPER
-
-    renderDate(itemTimestamp) {
-      let seconds = this.unixTimestamp - itemTimestamp;
-      let sign = seconds < 0;
-      seconds = Math.abs(seconds);
-      if (seconds < 60) return "just now";
-      let val = "";
-      if (seconds > 60 * 60 * 24 * 7 * 5) {
-        let dateThen = new Date(itemTimestamp),
-          dateNow = new Date(this.unixTimestamp);
-        let diffMonths = Math.abs(
-          dateNow.getMonth() -
-            dateThen.getMonth +
-            12 * (dateNow.getFullYear() - dateThen.getFullYear())
-        );
-        if (diffMonths > 12) {
-          val = Math.floor(diffMonths / 12) + " years";
-        } else {
-          if (diffMonths == 1) {
-            val = diffMonths + " month";
-          } else {
-            val = diffMonths + " months";
-          }
-        }
-      } else if (seconds > 60 * 60 * 24 * 7) {
-        let count = Math.floor(seconds / (60 * 60 * 24 * 7));
-        if (count == 1) {
-          val = count + " week";
-        } else {
-          val = count + " weeks";
-        }
-      } else if (seconds > 60 * 60 * 24) {
-        let count = Math.floor(seconds / (60 * 60 * 24));
-        if (count == 1) {
-          val = count + " day";
-        } else {
-          val = count + " days";
-        }
-      } else if (seconds > 60 * 60) {
-        let count = Math.floor(seconds / (60 * 60));
-        if (count == 1) {
-          val = count + " hour";
-        } else {
-          val = count + " hours";
-        }
-      } else {
-        let count = Math.floor(seconds / 60);
-        if (count == 1) {
-          val = count + " minute";
-        } else {
-          val = count + " minutes";
-        }
-      }
-      if (sign) return "in " + val;
-      else return val + " ago";
-    },
     getIcon(id) {
       return icons[id];
     },

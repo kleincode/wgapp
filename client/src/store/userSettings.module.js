@@ -114,6 +114,74 @@ const vuexModule = {
         weekday: "long"
       });
       return date => timeFormatter.format(date);
+    },
+    formatCurrency(state) {
+      // Initialize locale settings
+      let { locale } = state;
+      if (locale) locale = [locale, "en-US"];
+      // in case the saved locale is invalid, en-US is backup
+      else locale = undefined;
+      const numberFormatter = new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: state.currency || "EUR"
+      });
+      return amount => numberFormatter.format(amount);
+    },
+    formatDateRelative: () => date => {
+      if (date instanceof Date) date = Math.floor(date.getTime() / 1000);
+      let seconds = Date.now() / 1000 - date;
+      let sign = seconds < 0;
+      seconds = Math.abs(seconds);
+      if (seconds < 60) return "just now";
+      let val = "";
+      if (seconds > 60 * 60 * 24 * 7 * 5) {
+        let dateThen = new Date(date),
+          dateNow = new Date();
+        let diffMonths = Math.abs(
+          dateNow.getMonth() -
+            dateThen.getMonth +
+            12 * (dateNow.getFullYear() - dateThen.getFullYear())
+        );
+        if (diffMonths > 12) {
+          val = Math.floor(diffMonths / 12) + " years";
+        } else {
+          if (diffMonths == 1) {
+            val = diffMonths + " month";
+          } else {
+            val = diffMonths + " months";
+          }
+        }
+      } else if (seconds > 60 * 60 * 24 * 7) {
+        let count = Math.floor(seconds / (60 * 60 * 24 * 7));
+        if (count == 1) {
+          val = count + " week";
+        } else {
+          val = count + " weeks";
+        }
+      } else if (seconds > 60 * 60 * 24) {
+        let count = Math.floor(seconds / (60 * 60 * 24));
+        if (count == 1) {
+          val = count + " day";
+        } else {
+          val = count + " days";
+        }
+      } else if (seconds > 60 * 60) {
+        let count = Math.floor(seconds / (60 * 60));
+        if (count == 1) {
+          val = count + " hour";
+        } else {
+          val = count + " hours";
+        }
+      } else {
+        let count = Math.floor(seconds / 60);
+        if (count == 1) {
+          val = count + " minute";
+        } else {
+          val = count + " minutes";
+        }
+      }
+      if (sign) return "in " + val;
+      else return val + " ago";
     }
   }
 };
