@@ -24,7 +24,7 @@
                   ><v-list-item-title v-text="list.name"></v-list-item-title
                 ></v-list-item-content>
 
-                <v-list-item-action style="display: block" class="pt-3">
+                <v-list-item-action style="display: block" class="">
                   <v-btn icon>
                     <v-icon
                       color="grey lighten-1"
@@ -108,15 +108,30 @@
           Edit your shopping list
         </v-card-title>
         <v-card-text>
-          <v-text-field
-            v-model="editList.name"
-            required
-            class="my-3 mx-3"
-            hint="Enter a name"
-            placeholder="Beer & other Drugs"
-            clearable
-          >
-          </v-text-field>
+          <v-row>
+            <v-col cols="12" sm="6" style="text-align: center">
+              <v-icon style="font-size: 10em" class="mb-3">{{
+                getIcon(editList.icon)
+              }}</v-icon>
+              <br />
+              <IconChooser
+                v-model="selectedIcon"
+                @ok="newIconSelected"
+                @cancel="noNewIconSelected"
+              ></IconChooser>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                v-model="editList.name"
+                required
+                class="my-3 mx-3"
+                hint="Enter a name"
+                placeholder="List Name"
+                clearable
+              >
+              </v-text-field>
+            </v-col>
+          </v-row>
         </v-card-text>
 
         <v-card-actions>
@@ -132,12 +147,16 @@
 
 <script>
 import { mapState } from "vuex";
+import IconChooser from "@/components/IconChooser.vue";
 import icons from "@/assets/icons.js";
 import en_autoItems from "@/assets/en_shoppingitems.js";
 import de_autoItems from "@/assets/de_shoppingitems.js";
 
 export default {
   name: "ShoppingList",
+  components: {
+    IconChooser
+  },
   data: () => ({
     //Variablen einfügen
     disabledTest: true,
@@ -145,6 +164,7 @@ export default {
     addItem: false,
     editListMode: false,
     editList: {},
+    selectedIcon: 0,
     textFieldNewItemName: "",
     textFieldNewItemAmount: 0,
     selected: [],
@@ -173,7 +193,6 @@ export default {
   computed: {
     ...mapState("userSettings", ["locale"]),
     isListSelected() {
-      console.log(this.selectedList + " " + this.shoppingLists.length);
       return !(
         this.selectedList < 0 || this.selectedList >= this.shoppingLists.length
       );
@@ -185,7 +204,7 @@ export default {
       //Methodencode
       this.addListDialog = true;
       this.editListMode = false;
-      this.editList = {};
+      this.editList = { name: "", icon: 0 };
     },
     clickCreateItem() {
       this.itemlist.push({
@@ -206,9 +225,9 @@ export default {
       this.addListDialog = false;
       this.update();
     },
+
     clickCancel() {
       this.addListDialog = false;
-      this.addItem = false;
     },
     openEditListDialog(list) {
       this.editListMode = true;
@@ -217,22 +236,19 @@ export default {
     },
 
     onClickDeleteCancel(item) {
-      console.log("## cancelling");
       //Alten content des textfeldes speichern und bei cancel restore
       //handeln was passiert wenn deleted / cancelled wird
       if (this.selectedItem != item.id) {
         this.setDefaultIcons(this.itemlist[this.selectedItem]);
       }
       if (item.disabledProp == true) {
-        //item löschen
-        //Methode zum löschen eines Items aufrufen
+        this.deleteShoppingItem(item);
       } else {
         //cancel methode
         this.setDefaultIcons(item);
       }
     },
     onSave(item) {
-      console.log("### save", item);
       if (isNaN(item.id)) {
         this.createItem(item);
       } else {
@@ -241,7 +257,6 @@ export default {
       this.setDefaultIcons(item);
     },
     onEdit(item) {
-      console.log("### edit", item);
       //Alten content des textfeldes speichern und bei cancel restore
       //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
       if (item.disabledProp == true) {
@@ -252,14 +267,12 @@ export default {
     setEditIcons(item) {
       //setzt nur icons
       item.disabledProp = false;
-      item.icon = this.shoppingIcons[1];
       item.cancelIcon = this.shoppingIcons[3];
     },
     setDefaultIcons(item) {
       //setzt nur icons
       try {
         item.disabledProp = true;
-        item.icon = this.shoppingIcons[0];
         item.cancelIcon = this.shoppingIcons[2];
       } catch (err) {
         console.error(err);
@@ -304,7 +317,7 @@ export default {
     async createShoppingsList(list) {
       //icon hinzufügen
       try {
-        var icon = 120;
+        let icon = list.icon;
         let name = list.name;
         const { data } = await this.$http.post("/_/createshoppinglist", {
           name,
@@ -336,7 +349,7 @@ export default {
       //icon hinzufügen
       try {
         let id = list.id;
-        let icon = 120;
+        let icon = list.icon;
         let name = list.name;
         const { data } = await this.$http.post("/_/editshoppinglist", {
           id,
@@ -368,6 +381,8 @@ export default {
     async deleteShoppingsList(list) {
       //icon hinzufügen
       try {
+        this.loadingItems = true;
+        this.loadingLists = true;
         if (
           this.shoppingLists.indexOf(list) == this.shoppingLists.length - 1 &&
           this.shoppingLists.length - 1 == this.selectedList
@@ -387,8 +402,12 @@ export default {
         } else {
           this.$store.dispatch("showSnackbar", data.message);
         }
+        this.loadingItems = false;
+        this.loadingLists = false;
         this.update();
       } catch (err) {
+        this.loadingItems = false;
+        this.loadingLists = false;
         console.error(err);
         this.$store.dispatch(
           "showSnackbar",
@@ -402,7 +421,6 @@ export default {
     async fetchShoppingItems() {
       if (!this.isListSelected) {
         //Keine Liste ist ausgewählt
-        console.log("nothing selected");
         this.itemlist = [];
         return;
       }
@@ -451,9 +469,7 @@ export default {
 
     async createItem(item) {
       try {
-        console.log(item);
         let itemName = item.item;
-        console.log(itemName);
         let listid = item.listid;
         const { data } = await this.$http.post("/_/createShoppingItem", {
           item: itemName,
@@ -488,14 +504,36 @@ export default {
         if (!data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            "Error editing shopping list item. Please try again later."
+            "Couldn't edit shopping item. Please try again later."
           );
         }
         this.fetchShoppingItems();
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          "Error editing shopping list item. Please try again later."
+          "Error editing shopping item. Please try again later."
+        );
+      }
+    },
+
+    async deleteShoppingItem(item) {
+      try {
+        //icon hinzufügen
+        var id = item.id;
+        const { data } = await this.$http.post("/_/deleteshoppingitem", {
+          id
+        });
+        if (!data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't delete shopping item. Please try again later."
+          );
+        }
+        this.fetchShoppingItems();
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error editing shopping item. Please try again later."
         );
       }
     },
@@ -515,16 +553,29 @@ export default {
       return icons[index];
     },
     getSelectListName() {
-      if (!this.isListSelected) {
+      if (
+        !this.isListSelected ||
+        this.shoppingLists[this.selectedList] == undefined
+      ) {
         return "";
       } else {
         return this.shoppingLists[this.selectedList].name;
       }
     },
+
+    newIconSelected(id) {
+      this.editList.icon = id;
+      this.selectedIcon = id;
+    },
+    noNewIconSelected() {
+      this.selectedIcon = this.editList.icon;
+    },
+
     async update() {
-      //Methode fetchShoppingList aufrufen um daten abzurufen aus mysql
       await this.fetchShoppinglists();
       await this.fetchShoppingItems();
+      this.loadingItems = false;
+      this.loadingLists = false;
     }
   }
 };

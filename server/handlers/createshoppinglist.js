@@ -13,7 +13,7 @@ module.exports = ({ db }) => ({
       // Icon index
       icon: {
         type: "int",
-        required: true,
+        default: 0
       }
     },
     handler: async ({ body, query, uid }, { success, fail, error }) => {
