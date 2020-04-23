@@ -3,7 +3,7 @@
     <h1 class="display-2 pb-6">Shopping List</h1>
     <v-row class="ml-4" cols="12">
       <v-col>
-        <v-card :loading="loadingLists">
+        <v-card :loading="loadingLists" style="height: 100%">
           <v-card-title
             >Shoppinglists
             <v-spacer></v-spacer>
@@ -47,8 +47,9 @@
       </v-col>
 
       <v-col>
-        <v-card :loading="loadingItems">
+        <v-card :loading="loadingItems" style="height: 100%">
           <v-card-title
+            ><v-icon class="mr-2">{{ getIcon(getSelectListIcon()) }}</v-icon
             >{{ getSelectListName() }} <v-spacer></v-spacer
             ><v-btn
               color="primary"
@@ -60,6 +61,20 @@
           >
 
           <v-card-text>
+            <v-row class="my-1 mr-4" align="center">
+              <strong class="mx-4 info--text text--darken-2">
+                Remaining: {{ remainingTasks }}
+              </strong>
+              <v-divider vertical></v-divider>
+              <strong class="mx-4 success--text text--darken-2">
+                Completed: {{ completedTasks }}
+              </strong>
+              <v-spacer></v-spacer>
+              <v-progress-circular
+                :value="progress"
+                class="mr-2"
+              ></v-progress-circular>
+            </v-row>
             <v-list dense
               ><v-list-item
                 v-for="(item, i) in itemlist"
@@ -72,11 +87,11 @@
                   <v-list-item-title
                     ><v-combobox
                       v-model="item.item"
-                      stl
                       :single-line="true"
                       :items="getAutocompletionItems()"
                       auto-select-first
                       append-icon=""
+                      :disabled="item.checked"
                       @keydown.enter="onSave(item)"
                       @blur="onSave(item)"
                     ></v-combobox
@@ -194,6 +209,15 @@ export default {
         this.selectedList >= this.shoppingLists.length ||
         this.selectedList == undefined
       );
+    },
+    completedTasks() {
+      return this.itemlist.filter(task => task.checked).length;
+    },
+    progress() {
+      return (this.completedTasks / this.itemlist.length) * 100;
+    },
+    remainingTasks() {
+      return this.itemlist.length - this.completedTasks;
     }
   },
 
@@ -440,6 +464,7 @@ export default {
               cancelIcon: this.shoppingIcons[2]
             });
           });
+          this.itemlist.sort((a, b) => a.checked - b.checked);
         } else {
           this.$store.dispatch(
             "showSnackbar",
@@ -573,6 +598,16 @@ export default {
         return "";
       } else {
         return this.shoppingLists[this.selectedList].name;
+      }
+    },
+    getSelectListIcon() {
+      if (
+        !this.isListSelected ||
+        this.shoppingLists[this.selectedList] == undefined
+      ) {
+        return "";
+      } else {
+        return this.shoppingLists[this.selectedList].icon;
       }
     },
 
