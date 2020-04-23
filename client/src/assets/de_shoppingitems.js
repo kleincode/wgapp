@@ -4,7 +4,7 @@ export default [
   "Äpfel",
   "Backpapier",
   "Bananen",
-  "Bergsteigermüsli",
+  "Bergsteiger müsli",
   "Bier",
   "Birnen",
   "Brezeln",

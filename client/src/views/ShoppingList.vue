@@ -86,13 +86,14 @@
                   </v-checkbox>
                   <v-list-item-title
                     ><v-combobox
+                      ref="combo"
                       v-model="item.item"
                       :single-line="true"
                       :items="getAutocompletionItems()"
                       auto-select-first
                       append-icon=""
                       :disabled="item.checked"
-                      @keydown.enter="onSave(item)"
+                      @keydown.enter="selectNextItem(i)"
                       @blur="onSave(item)"
                     ></v-combobox
                   ></v-list-item-title>
@@ -106,11 +107,17 @@
               </v-list-item>
             </v-list></v-card-text
           >
+          <div class="ma-4">
+            <FinishShoppingDialog
+              v-model="shoppingLists[selectedList]"
+              :remaining-tasks="remainingTasks"
+            ></FinishShoppingDialog>
+          </div>
         </v-card>
       </v-col>
     </v-row>
 
-    <v-dialog v-model="addListDialog" max-width="550px" overlay-opacity="1">
+    <v-dialog v-model="addListDialog" max-width="600px">
       <v-card>
         <v-card-title v-if="!editListMode">
           Create a new shopping list
@@ -145,11 +152,13 @@
           </v-row>
         </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions class="pb-3 pr-3">
           <!--spacer sorgt dafür dass buttons rechts sind-->
           <v-spacer></v-spacer>
-          <v-btn outlined @click="clickSaveList">Save</v-btn>
-          <v-btn outlined @click="clickCancel">Cancel</v-btn>
+          <v-btn text color="primary" class="mr-2" @click="clickSaveList"
+            >Save</v-btn
+          >
+          <v-btn text @click="clickCancel">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -159,6 +168,7 @@
 <script>
 import { mapState } from "vuex";
 import IconChooser from "@/components/IconChooser.vue";
+import FinishShoppingDialog from "@/components/dialogs/FinishShoppingDialog.vue";
 import icons from "@/assets/icons.js";
 import en_autoItems from "@/assets/en_shoppingitems.js";
 import de_autoItems from "@/assets/de_shoppingitems.js";
@@ -166,7 +176,8 @@ import de_autoItems from "@/assets/de_shoppingitems.js";
 export default {
   name: "ShoppingList",
   components: {
-    IconChooser
+    IconChooser,
+    FinishShoppingDialog
   },
   data: () => ({
     //Variablen einfügen
@@ -196,10 +207,6 @@ export default {
     loadingItems: false,
     loadingLists: false
   }),
-  async mounted() {
-    await this.fetchShoppinglists();
-    this.fetchShoppingItems();
-  },
 
   computed: {
     ...mapState("userSettings", ["locale"]),
@@ -221,6 +228,11 @@ export default {
     }
   },
 
+  async mounted() {
+    await this.fetchShoppinglists();
+    this.fetchShoppingItems();
+  },
+
   methods: {
     openCreateListDialog() {
       //Methodencode
@@ -233,10 +245,10 @@ export default {
         item: "",
         checked: false,
         listid: this.shoppingLists[this.selectedList].id,
-        disabledProp: false,
-        icon: this.shoppingIcons[1],
-        cancelIcon: this.shoppingIcons[2]
+        disabledProp: false
       });
+      let lastindex = this.itemlist.length - 1;
+      setTimeout(() => this.$refs.combo[lastindex].focus(), 100);
     },
     clickSaveList() {
       if (this.editListMode) {
@@ -271,12 +283,14 @@ export default {
       }
     },
     onSave(item) {
-      if (isNaN(item.id)) {
-        this.createItem(item);
-      } else {
-        this.editItem(item.item, item.id, item.checked);
-      }
-      this.setDefaultIcons(item);
+      setTimeout(() => {
+        if (isNaN(item.id)) {
+          this.createItem(item);
+        } else {
+          this.editItem(item.item, item.id, item.checked);
+        }
+        this.setDefaultIcons(item);
+      }, 50);
     },
     setEditIcons(item) {
       //setzt nur icons
@@ -306,7 +320,6 @@ export default {
             this.shoppingLists.push({
               name: list.name,
               icon: list.icon,
-              editIcon: this.shoppingIcons[0],
               cancelIcon: this.shoppingIcons[2],
               disabledProp: true,
               id: list.id
@@ -619,11 +632,20 @@ export default {
       this.selectedIcon = this.editList.icon;
     },
 
+    selectNextItem(i) {
+      this.$refs.combo[i].blur();
+      if (this.remainingTasks > i + 1) {
+        this.$refs.combo[i + 1].focus();
+      } else {
+        this.$refs.combo[0].focus();
+      }
+    },
+
     async update() {
       await this.fetchShoppinglists();
+      this.loadingLists = false;
       await this.fetchShoppingItems();
       this.loadingItems = false;
-      this.loadingLists = false;
     }
   }
 };

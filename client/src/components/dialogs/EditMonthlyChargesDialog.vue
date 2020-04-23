@@ -1,7 +1,9 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn icon v-on="on"><v-icon>add</v-icon></v-btn>
+      <v-btn icon :disabled="remainingTasks > 0" v-on="on"
+        ><v-icon>add</v-icon></v-btn
+      >
     </template>
     <v-form ref="form" v-model="formValid" @submit.prevent="save">
       <v-card :loading="loading">
@@ -77,8 +79,8 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="reset">Cancel</v-btn>
-          <v-btn color="blue darken-1" text type="submit" :disabled="!formValid"
+          <v-btn text @click="reset">Cancel</v-btn>
+          <v-btn color="primary" text type="submit" :disabled="!formValid"
             >Save</v-btn
           >
         </v-card-actions>
