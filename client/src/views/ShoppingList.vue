@@ -15,7 +15,7 @@
             <v-list-item-group
               v-model="selectedList"
               color="primary"
-              @change="update"
+              @change="fetchShoppingItems"
             >
               <v-list-item v-for="(list, i) in shoppingLists" :key="i"
                 ><v-list-item-icon>
@@ -66,30 +66,26 @@
                 :key="i"
                 @blur="onSave(item)"
               >
-                <v-list-item-content>
+                <v-list-item-content style="display: contents">
+                  <v-checkbox v-model="item.checked" @change="checkItem(item)">
+                  </v-checkbox>
                   <v-list-item-title
                     ><v-combobox
                       v-model="item.item"
+                      stl
                       :single-line="true"
                       :items="getAutocompletionItems()"
-                      :disabled="item.disabledProp"
                       auto-select-first
+                      append-icon=""
+                      @keydown.enter="onSave(item)"
                       @blur="onSave(item)"
                     ></v-combobox
                   ></v-list-item-title>
                 </v-list-item-content>
 
-                <v-list-item-action style="display: block" class="pt-3">
-                  <v-btn v-if="item.disabledProp" icon @click="onEdit(item)">
-                    <v-icon color="grey lighten-1">{{ item.icon }}</v-icon>
-                  </v-btn>
-                  <v-btn v-else icon @click="onSave(item)">
-                    <v-icon color="grey lighten-1">{{ item.icon }}</v-icon>
-                  </v-btn>
+                <v-list-item-action style="display: block">
                   <v-btn icon @click="onClickDeleteCancel(item)">
-                    <v-icon color="grey lighten-1">{{
-                      item.cancelIcon
-                    }}</v-icon>
+                    <v-icon>{{ item.cancelIcon }}</v-icon>
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
@@ -194,7 +190,9 @@ export default {
     ...mapState("userSettings", ["locale"]),
     isListSelected() {
       return !(
-        this.selectedList < 0 || this.selectedList >= this.shoppingLists.length
+        this.selectedList < 0 ||
+        this.selectedList >= this.shoppingLists.length ||
+        this.selectedList == undefined
       );
     }
   },
@@ -255,14 +253,6 @@ export default {
         this.editItem(item.item, item.id, item.checked);
       }
       this.setDefaultIcons(item);
-    },
-    onEdit(item) {
-      //Alten content des textfeldes speichern und bei cancel restore
-      //überprüfen ob schon ein anderes Textfeld im Bearbeitungsmodus ist
-      if (item.disabledProp == true) {
-        //edit Mode
-        this.setEditIcons(item);
-      }
     },
     setEditIcons(item) {
       //setzt nur icons
@@ -443,7 +433,7 @@ export default {
             this.itemlist.push({
               id: list.id,
               item: list.item,
-              checked: list.checked,
+              checked: Boolean(list.checked),
               listid: this.shoppingLists[this.selectedList].id,
               disabledProp: true,
               icon: this.shoppingIcons[0],
@@ -512,6 +502,29 @@ export default {
         this.$store.dispatch(
           "showSnackbar",
           "Error editing shopping item. Please try again later."
+        );
+      }
+    },
+
+    async checkItem(item) {
+      try {
+        var id = item.id;
+        var targetState = !item.checked;
+        const { data } = await this.$http.post("/_/checkshoppingitem", {
+          id,
+          targetState
+        });
+        if (!data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't check shopping item. Please try again later."
+          );
+        }
+        this.fetchShoppingItems();
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error checking shopping item. Please try again later."
         );
       }
     },
