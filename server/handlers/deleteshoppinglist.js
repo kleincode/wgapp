@@ -1,4 +1,4 @@
-/*  Handler for "/_/deletemonthlycharge". Purpose: Delete monthly charge in monthlycharge table */
+/*  Handler for "/_/deleteshoppinglist". Purpose: Delete monthly charge in monthlycharge table */
 const Helpers = require("../components/Helpers");
 module.exports = ({ db }) => ({
     type: "POST",
@@ -20,17 +20,17 @@ module.exports = ({ db }) => ({
             "DELETE FROM shoppinglists WHERE id = ? AND hid = ?",
             [body.id, requestHid]
           );
-          const { results: { affectedRows2 } } = await db.query(
+          const { results: { affectedRows: entries } } = await db.query(
             "DELETE FROM shoppingitems WHERE listid = ? AND hid = ?",
             [body.id, requestHid]
           );
           if (affectedRows == 0) {
             fail("You do not have permission to perform this operation.");
           } else {
-            if (isNaN(affectedRows2)) {
+            if (isNaN(entries)) {
                 success("Deleted shopping list with 0 entries successfully.");
             } else {
-                success("Deleted shopping list with " + affectedRows2 + " entries successfully.");
+                success("Deleted shopping list with " + entries + " entries successfully.");
             }
           }
         } catch (err) {
