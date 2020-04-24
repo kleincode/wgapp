@@ -11,7 +11,7 @@ module.exports = ({ db }) => ({
         try {
           const { results } = await db.query(baseQuery, baseParams);
           if (results.length == 0) {
-            success({ message: "Empty.", data: {} });
+            success({ message: "Empty.", data: [] });
           } else success({ message: "monthly charges received", data: results });
         } catch (err) {
           error("Error while fetching monthly charges from database.", err);

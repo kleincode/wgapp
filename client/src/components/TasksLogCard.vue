@@ -11,7 +11,7 @@
           :icon="getIcons()[task.icon]"
         >
           <template v-slot:opposite>
-            <span class="headline font-weight-bold"
+            <span class="subtitle font-weight-bold"
               >{{
                 new Date(task.time).toLocaleDateString(
                   $store.state.userSettings.locale || undefined
@@ -27,15 +27,26 @@
             >
           </template>
           <div class="py-4" :class="i % 2 ? 'text-right' : ''">
-            <h2 class="display-1 font-weight-light mb-4 primary--text">
+            <h2 class="display-1 font-weight-light mb-1 primary--text">
               {{ task.name }}
             </h2>
-            <v-chip>
-              <v-avatar left>
-                <img src="https://randomuser.me/api/portraits/men/81.jpg" />
-              </v-avatar>
-              {{ getUserName(task.assigned) }}
-            </v-chip>
+            <div v-if="task.assigned == task.working">
+              <v-chip>
+                <v-avatar left>
+                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                </v-avatar>
+                {{ getUserName(task.working) }}
+              </v-chip>
+            </div>
+            <div v-else>
+              originally: {{ getUserName(task.assigned) }} <br />
+              <v-chip>
+                <v-avatar left>
+                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                </v-avatar>
+                {{ getUserName(task.working) }}
+              </v-chip>
+            </div>
           </div>
         </v-timeline-item>
       </v-timeline>
