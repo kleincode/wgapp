@@ -111,6 +111,12 @@ export default {
         });
       contents.push(
         {
+          name: "Shopping",
+          icon: "shopping_cart",
+          path: "/shoppinglist",
+          show: true
+        },
+        {
           name: "Finances",
           icon: "money",
           path: "/finances",
