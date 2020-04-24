@@ -11,7 +11,7 @@
               >New Shoppinglist</v-btn
             >
           </v-card-title>
-          <v-list>
+          <v-list v-if="shoppingLists.length > 0">
             <v-list-item-group
               v-model="selectedList"
               color="primary"
@@ -26,23 +26,29 @@
 
                 <v-list-item-action style="display: block" class="">
                   <v-btn icon>
-                    <v-icon
-                      color="grey lighten-1"
-                      @click="openEditListDialog(list)"
-                      >{{ shoppingIcons[0] }}</v-icon
-                    >
+                    <v-icon @click="openEditListDialog(list)">{{
+                      shoppingIcons[0]
+                    }}</v-icon>
                   </v-btn>
                   <v-btn icon>
-                    <v-icon
-                      color="grey lighten-1"
-                      @click="deleteShoppingsList(list)"
-                      >{{ shoppingIcons[2] }}</v-icon
-                    >
+                    <v-icon @click="deleteShoppingsList(list)">{{
+                      shoppingIcons[2]
+                    }}</v-icon>
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>
             </v-list-item-group>
           </v-list>
+          <div
+            v-else
+            style="text-align: center"
+            class="text--disabled pb-12 pt-8"
+          >
+            <v-icon style="font-size: 10em" class="text--disabled"
+              >shopping_cart</v-icon
+            >
+            <br />Looks like, you have no lists yet.
+          </div>
         </v-card>
       </v-col>
 
@@ -75,41 +81,57 @@
                 class="mr-2"
               ></v-progress-circular>
             </v-row>
-            <v-list dense
-              ><v-list-item
-                v-for="(item, i) in itemlist"
-                :key="i"
-                @blur="onSave(item)"
-              >
-                <v-list-item-content style="display: contents">
-                  <v-checkbox v-model="item.checked" @change="checkItem(item)">
-                  </v-checkbox>
-                  <v-list-item-title
-                    ><v-combobox
-                      ref="combo"
-                      v-model="item.item"
-                      :single-line="true"
-                      :items="getAutocompletionItems()"
-                      auto-select-first
-                      append-icon=""
-                      :disabled="item.checked"
-                      @keydown.enter="selectNextItem(i)"
-                      @blur="onSave(item)"
-                    ></v-combobox
-                  ></v-list-item-title>
-                </v-list-item-content>
+            <v-list v-if="itemlist.length > 0" dense>
+              <transition-group name="shopping-items" tag="ul">
+                <v-list-item
+                  v-for="(item, i) in itemlist"
+                  :key="item.id"
+                  @blur="onSave(item)"
+                >
+                  <v-list-item-content style="display: contents">
+                    <v-checkbox
+                      v-model="item.checked"
+                      @change="checkItem(item)"
+                    >
+                    </v-checkbox>
+                    <v-list-item-title
+                      ><v-combobox
+                        ref="combo"
+                        v-model="item.item"
+                        :single-line="true"
+                        :items="getAutocompletionItems()"
+                        auto-select-first
+                        append-icon=""
+                        :disabled="item.checked"
+                        @keydown.enter="selectNextItem(i)"
+                        @blur="onSave(item)"
+                      ></v-combobox
+                    ></v-list-item-title>
+                  </v-list-item-content>
 
-                <v-list-item-action style="display: block">
-                  <v-btn icon @click="onClickDeleteCancel(item)">
-                    <v-icon>{{ item.cancelIcon }}</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list></v-card-text
+                  <v-list-item-action style="display: block">
+                    <v-btn icon @click="onClickDeleteCancel(item)">
+                      <v-icon>{{ item.cancelIcon }}</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+              </transition-group>
+            </v-list>
+            <div
+              v-else
+              style="text-align: center"
+              class="text--disabled pb-12 pt-8"
+            >
+              <v-icon style="font-size: 10em" class="text--disabled"
+                >shopping_basket</v-icon
+              >
+              <br />Happy shopping!
+            </div></v-card-text
           >
           <div class="ma-4">
             <FinishShoppingDialog
               v-model="shoppingLists[selectedList]"
+              :completed-tasks="completedTasks"
               :remaining-tasks="remainingTasks"
             ></FinishShoppingDialog>
           </div>
@@ -245,7 +267,8 @@ export default {
         item: "",
         checked: false,
         listid: this.shoppingLists[this.selectedList].id,
-        disabledProp: false
+        disabledProp: false,
+        id: -1
       });
       let lastindex = this.itemlist.length - 1;
       setTimeout(() => this.$refs.combo[lastindex].focus(), 100);
@@ -284,7 +307,7 @@ export default {
     },
     onSave(item) {
       setTimeout(() => {
-        if (isNaN(item.id)) {
+        if (item.id == -1) {
           this.createItem(item);
         } else {
           this.editItem(item.item, item.id, item.checked);
@@ -464,20 +487,17 @@ export default {
         });
 
         if (data.success) {
-          this.itemlist = [];
-          //TODO: Überprüfen ob liste leer ist
-          data.data.forEach(list => {
-            this.itemlist.push({
-              id: list.id,
-              item: list.item,
-              checked: Boolean(list.checked),
+          this.itemlist = data.data
+            .map(elem => ({
+              id: elem.id,
+              item: elem.item,
+              checked: !!elem.checked,
               listid: this.shoppingLists[this.selectedList].id,
               disabledProp: true,
               icon: this.shoppingIcons[0],
               cancelIcon: this.shoppingIcons[2]
-            });
-          });
-          this.itemlist.sort((a, b) => a.checked - b.checked);
+            }))
+            .sort((a, b) => a.checked - b.checked);
         } else {
           this.$store.dispatch(
             "showSnackbar",
@@ -608,7 +628,7 @@ export default {
         !this.isListSelected ||
         this.shoppingLists[this.selectedList] == undefined
       ) {
-        return "";
+        return "No list selected";
       } else {
         return this.shoppingLists[this.selectedList].name;
       }
@@ -650,3 +670,8 @@ export default {
   }
 };
 </script>
+<style>
+.shopping-items-move {
+  transition: transform 0.6s;
+}
+</style>
