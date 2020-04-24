@@ -40,6 +40,18 @@
         </v-list-item>
       </v-list>
       <template v-slot:append>
+        <v-chip
+          v-if="offline"
+          color="orange"
+          text-color="white"
+          label
+          class="ma-2 center"
+        >
+          <v-icon left>
+            offline_bolt
+          </v-icon>
+          Offline
+        </v-chip>
         <div class="pa-2">
           <v-btn block color="red lighten-2" @click="logout">Logout</v-btn>
         </div>
@@ -49,6 +61,7 @@
     <v-app-bar app color="primary" class="white--text" clipped-left>
       <v-app-bar-nav-icon
         color="white"
+        aria-label="Menu"
         @click="menuVisible = !menuVisible"
       ></v-app-bar-nav-icon>
       <v-toolbar-title>WG App</v-toolbar-title>
@@ -142,7 +155,8 @@ export default {
       "userFirstName",
       "userLastName",
       "snackbarMessage",
-      "updateAvailable"
+      "updateAvailable",
+      "offline"
     ]),
     ...mapGetters(["isUpdateAvailable"])
   },

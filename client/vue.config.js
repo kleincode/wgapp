@@ -25,7 +25,11 @@ module.exports = {
       fix: true
     })
   },
-  configureWebpack: {
-    devtool: "eval-source-map"
+  configureWebpack: config => {
+    if(process.env.NODE_ENV === "production") {
+      config.devtool = false;
+    } else {
+      config.devtool = "eval-source-map";
+    }
   }
 };

@@ -1,5 +1,43 @@
+// Cache policies
 self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+
+workbox.routing.registerNavigationRoute("/index.html");
+
+// Google Fonts
+workbox.routing.registerRoute(
+  new RegExp('https?://fonts.(?:googleapis|gstatic).com/(.*)'),
+  new workbox.strategies.CacheFirst({
+    cacheName: 'googleapis',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 30,
+      }),
+    ],
+  }),
+);
+
+// API calls
+workbox.routing.registerRoute(
+  new RegExp('/_/(.*)'),
+  new workbox.strategies.NetworkFirst({
+    cacheName: 'api',
+  }),
+);
+
+// Any non-pre-cached images
+workbox.routing.registerRoute(
+  /\.(?:png|gif|jpg|jpeg|svg)$/,
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'images',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxEntries: 60,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      }),
+    ],
+  }),
+);
 
 // Install new service worker when user confirms update (message "skipWaiting", see registerServiceWorker.js)
 self.addEventListener("message", msg => {

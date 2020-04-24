@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <h1 class="display-2 mb-6" style="max-width: 80%">
+      Hi, {{ $store.state.userFirstName }}!
+    </h1>
     <v-row align="stretch" justify="center">
       <v-col
         v-if="clockWidgetEnabled"

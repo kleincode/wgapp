@@ -38,6 +38,7 @@ axios.interceptors.response.use(
   }
 );
 
+// Instantiate Vue
 new Vue({
   router,
   store,

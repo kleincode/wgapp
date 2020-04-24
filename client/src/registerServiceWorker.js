@@ -14,29 +14,24 @@ const notifyUserAboutUpdate = worker => {
 if (process.env.NODE_ENV === "production") {
   register(`${process.env.BASE_URL}service-worker.js`, {
     ready() {
-      console.log(
-        "App is being served from cache by a service worker.\n" +
-          "For more details, visit https://goo.gl/AFskqB"
-      );
+      // do nothing
     },
     registered(registration) {
-      console.log("Service worker has been registered.");
+      console.log("PWA installed.");
       store.commit("set_service_worker", registration);
     },
     cached() {
-      console.log("Content has been cached for offline use.");
+      // do nothing
     },
     updatefound() {
-      console.log("New content is downloading.");
+      // do nothing
     },
     updated(registration) {
-      console.log("New content is available; please refresh.");
+      // New content available, ask for refresh
       notifyUserAboutUpdate(registration.waiting);
     },
     offline() {
-      console.log(
-        "No internet connection found. App is running in offline mode."
-      );
+      // Do nothing
     },
     error(error) {
       console.error("Error during service worker registration:", error);

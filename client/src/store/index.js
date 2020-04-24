@@ -17,7 +17,8 @@ let store = new Vuex.Store({
     snackbarMessage: "",
     householdUsers: {},
     updateAvailable: null,
-    serviceWorker: null
+    serviceWorker: null,
+    offline: false
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -51,6 +52,9 @@ let store = new Vuex.Store({
     },
     set_service_worker(state, sw) {
       state.serviceWorker = sw;
+    },
+    set_offline(state, offline) {
+      state.offline = offline;
     }
   },
   actions: {
@@ -156,5 +160,9 @@ let store = new Vuex.Store({
     tasks: TasksModule
   }
 });
+
+// Offline checkers
+window.addEventListener("online", () => store.commit("set_offline", false));
+window.addEventListener("offline", () => store.commit("set_offline", true));
 
 export default store;
