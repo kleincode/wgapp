@@ -362,7 +362,6 @@ export default {
         31
       );
       // Now fetch the calculated timespan
-      console.log("fetching", this.fetchStart, this.fetchEnd);
       const eventData = await listUpcomingEvents(
         this.fetchStart,
         this.fetchEnd,

@@ -136,6 +136,7 @@ const vuexModule = {
               name: task.name,
               time: task.time,
               icon: task.icon,
+              working: task.workingMember,
               assigned: task.assignedMember
             }))
           : [];

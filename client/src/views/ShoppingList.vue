@@ -612,7 +612,7 @@ export default {
     //Helpers
     getAutocompletionItems() {
       let locale = this.locale;
-      if (locale) locale = [locale, "en-US"];
+      if (!locale) locale = "en-US";
       if (locale.toString().substr(0, 2) == "de") {
         return de_autoItems;
       } else {

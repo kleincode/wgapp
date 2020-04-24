@@ -664,7 +664,7 @@ export default {
           if (data.results.length == 0) {
             this.lastBill = "----";
           } else {
-            this.lastBill = this.renderDate(
+            this.lastBill = this.formatDateRelative(
               new Date(data.results[0].lastBill).getTime() / 1000
             );
           }
@@ -680,7 +680,7 @@ export default {
           "showSnackbar",
           "Communication error. Please try again later."
         );
-        console.error("Error during fetching last bill");
+        console.error("Error during fetching last bill", err);
       }
       this.loadingLastBilling = false;
     },

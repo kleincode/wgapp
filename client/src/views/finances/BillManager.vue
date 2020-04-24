@@ -229,6 +229,7 @@ export default {
   }),
   computed: {
     ...mapGetters(["getUserName", "getUserInitials"]),
+    ...mapGetters("userSettings", ["formatDateRelative"]),
     memberTotals() {
       let totals = JSON.parse(JSON.stringify(this.singleMemberTotals));
       if (this.includeMonthlyCharges) {
@@ -275,7 +276,7 @@ export default {
         this.memberMap = {};
         this.monthlyData = [];
         let lastBill = new Date(data.lastBill).getTime();
-        this.lastBill = this.renderDate(lastBill);
+        this.lastBill = this.formatDateRelative(lastBill);
         this.lastBillTimestamp = lastBill;
         if (
           data.mainResult.length == 0 &&
@@ -564,68 +565,7 @@ export default {
       }
       this.debts = debts;
     },
-    getTimespanDiff() {},
 
-    renderDate(itemTimestamp) {
-      if (itemTimestamp == 0) {
-        return "no last bill";
-      }
-      itemTimestamp = itemTimestamp / 1000;
-      let curTimestamp = new Date().getTime() / 1000;
-      let seconds = curTimestamp - itemTimestamp;
-      let sign = seconds < 0;
-      seconds = Math.abs(seconds);
-      if (seconds < 60) return "just now";
-      let val = "";
-      if (seconds > 60 * 60 * 24 * 7 * 5) {
-        let dateThen = new Date(itemTimestamp),
-          dateNow = new Date(curTimestamp);
-        let diffMonths = Math.abs(
-          dateNow.getMonth() -
-            dateThen.getMonth() +
-            12 * (dateNow.getFullYear() - dateThen.getFullYear())
-        );
-        if (diffMonths > 12) {
-          val = Math.floor(diffMonths / 12) + " years";
-        } else {
-          if (diffMonths == 1) {
-            val = diffMonths + " month";
-          } else {
-            val = diffMonths + " months";
-          }
-        }
-      } else if (seconds > 60 * 60 * 24 * 7) {
-        let count = Math.floor(seconds / (60 * 60 * 24 * 7));
-        if (count == 1) {
-          val = count + " week";
-        } else {
-          val = count + " weeks";
-        }
-      } else if (seconds > 60 * 60 * 24) {
-        let count = Math.floor(seconds / (60 * 60 * 24));
-        if (count == 1) {
-          val = count + " day";
-        } else {
-          val = count + " days";
-        }
-      } else if (seconds > 60 * 60) {
-        let count = Math.floor(seconds / (60 * 60));
-        if (count == 1) {
-          val = count + " hour";
-        } else {
-          val = count + " hours";
-        }
-      } else {
-        let count = Math.floor(seconds / 60);
-        if (count == 1) {
-          val = count + " minute";
-        } else {
-          val = count + " minutes";
-        }
-      }
-      if (sign) return "in " + val;
-      else return val + " ago";
-    },
     getCurrency(val) {
       if (val == 0) {
         val = 0.0;

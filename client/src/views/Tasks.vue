@@ -3,7 +3,12 @@
     <h1 class="display-2">Tasks</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4">
-        <v-card outlined class="text-center" :loading="loading">
+        <v-card
+          outlined
+          class="text-center"
+          :loading="loading"
+          style="height: 100%"
+        >
           <h2 class="title pt-8">Today's Tasks</h2>
           <div class="container">
             <v-row justify="center">
