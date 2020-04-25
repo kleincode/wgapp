@@ -17,6 +17,11 @@ Vue.config.productionTip = false;
 
 Vue.use(VueAxios, axios);
 
+//Vue UUID
+import UUID from "vue-uuid";
+
+Vue.use(UUID);
+
 //Authorization: load token and refresh user data on startup
 const token = localStorage.getItem("auth_token");
 if (token) {
