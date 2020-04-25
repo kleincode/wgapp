@@ -1,7 +1,49 @@
 <template>
   <v-app>
+    <v-navigation-drawer v-model="drawer" app temporary absolute>
+      <v-list-item>
+        <v-list-item-avatar>
+          <v-img
+            alt="Vuetify Logo"
+            class="shrink mr-2"
+            contain
+            :src="require('./assets/avatar.webp')"
+            transition="scale-transition"
+            width="40"
+          />
+        </v-list-item-avatar>
+
+        <v-list-item-content>
+          <v-list-item-title>Jeff</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+      <v-divider></v-divider>
+
+      <v-list dense>
+        <v-list-item v-for="item in sections" :key="item.title" link>
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block color="warning" @click="logout"
+            ><v-icon class="mr-1">help</v-icon> Help</v-btn
+          >
+        </div>
+      </template>
+    </v-navigation-drawer>
     <v-app-bar app>
       <div class="d-flex align-center">
+        <v-btn icon @click.stop="drawer = !drawer"
+          ><v-icon>dehaze</v-icon></v-btn
+        >
         <v-img
           alt="Vuetify Logo"
           class="shrink mr-2"
@@ -63,7 +105,16 @@ export default {
     Home
   },
   data: () => ({
-    links: ["Home", "Open App", "Legal Notice"]
+    links: ["Home", "Open App", "Legal Notice"],
+    drawer: true,
+    sections: [
+      { title: "Home", icon: "home" },
+      { title: "Introduction", icon: "info" },
+      { title: "Features", icon: "list" },
+      { title: "Roadmap", icon: "place" },
+      { title: "FAQ", icon: "question_answer" },
+      { title: "About us", icon: "group" }
+    ]
   }),
   async created() {
     this.$vuetify.theme.dark = false;
