@@ -63,7 +63,7 @@ export default {
     Home
   },
   data: () => ({
-    links: ["Home", "Open App", "FAQ", "Contact Us"]
+    links: ["Home", "Open App", "Legal Notice"]
   }),
   async created() {
     this.$vuetify.theme.dark = false;

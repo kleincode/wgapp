@@ -44,7 +44,7 @@
         >
       </v-col>
     </v-row>
-    <v-row id="introduction" justify="center">
+    <v-row id="introduction" justify="center" class="ml-2 mr-2">
       <v-col cols="12" md="11" lg="9" class="mt-12 mb-12">
         <v-card tile color="primary" class="pl-5 pr-5"
           ><v-card-text class="white--text"
@@ -96,6 +96,21 @@
           looks like an app. That way we will never ever have any compatibality
           issues. Fancy isn't it?
         </div>
+        <v-row justify="center" class="mt-6">
+          <v-col cols="4" class="text-center"
+            ><v-icon style="font-size: 7em" color="black"
+              >smartphone</v-icon
+            ></v-col
+          >
+          <v-col cols="4" class="text-center"
+            ><v-icon style="font-size: 7em" color="black">tablet</v-icon></v-col
+          >
+          <v-col cols="4" class="text-center"
+            ><v-icon style="font-size: 7em" color="black"
+              >computer</v-icon
+            ></v-col
+          >
+        </v-row>
       </v-col>
     </v-row>
     <v-card class="mt-12 white--text" color="#04182d" style="min-height: 400px">
@@ -103,7 +118,7 @@
         <v-col cols="12" class="pt-12 text-center"
           ><div class="display-4 mb-7">Jeff's Features</div>
         </v-col>
-        <v-col cols="12" md="10" lg="7"
+        <v-col cols="12" md="11" lg="7"
           ><v-row>
             <v-col
               v-for="(feat, i) in features"
@@ -144,15 +159,17 @@
         >
       </v-row>
     </v-card>
-    <v-row justify="center">
+    <v-row justify="center" class="ml-2 mr-2">
       <v-col cols="12" md="8" class="mt-12 mb-12 text-center"
         ><div class="display-3" style="line-height: 1.6;">
           Interested? Move in with Jeff just by
           <span class="font-weight-bold">signing up</span>!
         </div>
         <div class="title text--secondary">
-          Jeff is currently free for everyone. Create your account and household
-          and start inviting people. It's that simple!
+          Jeff is currently
+          <span class="text--primary font-weight-bold">free</span> for everyone.
+          Create your account and household and start inviting people. It's that
+          simple! (We have even a dark mode..)
         </div>
         <v-btn class="mt-4 mb-12" outlined x-large>
           <v-icon left>mdi-open-in-new</v-icon>Open App</v-btn
@@ -266,7 +283,7 @@ export default {
         headline: "Shopping Lists",
         description: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
           sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`,
-        image: "Dashboard.svg"
+        image: "ShoppingLists.svg"
       },
       {
         headline: "Tasks",
