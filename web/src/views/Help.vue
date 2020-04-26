@@ -37,6 +37,7 @@
                         :elevation="hover ? 8 : 2"
                         color="primary lighten-1"
                         class="white--text text-center fill-height"
+                        :to="{ name: topic.link }"
                       >
                         <v-row class="fill-height">
                           <v-col cols="12" align-self="center">
@@ -60,6 +61,7 @@
 </template>
 <script>
 export default {
+  name: "Help",
   data: () => ({
     topics: [
       {
@@ -72,7 +74,8 @@ export default {
       },
       {
         name: "Tasks",
-        icon: "list"
+        icon: "list",
+        link: "Tasks"
       },
       {
         name: "Shopping Lists",
