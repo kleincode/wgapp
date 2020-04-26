@@ -62,7 +62,7 @@
               color="primary"
               text
               :disabled="!isListSelected"
-              @click="clickCreateItem"
+              @click="pushItem"
             >
               New Item
             </v-btn>
@@ -85,11 +85,7 @@
             </v-row>
             <v-list v-if="items.length > 0" dense>
               <transition-group name="shopping-items" tag="ul">
-                <v-list-item
-                  v-for="item in items"
-                  :key="item.id"
-                  @blur="onSave(item)"
-                >
+                <v-list-item v-for="(item, i) in items" :key="item.id">
                   <v-list-item-content style="display: contents">
                     <v-checkbox
                       v-model="item.checked"
@@ -106,7 +102,7 @@
                         append-icon=""
                         :disabled="item.checked"
                         @keydown.enter="selectNextItem(i)"
-                        @blur="onSave(item)"
+                        @blur="updateItem(item, i)"
                       ></v-combobox
                     ></v-list-item-title>
                   </v-list-item-content>
@@ -212,13 +208,14 @@ export default {
   async mounted() {
     try {
       await this.$store.dispatch("shopping/sync");
+      await this.fetchShoppingItems();
     } catch (err) {
       this.$store.dispatch("showSnackbar", "Sync failed: " + err);
     }
   },
 
   methods: {
-    async clickCreateItem() {
+    async pushItem() {
       const newItem = {
         text: "",
         checked: false,
@@ -226,44 +223,15 @@ export default {
         id: this.$uuid.v1()
       };
       await this.$store.dispatch("shopping/pushItem", newItem);
-      let lastindex = this.itemlist.length - 1;
+      let lastindex = this.items.length - 1;
       setTimeout(() => this.$refs.combo[lastindex].focus(), 100);
     },
 
-    onClickDeleteCancel(item) {
-      //Alten content des textfeldes speichern und bei cancel restore
-      //handeln was passiert wenn deleted / cancelled wird
-      if (this.selectedItem != item.id) {
-        this.setDefaultIcons(this.itemlist[this.selectedItem]);
-      }
-      if (item.disabledProp == true) {
-        this.deleteShoppingItem(item);
-      } else {
-        //cancel methode
-        this.setDefaultIcons(item);
-      }
+    updateItem(item, index) {
+      this.$refs.combo[index].blur();
+      // wait for next tick because combobox doesn't update its text value right away (vuetify bug)
+      this.$nextTick(() => this.$store.dispatch("shopping/editItem", item));
     },
-    onSave(item) {
-      setTimeout(() => {
-        if (item.id == -1) {
-          this.createItem(item);
-        } else {
-          this.editItem(item.item, item.id, item.checked);
-        }
-        this.setDefaultIcons(item);
-      }, 50);
-    },
-    setDefaultIcons(item) {
-      //setzt nur icons
-      try {
-        item.disabledProp = true;
-        item.cancelIcon = this.shoppingIcons[2];
-      } catch (err) {
-        console.error(err);
-      }
-    },
-
-    //Shopping items
 
     async fetchShoppingItems() {
       this.$store.dispatch(
@@ -274,100 +242,6 @@ export default {
         "fetching",
         this.isListSelected ? this.lists[this.selectedList].id : false
       );
-    },
-
-    async createItem(item) {
-      try {
-        let itemName = item.item;
-        let listid = item.listid;
-        const { data } = await this.$http.post("/_/createShoppingItem", {
-          item: itemName,
-          listid
-        });
-        if (!data.success) {
-          console.error(data);
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't create new shopping list item. Please try again later."
-          );
-        }
-        this.fetchShoppingItems();
-      } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error creating shopping list item. Please try again later."
-        );
-      }
-    },
-    async editItem(newItemName, itemid, checked) {
-      try {
-        //icon hinzufügen
-        var item = newItemName;
-        var listid = this.lists[this.selectedList].id;
-        const { data } = await this.$http.post("/_/editShoppingItem", {
-          item,
-          listid,
-          itemid,
-          checked
-        });
-        if (!data.success) {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't edit shopping item. Please try again later."
-          );
-        }
-        this.fetchShoppingItems();
-      } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error editing shopping item. Please try again later."
-        );
-      }
-    },
-
-    async checkItem(item) {
-      try {
-        var id = item.id;
-        var targetState = !item.checked;
-        const { data } = await this.$http.post("/_/checkshoppingitem", {
-          id,
-          targetState
-        });
-        if (!data.success) {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't check shopping item. Please try again later."
-          );
-        }
-        this.fetchShoppingItems();
-      } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error checking shopping item. Please try again later."
-        );
-      }
-    },
-
-    async deleteShoppingItem(item) {
-      try {
-        //icon hinzufügen
-        var id = item.id;
-        const { data } = await this.$http.post("/_/deleteshoppingitem", {
-          id
-        });
-        if (!data.success) {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't delete shopping item. Please try again later."
-          );
-        }
-        this.fetchShoppingItems();
-      } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error editing shopping item. Please try again later."
-        );
-      }
     },
 
     //Helpers
