@@ -40,6 +40,11 @@ const vuexModule = {
     edit_item(state, item) {
       const index = state.items.findIndex(el => el.id == item.id);
       if (index >= 0) state.items[index] = item;
+    },
+    // Use deleteItem action!
+    delete_item(state, id) {
+      const index = state.items.findIndex(el => el.id == id);
+      if (index >= 0) state.items.splice(index, 1);
     }
   },
   actions: {
@@ -71,7 +76,7 @@ const vuexModule = {
         if (updatedRows) commit("edit_list", list);
       });
     },
-    saveOrder({ state }) {
+    saveListOrder({ state }) {
       return db.transaction("rw", shoppingLists, async () => {
         for (let i = 0; i < state.lists.length; i++) {
           const list = state.lists[i];
@@ -84,7 +89,7 @@ const vuexModule = {
       return db.transaction("rw", shoppingLists, async () => {
         await shoppingLists.delete(id);
         commit("delete_list", id);
-        await dispatch("saveOrder");
+        await dispatch("saveListOrder");
       });
     },
     async loadList({ commit }, listId) {
@@ -119,6 +124,22 @@ const vuexModule = {
           updated: timestamp()
         });
         if (updatedRows) commit("edit_item", item);
+      });
+    },
+    saveItemOrder({ state }) {
+      return db.transaction("rw", shoppingItems, async () => {
+        for (let i = 0; i < state.items.length; i++) {
+          const item = state.items[i];
+          await shoppingItems.update(item.id, { order: i + 1 });
+          item.order = i + 1;
+        }
+      });
+    },
+    async deleteItem({ commit, dispatch }, id) {
+      return db.transaction("rw", shoppingItems, async () => {
+        await shoppingItems.delete(id);
+        commit("delete_item", id);
+        await dispatch("saveItemOrder");
       });
     }
   },
