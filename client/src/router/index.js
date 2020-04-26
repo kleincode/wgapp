@@ -117,10 +117,10 @@ const routes = [
       import(/* webpackChunkName: "calendar" */ "../views/Calendar.vue")
   },
   {
-    path: "/shoppinglist",
-    name: "ShoppingList",
+    path: "/shopping",
+    name: "Shopping",
     component: () =>
-      import(/* webpackChunkName: "shoppinglist" */ "../views/ShoppingList.vue")
+      import(/* webpackChunkName: "shoppinglist" */ "../views/Shopping.vue")
   }
 ];
 

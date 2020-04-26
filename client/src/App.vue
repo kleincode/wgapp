@@ -126,7 +126,7 @@ export default {
         {
           name: "Shopping",
           icon: "shopping_cart",
-          path: "/shoppinglist",
+          path: "/shopping",
           show: true
         },
         {

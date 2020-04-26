@@ -4,6 +4,7 @@ import axios from "./axios";
 
 import UserSettingsModule from "./userSettings.module";
 import TasksModule from "./tasks.module";
+import ShoppingModule from "./shopping.module";
 
 Vue.use(Vuex);
 
@@ -157,7 +158,8 @@ let store = new Vuex.Store({
   },
   modules: {
     userSettings: UserSettingsModule,
-    tasks: TasksModule
+    tasks: TasksModule,
+    shopping: ShoppingModule
   }
 });
 
