@@ -11,6 +11,8 @@ db.version(2).stores({
   shoppingItems: "&id,order,list,updated"
 });
 
+const timestamp = () => Math.floor(Date.now() / 1000);
+
 const { userSettings, shoppingLists, shoppingItems } = db;
 
-export { db, userSettings, shoppingLists, shoppingItems };
+export { db, userSettings, shoppingLists, shoppingItems, timestamp };
