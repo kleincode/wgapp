@@ -54,9 +54,9 @@
         <v-card :loading="loadingItems" style="height: 100%">
           <v-card-title>
             <v-icon class="mr-2">
-              {{ getIcon(getSelectListIcon()) }}
+              {{ getIcon(selectedListIcon) }}
             </v-icon>
-            {{ getSelectListName() }}
+            {{ selectedListName }}
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
@@ -89,29 +89,41 @@
                   <v-list-item-content style="display: contents">
                     <v-checkbox
                       v-model="item.checked"
-                      @change="checkItem(item)"
+                      class="mt-0"
+                      hide-details
+                      @change="updateItem(item, i)"
                     >
                     </v-checkbox>
-                    <v-list-item-title
-                      ><v-combobox
-                        ref="combo"
-                        v-model="item.text"
-                        :single-line="true"
-                        :items="getAutocompletionItems()"
-                        auto-select-first
-                        append-icon=""
-                        :disabled="item.checked"
-                        @keydown.enter="selectNextItem(i)"
-                        @blur="updateItem(item, i)"
-                      ></v-combobox
-                    ></v-list-item-title>
+                    <v-combobox
+                      ref="combo"
+                      v-model="item.text"
+                      solo
+                      dense
+                      class="shopping-combo"
+                      :single-line="true"
+                      hide-details
+                      :items="getAutocompletionItems()"
+                      auto-select-first
+                      append-icon=""
+                      :readonly="item.checked"
+                      @keydown.enter="selectNextItem(i)"
+                      @focus="activeItemIndex = i"
+                      @blur="updateItem(item, i)"
+                    >
+                      <template #append>
+                        <v-btn
+                          v-if="item.checked || activeItemIndex == i"
+                          icon
+                          small
+                          @click="deleteItem(item, i)"
+                        >
+                          <v-icon :color="item.checked ? '' : 'red'"
+                            >delete</v-icon
+                          >
+                        </v-btn>
+                      </template>
+                    </v-combobox>
                   </v-list-item-content>
-
-                  <v-list-item-action style="display: block">
-                    <v-btn icon @click="onClickDeleteCancel(item)">
-                      <v-icon>{{ item.cancelIcon }}</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
                 </v-list-item>
               </transition-group>
             </v-list>
@@ -128,7 +140,7 @@
           >
           <div class="ma-4">
             <FinishShoppingDialog
-              v-model="shoppingLists[selectedList]"
+              v-model="lists[selectedList]"
               :completed-tasks="completedTasks"
               :remaining-tasks="remainingTasks"
             ></FinishShoppingDialog>
@@ -154,54 +166,42 @@ export default {
     EditShoppingListDialog
   },
   data: () => ({
-    //Variablen einfügen
-    disabledTest: true,
-    addListDialog: false,
-    addItem: false,
     editList: {
       name: "",
       icon: 0
     },
-    selectedIcon: 0,
-    textFieldNewItemName: "",
-    textFieldNewItemAmount: 0,
-    selected: [],
     shoppingIcons: ["edit", "check", "delete", "cancel"],
-    headers: [
-      {
-        text: "Item",
-        align: "start",
-        sortable: false,
-        value: "item"
-      },
-      { text: "Amount", value: "amount" }
-    ],
-    itemlist: [],
-    shoppingLists: [],
     selectedList: 0,
     selectedItem: 0,
     loadingItems: false,
-    loadingLists: false
+    loadingLists: false,
+    activeItemIndex: -1
   }),
 
   computed: {
     ...mapState("userSettings", ["locale"]),
     ...mapState("shopping", ["lists", "items"]),
     isListSelected() {
-      return !(
-        this.selectedList < 0 ||
-        this.selectedList >= this.lists.length ||
-        this.selectedList == undefined
+      return (
+        typeof this.selectedList === "number" && !!this.lists[this.selectedList]
       );
     },
+    selectedListName() {
+      return this.isListSelected
+        ? this.lists[this.selectedList].name
+        : "No list selected";
+    },
+    selectedListIcon() {
+      return this.isListSelected ? this.lists[this.selectedList].icon : "";
+    },
     completedTasks() {
-      return this.itemlist.filter(task => task.checked).length;
+      return this.items.filter(task => task.checked).length;
     },
     progress() {
-      return (this.completedTasks / this.itemlist.length) * 100;
+      return (this.completedTasks / this.items.length) * 100;
     },
     remainingTasks() {
-      return this.itemlist.length - this.completedTasks;
+      return this.items.length - this.completedTasks;
     }
   },
 
@@ -228,9 +228,17 @@ export default {
     },
 
     updateItem(item, index) {
+      if (item.deleted) return;
       this.$refs.combo[index].blur();
+      this.activeItemIndex = -1;
       // wait for next tick because combobox doesn't update its text value right away (vuetify bug)
       this.$nextTick(() => this.$store.dispatch("shopping/editItem", item));
+    },
+
+    deleteItem(item, index) {
+      item.deleted = true;
+      this.$store.dispatch("shopping/deleteItem", item.id);
+      setTimeout(() => this.selectNextItem(index - 1), 200);
     },
 
     async fetchShoppingItems() {
@@ -258,35 +266,20 @@ export default {
     getIcon(index) {
       return icons[index];
     },
-    getSelectListName() {
-      if (!this.isListSelected || !this.lists[this.selectedList]) {
-        return "No list selected";
-      } else {
-        return this.lists[this.selectedList].name;
-      }
-    },
-    getSelectListIcon() {
-      if (!this.isListSelected || this.lists[this.selectedList] == undefined) {
-        return "";
-      } else {
-        return this.lists[this.selectedList].icon;
-      }
-    },
 
     selectNextItem(i) {
-      this.$refs.combo[i].blur();
-      if (this.remainingTasks > i + 1) {
-        this.$refs.combo[i + 1].focus();
-      } else {
-        this.$refs.combo[0].focus();
+      if (i >= 0) this.$refs.combo[i].blur();
+      if (this.remainingTasks < 1) return;
+      for (
+        let next = (i + 1) % this.items.length;
+        next != i;
+        next = (next + 1) % this.items.length
+      ) {
+        if (!this.items[next].checked) {
+          this.$refs.combo[next].focus();
+          break;
+        }
       }
-    },
-
-    async update() {
-      await this.fetchShoppinglists();
-      this.loadingLists = false;
-      await this.fetchShoppingItems();
-      this.loadingItems = false;
     }
   }
 };
@@ -294,5 +287,9 @@ export default {
 <style>
 .shopping-items-move {
   transition: transform 0.6s;
+}
+.shopping-combo * {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
 </style>
