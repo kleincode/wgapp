@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-row style="min-height: 93vh" align="center" justify="center">
+    <v-row id="home" style="min-height: 93vh" align="center" justify="center">
       <v-col cols="12" md="3" class="pl-2 pr-2">
         <div>
           <v-img
@@ -215,7 +215,7 @@
       </v-col>
 
       <v-col cols="12" md="11" lg="9" class="mt-12 mb-12">
-        <v-card tile color="primary" class="pl-5 pr-5"
+        <v-card id="about" tile color="primary" class="pl-5 pr-5"
           ><v-card-text class="white--text"
             ><v-row>
               <v-col class="d-md-none" cols="12" md="6" lg="4"
@@ -244,7 +244,7 @@
           ></v-card
         >
       </v-col>
-      <v-col cols="12" md="8" class="mt-12 mb-12 text-center">
+      <v-col id="faq" cols="12" md="8" class="mt-12 mb-12 text-center">
         <div class="display-4 mb-7">FAQ</div>
         <v-expansion-panels popout hover>
           <v-expansion-panel v-for="(question, i) in faq" :key="i">
@@ -274,7 +274,7 @@
       >
     </v-card>
     <v-row justify="center" class="mb-12">
-      <v-col cols="12" md="8" class="mt-12 mb-12 text-center">
+      <v-col id="contact" cols="12" md="8" class="mt-12 mb-12 text-center">
         <div class="display-4 mb-7">Contact</div>
         <v-form ref="form" v-model="contactValid">
           <v-row>

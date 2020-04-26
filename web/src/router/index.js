@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import goTo from "vuetify/es5/services/goto";
 import Home from "../views/Home.vue";
 
 Vue.use(VueRouter);
@@ -11,20 +12,30 @@ const routes = [
     component: Home
   },
   {
-    path: "/about",
-    name: "About",
+    path: "/help",
+    name: "Help",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+    component: () => import(/* webpackChunkName: "about" */ "../views/Help.vue")
   }
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
+  scrollBehavior: (to, from, savedPosition) => {
+    let scrollTo = 0;
+
+    if (to.hash) {
+      scrollTo = to.hash;
+    } else if (savedPosition) {
+      scrollTo = savedPosition.y;
+    }
+
+    return goTo(scrollTo, { offset: 64 });
+  }
 });
 
 export default router;

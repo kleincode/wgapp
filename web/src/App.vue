@@ -20,8 +20,13 @@
 
       <v-divider></v-divider>
 
-      <v-list dense>
-        <v-list-item v-for="item in sections" :key="item.title" link>
+      <v-list v-if="$route.name != 'Help'" dense>
+        <v-list-item
+          v-for="item in sections"
+          :key="item.title"
+          link
+          :to="item.link"
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
@@ -31,9 +36,14 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <template v-slot:append>
+      <div v-else class="pa-2">
+        <v-btn block color="primary" :to="{ name: 'Home' }"
+          ><v-icon class="mr-1">home</v-icon> Home</v-btn
+        >
+      </div>
+      <template v-if="$route.name != 'Help'" v-slot:append>
         <div class="pa-2">
-          <v-btn block color="warning" @click="logout"
+          <v-btn block color="warning" :to="{ name: 'Help' }"
             ><v-icon class="mr-1">help</v-icon> Help</v-btn
           >
         </div>
@@ -70,7 +80,7 @@
     </v-app-bar>
 
     <v-content>
-      <Home />
+      <router-view></router-view>
       <v-footer color="primary lighten-1" padless>
         <v-row justify="center" no-gutters>
           <v-btn
@@ -96,24 +106,44 @@
 </template>
 
 <script>
-import Home from "./views/Home.vue";
-
 export default {
   name: "App",
 
-  components: {
-    Home
-  },
   data: () => ({
     links: ["Home", "Open App", "Legal Notice"],
     drawer: false,
     sections: [
-      { title: "Home", icon: "home" },
-      { title: "Introduction", icon: "info" },
-      { title: "Features", icon: "list" },
-      { title: "Roadmap", icon: "place" },
-      { title: "FAQ", icon: "question_answer" },
-      { title: "About us", icon: "group" }
+      { title: "Home", icon: "home", link: { name: "Home", hash: "#home" } },
+      {
+        title: "Introduction",
+        icon: "info",
+        link: { name: "Home", hash: "#introduction" }
+      },
+      {
+        title: "Features",
+        icon: "list",
+        link: { name: "Home", hash: "#features" }
+      },
+      {
+        title: "Roadmap",
+        icon: "place",
+        link: { name: "Home", hash: "#roadmap" }
+      },
+      {
+        title: "About us",
+        icon: "group",
+        link: { name: "Home", hash: "#about" }
+      },
+      {
+        title: "FAQ",
+        icon: "question_answer",
+        link: { name: "Home", hash: "#faq" }
+      },
+      {
+        title: "Contact",
+        icon: "drafts",
+        link: { name: "Home", hash: "#contact" }
+      }
     ]
   }),
   async created() {
