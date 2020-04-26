@@ -1,23 +1,21 @@
 <template>
   <v-container fluid>
-    <h1 class="display-2 pb-6">Shopping List</h1>
+    <h1 class="display-2 pb-6">Shopping</h1>
     <v-row class="ml-4" cols="12">
       <v-col>
         <v-card :loading="loadingLists" style="height: 100%">
-          <v-card-title
-            >Shoppinglists
+          <v-card-title>
+            Lists
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="openCreateListDialog"
-              >New Shoppinglist</v-btn
-            >
+            <edit-shopping-list-dialog v-model="editList" />
           </v-card-title>
-          <v-list v-if="shoppingLists.length > 0">
+          <v-list v-if="lists.length > 0">
             <v-list-item-group
               v-model="selectedList"
               color="primary"
               @change="fetchShoppingItems"
             >
-              <v-list-item v-for="(list, i) in shoppingLists" :key="i"
+              <v-list-item v-for="list in lists" :key="list.id"
                 ><v-list-item-icon>
                   <v-icon>{{ getIcon(list.icon) }}</v-icon> </v-list-item-icon
                 ><v-list-item-content
@@ -26,9 +24,7 @@
 
                 <v-list-item-action style="display: block" class="">
                   <v-btn icon>
-                    <v-icon @click="openEditListDialog(list)">{{
-                      shoppingIcons[0]
-                    }}</v-icon>
+                    <v-icon>{{ shoppingIcons[0] }}</v-icon>
                   </v-btn>
                   <v-btn icon>
                     <v-icon @click="deleteShoppingsList(list)">{{
@@ -47,24 +43,28 @@
             <v-icon style="font-size: 10em" class="text--disabled"
               >shopping_cart</v-icon
             >
-            <br />Looks like, you have no lists yet.
+            <br />Go make a list, shopping is fun!
           </div>
         </v-card>
       </v-col>
 
       <v-col>
         <v-card :loading="loadingItems" style="height: 100%">
-          <v-card-title
-            ><v-icon class="mr-2">{{ getIcon(getSelectListIcon()) }}</v-icon
-            >{{ getSelectListName() }} <v-spacer></v-spacer
-            ><v-btn
+          <v-card-title>
+            <v-icon class="mr-2">
+              {{ getIcon(getSelectListIcon()) }}
+            </v-icon>
+            {{ getSelectListName() }}
+            <v-spacer></v-spacer>
+            <v-btn
               color="primary"
               text
               :disabled="!isListSelected"
               @click="clickCreateItem"
-              >New Item</v-btn
-            ></v-card-title
-          >
+            >
+              New Item
+            </v-btn>
+          </v-card-title>
 
           <v-card-text>
             <v-row class="my-1 mr-4" align="center">
@@ -138,59 +138,13 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <v-dialog v-model="addListDialog" max-width="600px">
-      <v-card>
-        <v-card-title v-if="!editListMode">
-          Create a new shopping list
-        </v-card-title>
-        <v-card-title v-else>
-          Edit your shopping list
-        </v-card-title>
-        <v-card-text>
-          <v-row>
-            <v-col cols="12" sm="6" style="text-align: center">
-              <v-icon style="font-size: 10em" class="mb-3">{{
-                getIcon(editList.icon)
-              }}</v-icon>
-              <br />
-              <IconChooser
-                v-model="selectedIcon"
-                @ok="newIconSelected"
-                @cancel="noNewIconSelected"
-              ></IconChooser>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-text-field
-                v-model="editList.name"
-                required
-                class="my-3 mx-3"
-                hint="Enter a name"
-                placeholder="List Name"
-                clearable
-              >
-              </v-text-field>
-            </v-col>
-          </v-row>
-        </v-card-text>
-
-        <v-card-actions class="pb-3 pr-3">
-          <!--spacer sorgt dafür dass buttons rechts sind-->
-          <v-spacer></v-spacer>
-          <v-btn text color="primary" class="mr-2" @click="clickSaveList"
-            >Save</v-btn
-          >
-          <v-btn text @click="clickCancel">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import IconChooser from "@/components/IconChooser.vue";
 import FinishShoppingDialog from "@/components/dialogs/FinishShoppingDialog.vue";
+import EditShoppingListDialog from "@/components/dialogs/EditShoppingListDialog.vue";
 import icons from "@/assets/icons.js";
 import en_autoItems from "@/assets/en_shoppingitems.js";
 import de_autoItems from "@/assets/de_shoppingitems.js";
@@ -198,16 +152,18 @@ import de_autoItems from "@/assets/de_shoppingitems.js";
 export default {
   name: "ShoppingList",
   components: {
-    IconChooser,
-    FinishShoppingDialog
+    FinishShoppingDialog,
+    EditShoppingListDialog
   },
   data: () => ({
     //Variablen einfügen
     disabledTest: true,
     addListDialog: false,
     addItem: false,
-    editListMode: false,
-    editList: {},
+    editList: {
+      name: "",
+      icon: 0
+    },
     selectedIcon: 0,
     textFieldNewItemName: "",
     textFieldNewItemAmount: 0,
@@ -232,6 +188,7 @@ export default {
 
   computed: {
     ...mapState("userSettings", ["locale"]),
+    ...mapState("shopping", ["lists"]),
     isListSelected() {
       return !(
         this.selectedList < 0 ||
@@ -251,17 +208,14 @@ export default {
   },
 
   async mounted() {
-    await this.fetchShoppinglists();
-    this.fetchShoppingItems();
+    try {
+      await this.$store.dispatch("shopping/sync");
+    } catch (err) {
+      this.$store.dispatch("showSnackbar", "Sync failed: " + err);
+    }
   },
 
   methods: {
-    openCreateListDialog() {
-      //Methodencode
-      this.addListDialog = true;
-      this.editListMode = false;
-      this.editList = { name: "", icon: 0 };
-    },
     clickCreateItem() {
       this.itemlist.push({
         item: "",
@@ -272,24 +226,6 @@ export default {
       });
       let lastindex = this.itemlist.length - 1;
       setTimeout(() => this.$refs.combo[lastindex].focus(), 100);
-    },
-    clickSaveList() {
-      if (this.editListMode) {
-        this.editShoppingsList(this.editList);
-      } else {
-        this.createShoppingsList(this.editList);
-      }
-      this.addListDialog = false;
-      this.update();
-    },
-
-    clickCancel() {
-      this.addListDialog = false;
-    },
-    openEditListDialog(list) {
-      this.editListMode = true;
-      this.editList = list;
-      this.addListDialog = true;
     },
 
     onClickDeleteCancel(item) {
@@ -642,14 +578,6 @@ export default {
       } else {
         return this.shoppingLists[this.selectedList].icon;
       }
-    },
-
-    newIconSelected(id) {
-      this.editList.icon = id;
-      this.selectedIcon = id;
-    },
-    noNewIconSelected() {
-      this.selectedIcon = this.editList.icon;
     },
 
     selectNextItem(i) {

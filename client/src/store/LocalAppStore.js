@@ -5,7 +5,12 @@ let db = new Dexie("LocalAppStore");
 db.version(1).stores({
   userSettings: "key"
 });
+db.version(2).stores({
+  userSettings: "key",
+  shoppingLists: "&id,order,updated",
+  shoppingItems: "&id,order,list,updated"
+});
 
-let userSettings = db.userSettings;
+const { userSettings, shoppingLists, shoppingItems } = db;
 
-export { userSettings };
+export { db, userSettings, shoppingLists, shoppingItems };

@@ -7,7 +7,7 @@
       @click:outside="cancel"
     >
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" outlined v-on="on">Change Icon</v-btn>
+        <v-btn color="primary" text v-on="on">Change Icon</v-btn>
       </template>
       <v-card>
         <v-card-title>
