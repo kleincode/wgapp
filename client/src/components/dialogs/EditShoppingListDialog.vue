@@ -105,7 +105,7 @@ export default {
       });
     },
     async commitEditList(listData) {
-      console.log("edit", listData);
+      await this.$store.dispatch("shopping/editList", listData);
     },
     async save() {
       if (!this.formValid) return;
@@ -122,13 +122,15 @@ export default {
     },
     reset() {
       this.dialogShown = false;
-      this.updateValue({
-        name: "",
-        id: "",
-        icon: 0
-      });
-      this.$refs.form.resetValidation();
-      this.editMode = false;
+      setTimeout(() => {
+        this.updateValue({
+          name: "",
+          id: "",
+          icon: 0
+        });
+        this.$refs.form.resetValidation();
+        this.editMode = false;
+      }, 100);
     },
     startEdit(itemData) {
       this.editMode = true;
