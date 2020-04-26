@@ -7,7 +7,7 @@
           <v-card-title>
             Lists
             <v-spacer></v-spacer>
-            <edit-shopping-list-dialog v-model="editList" />
+            <edit-shopping-list-dialog ref="editDialog" v-model="editList" />
           </v-card-title>
           <v-list v-if="lists.length > 0">
             <v-list-item-group
@@ -23,13 +23,15 @@
                 ></v-list-item-content>
 
                 <v-list-item-action style="display: block" class="">
-                  <v-btn icon>
-                    <v-icon>{{ shoppingIcons[0] }}</v-icon>
+                  <v-btn icon @click="$refs.editDialog.startEdit(list)">
+                    <v-icon>
+                      {{ shoppingIcons[0] }}
+                    </v-icon>
                   </v-btn>
-                  <v-btn icon>
-                    <v-icon @click="deleteShoppingsList(list)">{{
-                      shoppingIcons[2]
-                    }}</v-icon>
+                  <v-btn icon @click="deleteShoppingsList(list)">
+                    <v-icon>
+                      {{ shoppingIcons[2] }}
+                    </v-icon>
                   </v-btn>
                 </v-list-item-action>
               </v-list-item>

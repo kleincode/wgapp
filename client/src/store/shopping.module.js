@@ -21,6 +21,11 @@ const vuexModule = {
     // Use pushList action!
     push_list(state, list) {
       state.lists.push(list);
+    },
+    // Use editList action!
+    edit_list(state, list) {
+      const index = state.lists.findIndex(el => el.id == list.id);
+      if (index >= 0) state.lists[index] = list;
     }
   },
   actions: {
@@ -36,6 +41,12 @@ const vuexModule = {
         const listObject = { ...list, order: highestOrder + 1 };
         await shoppingLists.add(listObject);
         commit("push_list", listObject);
+      });
+    },
+    async editList({ commit }, list) {
+      await db.transaction("rw", shoppingLists, async () => {
+        const updatedRows = await shoppingLists.update(list.id, list);
+        if (updatedRows) commit("edit_list", list);
       });
     }
   },
