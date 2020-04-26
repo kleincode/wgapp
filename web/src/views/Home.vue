@@ -113,7 +113,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-card class="mt-12 white--text" color="#04182d" style="min-height: 400px">
+    <v-card class="mt-12 white--text" color="#04182d">
       <v-row id="features" justify="center">
         <v-col cols="12" class="pt-12 text-center"
           ><div class="display-4 mb-7">Jeff's Features</div>
@@ -244,96 +244,121 @@
           ></v-card
         >
       </v-col>
-      <v-col cols="12" md="8" class="mt-12 mb-12 text-center"
-        ><div class="display-3" style="line-height: 1.6;">
-          You have a question or would like to see a new feature in our app?
-        </div>
-        <div class="title text--secondary">
-          If you can't find your answer in our FAQs just fill out our contact
-          form. We're always eager to find out how we can improve Jeff. If you
-          unfortunately found a bug please send us the details and we will try
-          to talk to Jeff. We won't be too hard on him. We promise.
-        </div>
-        <v-btn class="mt-4 mb-12" outlined x-large>
-          <v-icon left>mail</v-icon>Contact</v-btn
-        >
+      <v-col cols="12" md="8" class="mt-12 mb-12 text-center">
+        <div class="display-4 mb-7">FAQ</div>
+        <v-expansion-panels popout hover>
+          <v-expansion-panel v-for="(question, i) in faq" :key="i">
+            <v-expansion-panel-header>{{
+              question.question
+            }}</v-expansion-panel-header>
+            <v-expansion-panel-content class="pt-2 text-justify"
+              >{{ question.answer }}
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-row>
+    <v-card class="mt-12 white--text" color="#04182d">
+      <v-row justify="center">
+        <v-col cols="12" md="8" class="mt-12 mb-12 text-center"
+          ><div class="display-3" style="line-height: 1.6;">
+            You have a question or would like to see a new feature in our app?
+          </div>
+          <div class="title white--text" style="opacity: 0.7">
+            If you can't find your answer in our FAQs just fill out our contact
+            form. We're always eager to find out how we can improve Jeff. If you
+            unfortunately found a bug please send us the details and we will try
+            to talk to Jeff. We won't be too hard on him. We promise.
+          </div>
+        </v-col></v-row
+      >
+    </v-card>
+    <v-row justify="center" class="mb-12">
+      <v-col cols="12" md="8" class="mt-12 mb-12 text-center">
+        <div class="display-4 mb-7">Contact</div>
+        <v-form ref="form" v-model="contactValid">
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="contactName"
+                :counter="10"
+                :rules="contactNameRules"
+                label="Name"
+                required
+              ></v-text-field>
+
+              <v-text-field
+                v-model="contactEmail"
+                :rules="contactEmailRules"
+                autocomplete="email"
+                label="E-mail"
+                required
+              ></v-text-field>
+
+              <v-select
+                v-model="contactSelect"
+                :items="contactTopics"
+                :rules="[v => !!v || 'Please choose a topic']"
+                label="Topic"
+                required
+              ></v-select>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-textarea
+                v-model="contactMessage"
+                name="input-7-1"
+                auto-grow
+                label="Message"
+                counter
+                :rules="[v => v != '' || 'Please enter a message']"
+                class="mb-2"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="12"
+              ><v-btn
+                :disabled="!contactValid"
+                color="success"
+                class="mr-4"
+                block
+                @click="validate"
+              >
+                Send
+              </v-btn></v-col
+            >
+          </v-row>
+        </v-form>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
+import features from "@/assets/features.js";
+import roadmap from "@/assets/roadmap.js";
+import faq from "@/assets/faq.js";
 export default {
   name: "Home",
   data: () => ({
-    features: [
-      {
-        headline: "Dashboard",
-        description: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
-          sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`,
-        image: "Dashboard.svg"
-      },
-      {
-        headline: "Finances",
-        description: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
-          sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`,
-        image: "Finances.svg"
-      },
-      {
-        headline: "Shopping Lists",
-        description: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
-          sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`,
-        image: "ShoppingLists.svg"
-      },
-      {
-        headline: "Tasks",
-        description: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
-          sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`,
-        image: "Dashboard.svg"
-      },
-      {
-        headline: "Calendar",
-        description: `Lorem ipsum dolor sit amet, consetetur sadipscing elitr, 
-          sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.`,
-        image: "Dashboard.svg"
-      }
+    contactValid: false,
+    contactName: "",
+    contactNameRules: [v => !!v || "Name is required"],
+    contactEmail: "",
+    contactEmailRules: [
+      v => !!v || "E-mail is required",
+      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
     ],
-    roadmap: [
-      {
-        color: "cyan",
-        bold: false,
-        title: "Closed Beta",
-        description:
-          "This app is developed with love and like everything it needs time. We will conduct a closed beta phase in May 2020. If you're interested feel free to get in touch.",
-        year: "May 2020"
-      },
-      {
-        color: "green",
-        bold: true,
-        title: "Offical Release",
-        description: `We're hoping to offically release our app in June 2020. This release will include: finances, 
-        shopping lists, tasks, calendar integration and will be available in German and English.`,
-        year: "June 2020"
-      },
-      {
-        color: "pink",
-        bold: false,
-        title: "WG-Chat, Google Maps Integration",
-        description: `Of course thats not it. We've got plenty of new features in the making. 
-        You want to have everything in one app? With the Chat Feature you can discuss everything important within the app
-        and even reference expenses, shopping lists, etc. You want to be reminded when you need to go to work/school/university?
-        With our Google Maps Integration Jeff can help you while using realtime traffic information. `,
-        year: "Summer 2020"
-      },
-      {
-        color: "amber",
-        bold: false,
-        title: "Home Control & Automation",
-        description: `You've got a Philipps Hue Bridge? Excellent, now you can control your scenes right from our dashboard.
-          With our new integrations you can now even automatically turn your lights on when you come home.`,
-        year: "Fall 2020"
-      }
-    ]
-  })
+    contactSelect: null,
+    contactTopics: ["General", "Support", "Feature Request", "Bug Report"],
+    contactMessage: "",
+
+    features: features,
+    roadmap: roadmap,
+    faq: faq
+  }),
+  methods: {
+    validate() {
+      this.$refs.form.validate();
+    }
+  }
 };
 </script>

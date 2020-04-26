@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" app temporary absolute>
+    <v-navigation-drawer v-model="drawer" app temporary>
       <v-list-item>
         <v-list-item-avatar>
           <v-img
@@ -106,7 +106,7 @@ export default {
   },
   data: () => ({
     links: ["Home", "Open App", "Legal Notice"],
-    drawer: true,
+    drawer: false,
     sections: [
       { title: "Home", icon: "home" },
       { title: "Introduction", icon: "info" },
