@@ -28,7 +28,7 @@
                       {{ shoppingIcons[0] }}
                     </v-icon>
                   </v-btn>
-                  <v-btn icon @click="deleteShoppingsList(list)">
+                  <v-btn icon @click="deleteList(list)">
                     <v-icon>
                       {{ shoppingIcons[2] }}
                     </v-icon>
@@ -366,41 +366,12 @@ export default {
       }
     },
 
-    async deleteShoppingsList(list) {
-      //icon hinzufügen
+    async deleteList(list) {
       try {
-        this.loadingItems = true;
-        this.loadingLists = true;
-        if (
-          this.shoppingLists.indexOf(list) == this.shoppingLists.length - 1 &&
-          this.shoppingLists.length - 1 == this.selectedList
-        ) {
-          this.selectedList = 0;
-        }
-        let id = list.id;
-        const { data } = await this.$http.post("/_/deleteshoppinglist", {
-          id
-        });
-        if (!data.success) {
-          console.error(data);
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't edit shopping list. Please try again later."
-          );
-        } else {
-          this.$store.dispatch("showSnackbar", data.message);
-        }
-        this.loadingItems = false;
-        this.loadingLists = false;
-        this.update();
+        await this.$store.dispatch("shopping/deleteList", list.id);
       } catch (err) {
-        this.loadingItems = false;
-        this.loadingLists = false;
-        console.error(err);
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error editing shopping list. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", err || "Could not delete list.");
+        console.warn(err);
       }
     },
 

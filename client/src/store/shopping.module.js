@@ -26,6 +26,11 @@ const vuexModule = {
     edit_list(state, list) {
       const index = state.lists.findIndex(el => el.id == list.id);
       if (index >= 0) state.lists[index] = list;
+    },
+    // Use deleteList action!
+    delete_list(state, id) {
+      const index = state.lists.findIndex(el => el.id == id);
+      if (index >= 0) state.lists.splice(index, 1);
     }
   },
   actions: {
@@ -35,18 +40,35 @@ const vuexModule = {
       commit("set_lists", await shoppingLists.orderBy("order").toArray());
       commit("set_initialized", true);
     },
-    async pushList({ commit }, list) {
-      await db.transaction("rw", shoppingLists, async () => {
-        const highestOrder = (await shoppingLists.orderBy("order").last()) || 0;
+    pushList({ commit }, list) {
+      return db.transaction("rw", shoppingLists, async () => {
+        const lastElement = (await shoppingLists.orderBy("order").last()) || {};
+        const highestOrder = lastElement.order || 0;
         const listObject = { ...list, order: highestOrder + 1 };
         await shoppingLists.add(listObject);
         commit("push_list", listObject);
       });
     },
-    async editList({ commit }, list) {
-      await db.transaction("rw", shoppingLists, async () => {
+    editList({ commit }, list) {
+      return db.transaction("rw", shoppingLists, async () => {
         const updatedRows = await shoppingLists.update(list.id, list);
         if (updatedRows) commit("edit_list", list);
+      });
+    },
+    saveOrder({ state }) {
+      return db.transaction("rw", shoppingLists, async () => {
+        for (let i = 0; i < state.lists.length; i++) {
+          const list = state.lists[i];
+          await shoppingLists.update(list.id, { order: i + 1 });
+          list.order = i + 1;
+        }
+      });
+    },
+    async deleteList({ commit, dispatch }, id) {
+      return db.transaction("rw", shoppingLists, async () => {
+        await shoppingLists.delete(id);
+        commit("delete_list", id);
+        await dispatch("saveOrder");
       });
     }
   },
