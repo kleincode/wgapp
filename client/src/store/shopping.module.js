@@ -35,6 +35,11 @@ const vuexModule = {
     // Use pushItem action!
     push_item(state, list) {
       state.items.push(list);
+    },
+    // Use editItem action!
+    edit_item(state, item) {
+      const index = state.items.findIndex(el => el.id == item.id);
+      if (index >= 0) state.items[index] = item;
     }
   },
   actions: {
@@ -104,6 +109,16 @@ const vuexModule = {
         };
         await shoppingItems.add(itemObject);
         commit("push_item", itemObject);
+      });
+    },
+    editItem({ commit }, item) {
+      console.log("edit", item.text);
+      return db.transaction("rw", shoppingItems, async () => {
+        const updatedRows = await shoppingItems.update(item.id, {
+          ...item,
+          updated: timestamp()
+        });
+        if (updatedRows) commit("edit_item", item);
       });
     }
   },
