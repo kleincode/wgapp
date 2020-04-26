@@ -83,10 +83,10 @@
                 class="mr-2"
               ></v-progress-circular>
             </v-row>
-            <v-list v-if="itemlist.length > 0" dense>
+            <v-list v-if="items.length > 0" dense>
               <transition-group name="shopping-items" tag="ul">
                 <v-list-item
-                  v-for="(item, i) in itemlist"
+                  v-for="item in items"
                   :key="item.id"
                   @blur="onSave(item)"
                 >
@@ -99,7 +99,7 @@
                     <v-list-item-title
                       ><v-combobox
                         ref="combo"
-                        v-model="item.item"
+                        v-model="item.text"
                         :single-line="true"
                         :items="getAutocompletionItems()"
                         auto-select-first
@@ -190,11 +190,11 @@ export default {
 
   computed: {
     ...mapState("userSettings", ["locale"]),
-    ...mapState("shopping", ["lists"]),
+    ...mapState("shopping", ["lists", "items"]),
     isListSelected() {
       return !(
         this.selectedList < 0 ||
-        this.selectedList >= this.shoppingLists.length ||
+        this.selectedList >= this.lists.length ||
         this.selectedList == undefined
       );
     },
@@ -218,14 +218,14 @@ export default {
   },
 
   methods: {
-    clickCreateItem() {
-      this.itemlist.push({
-        item: "",
+    async clickCreateItem() {
+      const newItem = {
+        text: "",
         checked: false,
-        listid: this.shoppingLists[this.selectedList].id,
-        disabledProp: false,
-        id: -1
-      });
+        list: this.lists[this.selectedList].id,
+        id: this.$uuid.v1()
+      };
+      await this.$store.dispatch("shopping/pushItem", newItem);
       let lastindex = this.itemlist.length - 1;
       setTimeout(() => this.$refs.combo[lastindex].focus(), 100);
     },
@@ -253,11 +253,6 @@ export default {
         this.setDefaultIcons(item);
       }, 50);
     },
-    setEditIcons(item) {
-      //setzt nur icons
-      item.disabledProp = false;
-      item.cancelIcon = this.shoppingIcons[3];
-    },
     setDefaultIcons(item) {
       //setzt nur icons
       try {
@@ -268,160 +263,17 @@ export default {
       }
     },
 
-    //Shopping lists
-
-    async fetchShoppinglists() {
-      try {
-        this.loadingLists = true;
-        const { data } = await this.$http.get("/_/fetchshoppinglists");
-
-        if (data.success) {
-          this.shoppingLists = [];
-          data.data.forEach(list => {
-            this.shoppingLists.push({
-              name: list.name,
-              icon: list.icon,
-              cancelIcon: this.shoppingIcons[2],
-              disabledProp: true,
-              id: list.id
-            });
-          });
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't fetch shopping lists. Please try again later."
-          );
-        }
-        this.loadingLists = false;
-      } catch (error) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error during fetching shopping lists. Please try again later."
-        );
-        console.error(error);
-        this.loadingLists = false;
-      }
-    },
-    async createShoppingsList(list) {
-      //icon hinzufügen
-      try {
-        let icon = list.icon;
-        let name = list.name;
-        const { data } = await this.$http.post("/_/createshoppinglist", {
-          name,
-          icon
-        });
-        if (!data.success) {
-          console.error(data);
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't create shopping list. Please try again later."
-          );
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Successfully created your new shopping list."
-          );
-        }
-        this.update();
-      } catch (err) {
-        console.error(err);
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error creating shopping list. Please try again later."
-        );
-      }
-    },
-
-    async editShoppingsList(list) {
-      //icon hinzufügen
-      try {
-        let id = list.id;
-        let icon = list.icon;
-        let name = list.name;
-        const { data } = await this.$http.post("/_/editshoppinglist", {
-          id,
-          name,
-          icon
-        });
-        if (!data.success) {
-          console.error(data);
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't edit shopping list. Please try again later."
-          );
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Successfully edited your shopping list."
-          );
-        }
-        this.update();
-      } catch (err) {
-        console.error(err);
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error editing shopping list. Please try again later."
-        );
-      }
-    },
-
-    async deleteList(list) {
-      try {
-        await this.$store.dispatch("shopping/deleteList", list.id);
-      } catch (err) {
-        this.$store.dispatch("showSnackbar", err || "Could not delete list.");
-        console.warn(err);
-      }
-    },
-
     //Shopping items
 
     async fetchShoppingItems() {
-      if (!this.isListSelected) {
-        //Keine Liste ist ausgewählt
-        this.itemlist = [];
-        return;
-      }
-      this.loadingItems = true;
-      try {
-        var id = this.shoppingLists[this.selectedList].id;
-      } catch (err) {
-        return;
-        //igonore
-      }
-      try {
-        const { data } = await this.$http.get("/_/fetchshoppinglistitems", {
-          params: { listid: id }
-        });
-
-        if (data.success) {
-          this.itemlist = data.data
-            .map(elem => ({
-              id: elem.id,
-              item: elem.item,
-              checked: !!elem.checked,
-              listid: this.shoppingLists[this.selectedList].id,
-              disabledProp: true,
-              icon: this.shoppingIcons[0],
-              cancelIcon: this.shoppingIcons[2]
-            }))
-            .sort((a, b) => a.checked - b.checked);
-        } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't fetch shopping items. Please try again later."
-          );
-        }
-        this.loadingItems = false;
-      } catch (error) {
-        console.error(error);
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error during fetching shopping items. Please try again later."
-        );
-        this.loadingItems = false;
-      }
+      this.$store.dispatch(
+        "shopping/loadList",
+        this.isListSelected ? this.lists[this.selectedList].id : false
+      );
+      console.log(
+        "fetching",
+        this.isListSelected ? this.lists[this.selectedList].id : false
+      );
     },
 
     async createItem(item) {
@@ -451,7 +303,7 @@ export default {
       try {
         //icon hinzufügen
         var item = newItemName;
-        var listid = this.shoppingLists[this.selectedList].id;
+        var listid = this.lists[this.selectedList].id;
         const { data } = await this.$http.post("/_/editShoppingItem", {
           item,
           listid,
@@ -533,23 +385,17 @@ export default {
       return icons[index];
     },
     getSelectListName() {
-      if (
-        !this.isListSelected ||
-        this.shoppingLists[this.selectedList] == undefined
-      ) {
+      if (!this.isListSelected || !this.lists[this.selectedList]) {
         return "No list selected";
       } else {
-        return this.shoppingLists[this.selectedList].name;
+        return this.lists[this.selectedList].name;
       }
     },
     getSelectListIcon() {
-      if (
-        !this.isListSelected ||
-        this.shoppingLists[this.selectedList] == undefined
-      ) {
+      if (!this.isListSelected || this.lists[this.selectedList] == undefined) {
         return "";
       } else {
-        return this.shoppingLists[this.selectedList].icon;
+        return this.lists[this.selectedList].icon;
       }
     },
 
