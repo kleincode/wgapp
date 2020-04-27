@@ -8,7 +8,7 @@
       class="elevation-12"
     >
       <v-list dense nav dark>
-        <v-list-item two-line class="px-0">
+        <v-list-item three-line class="px-0">
           <v-list-item-avatar color="primary">
             <span class="title white--text"
               >{{
@@ -27,6 +27,11 @@
               >{{ userFirstName }} {{ userLastName }}</v-list-item-title
             >
             <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
+            <v-list-item-subtitle
+              ><router-link :to="{ name: 'Profile' }"
+                >Profile</router-link
+              ></v-list-item-subtitle
+            >
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
