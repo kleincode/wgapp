@@ -90,7 +90,7 @@
             color="white"
             text
             rounded
-            class="my-2"
+            class="ma-2"
           >
             {{ link.title }}
           </v-btn>
@@ -113,8 +113,8 @@ export default {
   data: () => ({
     links: [
       { title: "Home", to: { name: "Home", hash: "#home" } },
-      { title: "Open App", to: { name: "Home", hash: "#home" } },
-      { title: "Legal Notice", to: { name: "Home", hash: "#home" } }
+      { title: "Open App", href: "https://wg.kleinco.de" },
+      { title: "Legal Notice", to: { name: "LegalNotice" } }
     ],
     drawer: false,
     sections: [

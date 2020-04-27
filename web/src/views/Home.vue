@@ -304,6 +304,9 @@
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
+              <v-text-field>
+                
+              </v-text-field>
               <v-textarea
                 v-model="contactMessage"
                 name="input-7-1"
