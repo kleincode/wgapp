@@ -10,9 +10,22 @@ db.version(2).stores({
   shoppingLists: "&id,order,updated",
   shoppingItems: "&id,order,list,updated"
 });
+db.version(3).stores({
+  userSettings: "key",
+  shoppingLists: "&id,order,updated",
+  shoppingItems: "&id,order,list,updated",
+  appSettings: "key"
+});
 
 const timestamp = () => Math.floor(Date.now() / 1000);
 
-const { userSettings, shoppingLists, shoppingItems } = db;
+const { userSettings, shoppingLists, shoppingItems, appSettings } = db;
 
-export { db, userSettings, shoppingLists, shoppingItems, timestamp };
+export {
+  db,
+  userSettings,
+  shoppingLists,
+  shoppingItems,
+  appSettings,
+  timestamp
+};
