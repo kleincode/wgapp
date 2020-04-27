@@ -51,7 +51,13 @@ const vuexModule = {
     // ({ state, commit, dispatch, getters, rootState, rootGetters })
     async sync({ state, commit }) {
       if (state._initialized) return;
-      commit("set_lists", await shoppingLists.orderBy("order").toArray());
+      commit(
+        "set_lists",
+        await shoppingLists
+          .orderBy("order")
+          .filter(el => !el.deleted)
+          .toArray()
+      );
       commit("set_initialized", true);
     },
     pushList({ commit }, list) {
@@ -69,11 +75,11 @@ const vuexModule = {
     },
     editList({ commit }, list) {
       return db.transaction("rw", shoppingLists, async () => {
-        const updatedRows = await shoppingLists.update(list.id, {
-          list,
-          updated: timestamp()
-        });
-        if (updatedRows) commit("edit_list", list);
+        const updatedRows = await shoppingLists.update(list.id, list);
+        if (updatedRows) {
+          await shoppingLists.update(list.id, { updated: timestamp() });
+          commit("edit_list", list);
+        }
       });
     },
     saveListOrder({ state }) {
@@ -85,9 +91,12 @@ const vuexModule = {
         }
       });
     },
-    async deleteList({ commit, dispatch }, id) {
+    deleteList({ commit, dispatch }, id) {
       return db.transaction("rw", shoppingLists, async () => {
-        await shoppingLists.delete(id);
+        const updatedRows = await shoppingLists.update(id, { deleted: true });
+        if (updatedRows) {
+          await shoppingLists.update(id, { updated: timestamp() });
+        }
         commit("delete_list", id);
         await dispatch("saveListOrder");
       });
@@ -96,7 +105,9 @@ const vuexModule = {
       commit(
         "set_items",
         listId
-          ? await shoppingItems.where({ list: listId }).sortBy("order")
+          ? (
+              await shoppingItems.where({ list: listId }).sortBy("order")
+            ).filter(el => !el.deleted)
           : []
       );
     },
@@ -119,11 +130,11 @@ const vuexModule = {
     editItem({ commit }, item) {
       console.log("edit", item.text);
       return db.transaction("rw", shoppingItems, async () => {
-        const updatedRows = await shoppingItems.update(item.id, {
-          ...item,
-          updated: timestamp()
-        });
-        if (updatedRows) commit("edit_item", item);
+        const updatedRows = await shoppingItems.update(item.id, item);
+        if (updatedRows) {
+          await shoppingItems.update(item.id, { updated: timestamp() });
+          commit("edit_item", item);
+        }
       });
     },
     saveItemOrder({ state }) {
@@ -135,9 +146,12 @@ const vuexModule = {
         }
       });
     },
-    async deleteItem({ commit, dispatch }, id) {
+    deleteItem({ commit, dispatch }, id) {
       return db.transaction("rw", shoppingItems, async () => {
-        await shoppingItems.delete(id);
+        const updatedRows = await shoppingItems.update(id, { deleted: true });
+        if (updatedRows) {
+          await shoppingItems.update(id, { updated: timestamp() });
+        }
         commit("delete_item", id);
         await dispatch("saveItemOrder");
       });

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <h1 class="display-2 pb-6">Shopping</h1>
     <v-row class="ml-4" cols="12">
       <v-col>
@@ -85,7 +85,7 @@
             </v-row>
             <v-list v-if="items.length > 0" dense>
               <transition-group name="shopping-items" tag="ul">
-                <v-list-item v-for="(item, i) in items" :key="item.id">
+                <v-list-item v-for="(item, i) in displayedItems" :key="item.id">
                   <v-list-item-content style="display: contents">
                     <v-checkbox
                       v-model="item.checked"
@@ -97,9 +97,14 @@
                     <v-combobox
                       ref="combo"
                       v-model="item.text"
-                      solo
+                      :solo="activeItemIndex != i"
                       dense
-                      class="shopping-combo"
+                      :class="{
+                        'shopping-combo': true,
+                        'mt-0': true,
+                        'pl-3': activeItemIndex == i,
+                        'pr-3': activeItemIndex == i
+                      }"
                       :single-line="true"
                       hide-details
                       :items="autocompleteItems"
@@ -107,8 +112,7 @@
                       append-icon=""
                       :disabled="item.checked"
                       :menu-props="{
-                        maxHeight: 150,
-                        elevation: 12
+                        maxHeight: 150
                       }"
                       @keydown.enter="selectNextItem(i)"
                       @focus="focusItem(i)"
@@ -215,6 +219,9 @@ export default {
       } else {
         return en_autoItems;
       }
+    },
+    displayedItems() {
+      return this.items.filter(el => !el.deleted);
     }
   },
 
@@ -222,9 +229,15 @@ export default {
     try {
       await this.$store.dispatch("shopping/sync");
       await this.fetchShoppingItems();
+      if (navigator.onLine) this.updateRemote();
+      window.addEventListener("online", this.updateRemote);
     } catch (err) {
       this.$store.dispatch("showSnackbar", "Sync failed: " + err);
     }
+  },
+
+  beforeDestroy() {
+    window.removeEventListener("online", this.updateRemote);
   },
 
   methods: {
@@ -254,6 +267,11 @@ export default {
       setTimeout(() => this.selectNextItem(index - 1), 200);
     },
 
+    deleteList(list) {
+      list.deleted = true;
+      this.$store.dispatch("shopping/deleteList", list.id);
+    },
+
     focusItem(index) {
       this.activeItemIndex = index;
       this.$nextTick(() =>
@@ -273,6 +291,11 @@ export default {
         "fetching",
         this.isListSelected ? this.lists[this.selectedList].id : false
       );
+    },
+
+    updateRemote() {
+      // TODO
+      // no 'this' in this function!
     },
 
     getIcon(index) {
@@ -296,12 +319,17 @@ export default {
   }
 };
 </script>
-<style>
+<style lang="scss">
 .shopping-items-move {
   transition: transform 0.6s;
 }
-.shopping-combo * {
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
+.shopping-combo {
+  & * {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+  }
+  & > .v-input__control {
+    min-height: 38px !important;
+  }
 }
 </style>
