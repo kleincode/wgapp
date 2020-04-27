@@ -96,7 +96,7 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
     //Check body
     if (handlerProps.body) {
       for (let elem in handlerProps.body) {
-        if (req.body[elem]) {
+        if (elem in req.body) {
           // type conversion
           let conv;
           switch (handlerProps.body[elem].type) {

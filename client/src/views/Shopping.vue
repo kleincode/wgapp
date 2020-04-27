@@ -183,7 +183,8 @@ export default {
     selectedItem: 0,
     loadingItems: false,
     loadingLists: false,
-    activeItemIndex: -1
+    activeItemIndex: -1,
+    updateRemoteFunction: null
   }),
 
   computed: {
@@ -229,15 +230,16 @@ export default {
     try {
       await this.$store.dispatch("shopping/sync");
       await this.fetchShoppingItems();
-      if (navigator.onLine) this.updateRemote();
-      window.addEventListener("online", this.updateRemote);
+      this.updateRemoteFunction = this.updateRemote();
+      if (navigator.onLine) this.updateRemoteFunction();
+      window.addEventListener("online", this.updateRemoteFunction);
     } catch (err) {
       this.$store.dispatch("showSnackbar", "Sync failed: " + err);
     }
   },
 
   beforeDestroy() {
-    window.removeEventListener("online", this.updateRemote);
+    window.removeEventListener("online", this.updateRemoteFunction);
   },
 
   methods: {
@@ -294,8 +296,10 @@ export default {
     },
 
     updateRemote() {
-      // TODO
-      // no 'this' in this function!
+      const store = this.$store;
+      return () => {
+        store.dispatch("shopping/updateRemote");
+      };
     },
 
     getIcon(index) {
