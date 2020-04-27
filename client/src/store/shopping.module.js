@@ -1,4 +1,11 @@
-import { db, shoppingLists, shoppingItems, timestamp } from "./LocalAppStore";
+import axios from "./axios";
+import {
+  db,
+  shoppingLists,
+  shoppingItems,
+  timestamp,
+  appSettings
+} from "./LocalAppStore";
 
 const vuexModule = {
   namespaced: true,
@@ -155,6 +162,53 @@ const vuexModule = {
         commit("delete_item", id);
         await dispatch("saveItemOrder");
       });
+    },
+    collectLocalUpdates() {
+      return db.transaction(
+        "r",
+        shoppingItems,
+        shoppingLists,
+        appSettings,
+        async () => {
+          // Fetch last update timestamp
+          const shoppingSync = await appSettings.get("shoppingSync"),
+            lastUpdate =
+              shoppingSync && typeof shoppingSync.value === "number"
+                ? shoppingSync.value
+                : 0;
+          // Fetch all lists locally updated since then
+          const lists = (
+            await shoppingLists
+              .where("updated")
+              .above(lastUpdate)
+              .toArray()
+          ).map(el => ({
+            updated: el.updated,
+            name: el.name,
+            icon: el.icon,
+            deleted: !!el.deleted
+          }));
+          // Fetch all items locally updated since then
+          const items = (
+            await shoppingItems
+              .where("updated")
+              .above(lastUpdate)
+              .toArray()
+          ).map(el => ({
+            updated: el.updated,
+            text: el.text,
+            checked: !!el.checked,
+            deleted: !!el.deleted
+          }));
+          return { lastUpdate, lists, items };
+        }
+      );
+    },
+    async updateRemote({ dispatch }) {
+      const localUpdates = await dispatch("collectLocalUpdates");
+      console.log(localUpdates);
+      const { data } = await axios.post("/_/syncshopping", localUpdates);
+      console.log(data);
     }
   },
   getters: {
