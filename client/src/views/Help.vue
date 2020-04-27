@@ -19,17 +19,17 @@
       </v-tab>
       <v-tab-item>
         <v-card flat>
-          <v-card-text><OverviewHelp></OverviewHelp> </v-card-text>
+          <v-card-text><OverviewHelp></OverviewHelp></v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
-          <v-card-text><FinancesHelp></FinancesHelp> </v-card-text>
+          <v-card-text><FinancesHelp></FinancesHelp></v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
-          <v-card-text> </v-card-text>
+          <v-card-text><TasksHelp></TasksHelp></v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs>
@@ -39,11 +39,13 @@
 <script>
 import FinancesHelp from "@/views/help/FinancesHelp.vue";
 import OverviewHelp from "@/views/help/OverviewHelp.vue";
+import TasksHelp from "@/views/help/TasksHelp.vue";
 export default {
   name: "Help",
   components: {
     FinancesHelp,
-    OverviewHelp
+    OverviewHelp,
+    TasksHelp
   },
   data: () => ({})
 };
