@@ -87,6 +87,12 @@ const routes = [
     component: Login
   },
   {
+    path: "/profile",
+    name: "Profile",
+    component: () =>
+      import(/* webpackChunkName: "household" */ "../views/Profile.vue")
+  },
+  {
     path: "/household",
     name: "Manage Household",
     component: () =>
