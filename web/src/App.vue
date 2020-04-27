@@ -20,7 +20,7 @@
 
       <v-divider></v-divider>
 
-      <v-list v-if="$route.name != 'Help'" dense>
+      <v-list v-if="$route.name == 'Home'" dense>
         <v-list-item
           v-for="item in sections"
           :key="item.title"
@@ -41,7 +41,7 @@
           ><v-icon class="mr-1">home</v-icon> Home</v-btn
         >
       </div>
-      <template v-if="$route.name != 'Help'" v-slot:append>
+      <template v-if="$route.name == 'Home'" v-slot:append>
         <div class="pa-2">
           <v-btn block color="warning" :to="{ name: 'Help' }"
             ><v-icon class="mr-1">help</v-icon> Help</v-btn
@@ -85,19 +85,20 @@
         <v-row justify="center" no-gutters>
           <v-btn
             v-for="link in links"
-            :key="link"
+            :key="link.title"
+            :to="link.to"
             color="white"
             text
             rounded
             class="my-2"
           >
-            {{ link }}
+            {{ link.title }}
           </v-btn>
           <v-col
             class="primary lighten-2 py-4 text-center white--text"
             cols="12"
           >
-            {{ new Date().getFullYear() }} — <strong>Vuetify</strong>
+            {{ new Date().getFullYear() }} — <strong>Jeff</strong>
           </v-col>
         </v-row>
       </v-footer>
@@ -110,7 +111,11 @@ export default {
   name: "App",
 
   data: () => ({
-    links: ["Home", "Open App", "Legal Notice"],
+    links: [
+      { title: "Home", to: { name: "Home", hash: "#home" } },
+      { title: "Open App", to: { name: "Home", hash: "#home" } },
+      { title: "Legal Notice", to: { name: "Home", hash: "#home" } }
+    ],
     drawer: false,
     sections: [
       { title: "Home", icon: "home", link: { name: "Home", hash: "#home" } },

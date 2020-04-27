@@ -25,13 +25,15 @@ export default {
     path: [
       {
         text: "Jeff",
-        disabled: false,
-        href: "Help"
+        to: { name: "Help" },
+        exact: true,
+        disabled: false
       },
       {
         text: "Tasks",
         disabled: true,
-        href: "Help"
+        exact: true,
+        to: { name: "Help" }
       }
     ]
   })

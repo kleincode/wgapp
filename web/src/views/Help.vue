@@ -37,7 +37,7 @@
                         :elevation="hover ? 8 : 2"
                         color="primary lighten-1"
                         class="white--text text-center fill-height"
-                        :to="{ name: topic.link }"
+                        :to="topic.link"
                       >
                         <v-row class="fill-height">
                           <v-col cols="12" align-self="center">
@@ -75,7 +75,7 @@ export default {
       {
         name: "Tasks",
         icon: "list",
-        link: "Tasks"
+        link: { name: "H-Tasks" }
       },
       {
         name: "Shopping Lists",

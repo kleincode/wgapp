@@ -29,7 +29,7 @@ export default {
       default: "Widget"
     },
     path: {
-      type: Object,
+      type: Array,
       default: () => {}
     }
   }
