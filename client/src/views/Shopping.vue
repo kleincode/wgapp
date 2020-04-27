@@ -102,24 +102,28 @@
                       class="shopping-combo"
                       :single-line="true"
                       hide-details
-                      :items="getAutocompletionItems()"
+                      :items="autocompleteItems"
                       auto-select-first
                       append-icon=""
-                      :readonly="item.checked"
+                      :disabled="item.checked"
+                      :menu-props="{
+                        maxHeight: 150,
+                        elevation: 12
+                      }"
                       @keydown.enter="selectNextItem(i)"
-                      @focus="activeItemIndex = i"
+                      @focus="focusItem(i)"
                       @blur="updateItem(item, i)"
                     >
                       <template #append>
                         <v-btn
-                          v-if="item.checked || activeItemIndex == i"
+                          v-if="activeItemIndex == i"
                           icon
                           small
                           @click="deleteItem(item, i)"
                         >
-                          <v-icon :color="item.checked ? '' : 'red'"
-                            >delete</v-icon
-                          >
+                          <v-icon color="red">
+                            delete
+                          </v-icon>
                         </v-btn>
                       </template>
                     </v-combobox>
@@ -202,6 +206,15 @@ export default {
     },
     remainingTasks() {
       return this.items.length - this.completedTasks;
+    },
+    autocompleteItems() {
+      let locale = this.locale;
+      if (!locale) locale = "en-US";
+      if (locale.toString().substr(0, 2) == "de") {
+        return de_autoItems;
+      } else {
+        return en_autoItems;
+      }
     }
   },
 
@@ -241,6 +254,16 @@ export default {
       setTimeout(() => this.selectNextItem(index - 1), 200);
     },
 
+    focusItem(index) {
+      this.activeItemIndex = index;
+      this.$nextTick(() =>
+        this.$refs.combo[this.activeItemIndex].$refs.input.setSelectionRange(
+          1000,
+          1000
+        )
+      );
+    },
+
     async fetchShoppingItems() {
       this.$store.dispatch(
         "shopping/loadList",
@@ -250,17 +273,6 @@ export default {
         "fetching",
         this.isListSelected ? this.lists[this.selectedList].id : false
       );
-    },
-
-    //Helpers
-    getAutocompletionItems() {
-      let locale = this.locale;
-      if (!locale) locale = "en-US";
-      if (locale.toString().substr(0, 2) == "de") {
-        return de_autoItems;
-      } else {
-        return en_autoItems;
-      }
     },
 
     getIcon(index) {
