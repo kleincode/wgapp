@@ -183,6 +183,7 @@ const vuexModule = {
               .above(lastUpdate)
               .toArray()
           ).map(el => ({
+            id: el.id,
             updated: el.updated,
             name: el.name,
             icon: el.icon,
@@ -195,6 +196,8 @@ const vuexModule = {
               .above(lastUpdate)
               .toArray()
           ).map(el => ({
+            id: el.id,
+            list: el.list,
             updated: el.updated,
             text: el.text,
             checked: !!el.checked,
