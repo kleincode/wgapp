@@ -31,7 +31,7 @@ module.exports = ({ db }) => ({
           const bcryptResult = await BCrypt.compare(providedPassword, pass);
           if(bcryptResult) {
             const token = JWT.sign({ uid }, JWT_SECRET);
-            success({ message: "You were successfully logged in.", providedEmail, token });
+            success({ message: "You were successfully logged in.", uid, providedEmail, token });
           } else {
             fail("The given combination of email and password is incorrect.");
           }

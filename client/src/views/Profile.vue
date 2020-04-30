@@ -56,10 +56,15 @@
           </v-card>
           <v-row>
             <v-col cols="12" md="6">
-              <p class="text--secondary">registered: 30.04.2020</p>
+              <div class="headline">Last Tasks</div>
+              <TasksLogCard
+                :tasks="getTasks"
+                :loading="loading"
+                headless
+              ></TasksLogCard>
             </v-col>
             <v-col cols="12" md="6">
-              <p class="text--secondary">registered: 30.04.2020</p>
+              <div class="headline">Last Expenses</div>
             </v-col>
           </v-row>
         </v-card>
@@ -70,11 +75,13 @@
 
 <script>
 import ProfileEdit from "@/components/ProfileEdit.vue";
+import TasksLogCard from "@/components/TasksLogCard.vue";
 import { mapState, mapGetters } from "vuex";
 export default {
   name: "Profile",
   components: {
-    ProfileEdit
+    ProfileEdit,
+    TasksLogCard
   },
   data: () => ({
     editMode: false,
@@ -83,7 +90,12 @@ export default {
     imageSource: ""
   }),
   computed: {
+    getTasks() {
+      return this.loggedTasks.filter(task => task.working == this.uid);
+    },
+    ...mapState("tasks", ["loggedTasks"]),
     ...mapState([
+      "uid",
       "userEmail",
       "userFirstName",
       "userLastName",
@@ -92,10 +104,13 @@ export default {
     ]),
     ...mapGetters(["hasProfilePicture"])
   },
-  async mounted() {
+  mounted() {
     this.loading = true;
-    await this.$store.dispatch("fetchProfileImg");
-    this.loading = false;
+    const prom1 = this.$store.dispatch("fetchProfileImg");
+    const prom2 = this.$store.dispatch("tasks/fetchTasks");
+    Promise.all([prom1, prom2]).then(() => {
+      this.loading = false;
+    });
   },
   methods: {
     getInitials() {
