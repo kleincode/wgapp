@@ -232,7 +232,7 @@ export default {
             "showSnackbar",
             "Successfully deleted profile picture."
           );
-          setTimeout(() => this.$store.dispatch("fetchProfileImg"), 200);
+          this.$store.commit("set_profile_picture", null);
         } else {
           this.$store.dispatch(
             "showSnackbar",

@@ -10,6 +10,7 @@ Vue.use(Vuex);
 let store = new Vuex.Store({
   state: {
     userToken: localStorage.getItem("auth_token"),
+    uid: localStorage.getItem("uid"),
     userEmail: localStorage.getItem("user_email"),
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
@@ -22,12 +23,14 @@ let store = new Vuex.Store({
     profilePictureData: null
   },
   mutations: {
-    login_success(state, [email, token]) {
+    login_success(state, [uid, email, token]) {
+      state.uid = uid;
       state.userEmail = email;
       state.userToken = token;
       localStorage.setItem("auth_token", token);
     },
-    update_user(state, [email, firstname, lastname]) {
+    update_user(state, [uid, email, firstname, lastname]) {
+      state.uid = uid;
       state.userEmail = email;
       state.userFirstName = firstname;
       state.userLastName = lastname;
@@ -69,7 +72,12 @@ let store = new Vuex.Store({
           method: "GET"
         });
         if (data.success)
-          commit("update_user", [data.email, data.firstname, data.lastname]);
+          commit("update_user", [
+            data.uid,
+            data.email,
+            data.firstname,
+            data.lastname
+          ]);
         else commit("logout");
       } catch (err) {
         console.error("Error while authorizing user", err);
@@ -82,7 +90,8 @@ let store = new Vuex.Store({
         method: "POST",
         data: userData
       });
-      if (data.success) commit("login_success", [data.email, data.token]);
+      if (data.success)
+        commit("login_success", [data.uid, data.email, data.token]);
       else throw data.message;
       return data.redirect || "";
     },
@@ -121,6 +130,7 @@ let store = new Vuex.Store({
         console.warn(err);
       }
     },
+
     logout({ commit }) {
       commit("logout");
       localStorage.removeItem("auth_token");
