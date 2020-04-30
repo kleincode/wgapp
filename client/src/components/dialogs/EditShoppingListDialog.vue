@@ -114,6 +114,7 @@ export default {
         if (this.editMode) await this.commitEditList(this.value);
         else await this.commitNewList(this.value);
         this.reset();
+        this.$emit("committed");
       } catch (err) {
         this.$store.dispatch("showSnackbar", err || "Adding list failed.");
         console.warn(err);

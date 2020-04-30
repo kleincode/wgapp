@@ -55,7 +55,7 @@ module.exports = ({ db }) => ({
             if(countRes.length > 0 && countRes[0].exists) {
               // Update if newer and permission granted
               await ta.query(
-                "UPDATE shoppinglists SET ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND ? AND `localupdate` < ?",
+                "UPDATE shoppinglists SET ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND ? AND `localupdate` < FROM_UNIXTIME(?)",
                 [{ name }, { icon }, updated, now, { id }, { hid }, updated ]
               );
             } else {
@@ -70,7 +70,7 @@ module.exports = ({ db }) => ({
 
         // 2. Fetch all lists for household (always send all lists because some lists may have been deleted)
         let { results: fetchedLists } = await ta.query(
-          "SELECT id, name, icon, synctime >= FROM_UNIXTIME(?) AS 'fullSync' FROM shoppinglists WHERE ?",
+          "SELECT id, name, icon, synctime >= FROM_UNIXTIME(?) AS 'fullSync', UNIX_TIMESTAMP(localupdate) AS 'updated' FROM shoppinglists WHERE ?",
           [lastUpdate, { hid }]
         );
         if(!fetchedLists) fetchedLists = [];
