@@ -90,7 +90,7 @@ module.exports = ({ db }) => ({
             // Delete if newer and permission granted
             const { results: { affectedRows } } = await ta.query(
               "DELETE FROM shoppingitems WHERE ? AND `localupdate` <= FROM_UNIXTIME(?)",
-              [{ id }, { hid }, updated]
+              [{ id }, updated]
             );
             // If delete failed or rejected, set current list to full sync
             if(!affectedRows) {
@@ -115,7 +115,7 @@ module.exports = ({ db }) => ({
               // Insert new list
               await ta.query(
                 "INSERT INTO shoppingitems (`id`, `text`, `checked`, `list`, `localupdate`, `remoteupdate`) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?))",
-                [id, text, checked, list, updated, now]
+                [id, text || "", checked, list, updated, now]
               );
             }
           }

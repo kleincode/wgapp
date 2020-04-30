@@ -69,8 +69,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" outlined @click="save">ok</v-btn>
-          <v-btn text @click="cancel">cancel</v-btn>
+          <v-btn text @click="cancel">Cancel</v-btn>
+          <v-btn color="primary" @click="save">OK</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
