@@ -12,16 +12,25 @@
           <v-card
             v-show="!editMode"
             class="pa-6"
+            :loading="loading"
             :color="isDark ? 'secondary' : 'secondary lighten-5'"
           >
             <v-row>
               <v-col cols="12" md="6" lg="4" class="text-center">
-                <v-avatar size="250" class="mb-2">
+                <v-avatar
+                  size="250"
+                  class="mb-2"
+                  :color="hasProfilePicture ? '' : 'primary'"
+                >
                   <v-img
-                    src="https://cdn.vuetifyjs.com/images/john.jpg"
+                    v-if="hasProfilePicture"
+                    :src="profilePictureData"
                     alt="John"
                   >
                   </v-img>
+                  <span v-else class="white--text display-4">{{
+                    getInitials()
+                  }}</span>
                 </v-avatar>
               </v-col>
               <v-col cols="12" md="6" lg="8" class="pa-4">
@@ -39,12 +48,20 @@
                     <h1 class="headline">************</h1>
                   </v-col>
                   <v-col cols="12" md="4" class="text-right">
-                    <v-btn color="primary" @click="edit">edit</v-btn>
+                    <v-btn color="primary" @click="editMode = true">edit</v-btn>
                   </v-col>
                 </v-row>
               </v-col>
             </v-row>
           </v-card>
+          <v-row>
+            <v-col cols="12" md="6">
+              <p class="text--secondary">registered: 30.04.2020</p>
+            </v-col>
+            <v-col cols="12" md="6">
+              <p class="text--secondary">registered: 30.04.2020</p>
+            </v-col>
+          </v-row>
         </v-card>
       </v-col>
     </v-row></v-container
@@ -53,21 +70,43 @@
 
 <script>
 import ProfileEdit from "@/components/ProfileEdit.vue";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 export default {
   name: "Profile",
   components: {
     ProfileEdit
   },
   data: () => ({
-    editMode: false
+    editMode: false,
+    loading: false,
+    profilePictureExists: false,
+    imageSource: ""
   }),
   computed: {
-    ...mapState(["userEmail", "userFirstName", "userLastName"])
+    ...mapState([
+      "userEmail",
+      "userFirstName",
+      "userLastName",
+      "userInitials",
+      "profilePictureData"
+    ]),
+    ...mapGetters(["hasProfilePicture"])
+  },
+  async mounted() {
+    this.loading = true;
+    await this.$store.dispatch("fetchProfileImg");
+    this.loading = false;
   },
   methods: {
-    edit() {
-      this.editMode = true;
+    getInitials() {
+      let str = "";
+      if (this.userFirstName) {
+        str += this.userFirstName.substr(0, 1).toUpperCase();
+      }
+      if (this.userLastName) {
+        str += this.userLastName.substr(0, 1).toUpperCase();
+      }
+      return str;
     },
 
     isDark() {
