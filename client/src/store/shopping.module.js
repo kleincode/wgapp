@@ -56,8 +56,9 @@ const vuexModule = {
   },
   actions: {
     // ({ state, commit, dispatch, getters, rootState, rootGetters })
-    async sync({ state, commit }) {
-      if (state._initialized) return;
+    async sync({ state, commit }, forceResync) {
+      if (!forceResync && state._initialized) return;
+      console.log("syncing");
       commit(
         "set_lists",
         await shoppingLists
@@ -212,6 +213,43 @@ const vuexModule = {
       console.log(localUpdates);
       const { data } = await axios.post("/_/syncshopping", localUpdates);
       console.log(data);
+      if (data.success) {
+        // Now merge updates locally
+        const { lists, items, now } = data;
+        await db.transaction(
+          "rw",
+          shoppingLists,
+          shoppingItems,
+          appSettings,
+          async () => {
+            // Delete lists
+            let deletedLists = [];
+            await shoppingLists.toCollection().modify((value, ref) => {
+              if (!lists.find(el => el.id == value.id)) {
+                deletedLists.push(value.id);
+                delete ref.value;
+              }
+            });
+
+            // Add and update lists (add order prop)
+            await shoppingLists.bulkPut(lists.map(el => ({ ...el, order: 0 })));
+            // if full sync, delete all items from this list
+            deletedLists.push(lists.filter(el => el.fullSync).map(el => el.id));
+
+            // Delete items from deleted lists
+            for (let list of deletedLists) {
+              await shoppingItems.where({ list }).delete();
+            }
+
+            // Finally, add/update all items (add order prop)
+            await shoppingItems.bulkPut(items.map(el => ({ ...el, order: 0 })));
+
+            // Save update time
+            await appSettings.put({ key: "shoppingSync", value: now });
+          }
+        );
+      } else throw data.message;
+      await dispatch("sync", true);
     }
   },
   getters: {
