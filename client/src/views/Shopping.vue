@@ -1,8 +1,10 @@
 <template>
   <v-container>
-    <h1 class="display-2 pb-6">Shopping</h1>
-    <v-row class="ml-4" cols="12">
-      <v-col>
+    <v-row>
+      <v-col cols="12" lg="10" offset-lg="1" xl="8" offset-xl="2">
+        <h1 class="display-2 pb-6">Shopping</h1>
+      </v-col>
+      <v-col cols="12" md="5" lg="4" offset-lg="1" xl="3" offset-xl="2">
         <v-card style="height: 100%">
           <v-card-title>
             Lists
@@ -12,6 +14,14 @@
               v-model="editList"
               @committed="updateRemoteFunction()"
             />
+            <v-btn
+              icon
+              :loading="loading"
+              aria-label="Synchronize shopping lists"
+              @click="updateRemoteFunction(true)"
+            >
+              <v-icon>refresh</v-icon>
+            </v-btn>
           </v-card-title>
           <v-list v-if="lists.length > 0">
             <v-list-item-group
@@ -27,13 +37,13 @@
                 ></v-list-item-content>
 
                 <v-list-item-action style="display: block" class="">
-                  <v-btn icon @click="$refs.editDialog.startEdit(list)">
-                    <v-icon>
+                  <v-btn icon dense @click="$refs.editDialog.startEdit(list)">
+                    <v-icon dense>
                       {{ shoppingIcons[0] }}
                     </v-icon>
                   </v-btn>
                   <v-btn icon @click="deleteList(list)">
-                    <v-icon>
+                    <v-icon dense>
                       {{ shoppingIcons[2] }}
                     </v-icon>
                   </v-btn>
@@ -53,8 +63,8 @@
           </div>
         </v-card>
       </v-col>
-
-      <v-col>
+      <!-- Items col -->
+      <v-col cols="12" md="7" lg="6" xl="5">
         <v-card style="height: 100%">
           <v-card-title>
             <v-icon class="mr-2">
@@ -296,7 +306,7 @@ export default {
     },
 
     async fetchShoppingItems() {
-      this.$store.dispatch(
+      await this.$store.dispatch(
         "shopping/loadList",
         this.isListSelected ? this.lists[this.selectedList].id : false
       );
@@ -308,11 +318,12 @@ export default {
 
     updateRemote() {
       const that = this;
-      return async () => {
+      return async load => {
         if (navigator.onLine) {
-          that.loading = true;
+          if (load) that.loading = true;
           await that.$store.dispatch("shopping/updateRemote");
-          that.loading = false;
+          await that.fetchShoppingItems();
+          if (load) that.loading = false;
         }
       };
     },
