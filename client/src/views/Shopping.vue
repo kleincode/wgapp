@@ -110,7 +110,7 @@
                       :items="autocompleteItems"
                       auto-select-first
                       append-icon=""
-                      :disabled="item.checked"
+                      :disabled="!!item.checked"
                       :menu-props="{
                         maxHeight: 150
                       }"
@@ -296,9 +296,9 @@ export default {
     },
 
     updateRemote() {
-      const store = this.$store;
-      return () => {
-        store.dispatch("shopping/updateRemote");
+      const that = this;
+      return async () => {
+        await that.$store.dispatch("shopping/updateRemote");
       };
     },
 

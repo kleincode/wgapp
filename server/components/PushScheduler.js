@@ -5,7 +5,6 @@ const Helpers = require("./Helpers");
 module.exports = {
   registerJobs(db) {
     //Helpers.sendNotificationToUser(db, 7, "It works!!!");
-    Helpers.sendNotificationToUser(db, 8, "It works!!!");
     console.log("Registering push jobs");
 
     let tasksPushJob = Schedule.scheduleJob("* * * * *", async () => {

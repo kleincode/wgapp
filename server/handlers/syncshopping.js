@@ -48,7 +48,7 @@ module.exports = ({ db }) => ({
             );
           } else {
             // Check if list exists on remote
-            const { results: countRes } = ta.query(
+            const { results: countRes } = await ta.query(
               "SELECT COUNT(*) AS 'exists' FROM shoppinglists WHERE ?",
               { id }
             );
@@ -79,7 +79,7 @@ module.exports = ({ db }) => ({
         // 3. Merge all item updates
         for(let { id, updated, text, list, checked, deleted } of items) {
           // Check if list id is valid
-          if(!(list in listIds)) continue;
+          if(!listIds.includes(list)) continue;
           // Parse fields
           updated = parseInt(updated);
           checked = !!checked;
@@ -99,8 +99,8 @@ module.exports = ({ db }) => ({
             }
           } else {
             // Check if item exists on remote
-            const { results: itemFetchRes } = ta.query(
-              "SELECT `list` FROM shoppinglists WHERE ?",
+            const { results: itemFetchRes } = await ta.query(
+              "SELECT `list` FROM shoppingitems WHERE ?",
               { id }
             );
             if(itemFetchRes.length > 0) {
@@ -123,10 +123,18 @@ module.exports = ({ db }) => ({
 
         // 4. Fetch list items
         const fullSyncLists = fetchedLists.filter(el => el.fullSync).map(el => el.id);
-        const { results: itemResults } = await ta.query(
-          "SELECT `id`, `text`, `checked`, `list`, `localupdate` AS 'updated' FROM shoppingitems JOIN shoppinglists ON shoppingitems.list = shoppinglists.id WHERE shoppinglists.id IN (?) OR shoppingitems.remoteupdate > FROM_UNIXTIME(?)",
-          [fullSyncLists, lastUpdate]
-        );
+        let itemResults;
+        if(fullSyncLists.length) {
+          itemResults = (await ta.query(
+            "SELECT shoppingitems.`id`, shoppingitems.`text`, shoppingitems.`checked`, shoppingitems.`list`, UNIX_TIMESTAMP(shoppingitems.`localupdate`) AS 'updated' FROM shoppingitems JOIN shoppinglists ON shoppingitems.list = shoppinglists.id WHERE shoppinglists.id IN (?) OR shoppingitems.remoteupdate > FROM_UNIXTIME(?)",
+            [fullSyncLists, lastUpdate]
+          )).results;
+        } else {
+          itemResults = (await ta.query(
+            "SELECT `id`, `text`, `checked`, `list`, UNIX_TIMESTAMP(`localupdate`) AS 'updated' FROM shoppingitems WHERE remoteupdate > FROM_UNIXTIME(?)",
+            [lastUpdate]
+          )).results;
+        }
 
         await ta.commit();
         success({

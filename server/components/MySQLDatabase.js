@@ -53,7 +53,7 @@ var DatabaseHelper = class DatabaseHelper {
         if(err) reject(err);
         else connection.beginTransaction(err => {
           if(err) reject(err);
-          else resolve(new TransactionHelper(connection));
+          else resolve(new TransactionHelper(connection, { debug: true }));
         });
       });
     });
@@ -63,9 +63,14 @@ var DatabaseHelper = class DatabaseHelper {
 
 var TransactionHelper = class TransactionHelper {
 
-  constructor(connection) {
+  constructor(connection, options) {
     this.connection = connection;
     this.released = false;
+    this.options = options;
+  }
+
+  debug(msg) {
+    if(this.options.debug) console.log(msg);
   }
 
   getConnection() {
@@ -73,17 +78,28 @@ var TransactionHelper = class TransactionHelper {
   }
 
   query(query, data) {
+    if(this.options.debug) {
+      console.log("ta query", mysql.format(query, data));
+    }
     return new Promise((resolve, reject) => {
       if(this.released) reject("Transaction is closed. Please create a new transaction.");
       else this.connection.query(query, data, (err, results, fields) => {
         if(err) reject(err);
-        else resolve({err, results, fields});
+        else {
+          if(this.options.debug) {
+            console.log("ta results", results);
+          }
+          resolve({err, results, fields});
+        }
       });
     });
   }
 
   commit() {
     return new Promise((resolve, reject) => {
+      if(this.options.debug) {
+        console.log("ta commit");
+      }
       if(this.released) reject("Transaction is closed. Please create a new transaction.");
       else this.connection.commit(err => {
         if(err) reject(err);
@@ -97,6 +113,9 @@ var TransactionHelper = class TransactionHelper {
 
   rollback() {
     return new Promise((resolve, reject) => {
+      if(this.options.debug) {
+        console.log("ta rollback");
+      }
       if(this.released) reject("Transaction is closed. Please create a new transaction.");
       else this.connection.rollback(err => {
         if(err) reject(err);
