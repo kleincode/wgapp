@@ -3,11 +3,15 @@
     <h1 class="display-2 pb-6">Shopping</h1>
     <v-row class="ml-4" cols="12">
       <v-col>
-        <v-card :loading="loadingLists" style="height: 100%">
+        <v-card :loading="loading" style="height: 100%">
           <v-card-title>
             Lists
             <v-spacer></v-spacer>
-            <edit-shopping-list-dialog ref="editDialog" v-model="editList" />
+            <edit-shopping-list-dialog
+              ref="editDialog"
+              v-model="editList"
+              @committed="updateRemoteFunction()"
+            />
           </v-card-title>
           <v-list v-if="lists.length > 0">
             <v-list-item-group
@@ -51,7 +55,7 @@
       </v-col>
 
       <v-col>
-        <v-card :loading="loadingItems" style="height: 100%">
+        <v-card :loading="loading" style="height: 100%">
           <v-card-title>
             <v-icon class="mr-2">
               {{ getIcon(selectedListIcon) }}
@@ -181,8 +185,7 @@ export default {
     shoppingIcons: ["edit", "check", "delete", "cancel"],
     selectedList: 0,
     selectedItem: 0,
-    loadingItems: false,
-    loadingLists: false,
+    loading: false,
     activeItemIndex: -1,
     updateRemoteFunction: null
   }),
@@ -260,18 +263,26 @@ export default {
       this.$refs.combo[index].blur();
       this.activeItemIndex = -1;
       // wait for next tick because combobox doesn't update its text value right away (vuetify bug)
-      this.$nextTick(() => this.$store.dispatch("shopping/editItem", item));
+      this.$nextTick(async () => {
+        if (await this.$store.dispatch("shopping/editItem", item)) {
+          this.updateRemoteFunction();
+        }
+      });
     },
 
-    deleteItem(item, index) {
+    async deleteItem(item, index) {
       item.deleted = true;
-      this.$store.dispatch("shopping/deleteItem", item.id);
+      if (await this.$store.dispatch("shopping/deleteItem", item.id)) {
+        this.updateRemoteFunction();
+      }
       setTimeout(() => this.selectNextItem(index - 1), 200);
     },
 
-    deleteList(list) {
+    async deleteList(list) {
       list.deleted = true;
-      this.$store.dispatch("shopping/deleteList", list.id);
+      if (await this.$store.dispatch("shopping/deleteList", list.id)) {
+        this.updateRemoteFunction();
+      }
     },
 
     focusItem(index) {
@@ -298,7 +309,11 @@ export default {
     updateRemote() {
       const that = this;
       return async () => {
-        await that.$store.dispatch("shopping/updateRemote");
+        if (navigator.onLine) {
+          that.loading = true;
+          await that.$store.dispatch("shopping/updateRemote");
+          that.loading = false;
+        }
       };
     },
 

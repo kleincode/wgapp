@@ -88,6 +88,7 @@ const vuexModule = {
           await shoppingLists.update(list.id, { updated: timestamp() });
           commit("edit_list", list);
         }
+        return !!updatedRows;
       });
     },
     saveListOrder({ state }) {
@@ -107,6 +108,7 @@ const vuexModule = {
         }
         commit("delete_list", id);
         await dispatch("saveListOrder");
+        return !!updatedRows;
       });
     },
     async loadList({ commit }, listId) {
@@ -143,6 +145,7 @@ const vuexModule = {
           await shoppingItems.update(item.id, { updated: timestamp() });
           commit("edit_item", item);
         }
+        return !!updatedRows;
       });
     },
     saveItemOrder({ state }) {
@@ -162,6 +165,7 @@ const vuexModule = {
         }
         commit("delete_item", id);
         await dispatch("saveItemOrder");
+        return !!updatedRows;
       });
     },
     collectLocalUpdates() {
