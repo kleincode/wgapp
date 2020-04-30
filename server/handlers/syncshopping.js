@@ -55,7 +55,7 @@ module.exports = ({ db }) => ({
             if(countRes.length > 0 && countRes[0].exists) {
               // Update if newer and permission granted
               await ta.query(
-                "UPDATE shoppinglists SET ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND ? AND `localupdate` < FROM_UNIXTIME(?)",
+                "UPDATE shoppinglists SET ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND ? AND `localupdate` <= FROM_UNIXTIME(?)",
                 [{ name }, { icon }, updated, now, { id }, { hid }, updated ]
               );
             } else {
@@ -105,10 +105,10 @@ module.exports = ({ db }) => ({
             );
             if(itemFetchRes.length > 0) {
               // Check if item currently belongs to household (no permission otherwise)
-              if(!(itemFetchRes[0].list in listIds)) continue;
+              if(!listIds.includes(itemFetchRes[0].list)) continue;
               // Update if newer
               await ta.query(
-                "UPDATE shoppingitems SET ?, ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND `localupdate` < ?",
+                "UPDATE shoppingitems SET ?, ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND `localupdate` <= FROM_UNIXTIME(?)",
                 [{ text }, { checked }, { list }, updated, now, { id }, updated ]
               );
             } else {
