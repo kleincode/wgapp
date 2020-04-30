@@ -25,12 +25,16 @@
           </v-card-title>
           <v-list v-if="lists.length > 0">
             <v-list-item-group
-              v-model="selectedList"
+              v-model="selectedListId"
               color="primary"
               @change="fetchShoppingItems"
             >
-              <v-list-item v-for="list in lists" :key="list.id"
-                ><v-list-item-icon>
+              <v-list-item
+                v-for="list in lists"
+                :key="list.id"
+                :value="list.id"
+              >
+                <v-list-item-icon>
                   <v-icon>{{ getIcon(list.icon) }}</v-icon> </v-list-item-icon
                 ><v-list-item-content
                   ><v-list-item-title v-text="list.name"></v-list-item-title
@@ -75,7 +79,7 @@
             <v-btn
               color="primary"
               text
-              :disabled="!isListSelected"
+              :disabled="!selectedList"
               @click="pushItem"
             >
               New Item
@@ -162,7 +166,7 @@
           >
           <div class="ma-4">
             <FinishShoppingDialog
-              v-model="lists[selectedList]"
+              v-model="selectedList"
               :completed-tasks="completedTasks"
               :remaining-tasks="remainingTasks"
             ></FinishShoppingDialog>
@@ -193,7 +197,7 @@ export default {
       icon: 0
     },
     shoppingIcons: ["edit", "check", "delete", "cancel"],
-    selectedList: 0,
+    selectedListId: null,
     selectedItem: 0,
     loading: false,
     activeItemIndex: -1,
@@ -203,18 +207,14 @@ export default {
   computed: {
     ...mapState("userSettings", ["locale"]),
     ...mapState("shopping", ["lists", "items"]),
-    isListSelected() {
-      return (
-        typeof this.selectedList === "number" && !!this.lists[this.selectedList]
-      );
+    selectedList() {
+      return this.lists.find(el => el.id == this.selectedListId);
     },
     selectedListName() {
-      return this.isListSelected
-        ? this.lists[this.selectedList].name
-        : "No list selected";
+      return this.selectedList ? this.selectedList.name : "No list selected";
     },
     selectedListIcon() {
-      return this.isListSelected ? this.lists[this.selectedList].icon : "";
+      return this.selectedList ? this.selectedList.icon : "";
     },
     completedTasks() {
       return this.items.filter(task => task.checked).length;
@@ -260,7 +260,7 @@ export default {
       const newItem = {
         text: "",
         checked: false,
-        list: this.lists[this.selectedList].id,
+        list: this.selectedListId,
         id: this.$uuid.v1()
       };
       await this.$store.dispatch("shopping/pushItem", newItem);
@@ -308,12 +308,9 @@ export default {
     async fetchShoppingItems() {
       await this.$store.dispatch(
         "shopping/loadList",
-        this.isListSelected ? this.lists[this.selectedList].id : false
+        this.selectedListId || false
       );
-      console.log(
-        "fetching",
-        this.isListSelected ? this.lists[this.selectedList].id : false
-      );
+      console.log("fetching", this.selectedListId || false);
     },
 
     updateRemote() {
