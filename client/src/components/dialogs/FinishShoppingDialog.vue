@@ -7,20 +7,20 @@
         block
         v-on="on"
         @click="openDialog"
-        >Finish</v-btn
+        >Transfer to finances</v-btn
       >
     </template>
     <v-card :loading="loading">
       <v-card-title>
         <span class="headline">
-          Finish shopping
+          Add expense
         </span>
       </v-card-title>
 
       <v-card-text>
         <v-container>
           <p>
-            You can add an expense to your Finances for this shopping list
+            Add a new expense corresponding to this shopping list.
           </p>
           <v-text-field v-model="name"></v-text-field>
           <v-text-field
@@ -88,7 +88,7 @@ export default {
       try {
         const { data } = await this.$http.post("/_/addexpense", {
           description: this.value.name,
-          amount: Math.round(parseFloat(this.value.amount) * 100)
+          amount: Math.floor(parseFloat(this.amount) * 100)
         });
         if (data.success) {
           this.$store.dispatch(

@@ -3,7 +3,7 @@
     <h1 class="display-2 pb-6">Shopping</h1>
     <v-row class="ml-4" cols="12">
       <v-col>
-        <v-card :loading="loading" style="height: 100%">
+        <v-card style="height: 100%">
           <v-card-title>
             Lists
             <v-spacer></v-spacer>
@@ -55,7 +55,7 @@
       </v-col>
 
       <v-col>
-        <v-card :loading="loading" style="height: 100%">
+        <v-card style="height: 100%">
           <v-card-title>
             <v-icon class="mr-2">
               {{ getIcon(selectedListIcon) }}
