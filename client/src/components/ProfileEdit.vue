@@ -8,27 +8,31 @@
     <v-row>
       <v-col cols="12" md="6" lg="4" class="text-center">
         <v-hover v-slot:default="{ hover }">
-          <v-avatar size="250" class="mb-2">
+          <v-avatar
+            size="250"
+            class="mb-2"
+            :color="hasProfilePicture ? '' : 'grey'"
+          >
             <div class="centered">
-              <v-btn
-                icon
-                x-large
-                color="transparent"
-                :class="{ 'show-btns': hover }"
-                ><v-icon x-large>edit</v-icon></v-btn
-              >
+              <UploadProfileImageDialog
+                :hover="hover"
+              ></UploadProfileImageDialog>
             </div>
             <v-img
+              v-if="hasProfilePicture"
               class="profileImage"
               :class="{ 'on-hover': hover }"
-              src="https://cdn.vuetifyjs.com/images/john.jpg"
+              :src="profilePictureData"
               alt="John"
             >
             </v-img>
+            <span v-else class="white--text display-4">{{
+              getInitials()
+            }}</span>
           </v-avatar>
         </v-hover>
         <br />
-        <v-btn text>remove</v-btn>
+        <v-btn text @click="deleteProfilePicture()">remove</v-btn>
       </v-col>
       <v-col cols="12" md="6" lg="8" class="pa-3">
         <v-text-field
@@ -95,9 +99,13 @@
   </v-card>
 </template>
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
+import UploadProfileImageDialog from "@/components/dialogs/UploadProfileImageDialog.vue";
 export default {
   name: "ProfileEdit",
+  components: {
+    UploadProfileImageDialog
+  },
   props: {
     editMode: {
       type: Boolean,
@@ -126,7 +134,13 @@ export default {
     }
   }),
   computed: {
-    ...mapState(["userEmail", "userFirstName", "userLastName"])
+    ...mapState([
+      "userEmail",
+      "userFirstName",
+      "userLastName",
+      "profilePictureData"
+    ]),
+    ...mapGetters(["hasProfilePicture"])
   },
   watch: {
     editMode(newVal) {
@@ -206,9 +220,42 @@ export default {
         }
       } catch (err) {
         this.loading = false;
-        console.log(err);
+        console.error(err);
         this.$store.dispatch("showSnackbar", "Error while updating profile.");
       }
+    },
+    async deleteProfilePicture() {
+      try {
+        const { data } = await this.$http.post("/_/deleteprofilepicture");
+        if (data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Successfully deleted profile picture."
+          );
+          setTimeout(() => this.$store.dispatch("fetchProfileImg"), 200);
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't delete profile picture."
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while deleting profile picture."
+        );
+      }
+    },
+    getInitials() {
+      let str = "";
+      if (this.userFirstName) {
+        str += this.userFirstName.substr(0, 1).toUpperCase();
+      }
+      if (this.userLastName) {
+        str += this.userLastName.substr(0, 1).toUpperCase();
+      }
+      return str;
     },
     getEffect(hover) {
       if (hover) {
@@ -242,9 +289,6 @@ export default {
   opacity: 0.6;
 }
 
-.show-btns {
-  color: rgba(255, 255, 255, 1) !important;
-}
 .centered {
   position: absolute;
   top: 50%;

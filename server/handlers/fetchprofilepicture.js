@@ -13,7 +13,6 @@ module.exports = ({ db }) => ({
       "SELECT image FROM users WHERE id = ? AND hid = ?",
       [uid, hid]
     );
-    console.log(results);
     if(results.length == 0) {
       error("No user found.");
     } else if(!results[0].image) {
