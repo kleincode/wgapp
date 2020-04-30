@@ -79,7 +79,6 @@ module.exports = ({ db }) => ({
         query += "WHERE id = ?";
         params.push(uid);
         const { results: results2 } = await db.query(query, params);
-        console.log(results2);
         if (results2.affectedRows == 1) {
           success("Successfully updated profile");
         } else {

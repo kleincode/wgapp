@@ -18,7 +18,8 @@ let store = new Vuex.Store({
     householdUsers: {},
     updateAvailable: null,
     serviceWorker: null,
-    offline: false
+    offline: false,
+    profilePictureData: null
   },
   mutations: {
     login_success(state, [email, token]) {
@@ -55,6 +56,9 @@ let store = new Vuex.Store({
     },
     set_offline(state, offline) {
       state.offline = offline;
+    },
+    set_profile_picture(state, data) {
+      state.profilePictureData = data;
     }
   },
   actions: {
@@ -99,6 +103,24 @@ let store = new Vuex.Store({
       }
       return true;
     },
+    async fetchProfileImg({ commit }) {
+      try {
+        const { data, headers } = await axios.get("/_/fetchprofilepicture", {
+          responseType: "arraybuffer"
+        });
+        if (
+          headers &&
+          headers["content-type"] !== "application/json; charset=utf-8"
+        ) {
+          const buffer = Buffer.from(data, "binary").toString("base64");
+          const imageSource = `data:${headers["content-type"]};base64,${buffer}`;
+          commit("set_profile_picture", imageSource);
+        }
+      } catch (err) {
+        commit("set_profile_picture", null);
+        console.warn(err);
+      }
+    },
     logout({ commit }) {
       commit("logout");
       localStorage.removeItem("auth_token");
@@ -132,6 +154,7 @@ let store = new Vuex.Store({
       if (user.lastname) userName += user.lastname.substr(0, 1).toUpperCase();
       return userName;
     },
+    hasProfilePicture: state => !!state.profilePictureData,
     //Returns IDs of all household users
     getHouseholdUserIDs: state =>
       Object.keys(state.householdUsers).map(id => parseInt(id)),
