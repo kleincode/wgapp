@@ -3,7 +3,7 @@
     <h1 class="display-2 pl-12 pb-6">{{ householdName }}</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4" xl="3">
-        <v-card style="height: 100%;">
+        <v-card style="height: 100%;" :elevation="6">
           <v-card-title>
             Members
             <v-spacer></v-spacer>
@@ -37,7 +37,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4" xl="3">
-        <v-card style="height: 100%;">
+        <v-card style="height: 100%;" :elevation="6">
           <v-card-title>
             Info
           </v-card-title>
@@ -83,10 +83,10 @@
     >
       <p>Are you sure you want to leave this household?</p>
       <v-card color="primary" class="mb-4">
-        <v-card-title class="pb-0">
+        <v-card-title class="pb-0 white--text">
           {{ householdName }}
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="white--text">
           {{ householdTypes[householdType] }}<br />
           Created at: {{ formatDate(householdRegistered) }}
         </v-card-text>

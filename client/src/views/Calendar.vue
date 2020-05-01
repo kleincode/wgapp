@@ -63,7 +63,7 @@
         <v-row>
           <v-col>
             <!-- Calendar toolbar sheet -->
-            <v-sheet>
+            <v-sheet :elevation="6">
               <v-toolbar flat>
                 <!-- Today button -->
                 <v-btn
@@ -128,7 +128,7 @@
               </v-toolbar>
             </v-sheet>
             <!-- Calendar sheet -->
-            <v-sheet>
+            <v-sheet :elevation="6">
               <v-calendar
                 v-show="gapiSignedIn"
                 ref="calendar"

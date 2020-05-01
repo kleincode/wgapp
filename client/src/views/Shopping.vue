@@ -5,7 +5,7 @@
         <h1 class="display-2 pb-6">Shopping</h1>
       </v-col>
       <v-col cols="12" md="5" lg="4" offset-lg="1" xl="3" offset-xl="2">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :elevation="6">
           <v-card-title>
             Lists
             <v-spacer></v-spacer>
@@ -69,7 +69,7 @@
       </v-col>
       <!-- Items col -->
       <v-col cols="12" md="7" lg="6" xl="5">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :elevation="6">
           <v-card-title>
             <v-icon class="mr-2">
               {{ getIcon(selectedListIcon) }}

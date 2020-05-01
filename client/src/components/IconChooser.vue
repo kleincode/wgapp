@@ -24,16 +24,23 @@
               lg="1"
               class="iconEntry"
               @click="select(i)"
+              @dblclick="
+                select(i);
+                save();
+              "
             >
               <v-hover v-slot:default="{ hover }">
                 <v-card
-                  :class="{ 'on-hover': hover, primary: value == i }"
-                  :elevation="hover ? 12 : 2"
+                  :elevation="hover ? 8 : 4"
+                  :color="value == i ? 'primary' : null"
                   class="pt-2 pb-2"
                 >
-                  <v-icon style="font-size: 3em" class="pb-1">{{
-                    icon
-                  }}</v-icon>
+                  <v-icon
+                    style="font-size: 3em"
+                    class="pb-1"
+                    :color="value == i ? 'white' : null"
+                    >{{ icon }}</v-icon
+                  >
                 </v-card>
               </v-hover>
             </v-col>
@@ -49,19 +56,23 @@
               lg="1"
               class="iconEntry"
               @click="select(i + offset)"
+              @dblclick="
+                select(i);
+                save();
+              "
             >
               <v-hover v-slot:default="{ hover }">
                 <v-card
-                  :class="{
-                    'on-hover': hover,
-                    primary: value == i + offset
-                  }"
-                  :elevation="hover ? 12 : 2"
+                  :elevation="hover ? 8 : 4"
+                  :color="value == i + offset ? 'primary' : null"
                   class="pt-2 pb-2"
                 >
-                  <v-icon style="font-size: 3em" class="pb-1">{{
-                    icon
-                  }}</v-icon>
+                  <v-icon
+                    style="font-size: 3em"
+                    class="pb-1"
+                    :color="value == i + offset ? 'white' : null"
+                    >{{ icon }}</v-icon
+                  >
                 </v-card>
               </v-hover>
             </v-col>

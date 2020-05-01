@@ -16,7 +16,7 @@ import {
 } from "@/assets/tasksHelper.js";
 
 describe("tasksHelper.js", () => {
-  let vuetify, router;
+  var vuetify, router;
 
   beforeEach(() => {
     vuetify = new Vuetify();
@@ -34,122 +34,103 @@ describe("tasksHelper.js", () => {
   });
 
   it("isSameWeek correct", () => {
-    expect(isSameWeek(new Date("April 2, 2020 10:00:00"), new Date("April 1, 2020 10:00:00"))).toBe(true);
-    expect(isSameWeek(new Date("April 3, 2020 10:00:00"), new Date("April 4, 2020 10:00:00"))).toBe(true);
-    expect(isSameWeek(new Date("April 1, 2020 10:00:00"), new Date("April 5, 2020 10:00:00"))).toBe(true);
-    expect(isSameWeek(new Date("April 5, 2020 10:00:00"), new Date("March 31, 2020 10:00:00"))).toBe(true);
-    expect(isSameWeek(new Date("April 5, 2020 10:00:00"), new Date("March 29, 2020 10:00:00"))).toBe(false);
+    expect(
+      isSameWeek(
+        new Date("April 2, 2020 10:00:00"),
+        new Date("April 1, 2020 10:00:00")
+      )
+    ).toBe(true);
+    expect(
+      isSameWeek(
+        new Date("April 3, 2020 10:00:00"),
+        new Date("April 4, 2020 10:00:00")
+      )
+    ).toBe(true);
+    expect(
+      isSameWeek(
+        new Date("April 1, 2020 10:00:00"),
+        new Date("April 5, 2020 10:00:00")
+      )
+    ).toBe(true);
+    expect(
+      isSameWeek(
+        new Date("April 5, 2020 10:00:00"),
+        new Date("March 31, 2020 10:00:00")
+      )
+    ).toBe(true);
+    expect(
+      isSameWeek(
+        new Date("April 5, 2020 10:00:00"),
+        new Date("March 29, 2020 10:00:00")
+      )
+    ).toBe(false);
   });
 
   it("computes nextDueDayInWeek correctly", () => {
     let curDate = new Date("April 2, 2020 10:00:00");
     let prevTempDate = new Date("March 31, 2020 10:00:00");
     let repDayInts = [6];
-    let resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    let resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(4);
     expect(resDate.getMonth()).toBe(3);
 
     prevTempDate = new Date("March 31, 2020 10:00:00");
     repDayInts = [0];
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(5);
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [6, 0];
     prevTempDate = new Date("March 31, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(4);
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [4, 0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [4, 0];
     prevTempDate = new Date("April 2, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [6, 0];
     prevTempDate = new Date("March 31, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(4);
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [3, 5];
     prevTempDate = new Date("April 6, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(8);
     expect(resDate.getMonth()).toBe(3);
 
     repDayInts = [3, 1];
     prevTempDate = new Date("March 31, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate).toBe(null);
 
-    repDayInts = [1,2,3,4,5,6,0];
+    repDayInts = [1, 2, 3, 4, 5, 6, 0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(2);
     expect(resDate.getMonth()).toBe(3);
 
     curDate = new Date("April 5, 2020 10:00:00");
-    repDayInts = [1,2,3,4,5,6,0];
+    repDayInts = [1, 2, 3, 4, 5, 6, 0];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate.getDate()).toBe(5);
     expect(resDate.getMonth()).toBe(3);
 
-    repDayInts = [1,2,3,4,5,6];
+    repDayInts = [1, 2, 3, 4, 5, 6];
     prevTempDate = new Date("April 1, 2020 10:00:00");
-    resDate = computeNextDueInWeek(
-      curDate,
-      repDayInts,
-      prevTempDate
-    );
+    resDate = computeNextDueInWeek(curDate, repDayInts, prevTempDate);
     expect(resDate).toBe(null);
   });
 
@@ -295,7 +276,15 @@ describe("tasksHelper.js", () => {
     //custom - 3
     curDate = new Date("April 2, 2020 12:00:00");
     startDateInput = new Date("March 24, 2020 12:00:00");
-    repetitionDays = ["monday", "tuesday", "thursday", "wednesday", "friday", "saturday", "sunday"];
+    repetitionDays = [
+      "monday",
+      "tuesday",
+      "thursday",
+      "wednesday",
+      "friday",
+      "saturday",
+      "sunday"
+    ];
     repetitionUnit = 0;
     repetitionEvery = 1;
     resDate = computeNextDueDay(
@@ -457,7 +446,6 @@ describe("tasksHelper.js", () => {
     curDate = new Date("April 14, 2020 10:00:00");
     lastExecution = new Date("April 14, 2020 09:00:00");
     expect(getOnDemandStatus(curDate, lastExecution)).toBe(2);
-
   });
 
   it("computes checkStatus correctly", () => {

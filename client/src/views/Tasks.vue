@@ -4,7 +4,7 @@
     <v-row>
       <v-col cols="12" md="6" lg="4">
         <v-card
-          outlined
+          :elevation="6"
           class="text-center"
           :loading="loading"
           style="height: 100%"
@@ -15,9 +15,9 @@
               <v-col cols="12" md="10">
                 <v-card
                   v-if="getTodaysTasks.length > 0"
-                  raised
                   class="main-task text-center"
-                  :class="getTodaysTasks[0].missed ? 'red' : 'primary'"
+                  :class="getTodaysTasks[0].missed ? 'red' : 'accent'"
+                  :elevation="6"
                 >
                   <div class="overline">DUE TODAY</div>
                   <v-icon style="font-size: 10em" x-large>
@@ -47,7 +47,11 @@
                     {{ getUserName(getTodaysTasks[0].assigned) }}
                   </v-chip>
                 </v-card>
-                <v-card v-else raised class="main-task text-center secondary">
+                <v-card
+                  v-else
+                  class="main-task text-center secondary"
+                  :elevation="6"
+                >
                   <div class="overline text--disabled">DUE TODAY</div>
                   <v-icon class="text--disabled" style="font-size: 10em" x-large
                     >bathtub</v-icon

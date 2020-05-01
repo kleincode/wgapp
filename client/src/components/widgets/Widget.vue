@@ -1,9 +1,9 @@
 <template>
   <v-card
-    outlined
     class="widget-card"
     :loading="loading"
     :color="error ? 'red' : null"
+    :elevation="6"
   >
     <v-card-title>
       {{ title }}
