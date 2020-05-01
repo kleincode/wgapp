@@ -7,18 +7,36 @@ const picturesFolder = path.join(__dirname, "..", "images", "profile");
 module.exports = ({ db }) => ({
   type: "GET",
   public: false,
-  handler: async ({ query, uid }, { success, fail, error, res }) => {
+  params: {
+    selUid: {
+      type: "int",
+      unsigned: true,
+      default: -1
+    }
+  },
+  handler: async ({ body, query, uid }, { success, fail, error, res }) => {
+    try {
     const hid = await Helpers.fetchHouseholdID(db, uid);
+    const { selUid } = query;
+    let id = 0;
+    if (selUid == -1) {
+      id = uid;
+    } else {
+      id = selUid;
+    }
     const { results } = await db.query(
       "SELECT image FROM users WHERE id = ? AND hid = ?",
-      [uid, hid]
+      [id, hid]
     );
     if(results.length == 0) {
-      error("No user found.");
+      fail("No user found with id " + id + ".");
     } else if(!results[0].image) {
       success("No profile picture.");
     } else {
-      res.sendFile(path.join(picturesFolder, `${uid}.jpg`));
+      res.sendFile(path.join(picturesFolder, `${id}.jpg`));
     }
+  } catch (err) {
+    error("Error fetching profile picture");
+  }
   }
 });

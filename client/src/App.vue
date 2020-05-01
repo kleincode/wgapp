@@ -4,7 +4,7 @@
       <v-list dense nav>
         <v-list-item three-line class="px-0">
           <v-list-item-avatar color="primary">
-            <span class="white--text title"
+            <span v-if="!hasProfilePicture" class="white--text title"
               >{{
                 !!userFirstName
                   ? userFirstName.substring(0, 1).toUpperCase()
@@ -15,6 +15,7 @@
                   : ""
               }}</span
             >
+            <v-img v-else :src="profilePictureData"></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="title"
@@ -167,12 +168,14 @@ export default {
       "userLastName",
       "snackbarMessage",
       "updateAvailable",
-      "offline"
+      "offline",
+      "profilePictureData"
     ]),
-    ...mapGetters(["isUpdateAvailable"])
+    ...mapGetters(["isUpdateAvailable", "hasProfilePicture"])
   },
   async created() {
     await this.$store.dispatch("userSettings/sync");
+    await this.$store.dispatch("fetchProfileImg");
     this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
   },
   methods: {
