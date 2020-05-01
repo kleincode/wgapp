@@ -9,7 +9,7 @@
     >
       <v-list dense nav dark>
         <v-list-item three-line class="px-0">
-          <v-list-item-avatar color="primary">
+          <v-list-item-avatar :color="!hasProfilePicture ? 'primary' : ''">
             <span v-if="!hasProfilePicture" class="white--text title"
               >{{
                 !!userFirstName
