@@ -90,21 +90,38 @@
           autocomplete="new-password"
           @click:append="showPassword2 = !showPassword2"
         ></v-text-field>
-        <div class="text-right">
-          <v-btn text class="mr-4" color="error" @click="cancel">cancel</v-btn>
-          <v-btn color="info" @click="save">save</v-btn>
-        </div>
       </v-col>
     </v-row>
+    <v-card-actions>
+      <v-btn class="mr-4" color="error" @click="deleteDialogVisible = true"
+        >delete Account</v-btn
+      >
+      <v-spacer></v-spacer>
+      <v-btn text class="mr-4" color="error" @click="cancel">cancel</v-btn>
+      <v-btn color="info" @click="save">save</v-btn>
+    </v-card-actions>
+    <confirm-dialog
+      v-model="deleteDialogVisible"
+      title="Delete Account"
+      positive-option="Delete"
+      negative-option="Cancel"
+      :invert-colors="true"
+      @positive="deleteAccount"
+      @negative="deleteDialogVisible = false"
+      >Are you sure you want to leave us? This action can't be undone. All data
+      will be lost. Please don't go...</confirm-dialog
+    >
   </v-card>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
 import UploadProfileImageDialog from "@/components/dialogs/UploadProfileImageDialog.vue";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 export default {
   name: "ProfileEdit",
   components: {
-    UploadProfileImageDialog
+    UploadProfileImageDialog,
+    ConfirmDialog
   },
   props: {
     editMode: {
@@ -114,6 +131,7 @@ export default {
   },
   data: () => ({
     loading: false,
+    deleteDialogVisible: false,
     firstName: "",
     lastName: "",
     nickname: "",
@@ -135,6 +153,7 @@ export default {
   }),
   computed: {
     ...mapState([
+      "uid",
       "userEmail",
       "userFirstName",
       "userLastName",
@@ -209,6 +228,7 @@ export default {
           this.loading = false;
           this.$emit("close");
           this.$store.commit("update_user", [
+            this.uid,
             this.email,
             this.firstName,
             this.lastName
@@ -223,6 +243,30 @@ export default {
         console.error(err);
         this.$store.dispatch("showSnackbar", "Error while updating profile.");
       }
+    },
+    async deleteAccount() {
+      try {
+        const { data } = await this.$http.post("/_/deleteaccount");
+        if (data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Successfully deleted all personal data. Logging out.."
+          );
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't delete personal data."
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error while deleting account. Please contact support."
+        );
+      }
+      this.deleteDialogVisible = false;
+      //TODO logging out...
     },
     async deleteProfilePicture() {
       try {
