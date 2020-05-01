@@ -134,7 +134,7 @@
                 class="mb-1 mt-1"
                 height="300"
               />
-              <p class="text-left">
+              <p class="text-justify">
                 {{ feat.description }}
               </p>
             </v-col>
@@ -304,9 +304,6 @@
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field>
-                
-              </v-text-field>
               <v-textarea
                 v-model="contactMessage"
                 name="input-7-1"
@@ -314,6 +311,7 @@
                 label="Message"
                 counter
                 :rules="[v => v != '' || 'Please enter a message']"
+                hint="When reporting a bug please be very specific describing what you were trying to do and what happened. Thank you!"
                 class="mb-2"
               ></v-textarea>
             </v-col>
@@ -328,6 +326,10 @@
                 Send
               </v-btn></v-col
             >
+            <v-col cols="12" class="mt-8">
+              You can also write us an email to
+              <a>contact@jeff-organization.de</a>.
+            </v-col>
           </v-row>
         </v-form>
       </v-col>

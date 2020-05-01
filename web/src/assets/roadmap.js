@@ -5,7 +5,7 @@ export default [
     title: "Closed Beta",
     description:
       "This app is developed with love and like everything it needs time. We will conduct a closed beta in May 2020. If you're interested feel free to get in touch.",
-    year: "May 2020"
+    year: "May - June 2020"
   },
   {
     color: "green",
@@ -13,7 +13,7 @@ export default [
     title: "Offical Release",
     description: `We're hoping to offically release our app in June 2020. This release will include: finances, 
       shopping lists, tasks, calendar integration and will be available in German and English.`,
-    year: "June 2020"
+    year: "July 2020"
   },
   {
     color: "pink",
