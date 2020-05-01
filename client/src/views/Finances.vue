@@ -31,8 +31,14 @@
                 :value="member.id"
               >
                 <v-list-item-avatar size="48" color="primary" left>
-                  <v-img v-show="member.image" :src="member.image"></v-img>
-                  <span v-show="!member.image" class="white--text headline">
+                  <v-img
+                    v-show="userImages[member.id]"
+                    :src="userImages[member.id]"
+                  ></v-img>
+                  <span
+                    v-show="!userImages[member.id]"
+                    class="white--text headline"
+                  >
                     {{ getUserInitials(member.id) }}
                   </span>
                 </v-list-item-avatar>
@@ -313,6 +319,7 @@ export default {
     ReceiptDialog
   },
   data: () => ({
+    userImages: {},
     memberTotals: [],
     tableHeaders: [
       {
@@ -496,7 +503,13 @@ export default {
               .map(([id, total]) => ({ id, total }))
               .sort((a, b) => b.total - a.total); // sort descending by total
             this.memberTotals.forEach(async member => {
-              member.image = await fetchProfileImg(member.id);
+              if (!this.userImages[member.id]) {
+                this.$set(
+                  this.userImages,
+                  member.id,
+                  await fetchProfileImg(member.id)
+                );
+              }
             });
             this.trendValues = [];
             res.trend.forEach(entry =>

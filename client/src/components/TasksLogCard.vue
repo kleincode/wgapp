@@ -36,8 +36,17 @@
             </h2>
             <div v-if="task.assigned == task.working">
               <v-chip>
-                <v-avatar left>
-                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                <v-avatar
+                  :color="!userImages[task.assigned] ? 'primary' : ''"
+                  left
+                >
+                  <v-img
+                    v-show="userImages[task.assigned]"
+                    :src="userImages[task.assigned]"
+                  ></v-img>
+                  <span v-show="!userImages[task.assigned]" class="white--text">
+                    {{ getUserInitials(task.assigned) }}
+                  </span>
                 </v-avatar>
                 {{ getUserName(task.working) }}
               </v-chip>
@@ -45,8 +54,17 @@
             <div v-else>
               originally: {{ getUserName(task.assigned) }} <br />
               <v-chip>
-                <v-avatar left>
-                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                <v-avatar
+                  :color="!userImages[task.assigned] ? 'primary' : ''"
+                  left
+                >
+                  <v-img
+                    v-show="userImages[task.assigned]"
+                    :src="userImages[task.assigned]"
+                  ></v-img>
+                  <span v-show="!userImages[task.assigned]" class="white--text">
+                    {{ getUserInitials(task.assigned) }}
+                  </span>
                 </v-avatar>
                 {{ getUserName(task.working) }}
               </v-chip>
@@ -80,6 +98,10 @@ export default {
     headless: {
       type: Boolean,
       default: () => false
+    },
+    userImages: {
+      type: Object,
+      default: () => {}
     }
   },
   computed: {

@@ -39,10 +39,22 @@
                   <div class="caption pt-2">{{ getTodaysTasks[0].time }}</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
                   <v-chip>
-                    <v-avatar left>
-                      <img
-                        src="https://randomuser.me/api/portraits/men/81.jpg"
-                      />
+                    <v-avatar
+                      :color="
+                        !userImages[getTodaysTasks[0].assigned] ? 'primary' : ''
+                      "
+                      left
+                    >
+                      <v-img
+                        v-show="userImages[getTodaysTasks[0].assigned]"
+                        :src="userImages[getTodaysTasks[0].assigned]"
+                      ></v-img>
+                      <span
+                        v-show="!userImages[getTodaysTasks[0].assigned]"
+                        class="white--text headline"
+                      >
+                        {{ getUserInitials(getTodaysTasks[0].assigned) }}
+                      </span>
                     </v-avatar>
                     {{ getUserName(getTodaysTasks[0].assigned) }}
                   </v-chip>
@@ -87,10 +99,25 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     <v-chip small>
-                      <v-avatar style="max-height: 80%; max-width: 90%" left>
-                        <img
-                          src="https://randomuser.me/api/portraits/men/81.jpg"
-                        />
+                      <v-avatar
+                        :color="
+                          !userImages[getTodaysTasks[0].assigned]
+                            ? 'primary'
+                            : ''
+                        "
+                        style="max-height: 80%; max-width: 90%"
+                        left
+                      >
+                        <v-img
+                          v-show="userImages[task.assigned]"
+                          :src="userImages[task.assigned]"
+                        ></v-img>
+                        <span
+                          v-show="!userImages[task.assigned]"
+                          class="white--text headline"
+                        >
+                          {{ getUserInitials(task.assigned) }}
+                        </span>
                       </v-avatar>
                       {{ getUserName(task.assigned) }}
                     </v-chip>
@@ -132,6 +159,7 @@
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <UpcomingTasksCard
+          :user-images="userImages"
           :on-demand-tasks="onDemandTasks"
           :timed-tasks="timedTasks"
           :loading="loading"
@@ -141,12 +169,17 @@
       </v-col>
       <v-col cols="12" md="6">
         <RepeatingTasksCard
+          :user-images="userImages"
           :repeating-tasks="repeatingTasks"
           :loading="loading"
         ></RepeatingTasksCard>
       </v-col>
       <v-col cols="12" md="6">
-        <TasksLogCard :tasks="loggedTasks" :loading="loading"></TasksLogCard>
+        <TasksLogCard
+          :user-images="userImages"
+          :tasks="loggedTasks"
+          :loading="loading"
+        ></TasksLogCard>
       </v-col>
     </v-row>
     <v-snackbar v-model="taskCheckSnack">
@@ -161,6 +194,7 @@
 import icons from "@/assets/icons.js";
 import { mapState, mapGetters } from "vuex";
 import { formatDateString } from "@/assets/tasksHelper";
+import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
 import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
 import TasksLogCard from "@/components/TasksLogCard.vue";
@@ -173,12 +207,13 @@ export default {
     TasksLogCard
   },
   data: () => ({
+    userImages: {},
     loading: false,
     taskCheckSnack: false,
     checkedTask: null
   }),
   computed: {
-    ...mapState("tasks", ["loggedTasks"]),
+    ...mapState("tasks", ["loggedTasks", "tasks"]),
     ...mapGetters("tasks", [
       "getTodaysTasks",
       "repeatingTasks",
@@ -199,6 +234,15 @@ export default {
       this.loading = true;
       try {
         await this.$store.dispatch("tasks/fetchTasks");
+        this.tasks.forEach(async task => {
+          if (!this.userImages[task.assigned]) {
+            this.$set(
+              this.userImages,
+              task.assigned,
+              await fetchProfileImg(task.assigned)
+            );
+          }
+        });
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",

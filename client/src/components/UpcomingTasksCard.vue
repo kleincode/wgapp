@@ -48,8 +48,17 @@
             </v-list-item-title>
             <v-list-item-subtitle>
               <v-chip>
-                <v-avatar left>
-                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                <v-avatar
+                  :color="!userImages[task.assigned] ? 'primary' : ''"
+                  left
+                >
+                  <v-img
+                    v-show="userImages[task.assigned]"
+                    :src="userImages[task.assigned]"
+                  ></v-img>
+                  <span v-show="!userImages[task.assigned]" class="white--text">
+                    {{ getUserInitials(task.assigned) }}
+                  </span>
                 </v-avatar>
                 {{ getUserName(task.assigned) }}
               </v-chip>
@@ -104,8 +113,17 @@
             </v-list-item-title>
             <v-list-item-subtitle>
               <v-chip>
-                <v-avatar left>
-                  <img src="https://randomuser.me/api/portraits/men/81.jpg" />
+                <v-avatar
+                  :color="!userImages[task.assigned] ? 'primary' : ''"
+                  left
+                >
+                  <v-img
+                    v-show="userImages[task.assigned]"
+                    :src="userImages[task.assigned]"
+                  ></v-img>
+                  <span v-show="!userImages[task.assigned]" class="white--text">
+                    {{ getUserInitials(task.assigned) }}
+                  </span>
                 </v-avatar>
                 {{ getUserName(task.assigned) }}
               </v-chip>
@@ -159,6 +177,10 @@ export default {
     timedTasks: {
       type: Array,
       default: () => []
+    },
+    userImages: {
+      type: Object,
+      default: () => {}
     }
   },
   computed: {

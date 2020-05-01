@@ -3,7 +3,7 @@
     <v-navigation-drawer v-model="menuVisible" app clipped>
       <v-list dense nav>
         <v-list-item three-line class="px-0">
-          <v-list-item-avatar color="primary">
+          <v-list-item-avatar :color="!hasProfilePicture ? 'primary' : ''">
             <span v-if="!hasProfilePicture" class="white--text title"
               >{{
                 !!userFirstName
