@@ -14,12 +14,18 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="red darken-1" text @click="onNegativeOption">{{
-          negativeOption
-        }}</v-btn>
-        <v-btn color="green darken-1" text @click="onPositiveOption">{{
-          positiveOption
-        }}</v-btn>
+        <v-btn
+          :color="!invertColors ? 'red darken-1' : 'green darken-1'"
+          text
+          @click="onNegativeOption"
+          >{{ negativeOption }}</v-btn
+        >
+        <v-btn
+          :color="invertColors ? 'red darken-1' : 'green darken-1'"
+          text
+          @click="onPositiveOption"
+          >{{ positiveOption }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -51,6 +57,10 @@ export default {
     maxWidth: {
       type: Number,
       default: 300
+    },
+    invertColors: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

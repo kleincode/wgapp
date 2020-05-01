@@ -58,6 +58,7 @@
             <v-col cols="12" md="6">
               <div class="headline">Last Tasks</div>
               <TasksLogCard
+                :user-images="userImages"
                 :tasks="getTasks"
                 :loading="loading"
                 headless
@@ -124,6 +125,7 @@
 <script>
 import ProfileEdit from "@/components/ProfileEdit.vue";
 import TasksLogCard from "@/components/TasksLogCard.vue";
+import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 import { mapState, mapGetters } from "vuex";
 import icons from "@/assets/icons.js";
 export default {
@@ -133,6 +135,7 @@ export default {
     TasksLogCard
   },
   data: () => ({
+    userImages: {},
     editMode: false,
     loading: false,
     profilePictureExists: false,
@@ -168,6 +171,15 @@ export default {
     const prom3 = this.fetchExpenses();
     const prom4 = this.fetchMonthlyData();
     Promise.all([prom1, prom2, prom3, prom4]).then(() => {
+      this.loggedTasks.forEach(async task => {
+        if (!this.userImages[task.assigned]) {
+          this.$set(
+            this.userImages,
+            task.assigned,
+            await fetchProfileImg(task.assigned)
+          );
+        }
+      });
       this.loading = false;
     });
   },
