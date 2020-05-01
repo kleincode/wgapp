@@ -15,6 +15,8 @@
         delimiter-icon="fiber_manual_record"
         class="bottom-carousel"
         :interval="10000"
+        :dark="$vuetify.theme.dark"
+        :light="!$vuetify.theme.dark"
       >
         <v-carousel-item
           v-for="(task, i) in getTodaysTasks"
@@ -23,19 +25,19 @@
         >
           <v-list-item class="mb-4">
             <v-list-item-avatar>
-              <v-icon large :color="task.missed ? 'red' : ''">{{
+              <v-icon large :color="task.missed ? 'red' : 'primary'">{{
                 getIcon(task.icon) || "event_note"
               }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title
                 class="task-entry"
-                :color="task.missed ? 'red' : ''"
+                :color="task.missed ? 'red' : false"
               >
                 {{ task.name || "Unnamed task" }}
                 <div
                   class="overline pl-2 pt-1"
-                  :class="task.missed ? 'red--text' : ''"
+                  :class="task.missed ? 'red--text' : false"
                 >
                   - {{ task.time || "Today" }}
                 </div>

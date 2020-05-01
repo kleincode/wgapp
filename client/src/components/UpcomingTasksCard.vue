@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined :loading="loading" style="height: 100%">
+  <v-card :elevation="6" :loading="loading" style="height: 100%">
     <v-card-title>
       <v-row>
         <v-col cols="9" md="10" lg="10">

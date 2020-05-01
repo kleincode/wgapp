@@ -15,7 +15,7 @@
     </div>
     <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
-        <v-card style="height: 100%">
+        <v-card style="height: 100%" :elevation="6">
           <v-card-title> Member Expenses </v-card-title>
           <v-list three-line avatar>
             <v-subheader>Members</v-subheader>
@@ -100,7 +100,11 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card style="height: 100%" :loading="loadingMonthlyBudget">
+        <v-card
+          style="height: 100%"
+          :loading="loadingMonthlyBudget"
+          :elevation="6"
+        >
           <v-card-title>
             Monthly charges
             <v-spacer></v-spacer>
@@ -182,10 +186,10 @@
                   ></v-text-field>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="updateFinancesTarget"
-                      >ok</v-btn
-                    >
-                    <v-btn text @click="editBudgetDialog = false">cancel</v-btn>
+                    <v-btn text @click="editBudgetDialog = false">Cancel</v-btn>
+                    <v-btn text color="primary" @click="updateFinancesTarget">
+                      Ok
+                    </v-btn>
                   </v-card-actions>
                 </v-card-text>
               </v-card>
@@ -216,7 +220,7 @@
               </v-col>
             </v-row>
             <v-list-item>
-              <v-list-item-avatar size="48" color="secondary" left>
+              <v-list-item-avatar size="48" color="accent" left>
                 <span class="white--text headline">
                   <v-icon x-large>home</v-icon>
                 </span>
@@ -231,7 +235,7 @@
               }}</v-list-item-icon>
             </v-list-item>
             <v-list-item>
-              <v-list-item-avatar size="48" color="secondary" left>
+              <v-list-item-avatar size="48" color="accent" left>
                 <span class="white--text headline">
                   <v-icon x-large>person</v-icon>
                 </span>
@@ -249,7 +253,11 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4">
-        <v-card style="height: 100%" :loading="loadingLastBilling">
+        <v-card
+          style="height: 100%"
+          :loading="loadingLastBilling"
+          :elevation="6"
+        >
           <v-card-title>
             Compensation Payments
           </v-card-title>

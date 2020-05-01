@@ -1,10 +1,16 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="menuVisible" app clipped>
-      <v-list dense nav>
+    <v-navigation-drawer
+      v-model="menuVisible"
+      app
+      clipped
+      color="secondary"
+      class="elevation-12"
+    >
+      <v-list dense nav dark>
         <v-list-item two-line class="px-0">
           <v-list-item-avatar color="primary">
-            <span class="white--text title"
+            <span class="title white--text"
               >{{
                 !!userFirstName
                   ? userFirstName.substring(0, 1).toUpperCase()

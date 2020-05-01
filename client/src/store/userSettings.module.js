@@ -2,7 +2,7 @@ import { userSettings } from "./LocalAppStore";
 
 // Specify all values to sync with persistent store and their default values
 const syncEntries = {
-  darkMode: true,
+  darkMode: false,
   calendarEnabled: false,
   weatherWidgetEnabled: true,
   clockWidgetEnabled: true,
@@ -23,7 +23,7 @@ const vuexModule = {
   state: () => ({
     // These values are set for the short period of time before the persistent settings are fetched
     _initialized: false,
-    darkMode: true,
+    darkMode: false,
     calendarEnabled: false,
     weatherWidgetEnabled: false,
     clockWidgetEnabled: false,

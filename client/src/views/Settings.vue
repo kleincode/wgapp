@@ -8,6 +8,7 @@
           :vertical="$vuetify.breakpoint.mdAndUp"
           :show-arrows="!$vuetify.breakpoint.mdAndUp"
           center-active
+          :elevation="6"
         >
           <v-tab
             v-for="tab in tabs"

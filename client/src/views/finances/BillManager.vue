@@ -16,7 +16,7 @@
 
     <v-row>
       <v-col cols="12" lg="8">
-        <v-card :loading="loading" style="height: 100%">
+        <v-card :loading="loading" style="height: 100%" :elevation="6">
           <v-card-title class="headline">New Bill</v-card-title>
           <v-card-text>
             <p v-if="empty" class="text-center headline pt-12 pb-12">
@@ -135,6 +135,9 @@
             <v-btn icon @click="exportCurrentBillXLSX"
               ><v-icon>table_chart</v-icon></v-btn
             >
+            <v-btn text @click="back">
+              Back
+            </v-btn>
             <v-btn
               color="primary"
               text
@@ -143,14 +146,11 @@
             >
               Save payments
             </v-btn>
-            <v-btn text @click="back">
-              back
-            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" lg="4">
-        <v-card style="height: 100%" :loading="loadingHistory">
+        <v-card style="height: 100%" :loading="loadingHistory" :elevation="6">
           <v-card-title><h1 class="headline">Bill history</h1></v-card-title>
           <v-card-text>
             <v-simple-table>

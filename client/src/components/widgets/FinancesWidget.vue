@@ -15,6 +15,8 @@
         delimiter-icon="fiber_manual_record"
         class="bottom-carousel"
         :interval="9000"
+        :dark="$vuetify.theme.dark"
+        :light="!$vuetify.theme.dark"
       >
         <v-carousel-item
           v-for="(expense, i) in expenses"

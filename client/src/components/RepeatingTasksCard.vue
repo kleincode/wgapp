@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined :loading="loading" style="height: 100%">
+  <v-card :elevation="6" :loading="loading" style="height: 100%">
     <v-card-title>
       <h2 class="title">Manage repeating tasks</h2>
     </v-card-title>

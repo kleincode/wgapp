@@ -1,14 +1,14 @@
 module.exports = {
   pwa: {
-    name: 'WG App',
-    themeColor: '#463ABB',
-    msTileColor: '#463ABB',
+    name: "WG App",
+    themeColor: "#463ABB",
+    msTileColor: "#463ABB",
     manifestOptions: {
-      background_color: '#463ABB'
+      background_color: "#463ABB"
     },
-    workboxPluginMode: 'InjectManifest',
+    workboxPluginMode: "InjectManifest",
     workboxOptions: {
-      swSrc: 'public/service-worker.js'
+      swSrc: "public/service-worker.js"
     }
   },
   devServer: {
@@ -21,12 +21,15 @@ module.exports = {
   },
   transpileDependencies: ["vuetify"],
   chainWebpack: config => {
-    config.module.rule('eslint').use('eslint-loader').options({
-      fix: true
-    })
+    config.module
+      .rule("eslint")
+      .use("eslint-loader")
+      .options({
+        fix: true
+      });
   },
   configureWebpack: config => {
-    if(process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === "production") {
       config.devtool = false;
     } else {
       config.devtool = "eval-source-map";
