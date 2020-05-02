@@ -28,11 +28,12 @@
               >{{ userFirstName }} {{ userLastName }}</v-list-item-title
             >
             <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
-            <v-list-item-subtitle
-              ><router-link :to="{ name: 'Profile' }"
-                >Profile</router-link
-              ></v-list-item-subtitle
-            >
+            <v-list-item-subtitle>
+              <v-icon small>account_circle</v-icon>&nbsp;
+              <router-link class="white--text" :to="{ name: 'Profile' }">
+                My profile
+              </router-link>
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>

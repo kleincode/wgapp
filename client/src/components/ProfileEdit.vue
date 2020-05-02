@@ -156,21 +156,14 @@ export default {
       "userEmail",
       "userFirstName",
       "userLastName",
+      "userNickName",
       "profilePictureData"
     ]),
     ...mapGetters(["hasProfilePicture"])
   },
   watch: {
     editMode(newVal) {
-      if (newVal) {
-        this.firstName = this.userFirstName;
-        this.lastName = this.userLastName;
-        this.nickname = this.userFirstName;
-        this.email = this.userEmail;
-        this.oldPassword = "";
-        this.password1 = "";
-        this.password2 = "";
-      }
+      if (newVal) this.loadValues();
     }
   },
   mounted() {
@@ -180,7 +173,7 @@ export default {
     loadValues() {
       this.firstName = this.userFirstName;
       this.lastName = this.userLastName;
-      this.nickname = this.userFirstName;
+      this.nickname = this.userNickName;
       this.email = this.userEmail;
       this.oldPassword = "";
       this.password1 = "";
@@ -242,7 +235,8 @@ export default {
             this.uid,
             this.email,
             this.firstName,
-            this.lastName
+            this.lastName,
+            this.nickname
           ]);
           this.$store.dispatch("showSnackbar", "Successfully updated profile.");
         } else {

@@ -42,8 +42,10 @@
                       <h1 class="display-1">
                         {{ userFirstName }} {{ userLastName }}
                       </h1>
-                      <div class="overline mt-6">Nickname</div>
-                      <h1 class="headline">Nicki</h1>
+                      <template v-if="userNickName">
+                        <div class="overline mt-6">Nickname</div>
+                        <h1 class="headline">{{ userNickName }}</h1>
+                      </template>
                       <div class="overline mt-6">mail</div>
                       <h1 class="headline">{{ userEmail }}</h1>
                       <div class="overline mt-6">password</div>
@@ -64,7 +66,7 @@
           <v-col cols="12" md="6">
             <v-card :elevation="6">
               <v-card-title>Latest expenses</v-card-title>
-              <v-card-content>
+              <v-card-text>
                 <v-list v-if="expenses.length > 0">
                   <v-list-item v-for="(exp, i) in expenses" :key="i">
                     <v-list-item-content>
@@ -87,9 +89,9 @@
                 <div v-else class="text-center text--secondary mt-8 mb-8">
                   No expenses
                 </div>
-              </v-card-content>
+              </v-card-text>
               <v-card-title>Monthly expenses</v-card-title>
-              <v-card-content>
+              <v-card-text>
                 <v-list v-if="getFilteredMonthlyCharges.length > 0">
                   <v-list-item
                     v-for="(exp, i) in getFilteredMonthlyCharges"
@@ -115,7 +117,7 @@
                 <div v-else class="text-center text--secondary mt-8 mb-8">
                   No monthly charges
                 </div>
-              </v-card-content>
+              </v-card-text>
             </v-card>
           </v-col>
           <v-col cols="12" md="6">
@@ -167,6 +169,7 @@ export default {
       "userEmail",
       "userFirstName",
       "userLastName",
+      "userNickName",
       "userInitials",
       "profilePictureData"
     ]),

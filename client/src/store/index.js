@@ -15,6 +15,7 @@ let store = new Vuex.Store({
     userEmail: localStorage.getItem("user_email"),
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
+    userNickName: localStorage.getItem("user_nickname"),
     snackbarShow: false,
     snackbarMessage: "",
     householdUsers: {},
@@ -30,11 +31,16 @@ let store = new Vuex.Store({
       state.userToken = token;
       localStorage.setItem("auth_token", token);
     },
-    update_user(state, [uid, email, firstname, lastname]) {
+    update_user(state, [uid, email, firstname, lastname, nickname]) {
       state.uid = uid;
       state.userEmail = email;
       state.userFirstName = firstname;
       state.userLastName = lastname;
+      state.userNickName = nickname;
+      localStorage.setItem("user_email", email);
+      localStorage.setItem("user_firstname", firstname);
+      localStorage.setItem("user_lastname", lastname);
+      localStorage.setItem("user_nickname", nickname);
     },
     logout(state) {
       state.userToken = "";
@@ -77,12 +83,12 @@ let store = new Vuex.Store({
             data.uid,
             data.email,
             data.firstname,
-            data.lastname
+            data.lastname,
+            data.nickname
           ]);
         else commit("logout");
       } catch (err) {
-        console.error("Error while authorizing user", err);
-        commit("logout");
+        console.warn("User auth failed", err);
       }
     },
     async login({ commit }, userData) {
