@@ -1,0 +1,20 @@
+{
+  "landing": {
+    "hey": "Hey, ich bin",
+    "organizer": "Your Personal Home Organizer"
+  },
+  "why": {
+    "question": "Warum brauchst du Jeff?",
+    "answer": "Habt ihr keine Lust mehr auf Streitereien darüber, wer welche Aufgabe erledigt hat oder nicht? Wer das letzte Mal bezahlt hat? Hört auf euch darüber Gedanken zu machen und lassen Sie Jeff die Arbeit machen! Er kann eure  täglichen {tasks}, {finances} und {shopping} verwalten. Darüber hinaus hat er einen integrierten {calendar} für eure Events und ein {dashboard}, in dem ihr alles unter Kontrolle habt. Das Einzige, was Jeff nicht kann, ist, das Badezimmer für euch zu putzen. Das tut ihm sehr leid.",
+    "tasks": "Aufgaben",
+    "finances": "Finanzen",
+    "shopping": "Einkaufslisten",
+    "calendar": "Google-Kalender",
+    "dashboard": "Dasboard",
+    "learn": "Erfahre mehr"
+  },
+  "devices": {
+    "headline": "Jeff läuft auf {every} Gerät. Ohne Ausnahme.",
+    "every": "jedem"
+  }
+}

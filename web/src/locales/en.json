@@ -1,0 +1,20 @@
+{
+  "landing": {
+    "hey": "Hey, I'm",
+    "organizer": "Your Personal Home Organizer"
+  },
+  "why": {
+    "question": "Why do you need Jeff?",
+    "answer": "Are you tired of fights about who did or didn't do what task? Who paid last time? Stop worrying about all of that and let Jeff do the work! He can manage your daily {tasks}, {finances} and {shopping}. On top of that he has an integrated {calendar} for your events and an {dashboard} where you can keep everything in check. The only thing Jeff can't do is clean the bathroom for you. He is very sorry for that.",
+    "tasks": "tasks",
+    "finances": "finances",
+    "shopping": "shopping lists",
+    "calendar": "Google Calendar",
+    "dashboard": "dashboard",
+    "learn": "Learn More"
+  },
+  "devices": {
+    "headline": "Jeff runs on {every} device, no matter what.",
+    "every": "every"
+  }
+}

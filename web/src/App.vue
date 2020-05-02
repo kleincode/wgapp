@@ -14,7 +14,20 @@
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>Jeff</v-list-item-title>
+          <v-list-item-title style="display: contents"
+            >Jeff
+            <v-spacer></v-spacer>
+            <v-btn
+              v-if="$i18n.locale == 'en'"
+              icon
+              @click="$i18n.locale = 'de'"
+            >
+              <flag iso="de" :squared="false" />
+            </v-btn>
+            <v-btn v-else icon @click="$i18n.locale = 'en'">
+              <flag iso="us" :squared="false" />
+            </v-btn>
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
@@ -55,7 +68,7 @@
           ><v-icon>dehaze</v-icon></v-btn
         >
         <v-img
-          alt="Vuetify Logo"
+          alt="Jeff"
           class="shrink mr-2"
           contain
           :src="require('./assets/avatar.webp')"
@@ -67,7 +80,7 @@
       </div>
 
       <v-spacer></v-spacer>
-      <v-chip class="mr-6" color="primary"
+      <v-chip class="mr-6 d-none d-sm-block" color="primary"
         ><v-avatar left>
           <v-icon>info</v-icon>
         </v-avatar>
@@ -143,6 +156,11 @@ export default {
         title: "FAQ",
         icon: "question_answer",
         link: { name: "Home", hash: "#faq" }
+      },
+      {
+        title: "Screenshots",
+        icon: "image",
+        link: { name: "Home", hash: "#screenshots" }
       },
       {
         title: "Contact",

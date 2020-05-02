@@ -19,14 +19,14 @@
         :class="$vuetify.breakpoint.smAndDown ? 'text-center' : ''"
       >
         <p class="display-1 font-weight-regular">
-          Hey, I'm
+          {{ $t("landing.hey") }}
         </p>
         <h1 class="display-4 font-weight-bold mb-3">
           Jeff.
         </h1>
 
         <p class="title font-weight-regular">
-          Your Personal Home Organizer
+          {{ $t("landing.organizer") }}
         </p>
       </v-col>
       <v-col cols="12" class="text-center" style="max-height: 100px">
@@ -51,24 +51,35 @@
             ><v-row
               ><v-col cols="12" md="6" lg="4"
                 ><h1 class="display-4 font-weight-black">
-                  Why do you need Jeff?
+                  {{ $t("why.question") }}
                 </h1></v-col
               >
-              <v-col cols="12" md="6" lg="8"
-                ><p class="headline">
-                  Are you tired of fights about who did or didn't do what task?
-                  Who paid last time? Stop worrying about all of that and let
-                  Jeff do the work! He can manage your daily
-                  <span class="font-weight-black">tasks</span>,
-                  <span class="font-weight-black">finances</span> and
-                  <span class="font-weight-black">shopping lists</span>. On top
-                  of that he has an integrated
-                  <span class="font-weight-black">Google Calendar</span> for
-                  your WG events and an
-                  <span class="font-weight-black">dashboard</span> where you can
-                  keep everything in check. The only thing Jeff can't do is
-                  clean the bathroom for you. He is very sorry for that.
-                </p>
+              <v-col cols="12" md="6" lg="8">
+                <i18n path="why.answer" tag="p" class="headline">
+                  <template #tasks>
+                    <span class="font-weight-black">{{ $t("why.tasks") }}</span>
+                  </template>
+                  <template #finances>
+                    <span class="font-weight-black">{{
+                      $t("why.finances")
+                    }}</span>
+                  </template>
+                  <template #shopping>
+                    <span class="font-weight-black">{{
+                      $t("why.shopping")
+                    }}</span>
+                  </template>
+                  <template #calendar>
+                    <span class="font-weight-black">{{
+                      $t("why.calendar")
+                    }}</span>
+                  </template>
+                  <template #dashboard>
+                    <span class="font-weight-black">{{
+                      $t("why.dashboard")
+                    }}</span>
+                  </template>
+                </i18n>
                 <v-btn
                   class="mt-4"
                   rounded
@@ -78,7 +89,7 @@
                       easing: 'easeInOutCubic'
                     })
                   "
-                  >Lean More</v-btn
+                  >{{ $t("why.learn") }}</v-btn
                 >
               </v-col>
             </v-row></v-card-text
@@ -87,9 +98,16 @@
       </v-col>
       <v-col cols="12" md="8" class="mt-12 mb-12"
         ><div class="display-3 text-center" style="line-height: 1.6;">
-          Jeff runs on
-          <span class="font-weight-bold">every</span>
-          device, no matter what.
+          <i18n
+            path="devices.headline"
+            tag="div"
+            class="display-3 text-center"
+            style="line-height: 1.6;"
+          >
+            <template #every>
+              <span class="font-weight-bold">{{ $t("devices.every") }}</span>
+            </template>
+          </i18n>
         </div>
         <div class="title text-center text--secondary">
           It is build as a Progressive Web App (PWA) so it runs as a website but
