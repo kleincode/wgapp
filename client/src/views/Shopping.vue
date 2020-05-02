@@ -235,7 +235,9 @@ export default {
       }
     },
     displayedItems() {
-      return this.items.filter(el => !el.deleted);
+      return this.items
+        .filter(el => !el.deleted)
+        .sort((a, b) => a.checked - b.checked);
     }
   },
 
