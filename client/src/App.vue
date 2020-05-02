@@ -65,9 +65,6 @@
           </v-icon>
           Offline
         </v-chip>
-        <div class="pa-2">
-          <v-btn block color="red lighten-2" @click="logout">Logout</v-btn>
-        </div>
       </template>
     </v-navigation-drawer>
 
@@ -188,11 +185,6 @@ export default {
   methods: {
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
-    },
-    logout() {
-      this.$store.dispatch("logout");
-      delete this.$http.defaults.headers.common["x-access-token"];
-      this.$router.push({ name: "Login" });
     }
   }
 };
