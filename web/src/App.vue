@@ -57,7 +57,7 @@
       <template v-if="$route.name == 'Home'" v-slot:append>
         <div class="pa-2">
           <v-btn block color="warning" :to="{ name: 'Help' }"
-            ><v-icon class="mr-1">help</v-icon> Help</v-btn
+            ><v-icon class="mr-1">help</v-icon> {{ $t("help") }}</v-btn
           >
         </div>
       </template>
@@ -84,10 +84,10 @@
         ><v-avatar left>
           <v-icon>info</v-icon>
         </v-avatar>
-        Currently in Closed Beta</v-chip
+        {{ $t("closedBeta") }}</v-chip
       >
       <v-btn href="" target="_blank" text>
-        <span class="mr-2">Open App</span>
+        <span class="mr-2">{{ $t("openApp") }}</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
@@ -131,39 +131,32 @@ export default {
     ],
     drawer: false,
     sections: [
-      { title: "Home", icon: "home", link: { name: "Home", hash: "#home" } },
+      { icon: "home", link: { name: "Home", hash: "#home" } },
       {
-        title: "Introduction",
         icon: "info",
         link: { name: "Home", hash: "#introduction" }
       },
       {
-        title: "Features",
         icon: "list",
         link: { name: "Home", hash: "#features" }
       },
       {
-        title: "Roadmap",
         icon: "place",
         link: { name: "Home", hash: "#roadmap" }
       },
       {
-        title: "About us",
         icon: "group",
         link: { name: "Home", hash: "#about" }
       },
       {
-        title: "FAQ",
         icon: "question_answer",
         link: { name: "Home", hash: "#faq" }
       },
       {
-        title: "Screenshots",
         icon: "image",
         link: { name: "Home", hash: "#screenshots" }
       },
       {
-        title: "Contact",
         icon: "drafts",
         link: { name: "Home", hash: "#contact" }
       }
@@ -171,6 +164,10 @@ export default {
   }),
   async created() {
     this.$vuetify.theme.dark = false;
+    this.$i18n.locale = navigator.language.substr(0, 2);
+    for (let i = 0; i <= 7; i++) {
+      this.sections[i].title = this.$t("nav[" + i + "]");
+    }
   }
 };
 </script>

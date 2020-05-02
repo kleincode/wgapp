@@ -15,6 +15,136 @@
   },
   "devices": {
     "headline": "Jeff runs on {every} device, no matter what.",
-    "every": "every"
-  }
+    "every": "every",
+    "explanation": "It is build as a Progressive Web App (PWA) so it runs as a website but looks like an app. That way we will never ever have any compatibality issues. Fancy isn't it?"
+  },
+  "features": {
+    "headline": "Jeff's Features",
+    "explanations": [
+      "Always in a hurry? With our dashboard you've got everything covered in a second. Besides weather and time information we display the most important informations of our features. And of course: It's fully customizable.",
+      "With our finance feature you will never ever have to worry about money again. If you pay something, you enter the amount and upload the receipt. It's easy as that. We also support monthly charges and display various statistics about your expenses. And the best is yet come: With just one click our system will calculate all debts to get you guys even.",
+      "You don't need paper or other shopping apps anymore. You've got everything right here. Create shopping lists with automatic autocompletion that learns from you. It's even has full offline support.",
+      "We support 3 types of tasks: repeating tasks (repeat at specific times), on-demand tasks (should be done as needed) and simple single tasks (one time tasks). You can setup reminders, manually remind others via push notifications and automically iterate the assigned member. Every action is logged so fights are history.",
+      "With our Google Calendar integration we can setup your calendar automatically and invite all members. You can also display upcoming events in the dashboard."
+    ],
+    "more": "And even more to come!",
+    "moreHint": "Check out our roadmap for more information:",
+    "roadmap": "To Roadmap"
+  },
+  "interested": {
+    "headline": "Interested? Move in with Jeff just by {bold}!",
+    "bold": "signing up",
+    "explanation": "Jeff is currently {free} for everyone. Create your account and household and start inviting people. It's that simple! (We have even a dark mode..)",
+    "expBold": "free"
+  },
+  "roadmap": {
+    "headline": "Our Roadmap",
+    "milestones": [
+      {
+        "title": "Closed Beta",
+        "desc": "This app is developed with love and like everything it needs time. We will conduct a closed beta in May 2020. If you're interested feel free to get in touch.",
+        "time": "May - June 2020"
+      },
+      {
+        "title": "Offical Release",
+        "desc": "We're hoping to offically release our app in June 2020. This release will include: finances, shopping lists, tasks, calendar integration and will be available in German and English.",
+        "time": "July 2020"
+      },
+      {
+        "title": "WG-Chat, Google Maps Integration",
+        "desc": "Of course thats not it. We've got plenty of new features in the making. You want to have everything in one app? With the Chat Feature you can discuss everything important within the app and even reference expenses, shopping lists, etc. You want to be reminded when you need to go to work/school/university? With our Google Maps Integration Jeff can help you while using realtime traffic information.",
+        "time": "Summer 2020"
+      },
+      {
+        "title": "Home Control & Automation",
+        "desc": "You've got a Philipps Hue Bridge? Excellent, now you can control your scenes right from our dashboard. With our new integrations you can now even automatically turn your lights on when you come home.",
+        "time": "Fall 2020"
+      }
+    ]
+  },
+  "about": {
+    "headline": "About us",
+    "p1": "We're computer sciences students from Germany and one day we were sick of figuring out of who owes whom, who has to go grocery shopping and who - again - forgot to clean up.",
+    "p2": "That's why we created this app. We hope you find this app as helpful as we do. We're always happy to get your feedback so get in touch!"
+  },
+  "faq": {
+    "help": "Help pages:",
+    "questions": [
+      {
+        "question": "What is a Progressive Web App (PWA)?",
+        "answer": "A Progressive Web App - short PWA - is the future of app development. We design this app like we would work on a website - with all the advantages of web development: We can develop for all devices simultaneously. A PWA will run on every system and now we come to the cool part: You don't need an installation but if you want to use it like a real app you just need one click. For all the geeks out there: We used Node.js with Vue.js and Vuetify as our framework. The data is stored securely in a MySQL database."
+      },
+      {
+        "question": "How can I install this app?",
+        "answer": "Just open the app on your device and select in your browser 'Add to homescreen'. For more detailed information about the installation check out our help."
+      },
+      {
+        "question": "How do I create a household?",
+        "answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,"
+      },
+      {
+        "question": "I get no push notifications. Why?",
+        "answer": "To use push notifications you first need to activate this feature and grand permissions. We won't spam you don't worry. Just go to settings, scroll down and click 'Enable push notification'."
+      },
+      {
+        "question": "Is Jeff also available for my device?",
+        "answer": "Yes, Jeff is also available for your device. You just need a browser of your choice. Please check out our help for a complee installation guide."
+      },
+      {
+        "question": "Who many people can I add in my household?",
+        "answer": "You live in a castle and are worried that we can't handle many people in one household? Don't worry you can add as many if you want.  (If you really do live in a castle we would love to visit you some time...)"
+      },
+      {
+        "question": "Can I use this app with my kids?",
+        "answer": "Of course you can! Apologies to most adults but I fear that your kids learn our app faster than you do. Challenge accepted!"
+      },
+      {
+        "question": "How can I invite people to my household?",
+        "answer": "Just selected 'Manage household' in our navigation and hit 'Invite'. For more detailed informations visit our help!"
+      },
+      {
+        "question": "Can I synchronize the calendar with my Google Calendar?",
+        "answer": "Yes you can! (I know. We're very proud of that one) Setup the connection in 'Settings' -> 'Integrations' and sign in with your Google account. After that you can choose which calendars you want to display in the new calendars tab. For more detailed informations about the calendar feature visit our help!"
+      },
+      {
+        "question": "I can't find my question...",
+        "answer": "Please visit our help page or contact us with the form below or by mail."
+      }
+    ]
+  },
+  "question": {
+    "headline": "You have a question or would like to see a new feature in our app?",
+    "desc": "If you can't find your answer in our FAQs just fill out our contact form. We're always eager to find out how we can improve Jeff. If you unfortunately found a bug please send us the details and we will try to talk to Jeff. We won't be too hard on him. We promise."
+  },
+  "contact": {
+    "headline": "Contact",
+    "name": "Name",
+    "mail": "E-mail",
+    "topic": "Topic",
+    "topicHint": "Please choose a topic.",
+    "topics": [
+      "General",
+      "Support",
+      "Feature Request",
+      "Bug Report"
+    ],
+    "message": "Message",
+    "messageHint": "Please enter a message.",
+    "messageHint2": "When reporting a bug please be very specific describing what you were trying to do and what happened. Thank you!",
+    "send": "send",
+    "alternative": "You can also write us an email to"
+  },
+  "help": "Help",
+  "closedBeta": "Currently in closed beta",
+  "openApp": "Open App",
+  "nav": [
+    "Home",
+    "Introduction",
+    "Features",
+    "Roadmap",
+    "About us",
+    "FAQ",
+    "Screenshots",
+    "Contact"
+  ]
 }

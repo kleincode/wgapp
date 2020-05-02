@@ -110,9 +110,7 @@
           </i18n>
         </div>
         <div class="title text-center text--secondary">
-          It is build as a Progressive Web App (PWA) so it runs as a website but
-          looks like an app. That way we will never ever have any compatibality
-          issues. Fancy isn't it?
+          {{ $t("devices.explanation") }}
         </div>
         <v-row justify="center" class="mt-6">
           <v-col cols="4" class="text-center"
@@ -134,7 +132,7 @@
     <v-card class="mt-12 white--text" color="#04182d">
       <v-row id="features" justify="center">
         <v-col cols="12" class="pt-12 text-center"
-          ><div class="display-4 mb-7">Jeff's Features</div>
+          ><div class="display-4 mb-7">{{ $t("features.headline") }}</div>
         </v-col>
         <v-col cols="12" md="11" lg="7"
           ><v-row>
@@ -153,13 +151,13 @@
                 height="300"
               />
               <p class="text-justify">
-                {{ feat.description }}
+                {{ $t("features.explanations[" + i + "]") }}
               </p>
             </v-col>
             <v-col cols="12" md="6" class="pl-12 pt-12 pr-12 text-right">
-              <h1 class="headline mb-3">And even more to come!</h1>
+              <h1 class="headline mb-3">{{ $t("features.more") }}</h1>
               <p>
-                Check out our roadmap for more information:
+                {{ $t("features.moreHint") }}
               </p>
               <v-btn
                 color="white"
@@ -170,7 +168,7 @@
                     easing: 'easeInOutCubic'
                   })
                 "
-                >To Roadmap</v-btn
+                >{{ $t("features.roadmap") }}</v-btn
               ></v-col
             >
           </v-row></v-col
@@ -178,31 +176,43 @@
       </v-row>
     </v-card>
     <v-row justify="center" class="ml-2 mr-2">
-      <v-col cols="12" md="8" class="mt-12 mb-12 text-center"
-        ><div class="display-3" style="line-height: 1.6;">
-          Interested? Move in with Jeff just by
-          <span class="font-weight-bold">signing up</span>!
-        </div>
-        <div class="title text--secondary">
-          Jeff is currently
-          <span class="text--primary font-weight-bold">free</span> for everyone.
-          Create your account and household and start inviting people. It's that
-          simple! (We have even a dark mode..)
-        </div>
+      <v-col cols="12" md="8" class="mt-12 mb-12 text-center">
+        <i18n
+          path="interested.headline"
+          tag="div"
+          class="display-3"
+          style="line-height: 1.6;"
+        >
+          <template #bold>
+            <span class="font-weight-bold">{{ $t("interested.bold") }}</span>
+          </template>
+        </i18n>
+        <i18n
+          path="interested.explanation"
+          tag="div"
+          class="title text--secondary"
+          style="line-height: 1.6;"
+        >
+          <template #free>
+            <span class="text--primary font-weight-bold">{{
+              $t("interested.expBold")
+            }}</span>
+          </template>
+        </i18n>
         <v-btn class="mt-4 mb-12" outlined x-large>
-          <v-icon left>mdi-open-in-new</v-icon>Open App</v-btn
+          <v-icon left>mdi-open-in-new</v-icon>{{ $t("openApp") }}</v-btn
         >
         <br />
         <v-chip class="mt-12 mb-12" color="primary"
           ><v-avatar left>
             <v-icon>info</v-icon>
           </v-avatar>
-          Currently in Closed Beta</v-chip
+          {{ $t("closedBeta") }}</v-chip
         >
         <v-divider class="mt-12"></v-divider>
       </v-col>
       <v-col id="roadmap" cols="12" md="8" class="mt-12 mb-12 text-center">
-        <div class="display-4 mb-7">Our Roadmap</div>
+        <div class="display-4 mb-7">{{ $t("roadmap.headline") }}</div>
         <v-timeline>
           <v-timeline-item
             v-for="(entry, i) in roadmap"
@@ -213,18 +223,18 @@
             <template v-slot:opposite>
               <span
                 :class="`headline font-weight-bold ${entry.color}--text`"
-                v-text="entry.year"
+                v-text="$t('roadmap.milestones[' + i + '].time')"
               ></span>
             </template>
             <div class="py-4">
               <h2
                 :class="`headline font-weight-light mb-4 ${entry.color}--text`"
               >
-                {{ entry.title }}
+                {{ $t("roadmap.milestones[" + i + "].title") }}
               </h2>
               <div>
                 <p class="text-justify">
-                  {{ entry.description }}
+                  {{ $t("roadmap.milestones[" + i + "].desc") }}
                 </p>
               </div>
             </div>
@@ -238,24 +248,20 @@
             ><v-row>
               <v-col class="d-md-none" cols="12" md="6" lg="4"
                 ><h1 class="display-4 font-weight-black">
-                  About us
+                  {{ $t("about.headline") }}
                 </h1>
               </v-col>
               <v-col cols="12" md="6"
                 ><p class="subtitle-1">
-                  We're computer sciences students from Germany and one day we
-                  were sick of figuring out of who owes whom, who has to go
-                  grocery shopping and who - again - forgot to clean up.
+                  {{ $t("about.p1") }}
                 </p>
                 <p class="subtitle-1">
-                  That's why we created this app. We hope you find this app as
-                  helpful as we do. We're always happy to get your feedback so
-                  get in touch!
+                  {{ $t("about.p2") }}
                 </p>
               </v-col>
               <v-col cols="12" md="6" lg="4" class="d-none d-md-block"
                 ><h1 class="display-4 font-weight-black">
-                  About us
+                  {{ $t("about.headline") }}
                 </h1>
               </v-col>
             </v-row></v-card-text
@@ -267,10 +273,19 @@
         <v-expansion-panels popout hover>
           <v-expansion-panel v-for="(question, i) in faq" :key="i">
             <v-expansion-panel-header>{{
-              question.question
+              $t("faq.questions[" + i + "].question")
             }}</v-expansion-panel-header>
-            <v-expansion-panel-content class="pt-2 text-justify"
-              >{{ question.answer }}
+            <v-expansion-panel-content class="pt-2 text-justify">
+              {{ $t("faq.questions[" + i + "].answer") }}
+              <div v-if="question.links.length > 0" class="text-right mt-3">
+                {{ $t("faq.help") }}
+                <span v-for="(link, j) in question.links" :key="j">
+                  <a :to="link.link">
+                    {{ link.text }}
+                  </a>
+                  <span v-if="j < question.links.length - 1">,</span>
+                </span>
+              </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -290,20 +305,17 @@
       <v-row justify="center">
         <v-col cols="12" md="8" class="mt-12 mb-12 text-center"
           ><div class="display-3" style="line-height: 1.6;">
-            You have a question or would like to see a new feature in our app?
+            {{ $t("question.headline") }}
           </div>
           <div class="title white--text" style="opacity: 0.7">
-            If you can't find your answer in our FAQs just fill out our contact
-            form. We're always eager to find out how we can improve Jeff. If you
-            unfortunately found a bug please send us the details and we will try
-            to talk to Jeff. We won't be too hard on him. We promise.
+            {{ $t("question.desc") }}
           </div>
         </v-col></v-row
       >
     </v-card>
     <v-row justify="center" class="mb-12">
       <v-col id="contact" cols="12" md="8" class="mt-12 mb-12 text-center">
-        <div class="display-4 mb-7">Contact</div>
+        <div class="display-4 mb-7">{{ $t("contact.headline") }}</div>
         <v-form ref="form" v-model="contactValid">
           <v-row>
             <v-col cols="12" md="6">
@@ -311,7 +323,7 @@
                 v-model="contactName"
                 :counter="10"
                 :rules="contactNameRules"
-                label="Name"
+                :label="$t('contact.name')"
                 required
               ></v-text-field>
 
@@ -319,15 +331,15 @@
                 v-model="contactEmail"
                 :rules="contactEmailRules"
                 autocomplete="email"
-                label="E-mail"
+                :label="$t('contact.mail')"
                 required
               ></v-text-field>
 
               <v-select
                 v-model="contactSelect"
                 :items="contactTopics"
-                :rules="[v => !!v || 'Please choose a topic']"
-                label="Topic"
+                :rules="[v => !!v || $t('contact.topicHint')]"
+                :label="$t('contact.topic')"
                 required
               ></v-select>
             </v-col>
@@ -336,10 +348,10 @@
                 v-model="contactMessage"
                 name="input-7-1"
                 auto-grow
-                label="Message"
+                :label="$t('contact.message')"
                 counter
-                :rules="[v => v != '' || 'Please enter a message']"
-                hint="When reporting a bug please be very specific describing what you were trying to do and what happened. Thank you!"
+                :rules="[v => !!v || $t('contact.messageHint')]"
+                :hint="$t('contact.messageHint2')"
                 class="mb-2"
               ></v-textarea>
             </v-col>
@@ -351,11 +363,11 @@
                 block
                 @click="validate"
               >
-                Send
+                {{ $t("contact.send") }}
               </v-btn></v-col
             >
             <v-col cols="12" class="mt-8">
-              You can also write us an email to
+              {{ $t("contact.alternative") }}
               <a>contact@jeff-organization.de</a>.
             </v-col>
           </v-row>
@@ -366,7 +378,6 @@
 </template>
 
 <script>
-import features from "@/assets/features.js";
 import roadmap from "@/assets/roadmap.js";
 import faq from "@/assets/faq.js";
 export default {
@@ -381,10 +392,31 @@ export default {
       v => /.+@.+\..+/.test(v) || "E-mail must be valid"
     ],
     contactSelect: null,
-    contactTopics: ["General", "Support", "Feature Request", "Bug Report"],
+    contactTopics: [],
     contactMessage: "",
 
-    features: features,
+    features: [
+      {
+        headline: "Dashboard",
+        image: "Dashboard.svg"
+      },
+      {
+        headline: "Finances",
+        image: "Finances.svg"
+      },
+      {
+        headline: "Shopping Lists",
+        image: "ShoppingLists.svg"
+      },
+      {
+        headline: "Tasks",
+        image: "Tasks.svg"
+      },
+      {
+        headline: "Calendar",
+        image: "Calendar.svg"
+      }
+    ],
     roadmap: roadmap,
     faq: faq,
     screenshots: [
@@ -402,6 +434,11 @@ export default {
       }
     ]
   }),
+  created() {
+    for (let i = 0; i <= 3; i++) {
+      this.contactTopics.push(this.$t("contact.topics[" + i + "]"));
+    }
+  },
   methods: {
     validate() {
       this.$refs.form.validate();

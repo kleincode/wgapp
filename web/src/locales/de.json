@@ -15,6 +15,7 @@
   },
   "devices": {
     "headline": "Jeff läuft auf {every} Gerät. Ohne Ausnahme.",
-    "every": "jedem"
+    "every": "jedem",
+    "explanation": "Wir haben es als Progressive Web App (PWA) entwickelt, so dass es als Website läuft, aber wie eine App aussieht. Auf diese Weise werden wir niemals Kompatibilitätsprobleme haben. Cool, oder?" 
   }
 }
