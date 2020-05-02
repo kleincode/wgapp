@@ -88,7 +88,7 @@
     </v-content>
 
     <v-footer app inset class="text-center">
-      <div style="width: 100%;">Made in self-isolation -- 2020</div>
+      <div style="width: 100%;">Made in self-isolation - 2020</div>
     </v-footer>
     <v-snackbar v-model="snackbarShow" :timeout="4000">
       <span>{{ snackbarMessage }}</span>

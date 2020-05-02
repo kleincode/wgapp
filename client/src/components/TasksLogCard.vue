@@ -1,11 +1,7 @@
 <template>
-  <v-card
-    :elevation="6"
-    :loading="loading"
-    :style="headless ? 'border: none' : 'height: 100%'"
-  >
-    <v-card-title v-if="!headless">
-      <h2 class="title">Task Log</h2>
+  <v-card :elevation="6" :loading="loading" style="height: 100%;">
+    <v-card-title>
+      <h2 class="title">Task log</h2>
     </v-card-title>
     <v-card-text>
       <v-timeline v-if="tasks.length > 0">

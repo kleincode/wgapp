@@ -1,9 +1,5 @@
 <template>
-  <v-card
-    :loading="loading"
-    class="pa-6"
-    :color="isDark ? 'secondary' : 'secondary lighten-5'"
-  >
+  <div>
     <h1 class="headline">Edit profile</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4" class="text-center">
@@ -11,7 +7,7 @@
           <v-avatar
             size="250"
             class="mb-2"
-            :color="hasProfilePicture ? '' : 'grey'"
+            :color="hasProfilePicture ? '' : 'primary'"
           >
             <div class="centered">
               <UploadProfileImageDialog
@@ -26,9 +22,12 @@
               alt="John"
             >
             </v-img>
-            <span v-else class="white--text display-4">{{
-              getInitials()
-            }}</span>
+            <span
+              v-else
+              class="profileImage white--text display-4"
+              :class="{ 'on-hover': hover }"
+              >{{ getInitials() }}</span
+            >
           </v-avatar>
         </v-hover>
         <br />
@@ -111,7 +110,7 @@
       >Are you sure you want to leave us? This action can't be undone. All data
       will be lost. Please don't go...</confirm-dialog
     >
-  </v-card>
+  </div>
 </template>
 <script>
 import { mapState, mapGetters } from "vuex";
@@ -174,7 +173,19 @@ export default {
       }
     }
   },
+  mounted() {
+    this.loadValues();
+  },
   methods: {
+    loadValues() {
+      this.firstName = this.userFirstName;
+      this.lastName = this.userLastName;
+      this.nickname = this.userFirstName;
+      this.email = this.userEmail;
+      this.oldPassword = "";
+      this.password1 = "";
+      this.password2 = "";
+    },
     cancel() {
       this.$emit("close");
     },
@@ -326,11 +337,12 @@ export default {
   );
 }
 .profileImage {
-  transition: opacity 0.4s ease-in-out;
+  transition: all 0.2s ease-out;
 }
 
 .profileImage.on-hover {
-  opacity: 0.6;
+  opacity: 0.36;
+  filter: saturate(0.36);
 }
 
 .centered {

@@ -3,123 +3,132 @@
     ><v-row justify="center">
       <v-col xl="9" lg="10" md="12">
         <h1 class="display-2 pb-6">Profile</h1>
-        <v-card style="min-height: 70vh" class="pa-4" :loading="loading">
-          <ProfileEdit
-            v-show="editMode"
-            :edit-mode="editMode"
-            @close="editMode = false"
-          ></ProfileEdit>
-          <v-card
-            v-show="!editMode"
-            class="pa-6"
-            :loading="loading"
-            :color="isDark ? 'secondary' : 'secondary lighten-5'"
-          >
-            <v-row>
-              <v-col cols="12" md="6" lg="4" class="text-center">
-                <v-avatar
-                  size="250"
-                  class="mb-2"
-                  :color="hasProfilePicture ? '' : 'primary'"
-                >
-                  <v-img
-                    v-if="hasProfilePicture"
-                    :src="profilePictureData"
-                    alt="John"
+        <v-card
+          class="pa-6 trans"
+          :loading="loading"
+          :color="editMode ? '' : 'accent'"
+          :elevation="6"
+        >
+          <transition name="fade-transition" mode="out-in">
+            <ProfileEdit
+              v-if="editMode"
+              key="edit"
+              :edit-mode="editMode"
+              @close="editMode = false"
+            ></ProfileEdit>
+            <div v-else key="show">
+              <v-row>
+                <v-col cols="12" md="6" lg="4" class="text-center">
+                  <v-avatar
+                    size="250"
+                    class="mb-2"
+                    :color="hasProfilePicture ? '' : 'primary'"
                   >
-                  </v-img>
-                  <span v-else class="white--text display-4">{{
-                    getInitials()
-                  }}</span>
-                </v-avatar>
-              </v-col>
-              <v-col cols="12" md="6" lg="8" class="pa-4">
-                <v-row
-                  ><v-col cols="12" md="8">
-                    <div class="overline">username</div>
-                    <h1 class="display-1">
-                      {{ userFirstName }} {{ userLastName }}
-                    </h1>
-                    <div class="overline mt-6">Nickname</div>
-                    <h1 class="headline">Nicki</h1>
-                    <div class="overline mt-6">mail</div>
-                    <h1 class="headline">{{ userEmail }}</h1>
-                    <div class="overline mt-6">password</div>
-                    <h1 class="headline">************</h1>
-                  </v-col>
-                  <v-col cols="12" md="4" class="text-right">
-                    <v-btn color="primary" @click="editMode = true">edit</v-btn>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-card>
-          <v-row class="mt-6">
-            <v-col cols="12" md="6">
-              <div class="headline">Last Tasks</div>
-              <TasksLogCard
-                :user-images="userImages"
-                :tasks="getTasks"
-                :loading="loading"
-                headless
-              ></TasksLogCard>
-            </v-col>
-            <v-col cols="12" md="6">
-              <div class="headline">Last Expenses</div>
-              <v-list v-if="expenses.length > 0">
-                <v-list-item v-for="(exp, i) in expenses" :key="i">
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-row
-                        ><v-col cols="8">
-                          {{ exp.description }}
-                        </v-col>
-                        <v-col cols="4">
-                          {{ getCurrency((exp.amount / 100).toFixed(2)) }}
-                        </v-col>
-                      </v-row>
-                    </v-list-item-title>
-                    <v-list-item-subtitle>{{
-                      formatDateRelative(exp.date)
-                    }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-              <div v-else class="text-center text--secondary mt-8 mb-8">
-                No expenses
-              </div>
-              <div class="headline mt-4">Monthly Expenses</div>
-              <v-list v-if="getFilteredMonthlyCharges.length > 0">
-                <v-list-item
-                  v-for="(exp, i) in getFilteredMonthlyCharges"
-                  :key="i"
-                >
-                  <v-list-item-icon>
-                    <v-icon class="mt-1">{{ getIcon(exp.icon) }}</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-content>
-                    <v-list-item-title>
-                      <v-row
-                        ><v-col cols="8">
-                          {{ exp.name }}
-                        </v-col>
-                        <v-col cols="4">
-                          {{ getCurrency(exp.amount.toFixed(2)) }}
-                        </v-col>
-                      </v-row>
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-              <div v-else class="text-center text--secondary mt-8 mb-8">
-                No monthly charges
-              </div>
-            </v-col>
-          </v-row>
+                    <v-img
+                      v-if="hasProfilePicture"
+                      :src="profilePictureData"
+                      alt="John"
+                    >
+                    </v-img>
+                    <span v-else class="white--text display-4">{{
+                      getInitials()
+                    }}</span>
+                  </v-avatar>
+                </v-col>
+                <v-col cols="12" md="6" lg="8" class="pa-4">
+                  <v-row
+                    ><v-col cols="12" md="8">
+                      <div class="overline">username</div>
+                      <h1 class="display-1">
+                        {{ userFirstName }} {{ userLastName }}
+                      </h1>
+                      <div class="overline mt-6">Nickname</div>
+                      <h1 class="headline">Nicki</h1>
+                      <div class="overline mt-6">mail</div>
+                      <h1 class="headline">{{ userEmail }}</h1>
+                      <div class="overline mt-6">password</div>
+                      <h1 class="headline">************</h1>
+                    </v-col>
+                    <v-col cols="12" md="4" class="text-right">
+                      <v-btn color="primary" @click="editMode = true"
+                        >edit</v-btn
+                      >
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </div>
+          </transition>
         </v-card>
-      </v-col>
-    </v-row></v-container
-  >
+        <v-row class="mt-6">
+          <v-col cols="12" md="6">
+            <v-card :elevation="6">
+              <v-card-title>Latest expenses</v-card-title>
+              <v-card-content>
+                <v-list v-if="expenses.length > 0">
+                  <v-list-item v-for="(exp, i) in expenses" :key="i">
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <v-row
+                          ><v-col cols="8">
+                            {{ exp.description }}
+                          </v-col>
+                          <v-col cols="4" style="text-align: right;">
+                            {{ getCurrency((exp.amount / 100).toFixed(2)) }}
+                          </v-col>
+                        </v-row>
+                      </v-list-item-title>
+                      <v-list-item-subtitle>{{
+                        formatDateRelative(exp.date)
+                      }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+                <div v-else class="text-center text--secondary mt-8 mb-8">
+                  No expenses
+                </div>
+              </v-card-content>
+              <v-card-title>Monthly expenses</v-card-title>
+              <v-card-content>
+                <v-list v-if="getFilteredMonthlyCharges.length > 0">
+                  <v-list-item
+                    v-for="(exp, i) in getFilteredMonthlyCharges"
+                    :key="i"
+                  >
+                    <v-list-item-icon>
+                      <v-icon class="mt-1">{{ getIcon(exp.icon) }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        <v-row
+                          ><v-col cols="8">
+                            {{ exp.name }}
+                          </v-col>
+                          <v-col cols="4" style="text-align: right;">
+                            {{ getCurrency(exp.amount.toFixed(2)) }}
+                          </v-col>
+                        </v-row>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+                <div v-else class="text-center text--secondary mt-8 mb-8">
+                  No monthly charges
+                </div>
+              </v-card-content>
+            </v-card>
+          </v-col>
+          <v-col cols="12" md="6">
+            <TasksLogCard
+              :user-images="userImages"
+              :tasks="getTasks"
+              :loading="loading"
+              headless
+            ></TasksLogCard>
+          </v-col>
+        </v-row>
+      </v-col> </v-row
+  ></v-container>
 </template>
 
 <script>
@@ -276,3 +285,8 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.trans {
+  transition: all 0.5s ease-out;
+}
+</style>

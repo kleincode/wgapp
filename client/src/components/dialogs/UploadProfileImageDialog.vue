@@ -1,9 +1,15 @@
 <template>
   <v-dialog v-model="dialog" width="500">
     <template v-slot:activator="{ on }">
-      <v-btn icon x-large :color="getButtonHoverClass(hover)" v-on="on"
+      <v-btn
+        icon
+        x-large
+        :color="
+          hover ? (hasProfilePicture ? 'primary' : 'white') : 'transparent'
+        "
+        v-on="on"
         ><v-icon v-if="hasProfilePicture" x-large>edit</v-icon
-        ><v-icon v-else x-large>add</v-icon></v-btn
+        ><v-icon v-else x-large>add_photo_alternate</v-icon></v-btn
       >
     </template>
     <v-card>
@@ -100,17 +106,6 @@ export default {
         );
         console.error(err);
         this.loading = false;
-      }
-    },
-    getButtonHoverClass(hover) {
-      if (hover) {
-        if (this.hasProfilePicture) {
-          return "white";
-        } else {
-          return "primary";
-        }
-      } else {
-        return "transparent";
       }
     }
   }
