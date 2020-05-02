@@ -8,9 +8,9 @@
       class="elevation-12"
     >
       <v-list dense nav dark>
-        <v-list-item two-line class="px-0">
-          <v-list-item-avatar color="primary">
-            <span class="title white--text"
+        <v-list-item three-line class="px-0">
+          <v-list-item-avatar :color="!hasProfilePicture ? 'primary' : ''">
+            <span v-if="!hasProfilePicture" class="white--text title"
               >{{
                 !!userFirstName
                   ? userFirstName.substring(0, 1).toUpperCase()
@@ -21,12 +21,19 @@
                   : ""
               }}</span
             >
+            <v-img v-else :src="profilePictureData"></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title class="title"
               >{{ userFirstName }} {{ userLastName }}</v-list-item-title
             >
             <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
+            <v-list-item-subtitle>
+              <v-icon small>account_circle</v-icon>&nbsp;
+              <router-link class="white--text" :to="{ name: 'Profile' }">
+                My profile
+              </router-link>
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
@@ -82,7 +89,7 @@
     </v-content>
 
     <v-footer app inset class="text-center">
-      <div style="width: 100%;">Made in self-isolation -- 2020</div>
+      <div style="width: 100%;">Made in self-isolation - 2020</div>
     </v-footer>
     <v-snackbar v-model="snackbarShow" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
@@ -168,12 +175,14 @@ export default {
       "userLastName",
       "snackbarMessage",
       "updateAvailable",
-      "offline"
+      "offline",
+      "profilePictureData"
     ]),
-    ...mapGetters(["isUpdateAvailable"])
+    ...mapGetters(["isUpdateAvailable", "hasProfilePicture"])
   },
   async created() {
     await this.$store.dispatch("userSettings/sync");
+    await this.$store.dispatch("fetchProfileImg");
     this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
   },
   methods: {

@@ -11,26 +11,36 @@ Vue.use(Vuex);
 let store = new Vuex.Store({
   state: {
     userToken: localStorage.getItem("auth_token"),
+    uid: localStorage.getItem("uid"),
     userEmail: localStorage.getItem("user_email"),
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
+    userNickName: localStorage.getItem("user_nickname"),
     snackbarShow: false,
     snackbarMessage: "",
     householdUsers: {},
     updateAvailable: null,
     serviceWorker: null,
-    offline: false
+    offline: false,
+    profilePictureData: null
   },
   mutations: {
-    login_success(state, [email, token]) {
+    login_success(state, [uid, email, token]) {
+      state.uid = uid;
       state.userEmail = email;
       state.userToken = token;
       localStorage.setItem("auth_token", token);
     },
-    update_user(state, [email, firstname, lastname]) {
+    update_user(state, [uid, email, firstname, lastname, nickname]) {
+      state.uid = uid;
       state.userEmail = email;
       state.userFirstName = firstname;
       state.userLastName = lastname;
+      state.userNickName = nickname;
+      localStorage.setItem("user_email", email);
+      localStorage.setItem("user_firstname", firstname);
+      localStorage.setItem("user_lastname", lastname);
+      localStorage.setItem("user_nickname", nickname);
     },
     logout(state) {
       state.userToken = "";
@@ -56,6 +66,9 @@ let store = new Vuex.Store({
     },
     set_offline(state, offline) {
       state.offline = offline;
+    },
+    set_profile_picture(state, data) {
+      state.profilePictureData = data;
     }
   },
   actions: {
@@ -66,11 +79,16 @@ let store = new Vuex.Store({
           method: "GET"
         });
         if (data.success)
-          commit("update_user", [data.email, data.firstname, data.lastname]);
+          commit("update_user", [
+            data.uid,
+            data.email,
+            data.firstname,
+            data.lastname,
+            data.nickname
+          ]);
         else commit("logout");
       } catch (err) {
-        console.error("Error while authorizing user", err);
-        commit("logout");
+        console.warn("User auth failed", err);
       }
     },
     async login({ commit }, userData) {
@@ -79,7 +97,8 @@ let store = new Vuex.Store({
         method: "POST",
         data: userData
       });
-      if (data.success) commit("login_success", [data.email, data.token]);
+      if (data.success)
+        commit("login_success", [data.uid, data.email, data.token]);
       else throw data.message;
       return data.redirect || "";
     },
@@ -100,6 +119,25 @@ let store = new Vuex.Store({
       }
       return true;
     },
+    async fetchProfileImg({ commit }) {
+      try {
+        const { data, headers } = await axios.get("/_/fetchprofilepicture", {
+          responseType: "arraybuffer"
+        });
+        if (
+          headers &&
+          headers["content-type"] !== "application/json; charset=utf-8"
+        ) {
+          const buffer = Buffer.from(data, "binary").toString("base64");
+          const imageSource = `data:${headers["content-type"]};base64,${buffer}`;
+          commit("set_profile_picture", imageSource);
+        }
+      } catch (err) {
+        commit("set_profile_picture", null);
+        console.warn(err);
+      }
+    },
+
     logout({ commit }) {
       commit("logout");
       localStorage.removeItem("auth_token");
@@ -133,6 +171,7 @@ let store = new Vuex.Store({
       if (user.lastname) userName += user.lastname.substr(0, 1).toUpperCase();
       return userName;
     },
+    hasProfilePicture: state => !!state.profilePictureData,
     //Returns IDs of all household users
     getHouseholdUserIDs: state =>
       Object.keys(state.householdUsers).map(id => parseInt(id)),

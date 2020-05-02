@@ -16,10 +16,20 @@
                 :key="'hmem-' + member"
                 :value="member"
               >
-                <v-list-item-avatar size="48" color="teal" left>
-                  <span class="white--text headline">{{
-                    getUserInitials(member)
-                  }}</span>
+                <v-list-item-avatar
+                  size="48"
+                  :color="!userImages[member] ? 'primary' : ''"
+                  left
+                >
+                  <v-img
+                    v-show="userImages[member]"
+                    :src="userImages[member]"
+                  ></v-img>
+                  <span
+                    v-show="!userImages[member]"
+                    class="white--text headline"
+                    >{{ getUserInitials(member) }}
+                  </span>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title>{{
@@ -98,6 +108,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 
 import InviteLinkDialog from "@/components/dialogs/InviteLinkDialog.vue";
 import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
@@ -111,6 +122,7 @@ export default {
   data: () => ({
     householdName: "Manage household",
     members: [],
+    userImages: {},
     householdType: 0,
     householdRegistered: "",
     householdTypes: ["Shared apartment", "Couple", "Family"],
@@ -133,6 +145,11 @@ export default {
         this.householdName = data.name;
         this.householdType = data.type;
         this.householdRegistered = data.registered;
+        this.members.forEach(async member => {
+          if (!this.userImages[member]) {
+            this.$set(this.userImages, member, await fetchProfileImg(member));
+          }
+        });
       } else if (data.exists === false) {
         this.$store.dispatch(
           "showSnackbar",

@@ -31,7 +31,14 @@
                 :value="member.id"
               >
                 <v-list-item-avatar size="48" color="primary" left>
-                  <span class="white--text headline">
+                  <v-img
+                    v-show="userImages[member.id]"
+                    :src="userImages[member.id]"
+                  ></v-img>
+                  <span
+                    v-show="!userImages[member.id]"
+                    class="white--text headline"
+                  >
                     {{ getUserInitials(member.id) }}
                   </span>
                 </v-list-item-avatar>
@@ -302,6 +309,7 @@
 <script>
 import { mapGetters } from "vuex";
 import icons from "@/assets/icons.js";
+import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 
 import EditExpenseDialog from "@/components/dialogs/EditExpenseDialog.vue";
 import EditMonthlyChargesDialog from "@/components/dialogs/EditMonthlyChargesDialog.vue";
@@ -319,6 +327,7 @@ export default {
     ReceiptDialog
   },
   data: () => ({
+    userImages: {},
     memberTotals: [],
     tableHeaders: [
       {
@@ -410,10 +419,10 @@ export default {
       );
     },
     getChartData() {
-      if (this.trendValues == undefined || this.trendValues.length == 0) {
-        return {};
-      }
       let data = { labels: [], datasets: [] };
+      if (this.trendValues == undefined || this.trendValues.length == 0) {
+        return data;
+      }
       data.datasets.push({
         label: "Expenses",
         backgroundColor: this.$vuetify.theme.themes.dark.primary,
@@ -501,6 +510,15 @@ export default {
             this.memberTotals = Object.entries(res.memberTotals)
               .map(([id, total]) => ({ id, total }))
               .sort((a, b) => b.total - a.total); // sort descending by total
+            this.memberTotals.forEach(async member => {
+              if (!this.userImages[member.id]) {
+                this.$set(
+                  this.userImages,
+                  member.id,
+                  await fetchProfileImg(member.id)
+                );
+              }
+            });
             this.trendValues = [];
             res.trend.forEach(entry =>
               this.trendValues.push({
