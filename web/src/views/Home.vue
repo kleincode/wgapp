@@ -257,6 +257,16 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
+      <v-col id="screenshots" cols="12" md="8" class="mt-12 mb-12 text-center">
+        <div class="display-4 mb-7">Screenshots</div>
+        <v-carousel cycle>
+          <v-carousel-item
+            v-for="(shot, i) in screenshots"
+            :key="i"
+            :src="shot.src"
+          ></v-carousel-item>
+        </v-carousel>
+      </v-col>
     </v-row>
     <v-card class="mt-12 white--text" color="#04182d">
       <v-row justify="center">
@@ -358,7 +368,21 @@ export default {
 
     features: features,
     roadmap: roadmap,
-    faq: faq
+    faq: faq,
+    screenshots: [
+      {
+        src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg"
+      },
+      {
+        src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg"
+      },
+      {
+        src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg"
+      },
+      {
+        src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg"
+      }
+    ]
   }),
   methods: {
     validate() {
