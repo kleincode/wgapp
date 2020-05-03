@@ -96,6 +96,7 @@
       <span>A new update was installed. Please refresh.</span>
       <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
     </v-snackbar>
+    <IntroductionDialog></IntroductionDialog>
   </v-app>
 </template>
 
@@ -103,9 +104,13 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import IntroductionDialog from "@/components/dialogs/introduction/IntroductionDialog.vue";
 
 export default {
   name: "App",
+  components: {
+    IntroductionDialog
+  },
   data: () => ({
     menuVisible: null
   }),

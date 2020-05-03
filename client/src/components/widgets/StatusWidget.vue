@@ -110,6 +110,11 @@ export default {
         });
         if (data.success) {
           this.$store.dispatch("showSnackbar", "Updated user status");
+          this.members.forEach(member => {
+            if (member.id == this.uid) {
+              member.status = !member.status;
+            }
+          });
         } else {
           this.$store.dispatch("showSnackbar", "Could not connect to server.");
           this.userStatus = !this.userStatus;
