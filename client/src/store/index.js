@@ -154,6 +154,13 @@ let store = new Vuex.Store({
     isAuthorized(state) {
       return !!state.userToken;
     },
+    getName: state => {
+      if (state.userNickName != "") {
+        return state.userNickName;
+      } else {
+        return state.userFirstName + " " + state.userLastName;
+      }
+    },
     getUserName: state => uid => {
       let user = state.householdUsers[uid];
       if (!user) return "Unknown user";
