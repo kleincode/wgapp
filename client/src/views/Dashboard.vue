@@ -3,7 +3,7 @@
     <h1 class="display-2 mb-6" style="max-width: 80%">
       Hi, {{ $store.state.userFirstName }}!
     </h1>
-    <v-row align="stretch" justify="center">
+    <v-row align="stretch">
       <v-col
         v-if="clockWidgetEnabled"
         cols="12"
@@ -44,6 +44,9 @@
       >
         <FinancesWidget />
       </v-col>
+      <v-col cols="12" sm="6" lg="4" xl="3" class="widget-col">
+        <StatusWidget />
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -55,6 +58,7 @@ import ClockWidget from "@/components/widgets/ClockWidget.vue";
 import WeatherWidget from "@/components/widgets/WeatherWidget.vue";
 import TasksWidget from "@/components/widgets/TasksWidget.vue";
 import FinancesWidget from "@/components/widgets/FinancesWidget.vue";
+import StatusWidget from "@/components/widgets/StatusWidget.vue";
 
 export default {
   name: "Dashboard",
@@ -62,7 +66,8 @@ export default {
     ClockWidget,
     WeatherWidget,
     TasksWidget,
-    FinancesWidget
+    FinancesWidget,
+    StatusWidget
   },
   computed: {
     ...mapState("userSettings", [

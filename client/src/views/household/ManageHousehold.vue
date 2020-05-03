@@ -141,7 +141,7 @@ export default {
     async fetchHousehold() {
       const { data } = await this.$http.get("/_/fetchhousehold");
       if (data.success) {
-        this.members = data.members;
+        this.members = data.members.map(member => member.id);
         this.householdName = data.name;
         this.householdType = data.type;
         this.householdRegistered = data.registered;
