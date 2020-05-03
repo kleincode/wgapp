@@ -146,6 +146,7 @@ let store = new Vuex.Store({
       localStorage.removeItem("user_email");
       localStorage.removeItem("user_firstname");
       localStorage.removeItem("user_lastname");
+      localStorage.removeItem("user_nickname");
       //x-access-token header needs to be removed elsewhere!
     },
     showSnackbar({ commit }, message) {
