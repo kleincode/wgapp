@@ -296,7 +296,8 @@
           <v-carousel-item
             v-for="(shot, i) in screenshots"
             :key="i"
-            :src="shot.src"
+            contain
+            :src="require('../assets/screenshots/' + shot)"
           ></v-carousel-item>
         </v-carousel>
       </v-col>
@@ -420,18 +421,12 @@ export default {
     roadmap: roadmap,
     faq: faq,
     screenshots: [
-      {
-        src: "https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg"
-      },
-      {
-        src: "https://cdn.vuetifyjs.com/images/carousel/sky.jpg"
-      },
-      {
-        src: "https://cdn.vuetifyjs.com/images/carousel/bird.jpg"
-      },
-      {
-        src: "https://cdn.vuetifyjs.com/images/carousel/planet.jpg"
-      }
+      "finances.jpg",
+      "finances2.jpg",
+      "shopping.jpg",
+      "tasks.jpg",
+      "settings1.jpg",
+      "settings2.jpg"
     ]
   }),
   created() {

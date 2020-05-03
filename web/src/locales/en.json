@@ -25,7 +25,7 @@
       "With our finance feature you will never ever have to worry about money again. If you pay something, you enter the amount and upload the receipt. It's easy as that. We also support monthly charges and display various statistics about your expenses. And the best is yet come: With just one click our system will calculate all debts to get you guys even.",
       "You don't need paper or other shopping apps anymore. You've got everything right here. Create shopping lists with automatic autocompletion that learns from you. It's even has full offline support.",
       "We support 3 types of tasks: repeating tasks (repeat at specific times), on-demand tasks (should be done as needed) and simple single tasks (one time tasks). You can setup reminders, manually remind others via push notifications and automically iterate the assigned member. Every action is logged so fights are history.",
-      "With our Google Calendar integration we can setup your calendar automatically and invite all members. You can also display upcoming events in the dashboard."
+      "With our Google Calendar integration we can setup your shared calendar automatically and invite all members. You can also display upcoming events in the dashboard."
     ],
     "more": "And even more to come!",
     "moreHint": "Check out our roadmap for more information:",
@@ -34,7 +34,7 @@
   "interested": {
     "headline": "Interested? Move in with Jeff just by {bold}!",
     "bold": "signing up",
-    "explanation": "Jeff is currently {free} for everyone. Create your account and household and start inviting people. It's that simple! (We have even a dark mode..)",
+    "explanation": "Jeff is currently {free} for everyone. Create your account and household and start inviting people. It's that simple! (We have even a dark mode...)",
     "expBold": "free"
   },
   "roadmap": {
@@ -47,7 +47,7 @@
       },
       {
         "title": "Offical Release",
-        "desc": "We're hoping to offically release our app in June 2020. This release will include: finances, shopping lists, tasks, calendar integration and will be available in German and English.",
+        "desc": "We're hoping to offically release our app in July 2020. This release will include: finances, shopping lists, tasks, calendar integration and will be available in German and English.",
         "time": "July 2020"
       },
       {
@@ -84,7 +84,7 @@
       },
       {
         "question": "I get no push notifications. Why?",
-        "answer": "To use push notifications you first need to activate this feature and grand permissions. We won't spam you don't worry. Just go to settings, scroll down and click 'Enable push notification'."
+        "answer": "To use push notifications you first need to activate this feature and grant permissions. We won't spam you don't worry. Just go to settings, scroll down and click 'Enable push notification'."
       },
       {
         "question": "Is Jeff also available for my device?",
@@ -108,7 +108,7 @@
       },
       {
         "question": "I can't find my question...",
-        "answer": "Please visit our help page or contact us with the form below or by mail."
+        "answer": "Please visit our help page or contact us with the form below or by E-Mail."
       }
     ]
   },
@@ -119,7 +119,7 @@
   "contact": {
     "headline": "Contact",
     "name": "Name",
-    "mail": "E-mail",
+    "mail": "E-Mail",
     "topic": "Topic",
     "topicHint": "Please choose a topic.",
     "topics": [
