@@ -3,7 +3,7 @@ const Helpers = require("../components/Helpers");
 const fs = require("fs");
 const path = require("path");
 
-const receiptFolder = path.join(__dirname, "..", "images", "profile");
+const profileFolder = path.join(__dirname, "..", "images", "profile");
 
 module.exports = ({ db }) => ({
   type: "POST",
@@ -21,9 +21,7 @@ module.exports = ({ db }) => ({
         } else if(changedRows == 0) {
           success("No changes made.");
         } else {
-          fs.unlink(path.join(receiptFolder, `${uid}.jpg`), err => {
-            if(err) console.warn(err);
-          });
+          fs.unlink(path.join(profileFolder, `${uid}.jpg`), err => {});
           success("Receipt deleted.");
         }
       } catch (err) {

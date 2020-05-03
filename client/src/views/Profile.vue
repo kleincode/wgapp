@@ -3,6 +3,7 @@
     ><v-row justify="center">
       <v-col xl="9" lg="10" md="12">
         <h1 class="display-2 pb-6">Profile</h1>
+        <!-- Profile -->
         <v-card
           class="pa-6 trans"
           :loading="loading"
@@ -63,6 +64,119 @@
           </transition>
         </v-card>
         <v-row class="mt-6">
+          <!-- Critical Actions -->
+          <v-col cols="12">
+            <v-card :elevation="6">
+              <v-card-title>
+                Unforgivable curses
+              </v-card-title>
+              <v-card-text>
+                <p>
+                  Don't worry though, as you're most likely not a wizard you
+                  will not be sent to Azkaban.
+                </p>
+                <div
+                  class="d-md-flex"
+                  :style="
+                    $vuetify.breakpoint.smAndDown ? { display: 'grid' } : {}
+                  "
+                >
+                  <!-- Delete local data (IndexedDB) -->
+                  <confirm-dialog
+                    v-model="deleteLocalDataDialogShown"
+                    :max-width="500"
+                    positive-option="Do it!"
+                    negative-option="Cancel"
+                    invert-colors
+                    :title="
+                      'Delete local data' +
+                        (databaseSize
+                          ? ' (' + Math.floor(databaseSize / 1024) + ' KB)'
+                          : '')
+                    "
+                    :loading="dialogLoading"
+                    @negative="deleteLocalDataDialogShown = false"
+                    @positive="deleteDatabases"
+                  >
+                    <template #activator="{ on }">
+                      <v-btn text color="red" v-on="on">
+                        Delete local data{{
+                          databaseSize
+                            ? " (" + Math.floor(databaseSize / 1024) + " KB)"
+                            : ""
+                        }}
+                      </v-btn>
+                    </template>
+                    Deleting stored local data forces Jeff to refetch all your
+                    household data remotely. Pages will load slower and actions
+                    will take longer to perform until the cache is repopulated.
+                    Note that this will not clear cached application assets.
+                    Continue?
+                  </confirm-dialog>
+                  <!-- Logout -->
+                  <confirm-dialog
+                    v-model="logoutDialogShown"
+                    :max-width="500"
+                    positive-option="Logout"
+                    negative-option="Cancel"
+                    invert-colors
+                    title="Logout and clear local data?"
+                    :loading="dialogLoading"
+                    @negative="logoutDialogShown = false"
+                    @positive="logout"
+                  >
+                    <template #activator="{ on }">
+                      <v-btn text color="red" v-on="on">
+                        Logout
+                      </v-btn>
+                    </template>
+                    Logging out causes all authorization data saved on your
+                    machine to expire and all local household data to be
+                    deleted. Except for changing accounts, logging out is
+                    usually not necessary. Continue?
+                  </confirm-dialog>
+                  <!-- Delete account -->
+                  <confirm-dialog
+                    v-model="deleteAccountDialogShown"
+                    :max-width="500"
+                    positive-option="Delete account"
+                    negative-option="Cancel"
+                    invert-colors
+                    title="Permanently delete your account?"
+                    :loading="dialogLoading"
+                    @negative="deleteAccountDialogShown = false"
+                    @positive="deleteAccount"
+                  >
+                    <template #activator="{ on }">
+                      <v-btn text color="red" v-on="on">
+                        Delete account
+                      </v-btn>
+                    </template>
+                    <p>
+                      All your personal data (i.e. name, email, password, and
+                      nickname) will be permanently deleted from our server and
+                      from this device. Your household will remember you by the
+                      beautiful name of "Unknown User" and all your expenses and
+                      former tasks will remind them of you in a melancholic yet
+                      heartwarming way. You are to be logged out of this
+                      application and it will be as if this all never happened.
+                      Still - never will you be forgotten, Unknown User.
+                    </p>
+                    <p>
+                      But seriously: <b>This action cannot be undone.</b> So, to
+                      end with the inspiring words of one of the great minds of
+                      our time:
+                    </p>
+                    <blockquote class="blockquote">
+                      Ooh, think twice.<br />
+                      - Phil Collins
+                    </blockquote>
+                  </confirm-dialog>
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <!-- Latest expenses -->
           <v-col cols="12" md="6">
             <v-card :elevation="6">
               <v-card-title>Latest expenses</v-card-title>
@@ -120,6 +234,7 @@
               </v-card-text>
             </v-card>
           </v-col>
+          <!-- Tasks log -->
           <v-col cols="12" md="6">
             <TasksLogCard
               :user-images="userImages"
@@ -135,15 +250,19 @@
 
 <script>
 import ProfileEdit from "@/components/ProfileEdit.vue";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 import TasksLogCard from "@/components/TasksLogCard.vue";
 import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 import { mapState, mapGetters } from "vuex";
 import icons from "@/assets/icons.js";
+import { db } from "@/store/LocalAppStore";
+
 export default {
   name: "Profile",
   components: {
     ProfileEdit,
-    TasksLogCard
+    TasksLogCard,
+    ConfirmDialog
   },
   data: () => ({
     userImages: {},
@@ -152,7 +271,12 @@ export default {
     profilePictureExists: false,
     imageSource: "",
     expenses: [],
-    monthlyCharges: []
+    monthlyCharges: [],
+    databaseSize: null,
+    deleteLocalDataDialogShown: false,
+    logoutDialogShown: false,
+    deleteAccountDialogShown: false,
+    dialogLoading: false
   }),
   computed: {
     getTasks() {
@@ -194,6 +318,7 @@ export default {
       });
       this.loading = false;
     });
+    this.estimateLocalStorage();
   },
   methods: {
     async fetchExpenses() {
@@ -282,8 +407,58 @@ export default {
     getIcon(id) {
       return icons[id];
     },
-    isDark() {
-      return this.$theme.isDark;
+    estimateLocalStorage() {
+      navigator.storage
+        .estimate()
+        .then(res => {
+          this.databaseSize =
+            res && res.usageDetails ? res.usageDetails.indexedDB : null;
+        })
+        .catch(() => {
+          this.databaseSize = null;
+        });
+    },
+    async deleteDatabases() {
+      this.dialogLoading = true;
+      await db.delete();
+      this.dialogLoading = false;
+      this.deleteLocalDataDialogShown = false;
+      this.$store.dispatch("showSnackbar", "All local data deleted.");
+      this.estimateLocalStorage();
+    },
+    async logout() {
+      this.dialogLoading = true;
+      await db.delete();
+      this.$store.dispatch("logout");
+      delete this.$http.defaults.headers.common["x-access-token"];
+      this.dialogLoading = false;
+      this.logoutDialogShown = false;
+      window.location.href = "/";
+    },
+    async deleteAccount() {
+      this.dialogLoading = true;
+      try {
+        const { data } = await this.$http.post("/_/deleteaccount");
+        if (data.success) {
+          await db.delete();
+          this.$store.dispatch("logout");
+          delete this.$http.defaults.headers.common["x-access-token"];
+          this.dialogLoading = false;
+          this.logoutDialogShown = false;
+          window.location.href = "/";
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            data.message || "Deleting account failed."
+          );
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Could not establish contact to server."
+        );
+        console.warn(err);
+      }
     }
   }
 };

@@ -10,7 +10,7 @@ module.exports = ({ db }) => ({
     handler: async ({ uid }, { success, fail, error }) => {
       try {
         const requestHid = await Helpers.fetchHouseholdID(db, uid);
-        fs.unlinkSync(profileFolder + "/" + uid + ".jpg",);
+        fs.unlink(path.join(profileFolder, `${uid}.jpg`), () => {});
         try {
           const { results: { affectedRows } } = await db.query(
             "DELETE FROM users WHERE id = ? AND hid = ?",
