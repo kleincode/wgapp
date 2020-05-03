@@ -83,5 +83,6 @@ export default {
 .widget-footer {
   position: absolute;
   bottom: 16px;
+  width: 90%;
 }
 </style>

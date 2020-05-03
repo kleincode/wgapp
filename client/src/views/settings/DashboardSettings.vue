@@ -111,6 +111,28 @@
         v-model="financesWidgetEnabled"
         label="Enable finances widget"
       ></v-switch>
+      <!-- STATUS WIDGET -->
+      <div id="status" class="title pt-2">Do Not Disturb Widget</div>
+      <p>
+        You want to study or just be left alone for a while? When you activate
+        this widget you can see if somebody dont want to be disturbed. Just
+        activate the do not disturb mode with click of a button right from the
+        widget.
+      </p>
+      <v-switch
+        v-model="statusWidgetEnabled"
+        label="Enable do not disturb widget"
+      ></v-switch>
+      <!-- HOME WIDGET -->
+      <div id="home" class="title pt-2">Home Widget</div>
+      <p>
+        You want to let everybody know that you're home? Just hit the bell in
+        the widget and everybody will be notified.
+      </p>
+      <v-switch
+        v-model="homeWidgetEnabled"
+        label="Enable home widget"
+      ></v-switch>
     </v-card-text>
   </v-card>
 </template>
@@ -186,6 +208,28 @@ export default {
       },
       get() {
         return this.$store.state.userSettings.financesWidgetEnabled;
+      }
+    },
+    statusWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "statusWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.statusWidgetEnabled;
+      }
+    },
+    homeWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "homeWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.homeWidgetEnabled;
       }
     },
     temperatureUnit: {
