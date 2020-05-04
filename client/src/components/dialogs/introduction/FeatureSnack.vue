@@ -1,10 +1,13 @@
 <template>
   <v-snackbar v-model="show" :timeout="0" color="primary">
     <div>
-      <v-icon>info</v-icon>
+      <v-icon color="white">info</v-icon>
+      <v-btn v-if="last" text @click="introductionState = 15"
+        >Finish tutorial</v-btn
+      >
       {{ text }}
     </div>
-    <v-btn text @click="introductionState = 0">End Tutorial</v-btn>
+    <v-btn v-if="!last" text @click="introductionState = 0">End Tutorial</v-btn>
   </v-snackbar>
 </template>
 
@@ -23,6 +26,10 @@ export default {
     text: {
       type: String,
       default: () => ""
+    },
+    last: {
+      type: Boolean,
+      default: () => false
     }
   },
   computed: {
@@ -31,7 +38,10 @@ export default {
         return this.$store.state.userSettings.introductionState;
       },
       set(value) {
-        this.$store.commit("set_key", { key: "introductionState", value });
+        this.$store.commit("userSettings/set_key", {
+          key: "introductionState",
+          value
+        });
       }
     },
     show() {

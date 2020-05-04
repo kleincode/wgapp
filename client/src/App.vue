@@ -96,7 +96,9 @@
       <span>A new update was installed. Please refresh.</span>
       <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
     </v-snackbar>
-    <Introduction></Introduction>
+    <Introduction
+      v-if="this.$store.state.userSettings.introductionState > 0"
+    ></Introduction>
   </v-app>
 </template>
 
@@ -138,7 +140,7 @@ export default {
           icon: "event",
           path: "/calendar"
         });
-      if (state >= 3) {
+      if (state >= 3 || state <= 0) {
         contents.push({
           name: "Shopping",
           icon: "shopping_cart",
@@ -146,7 +148,7 @@ export default {
           show: true
         });
       }
-      if (state >= 5) {
+      if (state >= 5 || state <= 0) {
         contents.push({
           name: "Finances",
           icon: "money",
@@ -154,7 +156,7 @@ export default {
           show: true
         });
       }
-      if (state >= 7) {
+      if (state >= 7 || state <= 0) {
         contents.push({
           name: "Tasks",
           icon: "list",
@@ -162,20 +164,22 @@ export default {
           show: true
         });
       }
-      contents.push(
-        {
+      if (state >= 9 || state <= 0) {
+        contents.push({
           name: "Manage household",
           icon: "people",
           path: "/household",
           show: true
-        },
-        {
+        });
+      }
+      if (state >= 11 || state <= 0) {
+        contents.push({
           name: "Settings",
           icon: "settings",
           path: "/settings",
           show: true
-        }
-      );
+        });
+      }
       return contents;
     },
     ...mapState([

@@ -9,16 +9,31 @@
             :align="isDeviceSmall ? 'start' : 'center'"
             justify="center"
           >
-            <v-col cols="4" md="4" lg="3">
-              <v-img src="@/assets/logo.png" class=""></v-img>
+            <v-col cols="4" md="4" lg="4">
+              <v-img src="@/assets/jeff-without.svg" class=""></v-img>
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">
                 {{ text }}
               </h1>
-              <div class="subtitle-1 mt-4">{{ subtext }}</div>
-              <v-btn raised class="mt-4" @click="triggerNextState"
+              <div class="subtitle-1 mt-4">
+                {{ subtext
+                }}<a
+                  v-if="finish"
+                  href="mailto:contact@jeff-organizer.de"
+                  class="accent--text"
+                  >contact@jeff-organizer.de</a
+                ><span v-if="finish">.</span>
+              </div>
+              <v-btn
+                v-if="!finish"
+                raised
+                class="mt-4"
+                @click="triggerNextState"
                 >explore</v-btn
+              >
+              <v-btn v-else raised class="mt-4" @click="finishIntroduction"
+                >finish</v-btn
               >
             </v-col>
           </v-row>
@@ -47,6 +62,10 @@ export default {
     nextState: {
       type: Number,
       default: () => 0
+    },
+    finish: {
+      type: Boolean,
+      default: () => false
     }
   },
   data: () => ({
@@ -82,6 +101,10 @@ export default {
   methods: {
     triggerNextState() {
       this.introductionState = this.nextState;
+      this.dialog = false;
+    },
+    finishIntroduction() {
+      this.introductionState = 0;
       this.dialog = false;
     }
   }
