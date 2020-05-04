@@ -12,7 +12,7 @@
           outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="12" md="12" lg="12">
+      <v-col cols="12" md="12" lg="9">
         <v-card
           color="grey lighten-3"
           class="pa-6 mb-12"
