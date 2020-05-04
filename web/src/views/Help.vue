@@ -12,7 +12,7 @@
           outlined
         ></v-text-field>
       </v-col>
-      <v-col cols="12" md="12" lg="9">
+      <v-col cols="12" md="12" lg="12">
         <v-card
           color="grey lighten-3"
           class="pa-6 mb-12"
@@ -66,11 +66,13 @@ export default {
     topics: [
       {
         name: "General",
-        icon: "bathtub"
+        icon: "bathtub",
+        link: { name: "H-General" }
       },
       {
         name: "Dashboard",
-        icon: "view_quilt"
+        icon: "view_quilt",
+        link: { name: "H-Dashboard" }
       },
       {
         name: "Tasks",
@@ -79,15 +81,18 @@ export default {
       },
       {
         name: "Shopping Lists",
-        icon: "shopping_cart"
+        icon: "shopping_cart",
+        link: { name: "H-ShoppingLists" }
       },
       {
         name: "Finances",
-        icon: "attach_money"
+        icon: "attach_money",
+        link: { name: "H-Finances" }
       },
       {
         name: "Settings",
-        icon: "settings"
+        icon: "settings",
+        link: { name: "H-Settings" }
       }
     ]
   })

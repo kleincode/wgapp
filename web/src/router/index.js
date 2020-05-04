@@ -24,6 +24,40 @@ const routes = [
     name: "H-Tasks",
     component: () =>
       import(/* webpackChunkName: "h-tasks" */ "../views/help/Tasks.vue")
+  },
+  {
+    path: "/help/finances",
+    name: "H-Finances",
+    component: () =>
+      import(/* webpackChunkName: "h-finances" */ "../views/help/Finances.vue")
+  },
+  {
+    path: "/help/shoppinglists",
+    name: "H-ShoppingLists",
+    component: () =>
+      import(
+        /* webpackChunkName: "h-shoppinglists" */ "../views/help/ShoppingLists.vue"
+      )
+  },
+  {
+    path: "/help/settings",
+    name: "H-Settings",
+    component: () =>
+      import(/* webpackChunkName: "h-settings" */ "../views/help/Settings.vue")
+  },
+  {
+    path: "/help/dashboard",
+    name: "H-Dashboard",
+    component: () =>
+      import(
+        /* webpackChunkName: "h-dashboard" */ "../views/help/Dashboard.vue"
+      )
+  },
+  {
+    path: "/help/general",
+    name: "H-General",
+    component: () =>
+      import(/* webpackChunkName: "h-general" */ "../views/help/General.vue")
   }
 ];
 
