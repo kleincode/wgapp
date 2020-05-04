@@ -11,7 +11,7 @@
       <h1 class="display-1">Bill Manager</h1>
       <v-spacer></v-spacer>
       <div class="caption mr-2 mt-1">last bill:</div>
-      {{ lastBill }}
+      {{ formatDateRelative(lastBill) }}
     </div>
 
     <v-row>
@@ -217,14 +217,13 @@ export default {
     memberMap: {},
     total: 0,
     mean: 0,
-    lastBill: "",
+    lastBill: new Date(),
     debts: [],
     empty: true,
     loading: false,
     loadingHistory: false,
     finishPaymentDialog: false,
     includeMonthlyCharges: false,
-    lastBillTimestamp: 0,
     billhistory: []
   }),
   computed: {
@@ -237,10 +236,7 @@ export default {
           totals.forEach(entry => {
             if (monEntry.id == entry.id) {
               entry.total += Math.round(
-                this.getMonthlyFac(
-                  new Date(),
-                  new Date(this.lastBillTimestamp)
-                ) * monEntry.total
+                this.getMonthlyFac(new Date(), this.lastBill) * monEntry.total
               );
             }
           });
@@ -254,8 +250,7 @@ export default {
       this.monthlyData.forEach(monEntry => {
         sum +=
           Math.round(
-            this.getMonthlyFac(new Date(), new Date(this.lastBillTimestamp)) *
-              monEntry.total
+            this.getMonthlyFac(new Date(), this.lastBill) * monEntry.total
           ) / 100;
       });
       return sum;
@@ -275,13 +270,8 @@ export default {
         this.singleMemberTotals = [];
         this.memberMap = {};
         this.monthlyData = [];
-        let lastBill = new Date(data.lastBill).getTime();
-        this.lastBill = this.formatDateRelative(lastBill);
-        this.lastBillTimestamp = lastBill;
-        if (
-          data.mainResult.length == 0 &&
-          this.isToday(new Date(data.lastBill))
-        ) {
+        this.lastBill = new Date(data.lastBill);
+        if (data.mainResult.length == 0 && this.isToday(this.lastBill)) {
           this.empty = true;
           this.loading = false;
           return;
@@ -369,7 +359,7 @@ export default {
 
     exportCurrentBillHTML() {
       exportToHTML(
-        new Date(this.lastBillTimestamp).toLocaleDateString(
+        this.lastBill.toLocaleDateString(
           this.$store.state.userSettings.locale || undefined
         ),
         new Date().toLocaleDateString(
@@ -383,7 +373,7 @@ export default {
 
     exportCurrentBillXLSX() {
       exportXLSX(
-        new Date(this.lastBillTimestamp).toLocaleDateString(
+        this.lastBill.toLocaleDateString(
           this.$store.state.userSettings.locale || undefined
         ),
         new Date().toLocaleDateString(
@@ -455,7 +445,7 @@ export default {
     async finishPayments() {
       this.loading = true;
       const { data } = await this.$http.post("/_/updatelastbill", {
-        min: this.lastBillTimestamp,
+        min: this.lastBill.getTime(),
         max: Date.now(),
         data: this.curToJSON()
       });
@@ -509,7 +499,7 @@ export default {
       //optionally add monthly charges
       if (this.includeMonthlyCharges) {
         let curTimestamp = Math.floor(Date.now() / 60000); //in minutes
-        let lastBill = Math.floor(this.lastBillTimestamp / 60000);
+        let lastBill = Math.floor(this.lastBill.getTime() / 60000);
         if (this.monthlyData.length > 0) {
           this.monthlyData.forEach(entry => {
             let newAmount =

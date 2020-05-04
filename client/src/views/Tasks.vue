@@ -51,7 +51,7 @@
                       ></v-img>
                       <span
                         v-show="!userImages[getTodaysTasks[0].assigned]"
-                        class="white--text headline"
+                        class="white--text"
                       >
                         {{ getUserInitials(getTodaysTasks[0].assigned) }}
                       </span>

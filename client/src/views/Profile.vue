@@ -159,7 +159,7 @@
                       beautiful name of "Unknown User" and all your expenses and
                       former tasks will remind them of you in a melancholic yet
                       heartwarming way. You are to be logged out of this
-                      application and it will be as if this all never happened.
+                      application and it will be as if all this never happened.
                       Still - never will you be forgotten, Unknown User.
                     </p>
                     <p>
