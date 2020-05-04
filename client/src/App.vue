@@ -96,7 +96,7 @@
       <span>A new update was installed. Please refresh.</span>
       <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
     </v-snackbar>
-    <IntroductionDialog></IntroductionDialog>
+    <IntroductionDialog v-if="introductionState == 1"></IntroductionDialog>
   </v-app>
 </template>
 
@@ -170,6 +170,14 @@ export default {
         }
       );
       return contents;
+    },
+    introductionState: {
+      get() {
+        return this.$store.state.userSettings.introductionState;
+      },
+      set(value) {
+        this.$store.commit("set_key", { key: "introductionState", value });
+      }
     },
     ...mapState([
       "userEmail",

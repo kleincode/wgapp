@@ -10,12 +10,19 @@
     >
       <v-carousel-item v-for="(slide, i) in slides" :key="i">
         <v-sheet :color="slide.color" height="100%">
-          <v-row class="fill-height ml-4 mr-4" align="center" justify="center">
-            <v-col cols="3" md="6" lg="3">
-              <v-img src="@/assets/logo.png" class="ma-2"></v-img>
+          <v-row
+            class="ml-4 mr-4"
+            :class="isDeviceSmall ? '' : 'fill-height'"
+            :align="isDeviceSmall ? 'start' : 'center'"
+            justify="center"
+          >
+            <v-col cols="4" md="4" lg="3" :class="slide.last ? '' : 'mb-8'">
+              <v-img src="@/assets/logo.png" class=""></v-img>
             </v-col>
-            <v-col cols="9" md="6" lg="7">
-              <div class="display-2">{{ slide.text }}</div>
+            <v-col cols="12" md="7" lg="7">
+              <h1 class="fancytitle" :class="getTitleSize">
+                {{ slide.text }}
+              </h1>
               <div class="subtitle-1 mt-4">{{ slide.subtext }}</div>
               <v-row v-if="slide.last" align="center">
                 <v-col cols="12" md="6">
@@ -29,7 +36,7 @@
                   </v-btn>
                 </v-col>
                 <v-col cols="12" class="text-center">
-                  <v-btn color="secondary" text @click="dialog = false">
+                  <v-btn color="secondary" text @click="close">
                     close introduction
                   </v-btn>
                 </v-col>
@@ -62,7 +69,7 @@ export default {
         color: "pink darken-2"
       },
       {
-        text: "But first, we will create a household for you.",
+        text: "But first, let's create a household for you.",
         subtext:
           "If someone already created your household please join this household.",
         color: "red lighten-1",
@@ -70,6 +77,33 @@ export default {
       }
     ]
   }),
+  computed: {
+    introductionState: {
+      get() {
+        return this.$store.state.userSettings.introductionState;
+      },
+      set(value) {
+        this.$store.commit("userSettings/set_key", {
+          key: "introductionState",
+          value
+        });
+      }
+    },
+    getTitleSize() {
+      if (this.$vuetify.breakpoint.name == "sm") {
+        return "small";
+      } else if (this.$vuetify.breakpoint.name == "xs") {
+        return "tiny";
+      }
+      return "big";
+    },
+    isDeviceSmall() {
+      return (
+        this.$vuetify.breakpoint.name == "sm" ||
+        this.$vuetify.breakpoint.name == "xs"
+      );
+    }
+  },
   methods: {
     join() {
       this.$router.push({ path: "/household/join" });
@@ -78,9 +112,31 @@ export default {
     create() {
       this.$router.push({ path: "/household/create" });
       this.dialog = false;
+    },
+    close() {
+      this.introductionState = 0;
+      this.dialog = false;
     }
   }
 };
 </script>
 
-<style></style>
+<style>
+.tiny {
+  font-size: 1.5rem !important;
+  line-height: 2rem;
+}
+.small {
+  font-size: 2rem !important;
+  line-height: 2rem;
+}
+.big {
+  font-size: 3.5rem !important;
+  line-height: 3.4rem;
+}
+.fancytitle {
+  font-weight: 400;
+  letter-spacing: initial !important;
+  font-family: "Work Sans", sans-serif !important;
+}
+</style>
