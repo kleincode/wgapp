@@ -96,7 +96,7 @@
       <span>A new update was installed. Please refresh.</span>
       <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
     </v-snackbar>
-    <IntroductionDialog v-if="introductionState == 1"></IntroductionDialog>
+    <Introduction></Introduction>
   </v-app>
 </template>
 
@@ -104,12 +104,12 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import IntroductionDialog from "@/components/dialogs/introduction/IntroductionDialog.vue";
+import Introduction from "@/components/dialogs/introduction/Introduction.vue";
 
 export default {
   name: "App",
   components: {
-    IntroductionDialog
+    Introduction
   },
   data: () => ({
     menuVisible: null
@@ -124,6 +124,7 @@ export default {
       }
     },
     menuContents() {
+      let state = this.$store.state.userSettings.introductionState;
       let contents = [
         {
           name: "Dashboard",
@@ -131,31 +132,37 @@ export default {
           path: "/dashboard"
         }
       ];
-      if (this.$store.state.userSettings.calendarEnabled)
+      if (this.$store.state.userSettings.calendarEnabled && state <= 0)
         contents.push({
           name: "Calendar",
           icon: "event",
           path: "/calendar"
         });
-      contents.push(
-        {
+      if (state >= 3) {
+        contents.push({
           name: "Shopping",
           icon: "shopping_cart",
           path: "/shopping",
           show: true
-        },
-        {
+        });
+      }
+      if (state >= 5) {
+        contents.push({
           name: "Finances",
           icon: "money",
           path: "/finances",
           show: true
-        },
-        {
+        });
+      }
+      if (state >= 7) {
+        contents.push({
           name: "Tasks",
           icon: "list",
           path: "/tasks",
           show: true
-        },
+        });
+      }
+      contents.push(
         {
           name: "Manage household",
           icon: "people",
@@ -170,14 +177,6 @@ export default {
         }
       );
       return contents;
-    },
-    introductionState: {
-      get() {
-        return this.$store.state.userSettings.introductionState;
-      },
-      set(value) {
-        this.$store.commit("set_key", { key: "introductionState", value });
-      }
     },
     ...mapState([
       "userEmail",

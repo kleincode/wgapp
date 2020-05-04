@@ -106,10 +106,12 @@ export default {
   },
   methods: {
     join() {
+      this.introductionState = 2;
       this.$router.push({ path: "/household/join" });
       this.dialog = false;
     },
     create() {
+      this.introductionState = 2;
       this.$router.push({ path: "/household/create" });
       this.dialog = false;
     },

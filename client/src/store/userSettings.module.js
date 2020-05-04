@@ -2,7 +2,7 @@ import { userSettings } from "./LocalAppStore";
 
 // Specify all values to sync with persistent store and their default values
 const syncEntries = {
-  introductionState: 1,
+  introductionState: 3,
   darkMode: false,
   calendarEnabled: false,
   weatherWidgetEnabled: true,
