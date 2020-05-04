@@ -1,10 +1,10 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  pool: process.env.MAIL_USE_POOL !== false, // true by default
+  pool: process.env.MAIL_USE_POOL ? process.env.MAIL_USE_POOL.toLowerCase() === "true" : true, // true by default
   host: process.env.MAIL_HOST,
   port: process.env.MAIL_PORT || 465, // 465 (TLS port) by default
-  secure: process.env.MAIL_USE_TLS !== false, // use TLS by default
+  secure: process.env.MAIL_USE_TLS ? process.env.MAIL_USE_TLS.toLowerCase() === "true" : true, // use TLS by default
   auth: {
     user: process.env.MAIL_USER,
     pass: process.env.MAIL_PASS
