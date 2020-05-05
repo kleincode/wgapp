@@ -45,6 +45,14 @@
         <div id="notifications" class="title pt-2">Notifications</div>
         <p>Notifications remind you of important upcoming tasks.</p>
         <notification-controller></notification-controller>
+
+        <div id="introduction" class="title pt-2">Restart Introduction</div>
+        <p>
+          If you missed something in my introduction just restart it right here:
+        </p>
+        <v-btn color="primary" @click="restartIntro"
+          >Restart introduction</v-btn
+        >
       </div>
     </v-card-text>
   </v-card>
@@ -205,6 +213,23 @@ export default {
           currency: this.currency
         }
       ).format(123456.789);
+    },
+    introductionState: {
+      get() {
+        return this.$store.state.userSettings.introductionState;
+      },
+      set(value) {
+        this.$store.commit("userSettings/set_key", {
+          key: "introductionState",
+          value
+        });
+      }
+    }
+  },
+  methods: {
+    restartIntro() {
+      this.introductionState = 1;
+      this.$router.push({ path: "/dashboard" });
     }
   }
 };

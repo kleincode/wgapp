@@ -16,6 +16,7 @@ let store = new Vuex.Store({
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
     userNickName: localStorage.getItem("user_nickname"),
+    userInHousehold: false,
     snackbarShow: false,
     snackbarMessage: "",
     householdUsers: {},
@@ -56,6 +57,7 @@ let store = new Vuex.Store({
       state.snackbarShow = visible;
     },
     update_household_users(state, users) {
+      state.userInHousehold = !!users && !!Object.keys(users).length;
       state.householdUsers = users;
     },
     update_available(state, callback) {

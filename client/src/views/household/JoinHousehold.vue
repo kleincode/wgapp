@@ -131,6 +131,19 @@ export default {
     newHousehold: {},
     householdTypes: ["Shared apartment", "Couple", "Family"]
   }),
+  computed: {
+    introductionState: {
+      get() {
+        return this.$store.state.userSettings.introductionState;
+      },
+      set(value) {
+        this.$store.commit("userSettings/set_key", {
+          key: "introductionState",
+          value
+        });
+      }
+    }
+  },
   mounted() {
     if (this.$route.query.h) {
       this.householdId = this.$route.query.h;
@@ -196,7 +209,9 @@ export default {
         );
     },
     finish() {
+      this.$store.dispatch("fetchHouseholdUsers");
       this.$router.push({ name: "Dashboard" });
+      this.introductionState = 3;
     }
   }
 };

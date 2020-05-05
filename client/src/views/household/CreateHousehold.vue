@@ -132,6 +132,19 @@ export default {
     ],
     householdLink: "https://usw"
   }),
+  computed: {
+    introductionState: {
+      get() {
+        return this.$store.state.userSettings.introductionState;
+      },
+      set(value) {
+        this.$store.commit("userSettings/set_key", {
+          key: "introductionState",
+          value
+        });
+      }
+    }
+  },
   mounted() {
     this.cancel();
   },
@@ -174,7 +187,9 @@ export default {
       this.alertSnackbar("Copied to clipboard. Happy pasting! :)");
     },
     finish() {
+      this.$store.dispatch("fetchHouseholdUsers");
       this.$router.push({ name: "Dashboard" });
+      this.introductionState = 3;
     },
     cancel() {
       this.householdName = this.$store.state.userFirstName + "'s household";

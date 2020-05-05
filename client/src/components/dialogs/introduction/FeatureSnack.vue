@@ -1,0 +1,54 @@
+<template>
+  <v-snackbar v-model="show" :timeout="0" color="primary">
+    <div>
+      <v-icon color="white">info</v-icon>
+      <v-btn v-if="last" text @click="introductionState = 15"
+        >Finish tutorial</v-btn
+      >
+      {{ text }}
+    </div>
+    <v-btn v-if="!last" text @click="introductionState = 0">End Tutorial</v-btn>
+  </v-snackbar>
+</template>
+
+<script>
+export default {
+  name: "FeatureSnack",
+  props: {
+    showState: {
+      type: Number,
+      default: () => 0
+    },
+    value: {
+      type: Boolean,
+      default: () => false
+    },
+    text: {
+      type: String,
+      default: () => ""
+    },
+    last: {
+      type: Boolean,
+      default: () => false
+    }
+  },
+  computed: {
+    introductionState: {
+      get() {
+        return this.$store.state.userSettings.introductionState;
+      },
+      set(value) {
+        this.$store.commit("userSettings/set_key", {
+          key: "introductionState",
+          value
+        });
+      }
+    },
+    show() {
+      return this.introductionState == this.showState;
+    }
+  }
+};
+</script>
+
+<style></style>
