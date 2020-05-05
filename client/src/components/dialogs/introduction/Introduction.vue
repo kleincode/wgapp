@@ -7,7 +7,7 @@
     <FeaturesDialog
       v-if="introductionState == 3"
       text="That's the dashboard."
-      subtext="Here you have an overview about all the features we support. You can configure everything in the Settings."
+      subtext="Here you have an overview about all the features we support. You can configure everything in the Settings later on."
       color="primary"
       :next-state="4"
     ></FeaturesDialog>
@@ -16,7 +16,8 @@
     <FeaturesDialog
       v-if="introductionState == 5"
       text="You can write your shopping lists right here."
-      subtext="You can add multiple lists and edit the items even offline. I will sync everything once your device is online."
+      subtext="You can add multiple lists and edit the items even offline. I will sync everything once your device is online. 
+      Over time I will try to learn your usual shopping items and will autocomplete your items while you type."
       color="warning"
       :next-state="6"
     ></FeaturesDialog>

@@ -45,6 +45,78 @@
           </v-row>
         </v-sheet>
       </v-carousel-item>
+      <v-carousel-item v-if="!isInHousehold">
+        <v-sheet color="red lighten-1" height="100%">
+          <v-row
+            class="ml-4 mr-4"
+            :class="isDeviceSmall ? '' : 'fill-height'"
+            :align="isDeviceSmall ? 'start' : 'center'"
+            justify="center"
+          >
+            <v-col cols="4" md="4" lg="3">
+              <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+            </v-col>
+            <v-col cols="12" md="7" lg="7">
+              <h1 class="fancytitle" :class="getTitleSize">
+                But first, let's create a household for you.
+              </h1>
+              <div class="subtitle-1 mt-4">
+                If someone already created your household please join this
+                household.
+              </div>
+              <v-row align="center">
+                <v-col cols="12" md="6">
+                  <v-btn color="secondary" block @click="join">
+                    join household
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-btn color="secondary" block @click="create">
+                    create household
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" class="text-center">
+                  <v-btn color="secondary" text @click="close">
+                    close introduction
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-sheet>
+      </v-carousel-item>
+      <v-carousel-item v-if="isInHousehold">
+        <v-sheet color="red lighten-1" height="100%">
+          <v-row
+            class="ml-4 mr-4"
+            :class="isDeviceSmall ? '' : 'fill-height'"
+            :align="isDeviceSmall ? 'start' : 'center'"
+            justify="center"
+          >
+            <v-col cols="4" md="4" lg="3">
+              <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+            </v-col>
+            <v-col cols="12" md="7" lg="7">
+              <h1 class="fancytitle" :class="getTitleSize">
+                Since you're already in a household...
+              </h1>
+              <div class="subtitle-1 mt-4">Let's get started!</div>
+              <v-row align="center">
+                <v-col cols="12">
+                  <v-btn color="secondary" block @click="start">
+                    Start Tour
+                  </v-btn>
+                </v-col>
+                <v-col cols="12" class="text-center">
+                  <v-btn color="secondary" text @click="close">
+                    close introduction
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-sheet>
+      </v-carousel-item>
     </v-carousel>
   </v-dialog>
 </template>
@@ -67,13 +139,6 @@ export default {
       {
         text: "I'm gonna show you my most important features.",
         color: "pink darken-2"
-      },
-      {
-        text: "But first, let's create a household for you.",
-        subtext:
-          "If someone already created your household please join this household.",
-        color: "red lighten-1",
-        last: true
       }
     ]
   }),
@@ -105,6 +170,9 @@ export default {
     }
   },
   methods: {
+    async isInHousehold() {
+      return await this.$store.dispatch("fetchHouseholdUsers");
+    },
     join() {
       this.introductionState = 2;
       this.$router.push({ path: "/household/join" });
@@ -113,6 +181,11 @@ export default {
     create() {
       this.introductionState = 2;
       this.$router.push({ path: "/household/create" });
+      this.dialog = false;
+    },
+    start() {
+      this.introductionState = 3;
+      this.$router.push({ path: "/dashboard" });
       this.dialog = false;
     },
     close() {

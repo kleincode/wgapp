@@ -1,5 +1,14 @@
 <template>
   <v-container>
+    <v-overlay
+      v-if="getState > 0 && getState < 11"
+      :value="overlay"
+      :opacity="0.8"
+      absolute
+    >
+      <h1>We're not yet here!</h1>
+      Move on with your tutorial of click 'End tutorial' at the bottom.
+    </v-overlay>
     <v-row justify="center">
       <v-col xl="9" lg="10" md="12">
         <h1 class="display-2 pb-6">Settings</h1>
@@ -17,7 +26,7 @@
           >
             {{ tab.name }}
           </v-tab>
-          <v-tabs-items>
+          <v-tabs-items v-if="getState >= 11 || getState <= 0">
             <transition name="fade-transition" mode="out-in">
               <router-view></router-view>
             </transition>
@@ -31,6 +40,7 @@
 export default {
   name: "Settings",
   data: () => ({
+    overlay: true,
     tabs: [
       {
         name: "General",
@@ -45,6 +55,11 @@ export default {
         link: "integrations"
       }
     ]
-  })
+  }),
+  computed: {
+    getState() {
+      return this.$store.state.userSettings.introductionState;
+    }
+  }
 };
 </script>
