@@ -87,6 +87,15 @@ const routes = [
     component: Login
   },
   {
+    path: "/resetpassword/:token?",
+    name: "Reset password",
+    props: true,
+    component: () =>
+      import(
+        /* webpackChunkName: "resetPassword" */ "../views/ResetPassword.vue"
+      )
+  },
+  {
     path: "/profile",
     name: "Profile",
     component: () =>

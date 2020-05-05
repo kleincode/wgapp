@@ -1,6 +1,5 @@
 /*  Handler for "/_/forgotpassword". Purpose: Send email with verification code to change password (used in Login). */
 
-const Helpers = require("../components/Helpers");
 const { v4: uuidv4 } = require("uuid");
 const JWT = require("jsonwebtoken");
 const JWT_SECRET = process.env.FORGOT_PASS_SECRET || "jIiTU_#=i9:S`Deh";
