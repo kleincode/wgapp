@@ -1,9 +1,31 @@
 <template>
   <v-container>
+    <v-overlay
+      v-if="!userInHousehold"
+      :value="overlay"
+      :opacity="0.8"
+      absolute
+      class="pa-4"
+    >
+      <h1 class="display-3">You're not in a household yet.</h1>
+      <p class="title mt-2">Please join a household or create your own.</p>
+      <v-row align="center">
+        <v-col cols="12" md="6">
+          <v-btn color="primary" block @click="join">
+            join household
+          </v-btn>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-btn color="primary" block @click="create">
+            create household
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-overlay>
     <h1 class="display-2 mb-6" style="max-width: 80%">
       {{ message }}
     </h1>
-    <v-row align="stretch">
+    <v-row v-if="userInHousehold" align="stretch">
       <v-col
         v-if="clockWidgetEnabled"
         cols="12"
@@ -88,7 +110,11 @@ export default {
     StatusWidget,
     ImHomeWidget
   },
+  data: () => ({
+    overlay: true
+  }),
   computed: {
+    ...mapState(["userInHousehold"]),
     ...mapState("userSettings", [
       "clockWidgetEnabled",
       "weatherWidgetEnabled",
@@ -168,6 +194,18 @@ export default {
             return "Sleep well, " + this.getName + "!";
         }
       }
+    }
+  },
+  methods: {
+    join() {
+      this.introductionState = 2;
+      this.$router.push({ path: "/household/join" });
+      this.dialog = false;
+    },
+    create() {
+      this.introductionState = 2;
+      this.$router.push({ path: "/household/create" });
+      this.dialog = false;
     }
   }
 };

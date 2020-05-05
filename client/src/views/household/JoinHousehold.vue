@@ -209,6 +209,7 @@ export default {
         );
     },
     finish() {
+      this.$store.dispatch("fetchHouseholdUsers");
       this.$router.push({ name: "Dashboard" });
       this.introductionState = 3;
     }

@@ -45,7 +45,7 @@
           </v-row>
         </v-sheet>
       </v-carousel-item>
-      <v-carousel-item v-if="!isInHousehold">
+      <v-carousel-item v-if="!userInHousehold">
         <v-sheet color="red lighten-1" height="100%">
           <v-row
             class="ml-4 mr-4"
@@ -85,7 +85,7 @@
           </v-row>
         </v-sheet>
       </v-carousel-item>
-      <v-carousel-item v-if="isInHousehold">
+      <v-carousel-item v-if="userInHousehold">
         <v-sheet color="red lighten-1" height="100%">
           <v-row
             class="ml-4 mr-4"
@@ -122,6 +122,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "IntroductionDialog",
   data: () => ({
@@ -167,12 +169,10 @@ export default {
         this.$vuetify.breakpoint.name == "sm" ||
         this.$vuetify.breakpoint.name == "xs"
       );
-    }
+    },
+    ...mapState(["userInHousehold"])
   },
   methods: {
-    async isInHousehold() {
-      return await this.$store.dispatch("fetchHouseholdUsers");
-    },
     join() {
       this.introductionState = 2;
       this.$router.push({ path: "/household/join" });

@@ -6,7 +6,7 @@
       :opacity="0.8"
       absolute
     >
-      <h1>We're not yet here!</h1>
+      <h1 class="display-2">We're not yet here!</h1>
       Move on with your tutorial of click 'End tutorial' at the bottom.
     </v-overlay>
     <v-row justify="center">

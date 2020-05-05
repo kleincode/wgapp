@@ -187,6 +187,7 @@ export default {
       this.alertSnackbar("Copied to clipboard. Happy pasting! :)");
     },
     finish() {
+      this.$store.dispatch("fetchHouseholdUsers");
       this.$router.push({ name: "Dashboard" });
       this.introductionState = 3;
     },

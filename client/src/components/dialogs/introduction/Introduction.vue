@@ -97,9 +97,6 @@ export default {
           value
         });
       }
-    },
-    showShopping() {
-      return this.introductionState == 4;
     }
   },
   watch: {

@@ -28,7 +28,7 @@
               >{{ userFirstName }} {{ userLastName }}</v-list-item-title
             >
             <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
-            <v-list-item-subtitle>
+            <v-list-item-subtitle v-if="userInHousehold">
               <v-icon small>account_circle</v-icon>&nbsp;
               <router-link class="white--text" :to="{ name: 'Profile' }">
                 My profile
@@ -97,7 +97,9 @@
       <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
     </v-snackbar>
     <Introduction
-      v-if="this.$store.state.userSettings.introductionState > 0"
+      v-if="
+        this.$store.state.userSettings.introductionState > 0 && isAuthorized
+      "
     ></Introduction>
   </v-app>
 </template>
@@ -134,51 +136,53 @@ export default {
           path: "/dashboard"
         }
       ];
-      if (this.$store.state.userSettings.calendarEnabled && state <= 0)
-        contents.push({
-          name: "Calendar",
-          icon: "event",
-          path: "/calendar"
-        });
-      if (state >= 3 || state <= 0) {
-        contents.push({
-          name: "Shopping",
-          icon: "shopping_cart",
-          path: "/shopping",
-          show: true
-        });
-      }
-      if (state >= 5 || state <= 0) {
-        contents.push({
-          name: "Finances",
-          icon: "money",
-          path: "/finances",
-          show: true
-        });
-      }
-      if (state >= 7 || state <= 0) {
-        contents.push({
-          name: "Tasks",
-          icon: "list",
-          path: "/tasks",
-          show: true
-        });
-      }
-      if (state >= 9 || state <= 0) {
-        contents.push({
-          name: "Manage household",
-          icon: "people",
-          path: "/household",
-          show: true
-        });
-      }
-      if (state >= 11 || state <= 0) {
-        contents.push({
-          name: "Settings",
-          icon: "settings",
-          path: "/settings",
-          show: true
-        });
+      if (this.userInHousehold) {
+        if (this.$store.state.userSettings.calendarEnabled && state <= 0)
+          contents.push({
+            name: "Calendar",
+            icon: "event",
+            path: "/calendar"
+          });
+        if (state >= 3 || state <= 0) {
+          contents.push({
+            name: "Shopping",
+            icon: "shopping_cart",
+            path: "/shopping",
+            show: true
+          });
+        }
+        if (state >= 5 || state <= 0) {
+          contents.push({
+            name: "Finances",
+            icon: "money",
+            path: "/finances",
+            show: true
+          });
+        }
+        if (state >= 7 || state <= 0) {
+          contents.push({
+            name: "Tasks",
+            icon: "list",
+            path: "/tasks",
+            show: true
+          });
+        }
+        if (state >= 9 || state <= 0) {
+          contents.push({
+            name: "Manage household",
+            icon: "people",
+            path: "/household",
+            show: true
+          });
+        }
+        if (state >= 11 || state <= 0) {
+          contents.push({
+            name: "Settings",
+            icon: "settings",
+            path: "/settings",
+            show: true
+          });
+        }
       }
       return contents;
     },
@@ -186,16 +190,18 @@ export default {
       "userEmail",
       "userFirstName",
       "userLastName",
+      "userInHousehold",
       "snackbarMessage",
       "updateAvailable",
       "offline",
       "profilePictureData"
     ]),
-    ...mapGetters(["isUpdateAvailable", "hasProfilePicture"])
+    ...mapGetters(["isUpdateAvailable", "hasProfilePicture", "isAuthorized"])
   },
   async created() {
     await this.$store.dispatch("userSettings/sync");
     await this.$store.dispatch("fetchProfileImg");
+    //await this.$store.dispatch("fetchHouseholdUsers");
     this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
   },
   methods: {
