@@ -31,7 +31,7 @@
             <v-list-item-subtitle v-if="userInHousehold">
               <v-icon small>account_circle</v-icon>&nbsp;
               <router-link class="white--text" :to="{ name: 'Profile' }">
-                My profile
+                {{ $t("app.profile") }}
               </router-link>
             </v-list-item-subtitle>
           </v-list-item-content>
@@ -74,7 +74,7 @@
         aria-label="Menu"
         @click="menuVisible = !menuVisible"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title>WG App</v-toolbar-title>
+      <v-toolbar-title>Jeff</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
@@ -86,15 +86,19 @@
     </v-content>
 
     <v-footer app inset class="text-center">
-      <div style="width: 100%;">Made in self-isolation - 2020</div>
+      <div style="width: 100%;">{{ $t("app.footer") }}</div>
     </v-footer>
     <v-snackbar v-model="snackbarShow" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
-      <v-btn text small color="red" @click="snackbarShow = false">Close</v-btn>
+      <v-btn text small color="red" @click="snackbarShow = false">{{
+        $t("commands.close")
+      }}</v-btn>
     </v-snackbar>
     <v-snackbar v-model="isUpdateAvailable" :timeout="0">
-      <span>A new update was installed. Please refresh.</span>
-      <v-btn text small color="primary" @click="updateAvailable">Refresh</v-btn>
+      <span>{{ $t("app.update") }}</span>
+      <v-btn text small color="primary" @click="updateAvailable">{{
+        $t("commands.refresh")
+      }}</v-btn>
     </v-snackbar>
     <Introduction
       v-if="
@@ -131,7 +135,7 @@ export default {
       let state = this.$store.state.userSettings.introductionState;
       let contents = [
         {
-          name: "Dashboard",
+          name: this.$i18n.t("navigation.dashboard"),
           icon: "dashboard",
           path: "/dashboard"
         }
@@ -139,13 +143,13 @@ export default {
       if (this.userInHousehold) {
         if (this.$store.state.userSettings.calendarEnabled && state <= 0)
           contents.push({
-            name: "Calendar",
+            name: this.$i18n.t("navigation.calendar"),
             icon: "event",
             path: "/calendar"
           });
         if (state >= 3 || state <= 0) {
           contents.push({
-            name: "Shopping",
+            name: this.$i18n.t("navigation.shopping"),
             icon: "shopping_cart",
             path: "/shopping",
             show: true
@@ -153,7 +157,7 @@ export default {
         }
         if (state >= 5 || state <= 0) {
           contents.push({
-            name: "Finances",
+            name: this.$i18n.t("navigation.finances"),
             icon: "money",
             path: "/finances",
             show: true
@@ -161,7 +165,7 @@ export default {
         }
         if (state >= 7 || state <= 0) {
           contents.push({
-            name: "Tasks",
+            name: this.$i18n.t("navigation.tasks"),
             icon: "list",
             path: "/tasks",
             show: true
@@ -169,7 +173,7 @@ export default {
         }
         if (state >= 9 || state <= 0) {
           contents.push({
-            name: "Manage household",
+            name: this.$i18n.t("navigation.household"),
             icon: "people",
             path: "/household",
             show: true
@@ -177,7 +181,7 @@ export default {
         }
         if (state >= 11 || state <= 0) {
           contents.push({
-            name: "Settings",
+            name: this.$i18n.t("navigation.settings"),
             icon: "settings",
             path: "/settings",
             show: true
@@ -201,7 +205,6 @@ export default {
   async created() {
     await this.$store.dispatch("userSettings/sync");
     await this.$store.dispatch("fetchProfileImg");
-    //await this.$store.dispatch("fetchHouseholdUsers");
     this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
   },
   methods: {

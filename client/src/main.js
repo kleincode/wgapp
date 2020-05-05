@@ -20,6 +20,8 @@ Vue.use(VueAxios, axios);
 //Vue UUID
 import UUID from "vue-uuid";
 
+import i18n from "./i18n";
+
 Vue.use(UUID);
 
 //Authorization: load token and refresh user data on startup
@@ -48,5 +50,6 @@ new Vue({
   router,
   store,
   vuetify,
+  i18n,
   render: h => h(App)
 }).$mount("#app");

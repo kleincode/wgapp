@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "gui": "vue ui"
+    "gui": "vue ui",
+    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
   },
   "dependencies": {
     "@mdi/font": "^3.6.95",
@@ -23,6 +24,7 @@
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-chartjs": "^3.5.0",
+    "vue-i18n": "^8.17.3",
     "vue-router": "^3.1.5",
     "vue-uuid": "^1.1.1",
     "vuetify": "^2.2.11",
@@ -30,6 +32,7 @@
     "zipcelx": "^1.6.2"
   },
   "devDependencies": {
+    "@intlify/vue-i18n-loader": "^1.0.0",
     "@vue/cli-plugin-babel": "~4.2.0",
     "@vue/cli-plugin-eslint": "~4.2.0",
     "@vue/cli-plugin-pwa": "~4.2.0",
@@ -48,6 +51,7 @@
     "prettier": "^1.19.1",
     "sass": "^1.26.3",
     "sass-loader": "^8.0.2",
+    "vue-cli-plugin-i18n": "~1.0.1",
     "vue-cli-plugin-vuetify": "~2.0.5",
     "vue-cli-plugin-vuetify-preset-reply": "~1.0.3",
     "vue-template-compiler": "^2.6.11",

@@ -11,6 +11,7 @@ module.exports = {
       swSrc: "public/service-worker.js"
     }
   },
+
   devServer: {
     proxy: {
       "/_/*": {
@@ -19,7 +20,9 @@ module.exports = {
       }
     }
   },
+
   transpileDependencies: ["vuetify"],
+
   chainWebpack: config => {
     config.module
       .rule("eslint")
@@ -28,11 +31,21 @@ module.exports = {
         fix: true
       });
   },
+
   configureWebpack: config => {
     if (process.env.NODE_ENV === "production") {
       config.devtool = false;
     } else {
       config.devtool = "eval-source-map";
+    }
+  },
+
+  pluginOptions: {
+    i18n: {
+      locale: "en",
+      fallbackLocale: "en",
+      localeDir: "locales",
+      enableInSFC: true
     }
   }
 };

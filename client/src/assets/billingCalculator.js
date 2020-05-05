@@ -30,3 +30,6 @@ function splitPayments(payments) {
     }
   }
 }
+export {
+  splitPayments
+}

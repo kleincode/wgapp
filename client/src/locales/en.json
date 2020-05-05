@@ -1,0 +1,88 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "shopping": "Shopping",
+    "finances": "Finances",
+    "tasks": "Tasks",
+    "household": "Manage Household",
+    "settings": "Settings"
+  },
+  "commands": {
+    "close": "Close",
+    "refresh": "Refresh",
+    "undo": "Undo",
+    "save": "Save",
+    "delete": "Delete",
+    "cancel": "Cancel"
+  },
+  "app": {
+    "profile": "My profile",
+    "footer": "Made in self-isolation - 2020",
+    "update": "A new update was installed. Please refresh."
+  },
+  "weekdays": {
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday"
+  },
+  "time": {
+    "weeks": "Weeks",
+    "months": "Months"
+  },
+  "tasks": {
+    "todaystasks": "Today's tasks",
+    "duetoday": "DUE TODAY",
+    "chill": "Just chillin'",
+    "other": "other",
+    "nothing": "Nothing to do",
+    "checked": "Checked",
+    "reminder": {
+      "part1": "You've reminded ",
+      "part2": " of ",
+      "part3": ""
+    },
+    "errors": {
+      "fetchTask": "Could not fetch tasks. Please try again later.",
+      "checkTask": "Could not check task. Please try again later.",
+      "undo": "Undo failed :/",
+      "reminder": "Error triggering the reminder."
+    },
+    "editTask": {
+      "titleEdit": "Edit task",
+      "titleAdd": "Add task",
+      "taskMode": "Task Mode",
+      "name": "Name",
+      "memberMode": "Member mode",
+      "assigned": "Assigned to",
+      "titleTime": "Time & Date",
+      "lblStart": "Choose your start day",
+      "lblTime": "Choose your task time",
+      "lblReminder": "Toggle Reminder",
+      "lblRepeatOn": "Repeat on",
+      "lblRepeatEvery": "Repeat every",
+      "lblRepeatUnit": "Repetition unit",
+      "deleteDialog": "Do you really want to delete this task?",
+      "errors": {
+        "number": "Error while fetching tasks. Multiple or no task received.",
+        "settings": "Couldn't fetch settings data. Please try again later.",
+        "settingsErr": "Error while fetching settings data. Please try again later.",
+        "add": "Couldn't add new task. Please try again later.",
+        "addErr": "Error while connecting to the server. Please try again later.",
+        "delete": "Couldn't delete task. Please try again later",
+        "deleteErr": "Error while connecting to the server. Please try again later."
+      },
+      "messages": {
+        "name": "You need to specify a name.",
+        "intervall": "You need to specify a valid intervall.",
+        "weekday": "You need to specify at least one weekday.",
+        "success": "Successfully edited the task.",
+        "delete": "Deleted task."
+      }
+    }
+  }
+}
