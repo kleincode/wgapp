@@ -1,0 +1,150 @@
+{
+  "landing": {
+    "hey": "Hey, ich bin",
+    "organizer": "Your Personal Home Organizer"
+  },
+  "why": {
+    "question": "Warum brauchst du Jeff?",
+    "answer": "Habt ihr keine Lust mehr auf Streitereien darüber, wer welche Aufgabe erledigt hat oder nicht? Wer das letzte Mal bezahlt hat? Hört auf euch darüber Gedanken zu machen und lassen Sie Jeff die Arbeit machen! Er kann eure  täglichen {tasks}, {finances} und {shopping} verwalten. Darüber hinaus hat er einen integrierten {calendar} für eure Events und ein {dashboard}, in dem ihr alles unter Kontrolle habt. Das Einzige, was Jeff nicht kann, ist, das Badezimmer für euch zu putzen. Das tut ihm sehr leid.",
+    "tasks": "Aufgaben",
+    "finances": "Finanzen",
+    "shopping": "Einkaufslisten",
+    "calendar": "Google-Kalender",
+    "dashboard": "Dasboard",
+    "learn": "Erfahre mehr"
+  },
+  "devices": {
+    "headline": "Jeff läuft auf {every} Gerät. Ohne Ausnahme.",
+    "every": "jedem",
+    "explanation": "Wir haben es als Progressive Web App (PWA) entwickelt, so dass es als Website läuft, aber wie eine App aussieht. Auf diese Weise werden wir niemals Kompatibilitätsprobleme haben. Cool, oder?" 
+  },
+  "features": {
+    "headline": "Jeff's Funktionen",
+    "explanations": [
+      "Immer im Stress? Mit unserem Dashboard haben Sie in Sekundenschnelle alles im Griff. Neben dem Wetter und der Zeit zeigen wir dir die wichtigsten Informationen aus unseren Features an. Und natürlich: Alles ist vollständig konfigurierbar.",
+      "Mit unserer Finanzfunktion müsst ihr euch nie wieder Sorgen um Geld machen. Wenn ihr etwas bezahlt, gebt einfach den Betrag ein und ladet die Quittung hoch. Ganz einfach. Wir unterstützen auch monatliche Gebühren und zeigen verschiedene Statistiken über eure Ausgaben an. Und das Beste kommt noch: Mit nur einem Klick berechnet unser System alle Schulden.",
+      "Ihr braucht kein Papier oder andere Shopping-Apps mehr. Jeff kann das auch. Erstellt Einkaufslisten mittels automatischer Autovervollständigung, die von eurem Verhalten lernt. Falls ihr mal kein Internet habt: inklusive Offline-Unterstützung.",
+      "Wir unterstützen 3 Arten von Aufgaben: sich wiederholende Aufgaben (die zu bestimmten Zeiten wiederholt werden), Aufgaben nach Bedarf und einmalige Aufgaben. Sie können Erinnerungen einrichten, andere per Push-Benachrichtigungen manuell an ihre Aufgaben erinnern. Bei sich wiederholenden Aufgaben kann die zuständige Person automatisch durchgewechselt werden. Jede Aktion wird protokolliert, sodass sich keiner mehr streiten muss.",
+      "Mit unserer Google-Kalender Integration können wir euren gemeinsamen Kalender automatisch einrichten und alle Mitglieder einladen. Ihr könnt auch bevorstehende Veranstaltungen im Dashboard anzeigen."
+    ],
+    "more": "Und es kommt noch mehr!",
+    "moreHint": "Schaut euch einfach unsere Roadmap an:",
+    "roadmap": "Zur Roadmap"
+  },
+  "interested": {
+    "headline": "Interessiert? Zieht einfach bei Jeff ein, indem ihr euch {bold}!",
+    "bold": "registriert",
+    "explanation": "Jeff aktuell für jeden {free}. Erstelle einen Account und einen Haushalt und lade deine Mitbewohner ein. Super easy! (Wir haben auch einen Dark Mode...)",
+    "expBold": "kostenlos"
+  },
+  "roadmap": {
+    "headline": "Unsere Roadmap",
+    "milestones": [
+      {
+        "title": "Closed Beta",
+        "desc": "Diese App wird mit Liebe entwickelt und wie alles braucht sie Zeit. Wir werden im Mai 2020 eine Closed Beta durchführen. Wenn ihr interessiert seit, meldet euch einfach bei uns.",
+        "time": "Mai - Juni 2020"
+      },
+      {
+        "title": "Offical Release",
+        "desc": "Wir hoffen, unsere App im Juli 2020 offiziell zu veröffentlichen. Diese Version wird Folgendes enthalten: Finanzen, Einkaufslisten, Aufgaben, Google Kalender Integration. Sie wird in Deutsch und Englisch verfügbar sein.",
+        "time": "Juli 2020"
+      },
+      {
+        "title": "WG-Chat, Google Maps Integration",
+        "desc": "Das ist natürlich nicht alles. Wir haben viele neue Funktionen in Arbeit. Wollt ihr alles, was ihr braucht in einer App haben? Mit dem Chat-Feature können Sie alles Wichtige innerhalb der App besprechen und sogar Ausgaben, Einkaufslisten usw. einbinden. Ihr wollt daran erinnert werden, wenn ihr zur Arbeit/Schule/Universität los müsst? Mit unserer Google Maps Integration kann Jeff euch helfen, indem er Echtzeit-Verkehrsinformationen nutzt.",
+        "time": "Sommer 2020"
+      },
+      {
+        "title": "Home Control & Automation",
+        "desc": "Ihr habt eine Philipps-Hue-Bridge? Sehr gut, jetzt könnt ihr eure Szenen direkt von unserem Dashboard aus steuern. Mit unseren neuen Integrationen könnt ihr jetzt sogar automatisch das Licht einschalten, wenn ihr nach Hause kommt.",
+        "time": "Herbst 2020"
+      }
+    ]
+  },
+  "about": {
+    "headline": "Über uns",
+    "p1": "Wir sind Informatikstudenten aus Jena, und irgendwann hatten wir es satt, darüber zu diskutieren, wer wem was schuldet, wer einkaufen muss und wer - mal wieder - vergessen hat, aufzuräumen.",
+    "p2": "Deswegen haben wir diese App entwickelt. Wir hoffen, dass ihr die App genauso hilfreich findet wie wir. Wir freuen uns immer über Ihr Feedback, also meldet euch bei uns!"
+  },
+  "faq": {
+    "help": "Hilfeseiten:",
+    "questions": [
+      {
+        "question": "Was ist eine Progressive Web App (PWA)?",
+        "answer": "Eine Progressive Web-App (kurz: PWA) ist die Zukunft der App-Entwicklung. Wir gestalten diese App wie eine Website - mit allen Vorteilen der Webentwicklung: Wir können nämlich für alle Geräte gleichzeitig entwickeln. Eine PWA wird auf jedem Gerät laufen. Jetzt kommen wir erst zum coolen Teil: Ihr brauchen keine Installation. Wenn ihr Jeff wie eine echte App benutzen wollt, braucht ihr nur einen Klick. Für all die Geeks da draußen: Wir haben Node.js mit Vue.js und Vuetify verwendet. Die Daten werden sicher in einer MySQL-Datenbank gespeichert."
+      },
+      {
+        "question": "Wie kann ich die App installieren?",
+        "answer": "Öffnet einfach die App auf eurem Gerät und wählt in eurem Browser 'Zum Homescreen hinzufügen' aus. Ausführlichere Informationen über die Installation findet ihr in unserer Hilfe."
+      },
+      {
+        "question": "Wie erstelle ich einen Haushalt?",
+        "answer": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,"
+      },
+      {
+        "question": "Ich kriege keine Push Notifications. Warum?",
+        "answer": "Um Push-Benachrichtigungen verwenden zu können, müsst ihr diese Funktion zunächst aktivieren und Berechtigungen erteilen.  Wir spammen nicht, macht euch keine Sorgen. Geht einfach zu den Einstellungen, scrollt nach unten und klickt auf 'Push-Benachrichtigung aktivieren'."
+      },
+      {
+        "question": "Gibt es Jeff auch für mein Gerät?",
+        "answer": "Ja, Jeff gibt es auch für dein Gerät. Du brauchst nur einen Browser deiner Wahl. Eine vollständige Installationsanleitung findest du in unserer Hilfe."
+      },
+      {
+        "question": "Wie viele Accounts kann ich zu meinem Haushalt hinzufügen?",
+        "answer": "Ihr lebt in einem Schloss und seid besorgt, dass Jeff nicht mit vielen Menschen in einem Haushalt umgehen kann? Macht euch keine Sorgen, ihr könnt so viele hinzufügen, wie ihr wollt.  (Wenn ihr wirklich in einem Schloss wohnt, würden wir euch gerne einmal besuchen...)"
+      },
+      {
+        "question": "Kann ich die App mit meinen Kindern benutzen?",
+        "answer": "Natürlich könnt ihr das! Jeff meint, dass eure Kinder die App vermutlich schneller lernen als ihr. Challenge accepted!"
+      },
+      {
+        "question": "Wie kann ich jemanden in meinen Haushalt einladen?",
+        "answer": "Wähl einfach 'Haushalt verwalten' in unserer Navigation und klick auf 'Einladen'. Für detailliertere Informationen besuch mal unsere Hilfe!"
+      },
+      {
+        "question": "Kann ich die App mit meinem Google Kalender synchronisieren?",
+        "answer": "Ja, das kannst du! (Ich weiß. Wir sind sehr stolz darauf.) Richte die Verbindung unter 'Einstellungen' -> 'Integrationen' ein und melde dich mit deinem Google-Konto an. Danach kannst du auswählen, welche Kalender du im neuen Kalender-Tab anzeigen möchtest. Für genauere Informationen über die Kalenderfunktion besuch einfach unsere Hilfe!"
+      },
+      {
+        "question": "Ich finde meine Frage nicht...",
+        "answer": "Bitte besuch mal unsere Hilfeseite oder schreib uns mit dem unten stehenden Formular oder per E-Mail."
+      }
+    ]
+  },
+  "question": {
+    "headline": "Du hast eine Frage oder würdest gerne ein weiteres Feature in unserer App haben?",
+    "desc": "Wenn du deine Antwort nicht in unseren FAQs finden kannst, fülle einfach unser Kontaktformular aus. Wir wollen immer herausfinden, wie wir Jeff besser machen können. Wenn du leider einen Fehler gefunden hast, schicke uns bitte die Details und wir werden versuchen, mit Jeff zu sprechen. Wir werden nicht zu hart mit ihm sein. Versprochen."
+  },
+  "contact": {
+    "headline": "Kontakt",
+    "name": "Name",
+    "mail": "E-Mail",
+    "topic": "Thema",
+    "topicHint": "Bitte wähle ein Thema",
+    "topics": [
+      "Allgemein",
+      "Support",
+      "Feature Anfrage",
+      "Bug Report"
+    ],
+    "message": "Nachricht",
+    "messageHint": "Bitte gibt eine Nachricht ein.",
+    "messageHint2": "Wenn du einen Bug Report schreibst, bitte beschreibe uns ganz genau was du vor hattest und was passiert ist. Vielen Dank!",
+    "send": "senden",
+    "alternative": "Du kannst uns auch eine E-Mail schreiben. An: "
+  },
+  "help": "Hilfe",
+  "closedBeta": "Aktuell in closed beta",
+  "openApp": "App öffnen",
+  "nav": [
+    "Home",
+    "Einführung",
+    "Funktionen",
+    "Roadmap",
+    "Über uns",
+    "FAQ",
+    "Screenshots",
+    "Kontakt"
+  ]
+}
