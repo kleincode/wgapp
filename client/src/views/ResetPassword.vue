@@ -7,7 +7,7 @@
             <v-toolbar color="primary" dark>
               <v-toolbar-title>Reset password</v-toolbar-title>
             </v-toolbar>
-            <v-form ref="form" @submit.prevent="submitForm">
+            <v-form ref="form" v-model="formValid" @submit.prevent="submitForm">
               <v-card-text>
                 <v-expand-transition>
                   <div v-if="state == 0">
@@ -44,7 +44,7 @@
                       outlined
                     />
                     <v-text-field
-                      v-model="password"
+                      v-model="repeatPassword"
                       label="Repeat password"
                       type="password"
                       :rules="passwordRules"
@@ -105,7 +105,8 @@ export default {
     errorText: "Unknown error.",
     email: "",
     password: "",
-    repeatPassword: ""
+    repeatPassword: "",
+    formValid: false
   }),
   mounted() {
     this.verifyToken();
@@ -131,6 +132,37 @@ export default {
         this.errorText = "No valid token provided.";
         this.state = 2;
       }
+    },
+    submitForm() {
+      this.$refs.form.validate();
+      this.$nextTick(() => this.changePassword());
+    },
+    async changePassword() {
+      if (!this.formValid) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Please provide a valid password."
+        );
+      } else if (this.password != this.repeatPassword) {
+        this.$store.dispatch("showSnackbar", "The two passwords don't match.");
+        this.password = "";
+        this.repeatPassword = "";
+      } else
+        try {
+          const { data } = await this.$http.post("/_/updateresetpassword", {
+            token: this.token,
+            password: this.password
+          });
+          if (data.success) {
+            this.$store.dispatch(
+              "showSnackbar",
+              "Password updated. Please login."
+            );
+            this.$router.push({ name: "Login" });
+          } else throw data.message;
+        } catch (err) {
+          this.$store.dispatch("showSnackbar", err || "Update failed.");
+        }
     }
   }
 };
