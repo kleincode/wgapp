@@ -15,7 +15,6 @@ module.exports = ({ db }) => ({
   },
   handler: async ({ body, query, uid }, { success, fail, error }) => {
     try {
-      console.log(query.token);
       const { email, cpwtoken } = JWT.verify(query.token, JWT_SECRET);
       if(!email || !cpwtoken) {
         fail("Incomplete token.");
