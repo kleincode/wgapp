@@ -7,17 +7,17 @@
       absolute
       class="pa-4"
     >
-      <h1 class="display-3">You're not in a household yet.</h1>
-      <p class="title mt-2">Please join a household or create your own.</p>
+      <h1 class="display-3">{{ $t("dashboard.householdTitle") }}</h1>
+      <p class="title mt-2">{{ $t("dashboard.householdMsg") }}</p>
       <v-row align="center">
         <v-col cols="12" md="6">
           <v-btn color="primary" block @click="join">
-            join household
+            {{ $t("dashboard.join") }}
           </v-btn>
         </v-col>
         <v-col cols="12" md="6">
           <v-btn color="primary" block @click="create">
-            create household
+            {{ $t("dashboard.create") }}
           </v-btn>
         </v-col>
       </v-row>
@@ -131,79 +131,94 @@ export default {
         let number = Math.floor(Math.random() * 2);
         switch (number) {
           case 0:
-            return "Any late night thoughts, " + this.getName + "?";
+            return (
+              this.$t("dashboard.message.lateNight[0]") + this.getName + "?"
+            );
           default:
-            return "How's the party going " + this.getName + "?";
+            return (
+              this.$t("dashboard.message.lateNight[1]") + this.getName + "?"
+            );
         }
       } else if (time.getHours() < 10) {
         //morning
         let number = Math.floor(Math.random() * 5);
         switch (number) {
           case 0:
-            return "Morning sunshine!";
+            return this.$t("dashboard.message.morning[0]");
           case 1:
-            return "Wakey wakey rise n’ shine!";
+            return this.$t("dashboard.message.morning[1]");
           case 2:
-            return "Rise and shine, it's time for wine!";
+            return this.$t("dashboard.message.morning[2]");
           case 3:
-            return "Have a great day, " + this.getName + "!";
+            return this.$t("dashboard.message.morning[3]") + this.getName + "!";
           default:
-            return "Good Morning, " + this.getName + "!";
+            return this.$t("dashboard.message.morning[4]") + this.getName + "!";
         }
       } else if (time.getHours() < 14) {
         //noon
         let number = Math.floor(Math.random() * 3);
         switch (number) {
           case 0:
-            return "Hi, " + this.getName + "!";
+            return this.$t("dashboard.message.noon[0]") + this.getName + "!";
           case 1:
-            return "What's up, " + this.getName + "?";
+            return this.$t("dashboard.message.noon[1]") + this.getName + "?";
           default:
-            return "How you doin?";
+            return this.$t("dashboard.message.noon[2]");
         }
       } else if (time.getHours() < 18) {
+        //afternoon
         let number = Math.floor(Math.random() * 3);
         switch (number) {
           case 0:
-            return "Hi, " + this.getName + "!";
+            return (
+              this.$t("dashboard.message.afternoon[0]") + this.getName + "!"
+            );
           case 1:
-            return "Nice to see you, " + this.getName + "!";
+            return (
+              this.$t("dashboard.message.afternoon[1]") + this.getName + "!"
+            );
           default:
-            return "How was your day, " + this.getName + "?";
+            return (
+              this.$t("dashboard.message.afternoon[2]") + this.getName + "?"
+            );
         }
       } else if (time.getHours() < 22) {
         //evening
         let number = Math.floor(Math.random() * 3);
         switch (number) {
           case 0:
-            return "Netflix and chill?";
+            return this.$t("dashboard.message.evening[0]");
           case 1:
-            return "Good evening, " + this.getName + "!";
+            return this.$t("dashboard.message.evening[1]") + this.getName + "!";
           default:
-            return "How was your day, " + this.getName + "?";
+            return this.$t("dashboard.message.evening[2]") + this.getName + "?";
         }
       } else {
         //night
         let number = Math.floor(Math.random() * 3);
         switch (number) {
           case 0:
-            return "Good Night, " + this.getName + "!";
+            return this.$t("dashboard.message.night[0]") + this.getName + "!";
           case 1:
-            return "Go get your beauty sleep, " + this.getName + "!";
+            return this.$t("dashboard.message.night[1]") + this.getName + "!";
           default:
-            return "Sleep well, " + this.getName + "!";
+            return this.$t("dashboard.message.night[2]") + this.getName + "!";
         }
       }
     }
   },
   methods: {
     join() {
-      this.introductionState = 2;
+      if (this.introductionState != 0) {
+        this.introductionState = 2;
+      }
       this.$router.push({ path: "/household/join" });
       this.dialog = false;
     },
     create() {
-      this.introductionState = 2;
+      if (this.introductionState != 0) {
+        this.introductionState = 2;
+      }
       this.$router.push({ path: "/household/create" });
       this.dialog = false;
     }

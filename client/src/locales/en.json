@@ -10,7 +10,8 @@
   },
   "general": {
     "member": "Member",
-    "members": "Members"
+    "members": "Members",
+    "household": "household"
   },
   "commands": {
     "close": "Close",
@@ -23,7 +24,10 @@
     "signin": "Sign in",
     "signout": "Sign out",
     "loading": "Loading",
-    "ok": "Ok"
+    "ok": "Ok",
+    "continue": "Continnue",
+    "next": "Next",
+    "finish": "Finish"
   },
   "app": {
     "profile": "My profile",
@@ -258,5 +262,98 @@
     "openBill": "Open Bill Manager",
     "memberTrend": "Member Trend Expenses",
     "confirmDelete": "Are you sure you want to delete"
+  },
+  "dashboard": {
+    "householdTitle": "You're not in a household yet.",
+    "householdMsg": "Please join a household or create your own.",
+    "join": "join household",
+    "create": "create household",
+    "message": {
+      "lateNight": [
+        "Any late night thoughts, ",
+        "How's the party going "
+      ],
+      "morning": [
+        "Morning sunshine!",
+        "Wakey wakey rise n’ shine!",
+        "Rise and shine, it's time for wine!",
+        "Have a great day, ",
+        "Good Morning, "
+      ],
+      "noon": [
+        "Hi, ",
+        "Waht's up, ",
+        "How you doin?"
+      ],
+      "afternoon": [
+        "Hi, ",
+        "Nice to see you, ",
+        "How was your day, "
+      ],
+      "evening": [
+        "Netflix and chill?",
+        "Good evening, ",
+        "How was your day, "
+      ],
+      "night": [
+        "Good Night, ",
+        "Go get your beauty sleep, ",
+        "Sleep well, "
+      ]
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "lblSel": "Select Calendars",
+    "lblNotSigned": "Not signed in",
+    "others": "others",
+    "warning": "Please refer to the to {settings} activate this feature.",
+    "warnSettings": "settings",
+    "warning2": "Please refer to the {settings} to connect to the Google services.",
+    "time": [
+      "Day",
+      "Week",
+      "Month",
+      "4 days"
+    ],
+    "nodesc": "No description"
+  },
+  "household": {
+    "title": "Members",
+    "leave": "Leave household",
+    "lea": "Leave",
+    "stay": "Stay",
+    "info": "Info",
+    "created": "Created",
+    "confirmLeave": "Are you sure you want to leave this household?",
+    "confirmExp": "This operation can only be undone using an invite link. You old data will be lost",
+    "types": [
+      "Shared apartment", "Couple", "Family"
+    ],
+    "errors": {
+      "assigned": "You are not assigned to a household yet. Please create one now.",
+      "connect": "Could not connect to server.",
+      "unkown": "Unknown error."
+    },
+    "create": {
+      "title": "Create new household",
+      "nameDesc": "Give your household a sweet little name. Don't worry, you will be able to change it later.",
+      "lblName": "Household name",
+      "configure": "Configure household",
+      "lblType": "Household type",
+      "invite": "Invite members",
+      "inviteDesc": "It feels so lonely without some roommates. Invite them via the link below.",
+      "finishDesc": "Congratulations, your new household has been setup successfully. Continue to check out your dashboard.",
+      "dashboard": "Go to dashboard",
+      "ruleName": "Please provide a name!",
+      "ruleNameLong": "Name is too long!",
+      "messages": {
+        "input": "Please check your input.",
+        "copied": "Copied to clipboard. Happy pasting! :)"
+      },
+      "errors": {
+        "creating": "Error while creating household."
+      }
+    }
   }
 }

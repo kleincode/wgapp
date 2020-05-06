@@ -10,30 +10,31 @@
               }}</v-toolbar-title>
             </v-toolbar>
             <v-stepper v-model="stepperProgress" vertical>
-              <v-stepper-step :complete="stepperProgress > 1" step="1"
-                >Create new household</v-stepper-step
-              >
+              <v-stepper-step :complete="stepperProgress > 1" step="1">{{
+                $t("household.create.title")
+              }}</v-stepper-step>
 
               <v-stepper-content step="1">
                 <p>
-                  Give your household a sweet little name. Don't worry, you will
-                  be able to change it later.
+                  {{ $t("household.create.nameDesc") }}
                 </p>
                 <v-form v-model="step1Valid" @submit.prevent="step1Submit">
                   <v-text-field
                     v-model="householdName"
-                    label="Household name"
+                    :label="$t('household.create.lblName')"
                     outlined
                     counter="64"
                     :rules="householdNameRules"
                   ></v-text-field>
-                  <v-btn color="primary" type="submit">Continue</v-btn>
+                  <v-btn color="primary" type="submit">{{
+                    $t("commands.continue")
+                  }}</v-btn>
                 </v-form>
               </v-stepper-content>
 
-              <v-stepper-step :complete="stepperProgress > 2" step="2"
-                >Configure household</v-stepper-step
-              >
+              <v-stepper-step :complete="stepperProgress > 2" step="2">{{
+                $t("household.create.configure")
+              }}</v-stepper-step>
 
               <v-stepper-content step="2">
                 <v-form v-model="step2Valid" @submit.prevent="step2Submit">
@@ -43,26 +44,25 @@
                     :items="householdTypes"
                     item-text="description"
                     item-value="id"
-                    label="Household type"
+                    :label="$t('household.create.lblType')"
                     class="mt-2"
                   ></v-select>
-                  <v-btn color="primary" type="submit" :loading="loading"
-                    >Continue</v-btn
-                  >
-                  <v-btn text class="ml-2" @click.prevent="cancel"
-                    >Cancel</v-btn
-                  >
+                  <v-btn color="primary" type="submit" :loading="loading">{{
+                    $t("commands.continue")
+                  }}</v-btn>
+                  <v-btn text class="ml-2" @click.prevent="cancel">{{
+                    $t("commands.cancel")
+                  }}</v-btn>
                 </v-form>
               </v-stepper-content>
 
-              <v-stepper-step :complete="stepperProgress > 3" step="3"
-                >Invite members</v-stepper-step
-              >
+              <v-stepper-step :complete="stepperProgress > 3" step="3">{{
+                $t("household.create.invite")
+              }}</v-stepper-step>
 
               <v-stepper-content step="3">
                 <p>
-                  It feels so lonely without some roommates. Invite them via the
-                  link below.
+                  {{ $t("household.create.inviteDesc") }}
                 </p>
                 <v-text-field
                   ref="addLink"
@@ -72,21 +72,25 @@
                   outlined
                   @click:append="copyAddLink"
                 ></v-text-field>
-                <v-btn color="primary" @click.prevent="step3Submit">Next</v-btn>
-                <v-btn text class="ml-2" @click.prevent="cancel">Cancel</v-btn>
+                <v-btn color="primary" @click.prevent="step3Submit">{{
+                  $t("commands.next")
+                }}</v-btn>
+                <v-btn text class="ml-2" @click.prevent="cancel">{{
+                  $t("commands.cancel")
+                }}</v-btn>
               </v-stepper-content>
 
-              <v-stepper-step :complete="stepperProgress > 4" step="4"
-                >Finish</v-stepper-step
-              >
+              <v-stepper-step :complete="stepperProgress > 4" step="4">{{
+                $t("commands.finish")
+              }}</v-stepper-step>
 
               <v-stepper-content step="4">
                 <p>
-                  Congratulations, your new household has been setup
-                  successfully. Continue to check out your dashboard.
+                  {{ $t("household.create.finishDesc") }}
                 </p>
                 <v-btn color="primary" @click="finish">
-                  <v-icon left>dashboard</v-icon> Go to dashboard</v-btn
+                  <v-icon left>dashboard</v-icon>
+                  {{ $t("household.create.dashboard") }}</v-btn
                 >
               </v-stepper-content>
             </v-stepper>
@@ -96,7 +100,9 @@
     </v-container>
     <v-snackbar v-model="showSnackbar" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
-      <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
+      <v-btn text small color="red" @click="showSnackbar = false">{{
+        $t("commands.close")
+      }}</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -107,9 +113,11 @@ export default {
     stepperProgress: 1,
     householdName: "My household",
     householdNameRules: [
-      v => !!v || "Please provide a name!",
-      v => (v && v.length <= 64) || "Name is too long!"
+      v => !!v || this.ruleName,
+      v => (v && v.length <= 64) || this.ruleNameLong
     ],
+    ruleName: "Please provide a name!",
+    ruleNameLong: "Name is too long!",
     step1Valid: null,
     step2Valid: null,
     loading: false,
@@ -145,6 +153,13 @@ export default {
       }
     }
   },
+  created() {
+    this.ruleName = this.$t("household.create.ruleName");
+    this.ruleName = this.$t("household.create.ruleNameLong");
+    this.householdTypes[0].description = this.$t("household.types[0]");
+    this.householdTypes[1].description = this.$t("household.types[1]");
+    this.householdTypes[2].description = this.$t("household.types[2]");
+  },
   mounted() {
     this.cancel();
   },
@@ -160,7 +175,7 @@ export default {
     },
     step1Submit() {
       if (this.step1Valid) this.stepperProgress = 2;
-      else this.alertSnackbar("Please check your input.");
+      else this.alertSnackbar(this.$t("household.create.messages.input"));
     },
     async step2Submit() {
       this.loading = true;
@@ -173,7 +188,7 @@ export default {
           window.location.origin +
           `/household/join?h=${data.hid}&s=${data.sec}`;
         this.stepperProgress = 3;
-      } else this.alertSnackbar("Error while creating household.");
+      } else this.alertSnackbar(this.$t("household.create.errors.creating"));
       this.loading = false;
     },
     step3Submit() {
@@ -184,15 +199,18 @@ export default {
       this.$refs.addLink.$refs.input.select();
       document.execCommand("copy");
       event.target.focus();
-      this.alertSnackbar("Copied to clipboard. Happy pasting! :)");
+      this.alertSnackbar(this.$t("household.create.messages.copied"));
     },
     finish() {
       this.$store.dispatch("fetchHouseholdUsers");
       this.$router.push({ name: "Dashboard" });
-      this.introductionState = 3;
+      if (this.introductionState != 0) {
+        this.introductionState = 3;
+      }
     },
     cancel() {
-      this.householdName = this.$store.state.userFirstName + "'s household";
+      this.householdName =
+        this.$store.state.userFirstName + "'s " + this.$t("general.household");
       this.stepperProgress = 1;
       this.loading = false;
     }
