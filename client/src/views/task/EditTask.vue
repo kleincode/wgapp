@@ -267,8 +267,6 @@ export default {
     this.days.push(this.$t("weekdays.fri"));
     this.days.push(this.$t("weekdays.sat"));
     this.days.push(this.$t("weekdays.sun"));
-    this.repetitionUnits.push(this.$t("time.weeks"));
-    this.repetitionUnits.push(this.$t("time.months"));
   },
   mounted() {
     this.id = this.$route.params.id;

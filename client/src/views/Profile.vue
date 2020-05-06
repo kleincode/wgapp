@@ -2,7 +2,7 @@
   <v-container
     ><v-row justify="center">
       <v-col xl="9" lg="10" md="12">
-        <h1 class="display-2 pb-6">Profile</h1>
+        <h1 class="display-2 pb-6">{{ $t("profile.title") }}</h1>
         <v-card
           class="pa-6 trans"
           :loading="loading"
@@ -24,11 +24,7 @@
                     class="mb-2"
                     :color="hasProfilePicture ? '' : 'primary'"
                   >
-                    <v-img
-                      v-if="hasProfilePicture"
-                      :src="profilePictureData"
-                      alt="John"
-                    >
+                    <v-img v-if="hasProfilePicture" :src="profilePictureData">
                     </v-img>
                     <span v-else class="white--text display-4">{{
                       getInitials()
@@ -38,17 +34,21 @@
                 <v-col cols="12" md="6" lg="8" class="pa-4">
                   <v-row
                     ><v-col cols="12" md="8">
-                      <div class="overline">username</div>
+                      <div class="overline">{{ $t("profile.username") }}</div>
                       <h1 class="display-1">
                         {{ userFirstName }} {{ userLastName }}
                       </h1>
                       <template v-if="userNickName">
-                        <div class="overline mt-6">Nickname</div>
+                        <div class="overline mt-6">
+                          {{ $t("profile.nick") }}
+                        </div>
                         <h1 class="headline">{{ userNickName }}</h1>
                       </template>
-                      <div class="overline mt-6">mail</div>
+                      <div class="overline mt-6">{{ $t("profile.mail") }}</div>
                       <h1 class="headline">{{ userEmail }}</h1>
-                      <div class="overline mt-6">password</div>
+                      <div class="overline mt-6">
+                        {{ $t("profile.password") }}
+                      </div>
                       <h1 class="headline">************</h1>
                     </v-col>
                     <v-col cols="12" md="4" class="text-right">
@@ -65,7 +65,7 @@
         <v-row class="mt-6">
           <v-col cols="12" md="6">
             <v-card :elevation="6">
-              <v-card-title>Latest expenses</v-card-title>
+              <v-card-title>{{ $t("profile.expenses") }}</v-card-title>
               <v-card-text>
                 <v-list v-if="expenses.length > 0">
                   <v-list-item v-for="(exp, i) in expenses" :key="i">
@@ -87,10 +87,10 @@
                   </v-list-item>
                 </v-list>
                 <div v-else class="text-center text--secondary mt-8 mb-8">
-                  No expenses
+                  {{ $t("profile.noexpenses") }}
                 </div>
               </v-card-text>
-              <v-card-title>Monthly expenses</v-card-title>
+              <v-card-title>{{ $t("profile.monexpenses") }}</v-card-title>
               <v-card-text>
                 <v-list v-if="getFilteredMonthlyCharges.length > 0">
                   <v-list-item
@@ -115,7 +115,7 @@
                   </v-list-item>
                 </v-list>
                 <div v-else class="text-center text--secondary mt-8 mb-8">
-                  No monthly charges
+                  {{ $t("profile.nomonexpenses") }}
                 </div>
               </v-card-text>
             </v-card>
@@ -209,13 +209,13 @@ export default {
         if (data.success) {
           this.expenses = data.data;
         } else {
-          this.$store.dispatch("showSnackbar", "Couldn't fetch user expenses.");
+          this.$store.dispatch("showSnackbar", this.$t("profile.errors.users"));
           console.warn(data);
         }
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          "Error while fetching user expenses."
+          this.$t("profile.errors.usersErr")
         );
         console.error(err);
       }
@@ -243,17 +243,11 @@ export default {
             });
           });
         } else {
-          this.$store.dispatch(
-            "showSnackbar",
-            "Couldn't fetch monthly data. Please try again later."
-          );
+          this.$store.dispatch("showSnackbar", this.$t("profile.errors.mon"));
           console.warn("Error during fetching monthly data", data);
         }
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error during fetching monthly data. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("profile.errors.monErr"));
         console.error("Error during fetching monthly data");
       }
     },

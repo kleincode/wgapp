@@ -5,11 +5,11 @@
         <v-col cols="12" sm="8" md="4">
           <v-card :elevation="12">
             <v-toolbar color="primary" dark>
-              <v-toolbar-title>Welcome!</v-toolbar-title>
+              <v-toolbar-title>{{ $t("login.welcome") }}</v-toolbar-title>
               <template v-slot:extension>
                 <v-tabs v-model="registerMode" centered color="white">
-                  <v-tab>Login</v-tab>
-                  <v-tab>Register</v-tab>
+                  <v-tab>{{ $t("login.login") }}</v-tab>
+                  <v-tab>{{ $t("login.register") }}</v-tab>
                 </v-tabs>
               </template>
             </v-toolbar>
@@ -20,7 +20,7 @@
               <v-card-text>
                 <v-text-field
                   v-model="email"
-                  label="E-Mail"
+                  :label="$t('login.mail')"
                   prepend-icon="person"
                   type="text"
                   outlined
@@ -30,7 +30,7 @@
                   <v-text-field
                     v-if="registerMode"
                     v-model="firstname"
-                    label="First name"
+                    :label="$t('login.first')"
                     prepend-icon="text_format"
                     type="text"
                     outlined
@@ -43,7 +43,7 @@
                   <v-text-field
                     v-if="registerMode"
                     v-model="lastname"
-                    label="Last name"
+                    :label="$t('login.last')"
                     prepend-icon="text_format"
                     type="text"
                     outlined
@@ -54,7 +54,7 @@
                 </v-expand-transition>
                 <v-text-field
                   v-model="password"
-                  label="Password"
+                  :label="$t('login.password')"
                   prepend-icon="lock"
                   type="password"
                   :rules="validating && !!registerMode ? passwordRules : []"
@@ -64,7 +64,7 @@
                   <v-text-field
                     v-if="registerMode"
                     v-model="repeatPassword"
-                    label="Repeat password"
+                    :label="$t('login.rep')"
                     prepend-icon="replay"
                     type="password"
                     :rules="
@@ -78,7 +78,7 @@
                 <v-spacer></v-spacer>
                 <v-btn color="primary" type="submit" :loading="loading">
                   <v-icon left>arrow_forward</v-icon>
-                  {{ registerMode ? "Register" : "Login" }}
+                  {{ registerMode ? $t("login.register") : $t("login.login") }}
                 </v-btn>
               </v-card-actions>
             </v-form>
@@ -88,7 +88,9 @@
     </v-container>
     <v-snackbar v-model="showSnackbar" :timeout="4000">
       <span>{{ snackbarMessage }}</span>
-      <v-btn text small color="red" @click="showSnackbar = false">Close</v-btn>
+      <v-btn text small color="red" @click="showSnackbar = false">{{
+        $t("commands.close")
+      }}</v-btn>
     </v-snackbar>
   </div>
 </template>
@@ -106,18 +108,31 @@ export default {
     loading: false,
     showSnackbar: false,
     snackbarMessage: "Loading...",
-    standardFieldRules: [v => !!v || "This field is required!"],
+    ruleMsg: "This field is required!",
+    rulePass1: "Password is required!",
+    rulePass2: "Password must be at least 8 characters.",
+    ruleMail1: "E-mail is required!",
+    ruleMail2: "E-mail must be valid!",
+    standardFieldRules: [v => !!v || this.ruleMsg],
     emailRules: [
-      v => !!v || "E-mail is required!",
-      v => /.+@.+\..+/.test(v) || "E-mail must be valid!"
+      v => !!v || this.ruleMail1,
+      v => /.+@.+\..+/.test(v) || this.ruleMail2
     ],
     passwordRules: [
-      v => !!v || "Password is required!",
-      v => (v && v.length >= 8) || "Password must be at least 8 characters."
+      v => !!v || this.rulePass1,
+      v => (v && v.length >= 8) || this.rulePass2
     ],
     formValid: null,
     validating: false
   }),
+  created() {
+    this.snackbarMessage = this.$t("commands.loading") + "...";
+    this.ruleMsg = this.$t("login.messages.required");
+    this.rulePass1 = this.$t("login.messages.password1");
+    this.rulePass2 = this.$t("login.messages.password2");
+    this.ruleMail1 = this.$t("login.messages.mail1");
+    this.ruleMail2 = this.$t("login.messages.mail2");
+  },
   methods: {
     alertSnackbar(msg) {
       if (this.showSnackbar) {
@@ -137,10 +152,10 @@ export default {
     async register() {
       await this.validate();
       if (!this.formValid) {
-        this.alertSnackbar("Please check your input.");
+        this.alertSnackbar(this.$t("login.messages.input"));
         return;
       } else if (this.password !== this.repeatPassword) {
-        this.alertSnackbar("Your passwords do not match. Please try again.");
+        this.alertSnackbar(this.$t("login.messages.match"));
         this.password = "";
         this.repeatPassword = "";
         return;
@@ -160,14 +175,14 @@ export default {
         this.loading = false;
       } catch (err) {
         console.error(err);
-        this.alertSnackbar("Error registering. Please try again.");
+        this.alertSnackbar(this.$t("login.errors.register"));
         this.loading = false;
       }
     },
     async login() {
       await this.validate();
       if (!this.formValid) {
-        this.alertSnackbar("Please check your input.");
+        this.alertSnackbar(this.$t("login.messages.input"));
         return;
       }
       this.loading = true;

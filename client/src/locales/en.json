@@ -8,6 +8,10 @@
     "household": "Manage Household",
     "settings": "Settings"
   },
+  "general": {
+    "member": "Member",
+    "members": "Members"
+  },
   "commands": {
     "close": "Close",
     "refresh": "Refresh",
@@ -17,7 +21,9 @@
     "cancel": "Cancel",
     "check": "Check",
     "signin": "Sign in",
-    "signout": "Sign out"
+    "signout": "Sign out",
+    "loading": "Loading",
+    "ok": "Ok"
   },
   "app": {
     "profile": "My profile",
@@ -193,5 +199,64 @@
         "exp": "Coming soon (or maybe not so soon)."
       }
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "username",
+    "nick": "nickname",
+    "mail": "E-Mail",
+    "password": "password",
+    "expenses": "Latest expenses",
+    "noexpenses": "No expenses",
+    "monexpenses": "Monthly charges",
+    "nomonexpenses": "No monthly charges",
+    "errors": {
+      "users": "Couldn't fetch user expenses.",
+      "usersErr": "Error while fetching user expenses.",
+      "mon": "Couldn't fetch monthly data. Please try again later.",
+      "monErr": "Error during fetching monthly data. Please try again later."
+    }
+  },
+  "login": {
+    "welcome": "Welcome!",
+    "login": "Login",
+    "register": "Register",
+    "mail": "E-mail",
+    "first": "First name",
+    "last": "Last name",
+    "password": "Password",
+    "rep": "Repeat password",
+    "messages": {
+      "required": "This field is required!",
+      "mail1": "E-mail is required!",
+      "mail2": "E-mail must be valid!",
+      "password1": "Password is required",
+      "password2": "Password must be at least 8 characters.",
+      "input": "Please check your input.",
+      "match": "Your passwords do not match. Please try again."
+    },
+    "errors": {
+      "register": "Error registering. Please try again."
+    }
+  },
+  "finances": {
+    "title": "Finances",
+    "lblSpan": "Choose time span",
+    "memberExp": "Member Expenses",
+    "exp": "Expenses",
+    "moncharge": "Monthly Charges",
+    "monchargeExp": " Monthly charges are billed at the first day of every month.",
+    "payedby": "payed by",
+    "overview": "Overview Expenses",
+    "editMonBud": "Edit monthly budget",
+    "amount": "Amount",
+    "curUsed": "currently used",
+    "curTarTotal": "current target total",
+    "compPay": "Compensation Payments",
+    "compPayExp": "Calculate compensation payments for all member expenses since the last billing.",
+    "lastBill": "last bill",
+    "openBill": "Open Bill Manager",
+    "memberTrend": "Member Trend Expenses",
+    "confirmDelete": "Are you sure you want to delete"
   }
 }

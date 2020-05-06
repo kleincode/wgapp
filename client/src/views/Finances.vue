@@ -2,23 +2,23 @@
   <v-container>
     <div style="display:flex">
       <h1 class="display-2 mb-6" style="max-width: 80%">
-        Finances
+        {{ $t("finances.title") }}
       </h1>
       <v-spacer></v-spacer>
       <v-select
         v-model="choosenTimeSpan"
         :items="timespanes"
         item-value="value"
-        label="Choose time span"
+        :label="$t('finances.lblSpan')"
         @change="updateTable()"
       ></v-select>
     </div>
     <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
         <v-card style="height: 100%" :elevation="6">
-          <v-card-title> Member Expenses </v-card-title>
+          <v-card-title>{{ $t("finances.memberExp") }}</v-card-title>
           <v-list three-line avatar>
-            <v-subheader>Members</v-subheader>
+            <v-subheader>{{ $t("general.members") }}</v-subheader>
             <v-list-item-group
               v-model="filterMember"
               color="primary"
@@ -61,7 +61,7 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
           <v-card-title>
-            Expenses
+            {{ $t("finances.exp") }}
             <v-spacer></v-spacer>
             <edit-expense-dialog
               ref="editDialog"
@@ -113,7 +113,7 @@
           :elevation="6"
         >
           <v-card-title>
-            Monthly charges
+            {{ $t("finances.moncharge") }}
             <v-spacer></v-spacer>
             <v-btn
               icon
@@ -128,7 +128,7 @@
             ></EditMonthlyChargesDialog>
           </v-card-title>
           <v-card-text>
-            Monthly charges are billed at the first day of every month.
+            {{ $t("finances.monchargeExp") }}
             <v-list>
               <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
                 <v-list-item-icon>
@@ -137,7 +137,7 @@
                 <v-list-item-content>
                   <v-list-item-title>{{ charge.name }}</v-list-item-title>
                   <v-list-item-subtitle
-                    >payed by:
+                    >{{ $t("finances.payedby") }}:
                     {{ charge.responsibleUser }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -170,7 +170,7 @@
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%" :loading="loadingMonthlyBudget">
           <v-card-title>
-            Overview Expenses: {{ intervalStr }}
+            {{ $t("finances.overview") }}: {{ intervalStr }}
             <v-spacer></v-spacer>
             <v-dialog v-model="editBudgetDialog" max-width="600px">
               <template v-slot:activator="{ on }">
@@ -180,12 +180,12 @@
               </template>
               <v-card>
                 <v-card-title>
-                  <span class="headline">Edit monthly budget</span>
+                  <span class="headline">{{ $t("finances.editMonBud") }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-text-field
                     v-model="tempTotalMonthlyBudget"
-                    label="Amount"
+                    :label="$t('finances.amount')"
                     outlined
                     type="number"
                     step=".01"
@@ -193,9 +193,11 @@
                   ></v-text-field>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="editBudgetDialog = false">Cancel</v-btn>
+                    <v-btn text @click="editBudgetDialog = false">{{
+                      $t("commands.cancel")
+                    }}</v-btn>
                     <v-btn text color="primary" @click="updateFinancesTarget">
-                      Ok
+                      {{ $t("commands.ok") }}
                     </v-btn>
                   </v-card-actions>
                 </v-card-text>
@@ -210,7 +212,7 @@
                 :class="usedTotal > relativeTotal ? 'red--text' : ''"
               >
                 <div class="text-center">
-                  <div class="overline">currently used</div>
+                  <div class="overline">{{ $t("finances.curUsed") }}</div>
                   <div class="display-1">{{ getCurrency(usedTotal) }}</div>
                 </div>
               </v-col>
@@ -219,7 +221,7 @@
               ></v-col>
               <v-col cols="12" md="4">
                 <div class="text-center">
-                  <div class="overline">current target total</div>
+                  <div class="overline">{{ $t("finances.curTarTotal") }}</div>
                   <div class="display-1">
                     {{ getCurrency(relativeTotal) }}
                   </div>
@@ -234,7 +236,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>
-                  Monthly charges
+                  {{ $t("finances.moncharge") }}
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon>{{
@@ -249,7 +251,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>
-                  Member charges
+                  {{ $t("finances.memberExp") }}
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon>{{
@@ -266,28 +268,27 @@
           :elevation="6"
         >
           <v-card-title>
-            Compensation Payments
+            {{ $t("finances.compPay") }}
           </v-card-title>
           <v-card-text>
-            Calculate compensation payments for all member expenses since the
-            last billing.
+            {{ $t("finances.compPayExp") }}
             <div class="text-center pt-8 pb-4">
               <span class="overline" style="font-size: 1em !important">
-                last Billing
+                {{ $t("finances.lastBill") }}
               </span>
               <h1 class="display-1">{{ lastBill }}</h1>
             </div>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" block :to="{ name: 'BillManager' }"
-              >Open Bill Manager</v-btn
-            ></v-card-actions
+            <v-btn color="primary" block :to="{ name: 'BillManager' }">{{
+              $t("finances.openBill")
+            }}</v-btn></v-card-actions
           >
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
-          <v-card-title>Member Trend Expenses</v-card-title>
+          <v-card-title>{{ $t("finances.memberTrend") }}</v-card-title>
           <v-card-text>
             <ExpenseChart ref="chart" :chart-data="getChartData"></ExpenseChart>
           </v-card-text>
@@ -300,7 +301,7 @@
       :loading="deleteDialogLoading"
       @positive="deleteConfirm"
       @negative="deleteDialogVisible = false"
-      >Are you sure you want to delete "{{
+      >{{ $t("finances.confirmDelete") }} "{{
         deleteDescription
       }}"?</confirm-dialog
     >
