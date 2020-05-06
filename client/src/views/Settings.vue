@@ -6,12 +6,12 @@
       :opacity="0.8"
       absolute
     >
-      <h1 class="display-2">We're not yet here!</h1>
-      Move on with your tutorial of click 'End tutorial' at the bottom.
+      <h1 class="display-2">{{ $t("settings.introTitle") }}</h1>
+      {{ $t("settings.introText") }}
     </v-overlay>
     <v-row justify="center">
       <v-col xl="9" lg="10" md="12">
-        <h1 class="display-2 pb-6">Settings</h1>
+        <h1 class="display-2 pb-6">{{ $t("settings.title") }}</h1>
         <v-tabs
           class="elevation-2"
           :vertical="$vuetify.breakpoint.mdAndUp"

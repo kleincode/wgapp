@@ -14,7 +14,10 @@
     "undo": "Undo",
     "save": "Save",
     "delete": "Delete",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "check": "Check",
+    "signin": "Sign in",
+    "signout": "Sign out"
   },
   "app": {
     "profile": "My profile",
@@ -74,7 +77,8 @@
         "add": "Couldn't add new task. Please try again later.",
         "addErr": "Error while connecting to the server. Please try again later.",
         "delete": "Couldn't delete task. Please try again later",
-        "deleteErr": "Error while connecting to the server. Please try again later."
+        "deleteErr": "Error while connecting to the server. Please try again later.",
+        "edit": "Couldn't delete the task."
       },
       "messages": {
         "name": "You need to specify a name.",
@@ -82,6 +86,111 @@
         "weekday": "You need to specify at least one weekday.",
         "success": "Successfully edited the task.",
         "delete": "Deleted task."
+      }
+    }
+  },
+  "shopping": {
+    "title": "Shopping",
+    "hLists": "Lists",
+    "sync": "Synchronize shopping lists",
+    "emptyList": "Go make a list, shopping is fun!",
+    "emptyShopping": "Happy shopping!",
+    "newItem": "New Item",
+    "remaining": "Remaining",
+    "completed": "Completed",
+    "noselect": "No list selected",
+    "syncErr": "Sync failed: "
+  },
+  "settings": {
+    "title": "Settings",
+    "introTitle": "We're not yet here!",
+    "introText": "Move on with your tutorial of click 'End tutorial' at the bottom.",
+    "general": {
+      "title": "General",
+      "appearance": {
+        "title": "Appearance",
+        "exp": "Vanilla or chocolate? That's a question every worthy soldier has to answer for themselves. Just be careful: The blinding light might daze you.",
+        "lblDark": "Dark design"
+      },
+      "locale": {
+        "title": "Locale",
+        "exp": "The locale settings affect the way dates, times, and currencies are displayed.",
+        "system": "Use system locale ",
+        "custom": "Custom locale",
+        "customHint": "A locale can include a language only (like en) or a specific country (like en-US)",
+        "desc": "Note that the currency setting only changes the symbol used for displaying money amounts. No conversion is applied. If your household is an international conglomerate, we apologize for the inconvenience caused by this inadequacy.",
+        "cur":"Currency",
+        "sample": "Sample"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "exp": "Notifications remind you of important upcoming tasks.",
+        "controller": [
+          "Your system does not support push notifications.",
+          "Enabling push notifications failed.",
+          "The permission to send push notifications was denied on your system. Please check your website settings and allow them if you want to use this feature."
+        ]
+      },
+      "intro": {
+        "title": "Restart Introduction",
+        "exp": "If you missed something in my introduction just restart it right here.",
+        "lbl": "Restart introduction"
+      }
+    },
+    "dashboard": {
+      "clock": {
+        "title": "Clock Widget",
+        "exp": "A revolutionary time-telling device. Follows the laws of special and general relativity.",
+        "lblToggle": "Enable clock widget",
+        "note": "Note: ",
+        "noteText": "The clock widget displays time according to your ",
+        "noteLink": "locale settings"
+      },
+      "weather": {
+        "title": "Weather Widget",
+        "exp": "Provides you with the latest weather data using the free",
+        "lblToggle": "Enable weather widget",
+        "title2": "API call settings",
+        "exp2": "Please sign up for an API key at",
+        "exp3": "or freeload one from your roommates.",
+        "key": "API key",
+        "zip": "ZIP code",
+        "country": "Country code",
+        "open": "Open Weather API:",
+        "unit": "Temperature unit"
+      },
+      "tasks": {
+        "title": "Tasks Widget",
+        "exp": "This widget makes sure things are getting done in your home. No one ever dared to question its authority.",
+        "lblToggle": "Enable tasks widget"
+      },
+      "finances": {
+        "title": "Finances Widget",
+        "exp": "Never lose track of your household expenses so not a single penny will go missing.",
+        "lblToggle": "Enable finances widget"
+      },
+      "disturb": {
+        "title": "Do Not Disturb Widget",
+        "exp": "You want to study or just be left alone for a while? When you activate this widget you can see if somebody dont want to be disturbed. Just activate the do not disturb mode with click of a button right from the widget.",
+        "lblToggle": "Enable do not disturb widget"
+      },
+      "home": {
+        "title": "Home Widget",
+        "exp": "You want to let everybody know that you're home? Just hit the bell in the widget and everybody will be notified.",
+        "lblToggle": "Enable home widget"
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "calendar": {
+        "title": "Calendar",
+        "exp": "Keep track of your shared activites and duties using the Google Calendar API. If enabled, the calendar can be reached via the new link in your navigation drawer.",
+        "lbl": "Enable Google Calendar integration",
+        "status": "Status"
+      },
+      "hue": {
+        "title": "Philipps Hue",
+        "exp": "Coming soon (or maybe not so soon)."
       }
     }
   }

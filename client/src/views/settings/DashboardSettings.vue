@@ -3,25 +3,30 @@
     <v-card-text>
       <div class="display-1 mb-2">Dashboard</div>
       <!-- CLOCK WIDGET -->
-      <div id="clock" class="title pt-2">Clock Widget</div>
+      <div id="clock" class="title pt-2">
+        {{ $t("settings.dashboard.clock.title") }}
+      </div>
       <p>
-        A revolutionary time-telling device. Follows the laws of special and
-        general relativity.
+        {{ $t("settings.dashboard.clock.exp") }}
       </p>
       <v-switch
         v-model="clockWidgetEnabled"
-        label="Enable clock widget"
+        :label="$t('settings.dashboard.clock.lblToggle')"
       ></v-switch>
       <p>
-        <b>Note:</b> The clock widget displays time according to your
-        <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }"
-          >locale settings</router-link
+        <b>{{ $t("settings.dashboard.clock.note") }}</b
+        >{{ $t("settings.dashboard.clock.noteText") }}
+        <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }">{{
+          $t("settings.dashboard.clock.noteLink")
+        }}</router-link
         >.
       </p>
       <!-- WEATHER WIDGET -->
-      <div id="weather" class="title pt-2">Weather Widget</div>
+      <div id="weather" class="title pt-2">
+        {{ $t("settings.dashboard.weather.title") }}
+      </div>
       <p>
-        Provides you with the latest weather data using the free
+        {{ $t("settings.dashboard.weather.exp") }}
         <a href="https://openweathermap.org/" target="_blank"
           >Open Weather Map</a
         >
@@ -29,15 +34,17 @@
       </p>
       <v-switch
         v-model="weatherWidgetEnabled"
-        label="Enable weather widget"
+        :label="$t('settings.dashboard.weather.lblToggle')"
       ></v-switch>
-      <div class="subtitle-1 pt-2">API call settings</div>
+      <div class="subtitle-1 pt-2">
+        {{ $t("settings.dashboard.weather.title2") }}
+      </div>
       <p>
-        Please sign up for an API key at
+        {{ $t("settings.dashboard.weather.exp2") }}
         <a href="https://openweathermap.org/" target="_blank"
           >Open Weather Map</a
         >
-        or freeload one from your roommates.
+        {{ $t("settings.dashboard.weather.exp3") }}
       </p>
       <v-form v-model="weatherAPIValid" @submit.prevent="weatherAPICheck">
         <v-row class="pl-2 pr-2">
@@ -47,7 +54,7 @@
               :rules="rules.weatherAPIKey"
               :counter="32"
               maxlength="32"
-              label="API key"
+              :label="$t('settings.dashboard.weather.key')"
               required
               outlined
             ></v-text-field>
@@ -56,7 +63,7 @@
             <v-text-field
               v-model="weatherZip"
               :rules="rules.weatherZip"
-              label="ZIP code"
+              :label="$t('settings.dashboard.weather.zip')"
               required
               outlined
             ></v-text-field>
@@ -65,7 +72,7 @@
             <v-text-field
               v-model="weatherCountryCode"
               :rules="rules.weatherCountryCode"
-              label="Country code"
+              :label="$t('settings.dashboard.weather.country')"
               required
               outlined
             ></v-text-field>
@@ -78,60 +85,67 @@
             class="mt-0 ml-2"
             :disabled="!weatherAPIValid"
             :loading="weatherAPILoading"
-            >Check</v-btn
+            >{{ $t("commands.check") }}</v-btn
           >
           <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
-            <div class="overline">Open Weather API:</div>
+            <div class="overline">
+              {{ $t("settings.dashboard.weather.open") }}
+            </div>
             {{ weatherAPIStatus }}
           </div>
         </div>
       </v-form>
-      <v-radio-group v-model="temperatureUnit" label="Temperature unit">
+      <v-radio-group
+        v-model="temperatureUnit"
+        :label="$t('settings.dashboard.weather.unit')"
+      >
         <v-radio label="°C (Celsius)" value="c"></v-radio>
         <v-radio label="°F (Fahrenheit)" value="f"></v-radio>
         <v-radio label="K (Kelvin)" value="k"></v-radio>
       </v-radio-group>
       <!-- TASKS WIDGET -->
-      <div id="tasks" class="title pt-2">Tasks Widget</div>
+      <div id="tasks" class="title pt-2">
+        {{ $t("settings.dashboard.tasks.title") }}
+      </div>
       <p>
-        This widget makes sure things are getting done in your home. No one ever
-        dared to question its authority.
+        {{ $t("settings.dashboard.tasks.exp") }}
       </p>
       <v-switch
         v-model="tasksWidgetEnabled"
-        label="Enable tasks widget"
+        :label="$t('settings.dashboard.tasks.lblToggle')"
       ></v-switch>
       <!-- FINANCES WIDGET -->
-      <div id="finances" class="title pt-2">Finances Widget</div>
+      <div id="finances" class="title pt-2">
+        {{ $t("settings.dashboard.finances.title") }}
+      </div>
       <p>
-        Never lose track of your household expenses so not a single penny will
-        go missing.
+        {{ $t("settings.dashboard.finances.exp") }}
       </p>
       <v-switch
         v-model="financesWidgetEnabled"
-        label="Enable finances widget"
+        :label="$t('settings.dashboard.finances.lblToggle')"
       ></v-switch>
       <!-- STATUS WIDGET -->
-      <div id="status" class="title pt-2">Do Not Disturb Widget</div>
+      <div id="status" class="title pt-2">
+        {{ $t("settings.dashboard.disturb.title") }}
+      </div>
       <p>
-        You want to study or just be left alone for a while? When you activate
-        this widget you can see if somebody dont want to be disturbed. Just
-        activate the do not disturb mode with click of a button right from the
-        widget.
+        {{ $t("settings.dashboard.disturb.exp") }}
       </p>
       <v-switch
         v-model="statusWidgetEnabled"
-        label="Enable do not disturb widget"
+        :label="$t('settings.dashboard.disturb.lblToggle')"
       ></v-switch>
       <!-- HOME WIDGET -->
-      <div id="home" class="title pt-2">Home Widget</div>
+      <div id="home" class="title pt-2">
+        {{ $t("settings.dashboard.home.title") }}
+      </div>
       <p>
-        You want to let everybody know that you're home? Just hit the bell in
-        the widget and everybody will be notified.
+        {{ $t("settings.dashboard.home.exp") }}
       </p>
       <v-switch
         v-model="homeWidgetEnabled"
-        label="Enable home widget"
+        :label="$t('settings.dashboard.home.lblToggle')"
       ></v-switch>
     </v-card-text>
   </v-card>

@@ -2,57 +2,64 @@
   <v-card flat tile>
     <v-card-text>
       <div class="container">
-        <div class="display-1 mb-2">General</div>
-        <div id="appearance" class="title pt-2">Appearance</div>
+        <div class="display-1 mb-2">
+          {{ $t("settings.general.title") }}
+        </div>
+        <div id="appearance" class="title pt-2">
+          {{ $t("settings.general.appearance.title") }}
+        </div>
         <p>
-          Vanilla or chocolate? That's a question every worthy soldier has to
-          answer for themselves. Just be careful: The blinding light might daze
-          you.
+          {{ $t("settings.general.appearance.exp") }}
         </p>
-        <v-switch v-model="darkDesign" label="Dark design"></v-switch>
-        <div id="locale" class="title pt-2">Locale</div>
-        The locale settings affect the way dates, times, and currencies are
-        displayed.
+        <v-switch
+          v-model="darkDesign"
+          :label="$t('settings.general.appearance.lblDark')"
+        ></v-switch>
+        <div id="locale" class="title pt-2">
+          {{ $t("settings.general.locale.title") }}
+        </div>
+        {{ $t("settings.general.locale.exp") }}
         <v-switch
           v-model="useBrowserLocale"
-          :label="`Use system locale (${browserLocale})`"
+          :label="$t('settings.general.locale.system') + ` (${browserLocale})`"
         ></v-switch>
         <v-combobox
           v-model="customLocale"
-          label="Custom locale"
+          :label="$t('settings.general.locale.custom')"
           chips
           :items="locales"
           persistent-hint
-          hint="A locale can include a language only (like en) or a specific country (like en-US)"
+          :hint="$t('settings.general.locale.customHint')"
           class="pt-0"
           :return-object="false"
         ></v-combobox>
         <p class="pt-3">
-          Note that the currency setting only changes the symbol used for
-          displaying money amounts. No conversion is applied. If your household
-          is an international conglomerate, we apologize for the inconvenience
-          caused by this inadequacy.
+          {{ $t("settings.general.locale.desc") }}
         </p>
         <v-select
           v-model="currency"
           :items="currencies"
-          label="Currency"
+          label="$t('settings.general.locale.cur')"
           class="mt-3"
         ></v-select>
-        <p>Sample: {{ currencySample }}</p>
+        <p>{{ $t("settings.general.locale.sample") }}: {{ currencySample }}</p>
 
         <!-- Notifications -->
-        <div id="notifications" class="title pt-2">Notifications</div>
-        <p>Notifications remind you of important upcoming tasks.</p>
+        <div id="notifications" class="title pt-2">
+          {{ $t("settings.general.notifications.title") }}
+        </div>
+        <p>{{ $t("settings.general.notifications.exp") }}</p>
         <notification-controller></notification-controller>
 
-        <div id="introduction" class="title pt-2">Restart Introduction</div>
+        <div id="introduction" class="title pt-2">
+          {{ $t("settings.general.intro.title") }}
+        </div>
         <p>
-          If you missed something in my introduction just restart it right here:
+          {{ $t("settings.general.intro.exp") }}
         </p>
-        <v-btn color="primary" @click="restartIntro"
-          >Restart introduction</v-btn
-        >
+        <v-btn color="primary" @click="restartIntro">{{
+          $t("settings.general.intro.lbl")
+        }}</v-btn>
       </div>
     </v-card-text>
   </v-card>

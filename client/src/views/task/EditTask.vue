@@ -432,12 +432,12 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              "Successfully edited the task."
+              this.$t("tasks.editTask.messages.success")
             );
           } else {
             this.$store.dispatch(
               "showSnackbar",
-              "Error while editing the task."
+              this.$t("tasks.editTask.errors.edit")
             );
           }
         } else {

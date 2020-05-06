@@ -9,19 +9,17 @@
     ></v-switch>
     <!-- Warning if no service worker is registered -->
     <v-alert v-if="_initialized && !isServiceWorkerRegistered" type="warning">
-      Your system does not support push notifications.<br />
-      (No service worker found)
+      {{ $t("settings.general.notifications.controller[0]") }}<br />(No service
+      worker found)
     </v-alert>
     <!-- Warning if push registration failed -->
     <v-alert v-if="notRegFailed && !notPermDenied" type="error">
-      Enabling push notifications failed.<br />
+      {{ $t("settings.general.notifications.controller[1]") }}<br />
       ({{ notRegMessage }})
     </v-alert>
     <!-- Warning if push permission denied -->
     <v-alert v-if="notPermDenied" type="warning">
-      The permission to send push notifications was denied on your system.
-      Please check your website settings and allow them if you want to use this
-      feature.
+      {{ $t("settings.general.notifications.controller[2]") }}
     </v-alert>
   </div>
 </template>
