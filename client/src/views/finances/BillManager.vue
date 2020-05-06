@@ -29,7 +29,7 @@
                   <template v-for="(member, index) in memberTotals">
                     <v-divider :key="index"></v-divider>
                     <v-list-item
-                      :key="'finmem-' + member.id"
+                      :key="'finmem-' + member.id + index"
                       three-line
                       :value="member.id"
                       class="text-center"
@@ -206,6 +206,7 @@ import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 
 import { exportToHTML } from "@/assets/exportToHTML.js";
 import { exportXLSX } from "@/assets/exportToXLSX.js";
+import { getMonthlyFac } from "@/assets/billingCalculator.js";
 
 export default {
   components: {
@@ -236,7 +237,7 @@ export default {
           totals.forEach(entry => {
             if (monEntry.id == entry.id) {
               entry.total += Math.round(
-                this.getMonthlyFac(new Date(), this.lastBill) * monEntry.total
+                getMonthlyFac(this.lastBill, new Date()) * monEntry.total
               );
             }
           });
@@ -250,7 +251,7 @@ export default {
       this.monthlyData.forEach(monEntry => {
         sum +=
           Math.round(
-            this.getMonthlyFac(new Date(), this.lastBill) * monEntry.total
+            getMonthlyFac(this.lastBill, new Date()) * monEntry.total
           ) / 100;
       });
       return sum;
@@ -264,57 +265,65 @@ export default {
     async fetchNewBill() {
       this.dialog = true;
       this.loading = true;
-      const { data } = await this.$http.get("/_/fetchnewbill");
-      const { data: members } = await this.$http.get("/_/fetchhousehold");
-      if (data.success) {
-        this.singleMemberTotals = [];
-        this.memberMap = {};
-        this.monthlyData = [];
-        this.lastBill = new Date(data.lastBill);
-        if (data.mainResult.length == 0 && this.isToday(this.lastBill)) {
-          this.empty = true;
-          this.loading = false;
-          return;
-        }
-        this.empty = false;
-        data.mainResult.forEach(entry => {
-          this.singleMemberTotals.push({
-            id: entry.uid,
-            total: entry.amount
-          });
-          this.memberMap[entry.uid] = entry.amount / 100;
-        });
-        members.members.forEach(member => {
-          let contains = false;
-          this.singleMemberTotals.forEach(m => {
-            if (m.id == member) {
-              contains = true;
-            }
-          });
-          if (!contains) {
-            this.singleMemberTotals.push({
-              id: member,
-              total: 0
-            });
-            this.memberMap[member] = 0;
+      try {
+        const { data } = await this.$http.get("/_/fetchnewbill");
+        const { data: members } = await this.$http.get("/_/fetchhousehold");
+        if (data.success) {
+          this.singleMemberTotals = [];
+          this.memberMap = {};
+          this.monthlyData = [];
+          this.lastBill = new Date(data.lastBill);
+          if (data.mainResult.length == 0 && this.isToday(this.lastBill)) {
+            this.empty = true;
+            this.loading = false;
+            return;
           }
-        });
-        data.monthlyResult.forEach(entry => {
-          if (entry.uid != -1) {
-            this.monthlyData.push({
+          this.empty = false;
+          data.mainResult.forEach(entry => {
+            this.singleMemberTotals.push({
               id: entry.uid,
               total: entry.amount
             });
-          }
-        });
-        this.singleMemberTotals.sort((a, b) => b.total - a.total);
-        this.splitTotals();
-      } else {
+            this.memberMap[entry.uid] = entry.amount / 100;
+          });
+          members.members.forEach(member => {
+            let contains = false;
+            this.singleMemberTotals.forEach(m => {
+              if (m.id == member.id) {
+                contains = true;
+              }
+            });
+            if (!contains) {
+              this.singleMemberTotals.push({
+                id: member.id,
+                total: 0
+              });
+              this.memberMap[member] = 0;
+            }
+          });
+          data.monthlyResult.forEach(entry => {
+            if (entry.uid != -1) {
+              this.monthlyData.push({
+                id: entry.uid,
+                total: entry.amount
+              });
+            }
+          });
+          this.singleMemberTotals.sort((a, b) => b.total - a.total);
+          this.splitTotals();
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't fetch Bill Manager data. Please try again later."
+          );
+          this.dialog = false;
+        }
+      } catch (err) {
+        this.dialog = false;
         this.$store.dispatch(
           "showSnackbar",
-          "Error while fetching Bill Manager data. Please try again later."
+          "Error fetching Bill Manager data. Please try again later."
         );
-        this.dialog = false;
       }
       this.loading = false;
     },
@@ -334,14 +343,6 @@ export default {
 
     memberDebt(total) {
       return total - this.mean * 100;
-    },
-
-    getMonthlyFac(start, end) {
-      var months;
-      months = (end.getFullYear() - start.getFullYear()) * 12;
-      months -= start.getMonth();
-      months += end.getMonth();
-      return months <= 0 ? 0 : months;
     },
 
     memberProgress(total) {
