@@ -33,7 +33,7 @@
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title>{{
-                    getUserName(member)
+                    getFullUserName(member)
                   }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -132,7 +132,7 @@ export default {
     leaveDialogOpen: false
   }),
   computed: {
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters(["getFullUserName", "getUserInitials"])
   },
   created() {
     this.householdTypes = [];

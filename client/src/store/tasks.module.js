@@ -1,4 +1,5 @@
 import axios from "./axios";
+import i18n from "@/i18n";
 import {
   checkStatus,
   computeNextDueDay,
@@ -217,7 +218,7 @@ const vuexModule = {
             break;
           }
           case 2:
-            throw "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked.";
+            throw i18n.t("store.tasks.undoOnDemand");
         }
       }
       // Perform checking on server

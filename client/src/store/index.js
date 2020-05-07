@@ -6,6 +6,8 @@ import UserSettingsModule from "./userSettings.module";
 import TasksModule from "./tasks.module";
 import ShoppingModule from "./shopping.module";
 
+import i18n from "@/i18n";
+
 Vue.use(Vuex);
 
 let store = new Vuex.Store({
@@ -90,7 +92,7 @@ let store = new Vuex.Store({
           ]);
         else commit("logout");
       } catch (err) {
-        console.warn("User auth failed", err);
+        console.warn(i18n.t("store.errors.auth"), err);
       }
     },
     async login({ commit }, userData) {
@@ -117,7 +119,7 @@ let store = new Vuex.Store({
           return false;
         }
       } catch (err) {
-        console.error("Error while fetching household users", err);
+        console.error(i18n.t("store.errors.users"), err);
       }
       return true;
     },
@@ -165,12 +167,24 @@ let store = new Vuex.Store({
     },
     getUserName: state => uid => {
       let user = state.householdUsers[uid];
-      if (!user) return "Unknown user";
+      if (!user) return i18n.t("store.unkown");
+      let userName = "";
+      if (user.nickname) userName = user.nickname;
+      else {
+        if (user.firstname) userName += user.firstname;
+        if (user.firstname && user.lastname) userName += " ";
+        if (user.lastname) userName += user.lastname;
+      }
+      return userName || i18n.t("store.nameless");
+    },
+    getFullUserName: state => uid => {
+      let user = state.householdUsers[uid];
+      if (!user) return i18n.t("store.unkown");
       let userName = "";
       if (user.firstname) userName += user.firstname;
       if (user.firstname && user.lastname) userName += " ";
       if (user.lastname) userName += user.lastname;
-      return userName || "Nameless user";
+      return userName || i18n.t("store.nameless");
     },
     getUserInitials: state => uid => {
       let user = state.householdUsers[uid];
@@ -188,12 +202,15 @@ let store = new Vuex.Store({
     getHouseholdUsersAsItemList: state => {
       let users = [];
       Object.entries(state.householdUsers).forEach(([key, user]) => {
-        if (!user) return "Unknown user";
+        if (!user) return i18n.t("store.unkown");
         let userName = "";
         if (user.firstname) userName += user.firstname;
         if (user.firstname && user.lastname) userName += " ";
         if (user.lastname) userName += user.lastname;
-        users.push({ value: parseInt(key), text: userName || "Nameless user" });
+        users.push({
+          value: parseInt(key),
+          text: userName || i18n.t("store.nameless")
+        });
       });
       return users;
     },

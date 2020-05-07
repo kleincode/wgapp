@@ -27,7 +27,8 @@
     "ok": "Ok",
     "continue": "Continnue",
     "next": "Next",
-    "finish": "Finish"
+    "finish": "Finish",
+    "back": "Back"
   },
   "app": {
     "profile": "My profile",
@@ -261,7 +262,29 @@
     "lastBill": "last bill",
     "openBill": "Open Bill Manager",
     "memberTrend": "Member Trend Expenses",
-    "confirmDelete": "Are you sure you want to delete"
+    "confirmDelete": "Are you sure you want to delete",
+    "billman": {
+      "title": "Bill Manager",
+      "confirmFinish": "Are you sure you want to finish these payments? You can't undo this action.",
+      "noexp": "No new expenses available",
+      "newBill": "New Bill",
+      "monTot": "Monthly total",
+      "tot": "Total",
+      "pp": "per person",
+      "pay": "Paying",
+      "rec": "Receives",
+      "am": "Amount",
+      "includeMon": "Include monthly charge",
+      "save": "Save payments",
+      "history": "Bill history",
+      "from": "From",
+      "to": "To",
+      "export": "Export",
+      "errors": {
+        "history": "Couldn't fetch bill history. Please try again later.",
+        "historyErr": "Error while fetching bill history. Please try again later."
+      }
+    }
   },
   "dashboard": {
     "householdTitle": "You're not in a household yet.",
@@ -354,6 +377,28 @@
       "errors": {
         "creating": "Error while creating household."
       }
+    }
+  },
+  "store": {
+    "errors": {
+      "auth": "User auth failed",
+      "users": "Error while fetching household users"
+    },
+    "unkown": "Unkown user",
+    "nameless": "Nameless user",
+    "tasks": {
+      "undoOnDemand": "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
+    },
+    "format": {
+      "justnow": "just now",
+      "year": "1 year | {count} years",
+      "month": "1 month | {count} months",
+      "week": "1 week | {count} weeks",
+      "day": "1 day | {count} days",
+      "hour": "1 hour | {count} hours",
+      "minute": "1 minute | {count} minutes",
+      "in": "in",
+      "ago": "ago"
     }
   }
 }

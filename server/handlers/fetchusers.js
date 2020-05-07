@@ -8,9 +8,9 @@ module.exports = ({ db }) => ({
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       try {
-        const { results } = await db.query(`SELECT id, firstname, lastname FROM users WHERE ?`, [{hid}]);
+        const { results } = await db.query(`SELECT id, nickname, firstname, lastname FROM users WHERE ?`, [{hid}]);
         let userdata = {};
-        results.forEach(u => userdata[u.id] = { firstname: u.firstname, lastname: u.lastname });
+        results.forEach(u => userdata[u.id] = { firstname: u.firstname, lastname: u.lastname, nickname: u.nickname });
         success({ message: "User data fetched.", data: userdata });
       } catch (err) {
       }
