@@ -1,10 +1,13 @@
 <template>
   <v-dialog
-    v-model="value"
-    :max-width="maxWidth"
+    :value="value"
+    :width="maxWidth"
     @input="onDialogToggle"
     @click:outside="onDialogToggle(false)"
   >
+    <template #activator="{ on }">
+      <slot name="activator" :on="on"></slot>
+    </template>
     <v-card :loading="loading">
       <v-card-title class="headline">{{ title }}</v-card-title>
 

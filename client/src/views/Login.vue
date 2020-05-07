@@ -7,17 +7,29 @@
             <v-toolbar color="primary" dark>
               <v-toolbar-title>{{ $t("login.welcome") }}</v-toolbar-title>
               <template v-slot:extension>
-                <v-tabs v-model="registerMode" centered color="white">
+                <v-tabs
+                  v-model="registerMode"
+                  centered
+                  color="white"
+                  optional
+                  @change="print($event)"
+                >
                   <v-tab>{{ $t("login.login") }}</v-tab>
                   <v-tab>{{ $t("login.register") }}</v-tab>
                 </v-tabs>
               </template>
             </v-toolbar>
-            <v-form
-              ref="form"
-              @submit.prevent="registerMode ? register() : login()"
-            >
+            <v-form ref="form" @submit.prevent="submitForm">
               <v-card-text>
+                <v-expand-transition>
+                  <p v-if="registerMode == 2" class="my-0">
+                    If you forgot your password, please provide your email so we
+                    can send you a link which allows you to change your
+                    password.
+                    <br />
+                    <br />
+                  </p>
+                </v-expand-transition>
                 <v-text-field
                   v-model="email"
                   :label="$t('login.mail')"
@@ -28,57 +40,72 @@
                 />
                 <v-expand-transition>
                   <v-text-field
-                    v-if="registerMode"
+                    v-if="registerMode == 1"
                     v-model="firstname"
                     :label="$t('login.first')"
                     prepend-icon="text_format"
                     type="text"
                     outlined
                     :rules="
-                      validating && !!registerMode ? standardFieldRules : []
+                      validating && registerMode == 1 ? standardFieldRules : []
                     "
                   />
                 </v-expand-transition>
                 <v-expand-transition>
                   <v-text-field
-                    v-if="registerMode"
+                    v-if="registerMode == 1"
                     v-model="lastname"
                     :label="$t('login.last')"
                     prepend-icon="text_format"
                     type="text"
                     outlined
                     :rules="
-                      validating && !!registerMode ? standardFieldRules : []
+                      validating && registerMode == 1 ? standardFieldRules : []
                     "
                   />
                 </v-expand-transition>
-                <v-text-field
-                  v-model="password"
-                  :label="$t('login.password')"
-                  prepend-icon="lock"
-                  type="password"
-                  :rules="validating && !!registerMode ? passwordRules : []"
-                  outlined
-                />
                 <v-expand-transition>
                   <v-text-field
-                    v-if="registerMode"
+                    v-if="registerMode != 2"
+                    v-model="password"
+                    :label="$t('login.password')"
+                    prepend-icon="lock"
+                    type="password"
+                    :rules="
+                      validating && registerMode != 2 && !!registerMode
+                        ? passwordRules
+                        : []
+                    "
+                    outlined
+                  />
+                </v-expand-transition>
+                <v-expand-transition>
+                  <v-text-field
+                    v-if="registerMode == 1"
                     v-model="repeatPassword"
                     :label="$t('login.rep')"
                     prepend-icon="replay"
                     type="password"
                     :rules="
-                      validating && !!registerMode ? standardFieldRules : []
+                      validating && registerMode == 1 ? standardFieldRules : []
                     "
                     outlined
                   />
                 </v-expand-transition>
               </v-card-text>
               <v-card-actions>
+                <v-btn
+                  v-if="registerMode == 0"
+                  color="secondary"
+                  text
+                  @click="registerMode = 2"
+                >
+                  Forgot password?
+                </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" type="submit" :loading="loading">
                   <v-icon left>arrow_forward</v-icon>
-                  {{ registerMode ? $t("login.register") : $t("login.login") }}
+                  {{ [$t("login.login"), $t("login.register"), "Send e-mail"][registerMode] }}
                 </v-btn>
               </v-card-actions>
             </v-form>
@@ -99,7 +126,7 @@
 export default {
   name: "Login",
   data: () => ({
-    registerMode: false,
+    registerMode: 0,
     firstname: "",
     lastname: "",
     email: "",
@@ -141,6 +168,19 @@ export default {
       } else {
         this.snackbarMessage = msg;
         this.showSnackbar = true;
+      }
+    },
+    submitForm() {
+      switch (this.registerMode) {
+        case 0:
+          this.login();
+          break;
+        case 1:
+          this.register();
+          break;
+        case 2:
+          this.passRecovery();
+          break;
       }
     },
     async validate() {
@@ -204,6 +244,27 @@ export default {
         this.alertSnackbar(err);
         this.loading = false;
       }
+    },
+    async passRecovery() {
+      await this.validate();
+      if (!this.formValid) {
+        this.alertSnackbar("Please check your input.");
+        return;
+      }
+      this.loading = true;
+      try {
+        const { data } = await this.$http.post("/_/forgotpassword", {
+          email: this.email
+        });
+        this.alertSnackbar(data.message);
+      } catch (err) {
+        this.alertSnackbar("Communication error");
+        console.warn(err);
+      }
+      this.loading = false;
+    },
+    print(val) {
+      console.log(val);
     }
   }
 };

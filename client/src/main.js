@@ -39,7 +39,6 @@ axios.interceptors.response.use(
     if (err.response.status === 401) {
       store.dispatch("logout");
       router.push({ name: "Login" });
-      alert("Authentication error: Please enter your credentials.");
     }
     return err;
   }

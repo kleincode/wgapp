@@ -142,13 +142,14 @@ const vuexModule = {
       if (seconds < 60) return i18n.t("store.format.justnow");
       let val = "";
       if (seconds > 60 * 60 * 24 * 7 * 5) {
-        let dateThen = new Date(date),
+        let dateThen = new Date(date * 1000),
           dateNow = new Date();
         let diffMonths = Math.abs(
           dateNow.getMonth() -
-            dateThen.getMonth +
+            dateThen.getMonth() +
             12 * (dateNow.getFullYear() - dateThen.getFullYear())
         );
+        console.log(diffMonths);
         if (diffMonths > 12) {
           let num = Math.floor(diffMonths / 12);
           val = i18n.tc("store.format.year", num, { count: num });

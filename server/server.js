@@ -41,6 +41,8 @@ FS.readdirSync(handlersPath).forEach(file =>
 // Default: Provide index.html from build files
 app.get("/*", (req, res)  => res.sendFile(Path.join(__dirname, process.env.PUBLIC_FOLDER || "public", "index.html")));
 
+// Mail service
+const mailer = require("./components/Mailer");
 
 // Push notifications
 const webpush = require('web-push');
