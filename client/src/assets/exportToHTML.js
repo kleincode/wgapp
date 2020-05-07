@@ -1,3 +1,5 @@
+import i18n from "@/i18n";
+
 function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   let total = jsonData.total;
   let includeMonthlyCharges = jsonData.includeMonthlyCharges;
@@ -8,34 +10,48 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   let debts = jsonData.debts;
   var myWindow = window.open(
     "",
-    "WGApp - Compensation Payments",
+    "Jeff Organizer - " + i18n.t("finances.compPay"),
     "toolbar=yes,scrollbars=yes,resizable=yes,width=700,height=900"
   );
   myWindow.document.write(
-    '<html><head><link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"><title>WGApp - Compensation Payments</title></head><body><h1>Compensation Payments</h1><h3>' +
+    '<html><head><link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"><title>WGApp - ' +
+      i18n.t("finances.compPay") +
+      "</title></head><body><h1>" +
+      i18n.t("finances.compPay") +
+      "</h1><h3>" +
       lastBill +
-      " until " +
+      i18n.t("finances.export.until") +
       maxDate +
       '</h3><hr style="margin-bpottom: 15px">'
   );
   let css =
     "<style>body { font-family: 'Roboto', sans-serif; } table, th, td { border: 1px solid black; border-collapse: collapse;} table { border-spacing: 5px; } th, td {padding: 5px;}</style>";
   myWindow.document.write(
-    "<h2>Expenses</h2> <ul><li><b>Total: " +
+    "<h2>" +
+      i18n.t("finances.exp") +
+      "</h2> <ul><li><b>" +
+      i18n.t("finances.billman.monTot") +
+      ": " +
       getCurrency(total, currency, locale) +
       " </b></li>"
   );
   if (includeMonthlyCharges) {
     myWindow.document.write(
-      "<li>Monthly Total: " +
+      "<li>" +
+        i18n.t("finances.billman.monTot") +
+        ": " +
         getCurrency(monthlyTotal, currency, locale) +
         "</li>"
     );
   }
   myWindow.document.write(
-    "<li> Per Person: " + getCurrency(mean, currency, locale) + " </li></ul>"
+    "<li> " +
+      i18n.t("finances.billman.pp") +
+      ": " +
+      getCurrency(mean, currency, locale) +
+      " </li></ul>"
   );
-  myWindow.document.write("<h2>Member Expenses</h2><ul>");
+  myWindow.document.write("<h2>" + i18n.t("finances.memberExp") + "</h2><ul>");
   memberTotals.forEach(member => {
     myWindow.document.write(
       "<li>" +
@@ -48,7 +64,9 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   myWindow.document.write("</ul>");
 
   if (memberDebts != undefined) {
-    myWindow.document.write("<h2>Member Debts</h2><ul>");
+    myWindow.document.write(
+      "<h2>" + i18n.t("finances.export.debts") + "</h2><ul>"
+    );
     memberDebts.forEach(member => {
       myWindow.document.write(
         "<li>" +
@@ -62,7 +80,15 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   }
 
   myWindow.document.write(
-    '<h2>Resulting Compensation Payments</h2><table style="width:100%"><tr><th>Paying</th><th>Receives</th><th>Amount</th></tr>'
+    "<h2>" +
+      i18n.t("finances.export.res") +
+      '</h2><table style="width:100%"><tr><th>' +
+      i18n.t("finances.billman.pay") +
+      "</th><th>" +
+      i18n.t("finances.billman.rec") +
+      "</th><th>" +
+      i18n.t("finances.billman.am") +
+      "</th></tr>"
   );
   debts.forEach(debt => {
     myWindow.document.write(
@@ -76,7 +102,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
     );
   });
   myWindow.document.write(
-    "</table><h6>WGApp, 2020</h6></body>" + css + "</html>"
+    "</table><h6>Jeff - Organizer, 2020</h6></body>" + css + "</html>"
   );
   myWindow.document.close();
 }

@@ -379,6 +379,11 @@
       "addRec": "Add receipt",
       "added": "Expense added successfully.",
       "updated":"Expense updated successfully."
+    },
+    "export": {
+      "until": " until ",
+      "debts": "Member Debts",
+      "res": "Resulting Compensation Payments"
     }
   },
   "dashboard": {
