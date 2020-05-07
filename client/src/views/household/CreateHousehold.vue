@@ -112,35 +112,19 @@ export default {
   data: () => ({
     stepperProgress: 1,
     householdName: "My household",
-    householdNameRules: [
-      v => !!v || this.ruleName,
-      v => (v && v.length <= 64) || this.ruleNameLong
-    ],
-    ruleName: "Please provide a name!",
-    ruleNameLong: "Name is too long!",
     step1Valid: null,
     step2Valid: null,
     loading: false,
     showSnackbar: false,
     snackbarMessage: "Loading...",
     householdType: 0,
-    householdTypes: [
-      {
-        id: 0,
-        description: "Shared apartment"
-      },
-      {
-        id: 1,
-        description: "Couple"
-      },
-      {
-        id: 2,
-        description: "Family"
-      }
-    ],
     householdLink: "https://usw"
   }),
   computed: {
+    householdNameRules: [
+      v => !!v || this.$t("household.create.ruleName"),
+      v => (v && v.length <= 64) || this.$t("household.create.ruleNameLong")
+    ],
     introductionState: {
       get() {
         return this.$store.state.userSettings.introductionState;
@@ -151,14 +135,23 @@ export default {
           value
         });
       }
+    },
+    householdTypes() {
+      return [
+        {
+          id: 0,
+          description: this.$t("household.types[0]")
+        },
+        {
+          id: 1,
+          description: this.$t("household.types[1]")
+        },
+        {
+          id: 2,
+          description: this.$t("household.types[2]")
+        }
+      ];
     }
-  },
-  created() {
-    this.ruleName = this.$t("household.create.ruleName");
-    this.ruleName = this.$t("household.create.ruleNameLong");
-    this.householdTypes[0].description = this.$t("household.types[0]");
-    this.householdTypes[1].description = this.$t("household.types[1]");
-    this.householdTypes[2].description = this.$t("household.types[2]");
   },
   mounted() {
     this.cancel();

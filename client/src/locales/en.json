@@ -11,7 +11,8 @@
   "general": {
     "member": "Member",
     "members": "Members",
-    "household": "household"
+    "household": "household",
+    "comErr": "Communication error. Please try again later."
   },
   "commands": {
     "close": "Close",
@@ -31,7 +32,8 @@
     "back": "Back",
     "remove": "Remove",
     "activate": "Activate",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "upload": "Upload"
   },
   "app": {
     "profile": "My profile",
@@ -132,7 +134,23 @@
     "remaining": "Remaining",
     "completed": "Completed",
     "noselect": "No list selected",
-    "syncErr": "Sync failed: "
+    "syncErr": "Sync failed: ",
+    "expense": {
+      "transfer": "Transfer to finances",
+      "add": "Add expense",
+      "desc": "Add a new expense corresponding to this shopping list.",
+      "success": "Successfully added new shopping expense.",
+      "fail": "Couldn't add expense to database. Please try again later.",
+      "err": "Error during adding expense to database. Please try again later."
+    },
+    "list": {
+      "lblCreate": "Create shopping list",
+      "edit": "Edit shopping list",
+      "new": "New shopping list",
+      "msgName": "Please provide a list name!",
+      "msgLength": "List name is too long.",
+      "fail": "Adding list failed."
+    }
   },
   "settings": {
     "title": "Settings",
@@ -249,6 +267,14 @@
       "old": "Old Password",
       "new": "New Password",
       "rep": "Repeat new password"
+    },
+    "upload": {
+      "title": "Upload Profile Picture",
+      "place": "Upload your profile picture",
+      "hintImage": "Please specify an image",
+      "hintCompress": "Error while compressing the image.",
+      "upload": "Profile picture uploaded",
+      "upErr": "Error while uploading profile picture."
     }
   },
   "login": {
@@ -283,7 +309,9 @@
     "payedby": "payed by",
     "overview": "Overview Expenses",
     "editMonBud": "Edit monthly budget",
+    "name": "Name",
     "amount": "Amount",
+    "payedbyall": "Payed by all",
     "curUsed": "currently used",
     "curTarTotal": "current target total",
     "compPay": "Compensation Payments",
@@ -313,6 +341,44 @@
         "history": "Couldn't fetch bill history. Please try again later.",
         "historyErr": "Error while fetching bill history. Please try again later."
       }
+    },
+    "receipt": {
+      "title": "Receipt",
+      "load": "Loading receipt...",
+      "noRec": "No receipt uploaded yet",
+      "upload": "Upload your receipt",
+      "lbl": "Receipt",
+      "del": "Delete receipt",
+      "imgHint": "Please specify an image",
+      "compressHint": "Error while compressing the image.",
+      "upErr": "Error while uploading receipt.",
+      "successUpload": "Receipt uploaded",
+      "successDel": "Receipt deleted.",
+      "delFail": "Could not delete receipt.",
+      "delErr": "Error while deleting receipt."
+    },
+    "editMon": {
+      "titleEdit": "Edit monthly charge",
+      "titleNew": "New monthly charge",
+      "msg": "Specify a paying member or select payed by all!",
+      "rules": {
+        "name": "Please provide an charge name!",
+        "length": "name is too long.",
+        "amount": "Please provide an amount!",
+        "validAm": "Please provide a valid amount.",
+        "negative": "Negative amounts are not permitted",
+        "nonzero": "Please provide a non-zero number."
+      },
+      "updated": "Monthly charge updated successfully.",
+      "added": "Monthly charge added successfully."
+    },
+    "expense": {
+      "edit": "Edit expense",
+      "new": "New expense",
+      "desc": "Description",
+      "addRec": "Add receipt",
+      "added": "Expense added successfully.",
+      "updated":"Expense updated successfully."
     }
   },
   "dashboard": {
@@ -334,7 +400,7 @@
       ],
       "noon": [
         "Hi, ",
-        "Waht's up, ",
+        "What's up, ",
         "How you doin?"
       ],
       "afternoon": [
@@ -406,6 +472,14 @@
       "errors": {
         "creating": "Error while creating household."
       }
+    },
+    "invite": {
+      "title": "Invite members",
+      "btn": "Invite",
+      "desc": "Please use this link to invite members to join this household",
+      "copied": "Copied to clipboard. Happy pasting! :)",
+      "fail": "Couldn't fetch invite link. Please try again later.",
+      "error": "Error fetching invite link. Please try again later."
     }
   },
   "store": {

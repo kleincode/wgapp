@@ -7,20 +7,20 @@
         block
         v-on="on"
         @click="openDialog"
-        >Transfer to finances</v-btn
+        >{{ $t("shopping.expense.transfer") }}</v-btn
       >
     </template>
     <v-card :loading="loading">
       <v-card-title>
         <span class="headline">
-          Add expense
+          {{ $t("shopping.expense.add") }}
         </span>
       </v-card-title>
 
       <v-card-text>
         <v-container>
           <p>
-            Add a new expense corresponding to this shopping list.
+            {{ $t("shopping.expense.desc") }}
           </p>
           <v-text-field v-model="name"></v-text-field>
           <v-text-field
@@ -34,10 +34,10 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="close">close</v-btn>
-        <v-btn color="primary" text :disabled="amount == 0" @click="save"
-          >Save</v-btn
-        >
+        <v-btn text @click="close">{{ $t("commands.close") }}</v-btn>
+        <v-btn color="primary" text :disabled="amount == 0" @click="save">{{
+          $t("commands.save")
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -93,20 +93,17 @@ export default {
         if (data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            "Successfully added new shopping expense."
+            this.$t("shopping.expense.success")
           );
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Couldn't add expense to database. Please try again later."
+            this.$t("shopping.expense.fail")
           );
         }
       } catch (err) {
         console.error(err);
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error during adding expense to database. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("shopping.expense.err"));
       }
     }
   }

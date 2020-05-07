@@ -1,7 +1,12 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn color="success" icon aria-label="Create shopping list" v-on="on">
+      <v-btn
+        color="success"
+        icon
+        :aria-label="$t('shopping.list.lblCreate')"
+        v-on="on"
+      >
         <v-icon>add</v-icon>
       </v-btn>
     </template>
@@ -9,7 +14,7 @@
       <v-card :loading="loading">
         <v-card-title>
           <span class="headline">{{
-            editMode ? "Edit shopping list" : "New shopping list"
+            editMode ? $t("shopping.list.edit") : $t("shopping.list.new")
           }}</span>
         </v-card-title>
 
@@ -45,10 +50,12 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red" text @click="reset">Cancel</v-btn>
-          <v-btn color="green" text type="submit" :disabled="!formValid"
-            >Save</v-btn
-          >
+          <v-btn color="red" text @click="reset">{{
+            $t("commands.cancel")
+          }}</v-btn>
+          <v-btn color="green" text type="submit" :disabled="!formValid">{{
+            $t("commands.save")
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -76,15 +83,19 @@ export default {
   data: () => ({
     dialogShown: false,
     formValid: null,
-    nameRules: [
-      v => !!v || "Please provide a list name!",
-      v => (!!v && v.length <= 160) || "List name is too long."
-    ],
     loading: false,
     editMode: false,
     editId: null,
     selectedIcon: 0
   }),
+  computed: {
+    nameRules() {
+      return [
+        v => !!v || this.$t("shopping.list.msgName"),
+        v => (!!v && v.length <= 160) || this.$t("shopping.list.msgLength")
+      ];
+    }
+  },
   methods: {
     getIcon(index) {
       return icons[index];
@@ -93,7 +104,6 @@ export default {
       this.$emit("input", val || this.value);
     },
     newIconSelected(id) {
-      console.log("selected", id);
       this.updateValue({ ...this.value, icon: id });
       this.selectedIcon = id;
     },
@@ -118,7 +128,10 @@ export default {
         this.reset();
         this.$emit("committed");
       } catch (err) {
-        this.$store.dispatch("showSnackbar", err || "Adding list failed.");
+        this.$store.dispatch(
+          "showSnackbar",
+          err || this.$t("shopping.list.fail")
+        );
         console.warn(err);
       }
       this.loading = false;

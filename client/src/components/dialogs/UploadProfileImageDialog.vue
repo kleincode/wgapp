@@ -14,19 +14,19 @@
     </template>
     <v-card>
       <v-container>
-        <h2 class="mb-7">Upload Profile Picture</h2>
+        <h2 class="mb-7">{{ $t("profile.upload.title") }}</h2>
         <v-file-input
           v-model="imageFile"
           type="file"
           accept="image/png, image/jpeg, image/bmp"
-          placeholder="Upload your profile picture"
+          :placeholder="$t('profile.upload.place')"
           prepend-icon="mdi-camera"
           label="Profile Picture"
         ></v-file-input>
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="triggerUpload()">upload</v-btn>
+        <v-btn text @click="triggerUpload()">{{ $t("commands.upload") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -53,7 +53,10 @@ export default {
   methods: {
     async triggerUpload() {
       if (!this.imageFile) {
-        this.$store.dispatch("showSnackbar", "Please specify an image");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("profile.upload.hintImage")
+        );
         return;
       }
       this.loading = true;
@@ -70,7 +73,7 @@ export default {
         error: err => {
           this.$store.dispatch(
             "showSnackbar",
-            "Error while compressing the image."
+            this.$t("profile.upload.hintCompress")
           );
           console.log(err.message);
           this.loading = false;
@@ -93,17 +96,17 @@ export default {
           }
         );
         if (data.success) {
-          this.$store.dispatch("showSnackbar", "Profile picture uploaded");
+          this.$store.dispatch("showSnackbar", this.$t("profile.upload.uplad"));
           setTimeout(() => this.$store.dispatch("fetchProfileImg"), 200);
         } else {
-          this.$store.dispatch("showSnackbar", data.message || "Upload error");
+          this.$store.dispatch(
+            "showSnackbar",
+            data.message || this.$t("profile.upload.upErr")
+          );
         }
         this.loading = false;
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Error while uploading profile picture."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("profile.upload.upErr"));
         console.error(err);
         this.loading = false;
       }

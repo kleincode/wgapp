@@ -3,13 +3,15 @@
     <template v-slot:activator="{ on }">
       <v-btn text color="primary" v-on="on">
         <v-icon left>group_add</v-icon>
-        Invite
+        {{ $t("household.invite.btn") }}
       </v-btn>
     </template>
     <v-card>
-      <v-card-title class="headline">Invite members</v-card-title>
+      <v-card-title class="headline">{{
+        $t("household.invite.title")
+      }}</v-card-title>
       <v-card-text>
-        <p>Please use this link to invite members to join this household:</p>
+        <p>{{ $t("household.invite.desc") }}:</p>
         <v-text-field
           ref="addLink"
           v-model="householdLink"
@@ -23,7 +25,9 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="dialogShown = false">Close</v-btn>
+        <v-btn text @click="dialogShown = false">{{
+          $t("commands.close")
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -50,10 +54,7 @@ export default {
       this.$refs.addLink.$refs.input.select();
       document.execCommand("copy");
       event.target.focus();
-      this.$store.dispatch(
-        "showSnackbar",
-        "Copied to clipboard. Happy pasting! :)"
-      );
+      this.$store.dispatch("showSnackbar", this.$t("household.invite.copied"));
     },
     async dialogChange(state) {
       if (state)
@@ -66,8 +67,7 @@ export default {
           } else {
             this.$store.dispatch(
               "showSnackbar",
-              data.message ||
-                "Error fetching invite link. Please try again later."
+              data.message || this.$t("household.invite.fail")
             );
             this.dialogShown = false;
           }
@@ -75,7 +75,7 @@ export default {
         } catch (err) {
           this.$store.dispatch(
             "showSnackbar",
-            "Error fetching invite link. Please try again later."
+            this.$t("household.invite.error")
           );
           this.dialogShown = false;
         }
