@@ -1,6 +1,6 @@
 <template>
   <Widget
-    title="Do Not Disturb"
+    :title="$t('widgets.disturb.title')"
     :loading="loading"
     with-footer
     :context-items="contextItems"
@@ -29,8 +29,12 @@
       </v-col>
     </v-row>
     <template #footer
-      ><v-btn v-if="!userStatus" text block @click="toggle">Activate</v-btn>
-      <v-btn v-else color="red" block @click="toggle">Deactivate</v-btn>
+      ><v-btn v-if="!userStatus" text block @click="toggle">{{
+        $t("commands.activate")
+      }}</v-btn>
+      <v-btn v-else color="red" block @click="toggle">{{
+        $t("commands.deactivate")
+      }}</v-btn>
     </template>
   </Widget>
 </template>
@@ -50,16 +54,18 @@ export default {
     error: false,
     userStatus: false,
     userImages: {},
-    members: [],
-    contextItems: [
-      {
-        action: "settings",
-        text: "Widget Settings",
-        icon: "settings"
-      }
-    ]
+    members: []
   }),
   computed: {
+    contextItems() {
+      return [
+        {
+          action: "settings",
+          text: this.$t("widgets.settings"),
+          icon: "settings"
+        }
+      ];
+    },
     ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapState(["uid"])
   },
@@ -97,7 +103,7 @@ export default {
       } else {
         this.$store.dispatch(
           "showSnackbar",
-          data.message || "Could not connect to server."
+          data.message || this.$t("widgets.disturb.connect")
         );
       }
     },
@@ -116,12 +122,15 @@ export default {
             }
           });
         } else {
-          this.$store.dispatch("showSnackbar", "Could not connect to server.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("widgets.disturb.connect")
+          );
           this.userStatus = !this.userStatus;
         }
       } catch (err) {
         console.error(err);
-        this.$store.dispatch("showSnackbar", "Error toggling user status.");
+        this.$store.dispatch("showSnackbar", this.$t("widgets.disturb.err"));
         this.userStatus = !this.userStatus;
       }
       this.loading = false;

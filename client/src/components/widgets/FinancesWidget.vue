@@ -1,6 +1,6 @@
 <template>
   <Widget
-    title="Finances"
+    :title="$t('widgets.finances.title')"
     :content-pad="false"
     :context-items="contextItems"
     :loading="loading"
@@ -26,9 +26,13 @@
           <v-list-item class="mb-4">
             <v-list-item-content>
               <v-list-item-title class="task-entry">
-                {{ expense.description || "Unnamed expense" }}
+                {{ expense.description || $t("widgets.finances.unnamed") }}
                 <div class="overline pl-2 pt-1">
-                  - {{ formatDateRelative(expense.date) || "Today" }}
+                  -
+                  {{
+                    formatDateRelative(expense.date) ||
+                      $t("widgets.finances.today")
+                  }}
                 </div>
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -56,7 +60,7 @@
     </template>
     <div v-else style="text-align: center" class="text--disabled pb-4">
       <v-icon style="font-size: 4em" class="text--disabled">money</v-icon>
-      <br />Why don't you buy something?
+      <br />{{ $t("widgets.finances.empty") }}
     </div>
   </Widget>
 </template>
@@ -81,7 +85,7 @@ export default {
       return [
         {
           action: "refresh",
-          text: "Refresh",
+          text: this.$t("commands.refresh"),
           icon: "refresh",
           subtext:
             "Updated " +
@@ -89,12 +93,12 @@ export default {
         },
         {
           action: "finances",
-          text: "Finances page",
+          text: this.$t("widgets.finances.page"),
           icon: "money"
         },
         {
           action: "settings",
-          text: "Widget Settings",
+          text: this.$t("widgets.settings"),
           icon: "settings"
         }
       ];

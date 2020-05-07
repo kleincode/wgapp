@@ -1,6 +1,6 @@
 <template>
   <Widget
-    title="Weather"
+    :title="$t('widgets.weather.title')"
     :loading="loading"
     :error="!display"
     with-footer
@@ -14,12 +14,14 @@
       >
     </template>
     <template v-else>
-      <p>This widget is not configured correctly.</p>
-      <v-btn text to="/settings/dashboard">Settings</v-btn>
+      <p>{{ $t("widgets.weather.config") }}</p>
+      <v-btn text to="/settings/dashboard">{{
+        $t("navigation.settings")
+      }}</v-btn>
     </template>
     <template #footer>
       {{ condition }} | {{ cityName }}
-      {{ lastUpdate ? formatTimeHM(lastUpdate) : "Never" }}
+      {{ lastUpdate ? formatTimeHM(lastUpdate) : $t("widgets.weather.never") }}
     </template>
   </Widget>
 </template>
@@ -76,7 +78,7 @@ export default {
       return [
         {
           action: "refresh",
-          text: "Refresh",
+          text: this.$t("commands.refresh"),
           icon: "refresh",
           subtext:
             "Updated " +
@@ -84,7 +86,7 @@ export default {
         },
         {
           action: "settings",
-          text: "Widget Settings",
+          text: this.$t("widgets.settings"),
           icon: "settings"
         }
       ];

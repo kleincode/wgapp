@@ -1,6 +1,6 @@
 <template>
   <Widget
-    title="Home"
+    :title="$t('widgets.home.title')"
     :context-items="contextItems"
     class="text-center"
     @context-action="contextAction"
@@ -9,10 +9,9 @@
       ><v-icon x-large>notifications_active</v-icon></v-btn
     >
     <br />
-    <p class="display-1">"I'm home!"</p>
+    <p class="display-1">{{ $t("widgets.home.msg") }}</p>
   </Widget>
 </template>
-
 <script>
 import Widget from "./Widget";
 
@@ -21,15 +20,17 @@ export default {
   components: {
     Widget
   },
-  data: () => ({
-    contextItems: [
-      {
-        action: "settings",
-        text: "Widget Settings",
-        icon: "settings"
-      }
-    ]
-  }),
+  computed: {
+    contextItems() {
+      return [
+        {
+          action: "settings",
+          text: this.$t("widgets.settings"),
+          icon: "settings"
+        }
+      ];
+    }
+  },
   methods: {
     async bell() {
       try {

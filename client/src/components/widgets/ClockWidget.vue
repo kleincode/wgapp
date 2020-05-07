@@ -1,6 +1,6 @@
 <template>
   <Widget
-    title="Clock"
+    :title="$t('widgets.clock.title')"
     with-footer
     :context-items="contextItems"
     @context-action="contextAction"
@@ -26,16 +26,18 @@ export default {
   },
   data: () => ({
     now: new Date(),
-    clockIntervalID: -1,
-    contextItems: [
-      {
-        action: "settings",
-        text: "Widget Settings",
-        icon: "settings"
-      }
-    ]
+    clockIntervalID: -1
   }),
   computed: {
+    contextItems() {
+      return [
+        {
+          action: "settings",
+          text: this.$t("widgets.settings"),
+          icon: "settings"
+        }
+      ];
+    },
     ...mapState("userSettings", ["locale"]),
     ...mapGetters("userSettings", [
       "formatTimeHMS",

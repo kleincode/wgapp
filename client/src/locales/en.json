@@ -28,7 +28,10 @@
     "continue": "Continnue",
     "next": "Next",
     "finish": "Finish",
-    "back": "Back"
+    "back": "Back",
+    "remove": "Remove",
+    "activate": "Activate",
+    "deactivate": "Deactivate"
   },
   "app": {
     "profile": "My profile",
@@ -98,6 +101,25 @@
         "success": "Successfully edited the task.",
         "delete": "Deleted task."
       }
+    },
+    "upcom": {
+      "title": "Upcoming tasks",
+      "timed": "Timed tasks",
+      "ondem": "On-Demand Tasks",
+      "repDesc": "This is a repeating task",
+      "oneDesc": "This is a one-time task",
+      "emptyRep": "Congratulations, you've got nothing to do!",
+      "last": "last",
+      "emptyOnDem": "Are you sure there's really nothing you should do?",
+      "invalid": "Invalid Date"
+    },
+    "log": {
+      "title": "Task log",
+      "empty": "You really need to start getting stuff done!"
+    },
+    "rep": {
+      "title": "Manage repeating tasks",
+      "empty": "This demoralizing daily routine, right?"
     }
   },
   "shopping": {
@@ -208,7 +230,7 @@
   "profile": {
     "title": "Profile",
     "username": "username",
-    "nick": "nickname",
+    "nick": "Nickname",
     "mail": "E-Mail",
     "password": "password",
     "expenses": "Latest expenses",
@@ -220,6 +242,13 @@
       "usersErr": "Error while fetching user expenses.",
       "mon": "Couldn't fetch monthly data. Please try again later.",
       "monErr": "Error during fetching monthly data. Please try again later."
+    },
+    "edit": {
+      "title": "Edit profile",
+      "nickHint": "Will be used as the displayed name",
+      "old": "Old Password",
+      "new": "New Password",
+      "rep": "Repeat new password"
     }
   },
   "login": {
@@ -399,6 +428,47 @@
       "minute": "1 minute | {count} minutes",
       "in": "in",
       "ago": "ago"
+    }
+  },
+  "icon": {
+    "btn": "Change Icon",
+    "title": "Icon Chooser",
+    "common": "Common icons",
+    "all": "All icons"
+  },
+  "widgets": {
+    "settings": "Widget settings",
+    "weather": {
+      "title": "Weather",
+      "config": "This widget is not configured correctly.",
+      "never": "Never"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "unnamed": "Unnamed task",
+      "today": "Today",
+      "done": "You're done for today!",
+      "page": "Tasks page",
+      "not": "Notification sent to "
+    },
+    "disturb": {
+      "title": "Do Not Disturb",
+      "connect": "Could not connect to server.",
+      "err": "Error toggling user status."
+    },
+    "home": {
+      "title": "Home",
+      "msg": "\"I'm home!\""
+    },
+    "finances": {
+      "title": "Finances",
+      "today": "Today",
+      "unnamed": "Unnamed ecpense",
+      "empty": "Why don't you buy something?",
+      "page": "Finances page"
+    },
+    "clock": {
+      "title": "Clock"
     }
   }
 }

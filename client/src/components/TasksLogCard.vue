@@ -1,7 +1,7 @@
 <template>
   <v-card :elevation="6" :loading="loading" style="height: 100%;">
     <v-card-title>
-      <h2 class="title">Task log</h2>
+      <h2 class="title">{{ $t("tasks.log.title") }}</h2>
     </v-card-title>
     <v-card-text>
       <v-timeline v-if="tasks.length > 0">
@@ -72,7 +72,7 @@
         <v-icon style="font-size: 10em" class="text--disabled"
           >format_list_numbered</v-icon
         >
-        <br />You really need to start getting stuff done!
+        <br />{{ $t("tasks.log.empty") }}
       </div>
     </v-card-text>
   </v-card>
