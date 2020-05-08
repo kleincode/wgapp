@@ -55,11 +55,11 @@
                   left
                 >
                   <v-img
-                    v-show="userImages[task.assigned]"
-                    :src="userImages[task.assigned]"
+                    v-show="userImages[task.working]"
+                    :src="userImages[task.working]"
                   ></v-img>
-                  <span v-show="!userImages[task.assigned]" class="white--text">
-                    {{ getUserInitials(task.assigned) }}
+                  <span v-show="!userImages[task.working]" class="white--text">
+                    {{ getUserInitials(task.working) }}
                   </span>
                 </v-avatar>
                 {{ getUserName(task.working) }}

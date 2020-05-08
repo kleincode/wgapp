@@ -347,6 +347,11 @@
     "openBill": "Open Bill Manager",
     "memberTrend": "Member Trend Expenses",
     "confirmDelete": "Are you sure you want to delete",
+    "empty": {
+      "member": "Spend some money and you will be listed here!",
+      "exp": "No expenses added",
+      "moncharge": "Add your monthly charges here."
+    },
     "billman": {
       "title": "Bill Manager",
       "confirmFinish": "Are you sure you want to finish these payments? You can't undo this action.",
