@@ -347,6 +347,11 @@
     "openBill": "Open Bill Manager",
     "memberTrend": "Member Trend Expenses",
     "confirmDelete": "Are you sure you want to delete",
+    "empty": {
+      "member": "Spend some money and you will be listed here!",
+      "exp": "No expenses added",
+      "moncharge": "Add your monthly charges here."
+    },
     "billman": {
       "title": "Bill Manager",
       "confirmFinish": "Are you sure you want to finish these payments? You can't undo this action.",
@@ -481,13 +486,16 @@
     "created": "Created",
     "confirmLeave": "Are you sure you want to leave this household?",
     "confirmExp": "This operation can only be undone using an invite link. You old data will be lost",
+    "successUpdate": "Successfully updated household information.",
     "types": [
       "Shared apartment", "Couple", "Family"
     ],
     "errors": {
       "assigned": "You are not assigned to a household yet. Please create one now.",
       "connect": "Could not connect to server.",
-      "unkown": "Unknown error."
+      "unkown": "Unknown error.",
+      "update": "Couldn't update household information.",
+      "updateErr": "Error updating household information."
     },
     "create": {
       "title": "Create new household",

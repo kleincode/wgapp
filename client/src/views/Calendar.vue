@@ -363,9 +363,21 @@ export default {
         return;
       // Out of fetched range --> refetch
       this.loading = true;
-      let calIds = this.calendarsSelected.map(
-        cal => this.allCalendars[this.allCalendarsStrings.indexOf(cal)].id
-      );
+      console.log(this.allCalendars);
+      console.log(this.allCalendarsStrings);
+      console.log(this.calendarsSelected);
+      let calIds = [];
+      this.calendarsSelected.forEach(cal => {
+        let index = this.allCalendarsStrings.indexOf(cal);
+        if (index == -1) {
+          //not in list anymore
+          console.log("deleted", cal);
+          this.calendarsSelected.splice(this.calendarsSelected.indexOf(cal), 1);
+        } else {
+          calIds.push(this.allCalendars[index].id);
+        }
+      });
+
       // We will fetch around two months before and after the current timespan as buffer (date constructor takes care of changing year appropriately)
       this.fetchStart = new Date(
         startDate.getFullYear(),

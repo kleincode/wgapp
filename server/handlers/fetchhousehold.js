@@ -11,7 +11,6 @@ module.exports = ({ db }) => ({
         const { results: userResults } = await db.query(`SELECT id, status FROM users WHERE ?`, [{hid}]);
         let members = userResults;
         const { results: householdResults } = await db.query(`SELECT name, type, registered FROM households WHERE ?`, [{id: hid}]);
-        
         success({
           message: "Household data fetched.",
           exists: true,

@@ -17,7 +17,7 @@
       <v-col cols="12" md="6" lg="4">
         <v-card style="height: 100%" :elevation="6">
           <v-card-title>{{ $t("finances.memberExp") }}</v-card-title>
-          <v-list three-line avatar>
+          <v-list v-if="memberTotals.length > 0" three-line avatar>
             <v-subheader>{{ $t("general.members") }}</v-subheader>
             <v-list-item-group
               v-model="filterMember"
@@ -56,6 +56,16 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
+          <div
+            v-else
+            style="text-align: center"
+            class="text--disabled pb-12 pt-8 pl-3 pr-3"
+          >
+            <v-icon style="font-size: 6em" class="text--disabled"
+              >supervisor_account</v-icon
+            >
+            <br />{{ $t("finances.empty.member") }}
+          </div>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
@@ -75,6 +85,7 @@
             :options.sync="tableOptions"
             :server-items-length="tableTotalItems"
             :loading="tableLoading"
+            :no-data-text="$t('finances.empty.exp')"
             must-sort
           >
             <template v-slot:item.uid="{ item }">
@@ -129,7 +140,7 @@
           </v-card-title>
           <v-card-text>
             {{ $t("finances.monchargeExp") }}
-            <v-list>
+            <v-list v-if="monthlyCharges.length > 0">
               <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
                 <v-list-item-icon>
                   <v-icon>{{ getIcon(charge.icon) }}</v-icon>
@@ -164,6 +175,16 @@
                 </v-list-item-icon>
               </v-list-item>
             </v-list>
+            <div
+              v-else
+              style="text-align: center"
+              class="text--disabled pb-12 pt-8 pl-3 pr-3"
+            >
+              <v-icon style="font-size: 6em" class="text--disabled"
+                >event</v-icon
+              >
+              <br />{{ $t("finances.empty.moncharge") }}
+            </div>
           </v-card-text>
         </v-card>
       </v-col>

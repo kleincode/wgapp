@@ -1,9 +1,9 @@
 <template>
   <v-container>
-    <h1 class="display-2 pl-12 pb-6">{{ householdName }}</h1>
+    <h1 class="display-2 pb-6">{{ householdName }}</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4" xl="3">
-        <v-card style="height: 100%;" :elevation="6">
+        <v-card style="height: 100%;" :elevation="6" :loading="loading">
           <v-card-title>
             {{ $t("household.title") }}
             <v-spacer></v-spacer>
@@ -47,11 +47,13 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="4" xl="3">
-        <v-card style="height: 100%;" :elevation="6">
+        <v-card style="height: 100%;" :elevation="6" :loading="loading">
           <v-card-title>
             {{ $t("household.info") }}
+            <v-spacer></v-spacer>
+            <v-btn icon @click="edit"><v-icon>edit</v-icon></v-btn>
           </v-card-title>
-          <v-list disabled>
+          <v-list v-if="!editMode" disabled>
             <v-list-item-group>
               <v-list-item>
                 <v-list-item-icon>
@@ -66,7 +68,7 @@
                   <v-icon>home_work</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  {{ householdTypes[householdType] }}
+                  {{ householdTypes[householdType].text }}
                 </v-list-item-content>
               </v-list-item>
               <v-list-item>
@@ -80,6 +82,23 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
+          <v-container v-else class="text-right">
+            <v-text-field
+              v-model="eName"
+              :label="$t('household.create.lblName')"
+            ></v-text-field>
+            <v-select
+              v-model="eType"
+              :items="householdTypes"
+              :label="$t('household.create.lblType')"
+            ></v-select>
+            <v-btn color="success" class="mr-2" @click="saveEdit">{{
+              $t("commands.save")
+            }}</v-btn>
+            <v-btn text @click="editMode = false">{{
+              $t("commands.cancel")
+            }}</v-btn>
+          </v-container>
         </v-card>
       </v-col>
     </v-row>
@@ -98,7 +117,7 @@
           {{ householdName }}
         </v-card-title>
         <v-card-text class="white--text">
-          {{ householdTypes[householdType] }}<br />
+          {{ householdTypes[householdType].text }}<br />
           {{ $t("household.created") }}: {{ formatDate(householdRegistered) }}
         </v-card-text>
       </v-card>
@@ -123,22 +142,35 @@ export default {
     ConfirmDialog
   },
   data: () => ({
+    loading: false,
+    editMode: false,
     householdName: "Manage household",
     members: [],
     userImages: {},
     householdType: 0,
     householdRegistered: "",
-    householdTypes: [],
-    leaveDialogOpen: false
+    leaveDialogOpen: false,
+    eName: "",
+    eType: ""
   }),
   computed: {
+    householdTypes() {
+      return [
+        {
+          text: this.$t("household.types[0]"),
+          value: 0
+        },
+        {
+          text: this.$t("household.types[1]"),
+          value: 1
+        },
+        {
+          text: this.$t("household.types[2]"),
+          value: 2
+        }
+      ];
+    },
     ...mapGetters(["getFullUserName", "getUserInitials"])
-  },
-  created() {
-    this.householdTypes = [];
-    this.householdTypes.push(this.$t("household.types[0]"));
-    this.householdTypes.push(this.$t("household.types[1]"));
-    this.householdTypes.push(this.$t("household.types[2]"));
   },
   mounted() {
     this.fetchHousehold();
@@ -147,7 +179,17 @@ export default {
     formatDate(strdate) {
       return new Date(strdate).toLocaleString();
     },
+    edit() {
+      if (this.editMode) {
+        this.editMode = false;
+        return;
+      }
+      this.eName = this.householdName;
+      this.eType = this.householdType;
+      this.editMode = true;
+    },
     async fetchHousehold() {
+      this.loading = true;
       const { data } = await this.$http.get("/_/fetchhousehold");
       if (data.success) {
         this.members = data.members.map(member => member.id);
@@ -171,6 +213,36 @@ export default {
           data.message || this.$t("household.errors.connect")
         );
       }
+      this.loading = false;
+    },
+    async saveEdit() {
+      try {
+        const { data } = await this.$http.post("/_/edithousehold", {
+          name: this.eName,
+          type: this.eType
+        });
+        if (data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("household.successUpdate")
+          );
+          this.householdName = this.eName;
+          this.householdType = this.eType;
+        } else {
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("household.errors.update")
+          );
+          console.log(data);
+        }
+      } catch (err) {
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("household.errors.updateErr")
+        );
+        console.error(err);
+      }
+      this.editMode = false;
     },
     leaveCancel() {
       this.leaveDialogOpen = false;
