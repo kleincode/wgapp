@@ -259,12 +259,22 @@ export default {
       this.loading = false;
     },
     async checkTask(task) {
+      console.log(task);
       this.loading = true;
       // if this is a single task, show 'undo' snackbar
-      if (task.mode == 0) {
+      if (task.mode == 0 || task.mode == 1) {
         this.checkedTask = task;
         this.taskCheckSnack = true;
+      } else if (task.checked) {
+        //On-Demand
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$i18n.t("store.tasks.undoOnDemand")
+        );
+        this.loading = false;
+        return;
       }
+
       // Perform check task
       try {
         await this.$store.dispatch("tasks/updateTaskChecked", {

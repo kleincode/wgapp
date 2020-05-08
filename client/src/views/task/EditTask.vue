@@ -469,7 +469,7 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              this.$t("tasks.editTask.messages.success")
+              this.$t("tasks.editTask.messages.successEdit")
             );
           } else {
             this.$store.dispatch(
@@ -494,7 +494,7 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              this.$t("tasks.editTask.messages.success")
+              this.$t("tasks.editTask.messages.successAdd")
             );
           } else {
             this.$store.dispatch(

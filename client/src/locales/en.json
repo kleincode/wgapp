@@ -105,7 +105,8 @@
         "name": "You need to specify a name.",
         "intervall": "You need to specify a valid intervall.",
         "weekday": "You need to specify at least one weekday.",
-        "success": "Successfully edited the task.",
+        "successEdit": "Successfully edited the task.",
+        "successAdd": "Successfully added new task.",
         "delete": "Deleted task."
       }
     },
