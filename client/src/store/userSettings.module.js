@@ -74,7 +74,6 @@ const vuexModule = {
       ).then(() => commit("set_initialized", true));
     },
     async loadLocaleMessages({ state }) {
-      console.log("loading lang " + state.lang);
       await loadLocaleMessagesAsync(state.lang);
     }
   },
@@ -156,7 +155,6 @@ const vuexModule = {
             dateThen.getMonth() +
             12 * (dateNow.getFullYear() - dateThen.getFullYear())
         );
-        console.log(diffMonths);
         if (diffMonths > 12) {
           let num = Math.floor(diffMonths / 12);
           val = i18n.tc("store.format.year", num, { count: num });

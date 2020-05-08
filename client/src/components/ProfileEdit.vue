@@ -121,10 +121,6 @@ export default {
     lastName: "",
     nickname: "",
     email: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-    ],
     oldPassword: "",
     password1: "",
     password2: "",
@@ -137,6 +133,12 @@ export default {
     }
   }),
   computed: {
+    emailRules() {
+      return [
+        v => !!v || this.$t("profile.edit.mail"),
+        v => /.+@.+\..+/.test(v) || this.$t("profile.edit.mailValid")
+      ];
+    },
     ...mapState([
       "uid",
       "userEmail",
@@ -197,7 +199,7 @@ export default {
           if (this.password1 != this.password2) {
             this.$store.dispatch(
               "showSnackbar",
-              "Please repeat the new password correctly."
+              this.$t("profile.edit.msgsrepFail")
             );
             return;
           } else {
@@ -224,15 +226,24 @@ export default {
             this.lastName,
             this.nickname
           ]);
-          this.$store.dispatch("showSnackbar", "Successfully updated profile.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.edit.msgs.success")
+          );
         } else {
           console.log(data);
-          this.$store.dispatch("showSnackbar", "Couldn't update profile.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.edit.errors.update")
+          );
         }
       } catch (err) {
         this.loading = false;
         console.error(err);
-        this.$store.dispatch("showSnackbar", "Error while updating profile.");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("profile.edit.errors.updateErr")
+        );
       }
     },
     async deleteProfilePicture() {
@@ -241,20 +252,20 @@ export default {
         if (data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            "Successfully deleted profile picture."
+            this.$t("profile.edit.msgs.delSuccess")
           );
           this.$store.commit("set_profile_picture", null);
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Couldn't delete profile picture."
+            this.$t("profile.edit.errors.del")
           );
         }
       } catch (err) {
         console.error(err);
         this.$store.dispatch(
           "showSnackbar",
-          "Error while deleting profile picture."
+          this.$t("profile.edit.errors.delErr")
         );
       }
     },

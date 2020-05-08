@@ -71,6 +71,11 @@
       "undo": "Undo failed :/",
       "reminder": "Error triggering the reminder."
     },
+    "modes": {
+      "single": "Single",
+      "rep": "Repeating",
+      "ondem": "On-Demand"
+    },
     "editTask": {
       "titleEdit": "Edit task",
       "titleAdd": "Add task",
@@ -100,7 +105,8 @@
         "name": "You need to specify a name.",
         "intervall": "You need to specify a valid intervall.",
         "weekday": "You need to specify at least one weekday.",
-        "success": "Successfully edited the task.",
+        "successEdit": "Successfully edited the task.",
+        "successAdd": "Successfully added new task.",
         "delete": "Deleted task."
       }
     },
@@ -271,7 +277,20 @@
       "nickHint": "Will be used as the displayed name",
       "old": "Old Password",
       "new": "New Password",
-      "rep": "Repeat new password"
+      "rep": "Repeat new password",
+      "mail": "E-mail is required",
+      "mailValid": "E-mail must be valid",
+      "msgs": {
+        "repFail": "Please repeat the new password correctly.",
+        "success": "Successfully updated profile.",
+        "delSuccess": "Successfully deleted profile picture."
+      },
+      "errors": {
+        "update": "Couldn't update profile.",
+        "updateErr": "Error while updating profile.",
+        "del": "Couldn't delete profile picture.",
+        "delErr": "Error while deleting profile picture."
+      }
     },
     "upload": {
       "title": "Upload Profile Picture",
@@ -286,10 +305,12 @@
     "welcome": "Welcome!",
     "login": "Login",
     "register": "Register",
+    "msg": "If you forgot your password, please provide your email so we can send you a link which allows you to change your password.",
     "mail": "E-mail",
     "first": "First name",
     "last": "Last name",
     "password": "Password",
+    "forgot": "Forgot password?",
     "rep": "Repeat password",
     "messages": {
       "required": "This field is required!",
@@ -301,7 +322,8 @@
       "match": "Your passwords do not match. Please try again."
     },
     "errors": {
-      "register": "Error registering. Please try again."
+      "register": "Error registering. Please try again later.",
+      "com": "Communication error. Please try again later."
     }
   },
   "finances": {
@@ -344,8 +366,12 @@
       "export": "Export",
       "errors": {
         "history": "Couldn't fetch bill history. Please try again later.",
-        "historyErr": "Error while fetching bill history. Please try again later."
-      }
+        "historyErr": "Error while fetching bill history. Please try again later.",
+        "data": "Couldn't fetch Bill Manager data. Please try again later.",
+        "dataErr": "Error fetching Bill Manager data. Please try again later.",
+        "lastBill": "Error while updating last bill time. Please try again later."
+      },
+      "success": "Successfully updated last bill."
     },
     "receipt": {
       "title": "Receipt",

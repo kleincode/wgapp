@@ -331,7 +331,7 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Couldn't fetch Bill Manager data. Please try again later."
+            this.$t("finances.billman.errors.data")
           );
           this.dialog = false;
         }
@@ -339,7 +339,7 @@ export default {
         this.dialog = false;
         this.$store.dispatch(
           "showSnackbar",
-          "Error fetching Bill Manager data. Please try again later."
+          this.$t("finances.billman.errors.dataErr")
         );
       }
       this.loading = false;
@@ -468,11 +468,14 @@ export default {
         data: this.curToJSON()
       });
       if (data.success) {
-        this.$store.dispatch("showSnackbar", "Successfully updated last bill.");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("finances.billman.success")
+        );
       } else {
         this.$store.dispatch(
           "showSnackbar",
-          "Error while updating last bill time. Please try again later."
+          this.$t("finances.billman.errors.lastBill")
         );
       }
       this.loadingHistory = false;

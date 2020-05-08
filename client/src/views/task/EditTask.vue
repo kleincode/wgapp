@@ -146,6 +146,7 @@
                 v-show="mode == 'Repeating'"
                 v-model="chosenDays"
                 :items="days"
+                item-value="val"
                 chips
                 :label="$t('tasks.editTask.lblRepeatOn')"
                 multiple
@@ -239,15 +240,11 @@ export default {
     selectedIcon: 0,
     selectedMember: 0,
     date: new Date().toISOString().substr(0, 10),
-    days: [],
     chosenDays: [],
     time: null,
     reminder: false,
     repetitionEvery: "",
     repetitionUnit: "",
-    repetitionUnits: ["Weeks", "Months"],
-    modes: ["Single", "Repeating", "On-Demand"],
-
     startDateMenu: false,
     startTimeMenu: false,
     snackbar: false,
@@ -257,16 +254,58 @@ export default {
     loading: false
   }),
   computed: {
+    modes() {
+      return [
+        { text: this.$t("tasks.modes.single"), value: "Single" },
+        { text: this.$t("tasks.modes.rep"), value: "Repeating" },
+        { text: this.$t("tasks.modes.ondem"), value: "On-Demand" }
+      ];
+    },
+    repetitionUnits() {
+      return [
+        {
+          text: this.$t("time.weeks"),
+          value: "Weeks"
+        },
+        {
+          text: this.$t("time.months"),
+          value: "Months"
+        }
+      ];
+    },
+    days() {
+      return [
+        {
+          val: "Monday",
+          text: this.$t("weekdays.mon")
+        },
+        {
+          val: "Tuesday",
+          text: this.$t("weekdays.tue")
+        },
+        {
+          val: "Wednesday",
+          text: this.$t("weekdays.wed")
+        },
+        {
+          val: "Thursday",
+          text: this.$t("weekdays.thu")
+        },
+        {
+          val: "Friday",
+          text: this.$t("weekdays.fri")
+        },
+        {
+          val: "Saturday",
+          text: this.$t("weekdays.sat")
+        },
+        {
+          val: "Sunday",
+          text: this.$t("weekdays.sun")
+        }
+      ];
+    },
     ...mapGetters(["getHouseholdUsersAsItemList"])
-  },
-  created() {
-    this.days.push(this.$t("weekdays.mon"));
-    this.days.push(this.$t("weekdays.tue"));
-    this.days.push(this.$t("weekdays.wed"));
-    this.days.push(this.$t("weekdays.thu"));
-    this.days.push(this.$t("weekdays.fri"));
-    this.days.push(this.$t("weekdays.sat"));
-    this.days.push(this.$t("weekdays.sun"));
   },
   mounted() {
     this.id = this.$route.params.id;
@@ -430,7 +469,7 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              this.$t("tasks.editTask.messages.success")
+              this.$t("tasks.editTask.messages.successEdit")
             );
           } else {
             this.$store.dispatch(
@@ -455,7 +494,7 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              this.$t("tasks.editTask.messages.success")
+              this.$t("tasks.editTask.messages.successAdd")
             );
           } else {
             this.$store.dispatch(
