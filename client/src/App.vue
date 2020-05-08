@@ -134,7 +134,6 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import Introduction from "@/components/dialogs/introduction/Introduction.vue";
-import { loadLocaleMessagesAsync } from "@/i18n.js";
 
 export default {
   name: "App",
@@ -223,24 +222,34 @@ export default {
       "offline",
       "profilePictureData"
     ]),
+    ...mapState("userSettings", ["lang", "_initialized"]),
     ...mapGetters(["isUpdateAvailable", "hasProfilePicture", "isAuthorized"])
+  },
+  watch: {
+    _initialized(val) {
+      if (val) {
+        this.loadLang();
+      }
+    }
   },
   async created() {
     await this.$store.dispatch("userSettings/sync");
-    await this.$store.dispatch("fetchProfileImg");
     this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
-    this.loadLocaleMessages(this.$i18n.locale);
+  },
+  async mounted() {
+    if (this._initialized) {
+      this.loadLang();
+    }
+    await this.$store.dispatch("fetchProfileImg");
   },
   methods: {
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
     },
-    loadLocaleMessages(locale) {
-      console.log("loading");
-      this.loading = true;
-      loadLocaleMessagesAsync(locale).then(() => {
-        this.loading = false;
-      });
+    async loadLang() {
+      await this.$store.dispatch("userSettings/loadLocaleMessages");
+      this.$i18n.locale = this.lang;
+      this.loading = false;
     }
   }
 };

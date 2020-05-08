@@ -163,6 +163,11 @@
         "exp": "Vanilla or chocolate? That's a question every worthy soldier has to answer for themselves. Just be careful: The blinding light might daze you.",
         "lblDark": "Dark design"
       },
+      "lang": {
+        "title": "Language",
+        "exp": "We currently support English and German. If you want to help us translate Jeff into your you're very welcome to do so. Just contact us!",
+        "lbl": "Select language"
+      },
       "locale": {
         "title": "Locale",
         "exp": "The locale settings affect the way dates, times, and currencies are displayed.",

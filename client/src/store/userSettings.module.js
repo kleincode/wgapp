@@ -1,10 +1,12 @@
 import { userSettings } from "./LocalAppStore";
 import i18n from "@/i18n";
+import { loadLocaleMessagesAsync } from "@/i18n.js";
 
 // Specify all values to sync with persistent store and their default values
 const syncEntries = {
   introductionState: 1,
   darkMode: false,
+  lang: "en",
   calendarEnabled: false,
   weatherWidgetEnabled: true,
   clockWidgetEnabled: true,
@@ -29,6 +31,7 @@ const vuexModule = {
     _initialized: false,
     introductionState: -1,
     darkMode: false,
+    lang: "en",
     calendarEnabled: false,
     weatherWidgetEnabled: false,
     clockWidgetEnabled: false,
@@ -69,6 +72,10 @@ const vuexModule = {
           })
         )
       ).then(() => commit("set_initialized", true));
+    },
+    async loadLocaleMessages({ state }) {
+      console.log("loading lang " + state.lang);
+      await loadLocaleMessagesAsync(state.lang);
     }
   },
   getters: {

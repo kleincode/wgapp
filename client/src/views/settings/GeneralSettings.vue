@@ -15,6 +15,22 @@
           v-model="darkDesign"
           :label="$t('settings.general.appearance.lblDark')"
         ></v-switch>
+        <!--Language-->
+        <div id="language" class="title pt-2">
+          {{ $t("settings.general.lang.title") }}
+        </div>
+        <p>
+          {{ $t("settings.general.lang.exp") }}
+        </p>
+        <v-select
+          v-model="lang"
+          :items="supportedLocales"
+          item-text="name"
+          item-value="code"
+          :label="$t('settings.general.lang.lbl')"
+          @change="langChange"
+        ></v-select>
+        <!--Locale-->
         <div id="locale" class="title pt-2">
           {{ $t("settings.general.locale.title") }}
         </div>
@@ -39,7 +55,7 @@
         <v-select
           v-model="currency"
           :items="currencies"
-          label="$t('settings.general.locale.cur')"
+          :label="$t('settings.general.locale.cur')"
           class="mt-3"
         ></v-select>
         <p>{{ $t("settings.general.locale.sample") }}: {{ currencySample }}</p>
@@ -67,6 +83,7 @@
 
 <script>
 import NotificationController from "@/components/NotificationController.vue";
+import { getSupportedLocales } from "@/assets/supported-locales.js";
 
 export default {
   name: "GeneralSettings",
@@ -151,6 +168,9 @@ export default {
     browserLocale: navigator.language
   }),
   computed: {
+    supportedLocales() {
+      return getSupportedLocales();
+    },
     darkDesign: {
       set(val) {
         this.$store.commit("userSettings/set_key", {
@@ -161,6 +181,17 @@ export default {
       },
       get() {
         return this.$store.state.userSettings.darkMode;
+      }
+    },
+    lang: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "lang",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.lang;
       }
     },
     useBrowserLocale: {
@@ -237,6 +268,10 @@ export default {
     restartIntro() {
       this.introductionState = 1;
       this.$router.push({ path: "/dashboard" });
+    },
+    async langChange() {
+      await this.$store.dispatch("userSettings/loadLocaleMessages");
+      this.$i18n.locale = this.lang;
     }
   }
 };
