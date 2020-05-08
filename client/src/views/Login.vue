@@ -7,13 +7,7 @@
             <v-toolbar color="primary" dark>
               <v-toolbar-title>{{ $t("login.welcome") }}</v-toolbar-title>
               <template v-slot:extension>
-                <v-tabs
-                  v-model="registerMode"
-                  centered
-                  color="white"
-                  optional
-                  @change="print($event)"
-                >
+                <v-tabs v-model="registerMode" centered color="white" optional>
                   <v-tab>{{ $t("login.login") }}</v-tab>
                   <v-tab>{{ $t("login.register") }}</v-tab>
                 </v-tabs>
@@ -23,9 +17,7 @@
               <v-card-text>
                 <v-expand-transition>
                   <p v-if="registerMode == 2" class="my-0">
-                    If you forgot your password, please provide your email so we
-                    can send you a link which allows you to change your
-                    password.
+                    {{ $t("login.msg") }}
                     <br />
                     <br />
                   </p>
@@ -100,7 +92,7 @@
                   text
                   @click="registerMode = 2"
                 >
-                  Forgot password?
+                  {{ $t("login.forgot") }}
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="primary" type="submit" :loading="loading">
@@ -139,30 +131,28 @@ export default {
     loading: false,
     showSnackbar: false,
     snackbarMessage: "Loading...",
-    ruleMsg: "This field is required!",
-    rulePass1: "Password is required!",
-    rulePass2: "Password must be at least 8 characters.",
-    ruleMail1: "E-mail is required!",
-    ruleMail2: "E-mail must be valid!",
-    standardFieldRules: [v => !!v || this.ruleMsg],
-    emailRules: [
-      v => !!v || this.ruleMail1,
-      v => /.+@.+\..+/.test(v) || this.ruleMail2
-    ],
-    passwordRules: [
-      v => !!v || this.rulePass1,
-      v => (v && v.length >= 8) || this.rulePass2
-    ],
     formValid: null,
     validating: false
   }),
+  computed: {
+    standardFieldRules() {
+      return [v => !!v || this.$t("login.messages.required")];
+    },
+    emailRules() {
+      return [
+        v => !!v || this.$t("login.messages.mail1"),
+        v => /.+@.+\..+/.test(v) || this.$t("login.messages.mail2")
+      ];
+    },
+    passwordRules() {
+      return [
+        v => !!v || this.$t("login.messages.password1"),
+        v => (v && v.length >= 8) || this.$t("login.messages.password2")
+      ];
+    }
+  },
   created() {
     this.snackbarMessage = this.$t("commands.loading") + "...";
-    this.ruleMsg = this.$t("login.messages.required");
-    this.rulePass1 = this.$t("login.messages.password1");
-    this.rulePass2 = this.$t("login.messages.password2");
-    this.ruleMail1 = this.$t("login.messages.mail1");
-    this.ruleMail2 = this.$t("login.messages.mail2");
   },
   methods: {
     alertSnackbar(msg) {
@@ -252,7 +242,7 @@ export default {
     async passRecovery() {
       await this.validate();
       if (!this.formValid) {
-        this.alertSnackbar("Please check your input.");
+        this.alertSnackbar(this.$t("login.messages.match"));
         return;
       }
       this.loading = true;
@@ -262,13 +252,10 @@ export default {
         });
         this.alertSnackbar(data.message);
       } catch (err) {
-        this.alertSnackbar("Communication error");
+        this.alertSnackbar(this.$t("login.errors.com"));
         console.warn(err);
       }
       this.loading = false;
-    },
-    print(val) {
-      console.log(val);
     }
   }
 };

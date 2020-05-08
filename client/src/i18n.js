@@ -37,4 +37,6 @@ export function loadLocaleMessagesAsync(locale) {
   });
 }
 
+loadLocaleMessagesAsync("en");
+
 export default i18n;
