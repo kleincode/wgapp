@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col xl="9" lg="10" md="12">
         <div class="pb-6">
-          <span class="display-2">Calendar</span>
+          <span class="display-2">{{ $t("calendar.title") }}</span>
           <v-btn
             icon
             :disabled="!gapiSignedIn"
@@ -20,7 +20,9 @@
           v-model="calendarsSelected"
           :items="allCalendarsStrings"
           small-chips
-          :label="gapiSignedIn ? 'Select Calendars' : 'Not signed in'"
+          :label="
+            gapiSignedIn ? $t('calendar.lblSel') : $t('calendar.lblNotSigned')
+          "
           multiple
           outlined
           :disabled="!gapiSignedIn"
@@ -41,23 +43,31 @@
                 calendarsSelected.length -
                   ($vuetify.breakpoint.smAndDown ? 1 : 3)
               }}
-              others)</span
+              {{ $t("calendar.others") }})</span
             >
           </template>
         </v-select>
 
         <!-- Warning if feature disabled -->
         <v-alert v-if="_initialized && !calendarEnabled" type="warning">
-          Please refer to the
-          <router-link :to="{ name: 'Settings' }">settings</router-link> to
-          activate this feature.
+          <i18n path="calendar.warning" tag="span">
+            <template #settings>
+              <router-link :to="{ name: 'Settings' }">{{
+                $t("calendar.warnSettings")
+              }}</router-link>
+            </template>
+          </i18n>
         </v-alert>
 
         <!-- Warning if not connected to gapi -->
         <v-alert v-if="_initialized && gapiNotSignedIn" type="warning">
-          Please refer to the
-          <router-link :to="{ name: 'Settings' }">settings</router-link> to
-          connect to the Google services.
+          <i18n path="calendar.warning2" tag="span">
+            <template #settings>
+              <router-link :to="{ name: 'Settings' }">{{
+                $t("calendar.warnSettings")
+              }}</router-link>
+            </template>
+          </i18n>
         </v-alert>
 
         <v-row>
@@ -159,7 +169,9 @@
                   </v-toolbar>
                   <v-card-text>
                     <span
-                      v-text="selectedEvent.description || 'No description'"
+                      v-text="
+                        selectedEvent.description || $t('calendar.nodesc')
+                      "
                     ></span>
                   </v-card-text>
                 </v-card>
@@ -272,6 +284,10 @@ export default {
   },
   created() {
     if (this.calendarEnabled && !gapiLoaded) this.loadGapi();
+    this.viewToLabel["month"] = this.$t("calendar.time[2]");
+    this.viewToLabel["week"] = this.$t("calendar.time[1]");
+    this.viewToLabel["day"] = this.$t("calendar.time[0]");
+    this.viewToLabel["4day"] = this.$t("calendar.time[2]");
   },
   async mounted() {
     this.loading = true;

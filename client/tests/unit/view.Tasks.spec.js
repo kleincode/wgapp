@@ -1,7 +1,6 @@
 // Unit test for views/Tasks.vue
 
 // Libraries
-import Vuetify from "vuetify";
 import VueRouter from "vue-router";
 
 // Utilities
@@ -16,10 +15,9 @@ import {
 } from "@/assets/tasksHelper.js";
 
 describe("tasksHelper.js", () => {
-  var vuetify, router;
+  var router;
 
   beforeEach(() => {
-    vuetify = new Vuetify();
     router = new VueRouter();
   });
 

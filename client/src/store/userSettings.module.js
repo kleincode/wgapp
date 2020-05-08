@@ -1,9 +1,12 @@
 import { userSettings } from "./LocalAppStore";
+import i18n from "@/i18n";
+import { loadLocaleMessagesAsync } from "@/i18n.js";
 
 // Specify all values to sync with persistent store and their default values
 const syncEntries = {
   introductionState: 1,
   darkMode: false,
+  lang: "en",
   calendarEnabled: false,
   weatherWidgetEnabled: true,
   clockWidgetEnabled: true,
@@ -28,6 +31,7 @@ const vuexModule = {
     _initialized: false,
     introductionState: -1,
     darkMode: false,
+    lang: "en",
     calendarEnabled: false,
     weatherWidgetEnabled: false,
     clockWidgetEnabled: false,
@@ -68,6 +72,10 @@ const vuexModule = {
           })
         )
       ).then(() => commit("set_initialized", true));
+    },
+    async loadLocaleMessages({ state }) {
+      console.log("loading lang " + state.lang);
+      await loadLocaleMessagesAsync(state.lang);
     }
   },
   getters: {
@@ -138,7 +146,7 @@ const vuexModule = {
       let seconds = Date.now() / 1000 - date;
       let sign = seconds < 0;
       seconds = Math.abs(seconds);
-      if (seconds < 60) return "just now";
+      if (seconds < 60) return i18n.t("store.format.justnow");
       let val = "";
       if (seconds > 60 * 60 * 24 * 7 * 5) {
         let dateThen = new Date(date * 1000),
@@ -150,45 +158,28 @@ const vuexModule = {
         );
         console.log(diffMonths);
         if (diffMonths > 12) {
-          val = Math.floor(diffMonths / 12) + " years";
+          let num = Math.floor(diffMonths / 12);
+          val = i18n.tc("store.format.year", num, { count: num });
         } else {
-          if (diffMonths == 1) {
-            val = diffMonths + " month";
-          } else {
-            val = diffMonths + " months";
-          }
+          val = i18n.tc("store.format.month", diffMonths, {
+            count: diffMonths
+          });
         }
       } else if (seconds > 60 * 60 * 24 * 7) {
         let count = Math.floor(seconds / (60 * 60 * 24 * 7));
-        if (count == 1) {
-          val = count + " week";
-        } else {
-          val = count + " weeks";
-        }
+        val = i18n.tc("store.format.week", count, { count: count });
       } else if (seconds > 60 * 60 * 24) {
         let count = Math.floor(seconds / (60 * 60 * 24));
-        if (count == 1) {
-          val = count + " day";
-        } else {
-          val = count + " days";
-        }
+        val = i18n.tc("store.format.day", count, { count: count });
       } else if (seconds > 60 * 60) {
         let count = Math.floor(seconds / (60 * 60));
-        if (count == 1) {
-          val = count + " hour";
-        } else {
-          val = count + " hours";
-        }
+        val = i18n.tc("store.format.hour", count, { count: count });
       } else {
         let count = Math.floor(seconds / 60);
-        if (count == 1) {
-          val = count + " minute";
-        } else {
-          val = count + " minutes";
-        }
+        val = i18n.tc("store.format.minute", count, { count: count });
       }
-      if (sign) return "in " + val;
-      else return val + " ago";
+      if (sign) return i18n.t("store.format.in") + " " + val;
+      else return val + " " + i18n.t("store.format.ago");
     }
   }
 };

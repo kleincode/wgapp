@@ -4,28 +4,29 @@
       v-model="finishPaymentDialog"
       @positive="finishPayments"
       @negative="finishPaymentDialog = false"
-      >Are you sure you want to finish these payments? You can't undo this
-      action.</confirm-dialog
+      >{{ $t("finances.billman.confirmFinish") }}</confirm-dialog
     >
     <div style="display:flex">
-      <h1 class="display-1">Bill Manager</h1>
+      <h1 class="display-1">{{ $t("finances.billman.title") }}</h1>
       <v-spacer></v-spacer>
-      <div class="caption mr-2 mt-1">last bill:</div>
+      <div class="caption mr-2 mt-1">{{ $t("finances.lastBill") }}:</div>
       {{ formatDateRelative(lastBill) }}
     </div>
 
     <v-row>
       <v-col cols="12" lg="8">
         <v-card :loading="loading" style="height: 100%" :elevation="6">
-          <v-card-title class="headline">New Bill</v-card-title>
+          <v-card-title class="headline">{{
+            $t("finances.billman.newBill")
+          }}</v-card-title>
           <v-card-text>
             <p v-if="empty" class="text-center headline pt-12 pb-12">
-              No new expenses available
+              {{ $t("finances.billman.noexp") }}
             </p>
             <v-row v-if="!empty">
               <v-col cols="12" md="4">
                 <v-list three-line avatar>
-                  <v-subheader>Members</v-subheader>
+                  <v-subheader>{{ $t("general.members") }}</v-subheader>
                   <template v-for="(member, index) in memberTotals">
                     <v-divider :key="index"></v-divider>
                     <v-list-item
@@ -76,7 +77,9 @@
                     md="4"
                     class="text-center"
                   >
-                    <div class="overline">Monthly total</div>
+                    <div class="overline">
+                      {{ $t("finances.billman.monTot") }}
+                    </div>
                     <div class="display-1">{{ getCurrency(monthlyTotal) }}</div>
                   </v-col>
                   <v-col
@@ -84,7 +87,7 @@
                     :md="includeMonthlyCharges ? '4' : '6'"
                     class="text-center primary--text"
                   >
-                    <div class="overline">Total</div>
+                    <div class="overline">{{ $t("finances.billman.tot") }}</div>
                     <div class="display-1">{{ getCurrency(total) }}</div>
                   </v-col>
                   <v-col
@@ -92,18 +95,26 @@
                     :md="includeMonthlyCharges ? '4' : '6'"
                     class="text-center"
                   >
-                    <div class="overline">per person</div>
+                    <div class="overline">{{ $t("finances.billman.pp") }}</div>
                     <div class="display-1">{{ getCurrency(mean) }}</div>
                   </v-col>
                 </v-row>
-                <h2 class="headline mt-4 mb-2">Compensation payments:</h2>
+                <h2 class="headline mt-4 mb-2">
+                  {{ $t("finances.compPay") }}:
+                </h2>
                 <v-simple-table :loading="loading">
                   <template v-slot:default>
                     <thead>
                       <tr>
-                        <th class="text-left">Paying</th>
-                        <th class="text-left">Receives</th>
-                        <th class="text-left">Amount</th>
+                        <th class="text-left">
+                          {{ $t("finances.billman.pay") }}
+                        </th>
+                        <th class="text-left">
+                          {{ $t("finances.billman.rec") }}
+                        </th>
+                        <th class="text-left">
+                          {{ $t("finances.billman.am") }}
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -125,7 +136,7 @@
             <v-switch
               v-model="includeMonthlyCharges"
               class="pl-2"
-              label="Include monthly charges"
+              :label="$t('finances.billman.includeMon')"
               @change="splitTotals"
             ></v-switch>
             <v-spacer></v-spacer>
@@ -136,7 +147,7 @@
               ><v-icon>table_chart</v-icon></v-btn
             >
             <v-btn text @click="back">
-              Back
+              {{ $t("commands.back") }}
             </v-btn>
             <v-btn
               color="primary"
@@ -144,22 +155,28 @@
               :disabled="empty"
               @click="finishPaymentDialog = true"
             >
-              Save payments
+              {{ $t("finances.billman.save") }}
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" lg="4">
         <v-card style="height: 100%" :loading="loadingHistory" :elevation="6">
-          <v-card-title><h1 class="headline">Bill history</h1></v-card-title>
+          <v-card-title
+            ><h1 class="headline">
+              {{ $t("finances.billman.history") }}
+            </h1></v-card-title
+          >
           <v-card-text>
             <v-simple-table>
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left">From</th>
-                    <th class="text-left">To</th>
-                    <th class="text-left">Export</th>
+                    <th class="text-left">{{ $t("finances.billman.from") }}</th>
+                    <th class="text-left">{{ $t("finances.billman.to") }}</th>
+                    <th class="text-left">
+                      {{ $t("finances.billman.export") }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -482,14 +499,14 @@ export default {
           this.loadingHistory = false;
           this.$store.dispatch(
             "showSnackbar",
-            "Error while fetching bill history. Please try again later."
+            this.$t("finances.billman.errors.history")
           );
         }
       } catch (err) {
         this.loadingHistory = false;
         this.$store.dispatch(
           "showSnackbar",
-          "Error while fetching bill history. Please try again later."
+          this.$t("finances.billman.errors.historyErr")
         );
         console.error(err);
       }

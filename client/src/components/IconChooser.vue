@@ -7,14 +7,14 @@
       @click:outside="cancel"
     >
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" text v-on="on">Change Icon</v-btn>
+        <v-btn color="primary" text v-on="on">{{ $t("icon.btn") }}</v-btn>
       </template>
       <v-card>
         <v-card-title>
-          <span class="headline">Icon Chooser</span>
+          <span class="headline">{{ $t("icon.title") }}</span>
         </v-card-title>
         <v-card-text style="height: 500px;">
-          <p class="subtitle-1">Common icons</p>
+          <p class="subtitle-1">{{ $t("icon.common") }}</p>
           <v-row>
             <v-col
               v-for="(icon, i) in icons.slice(0, 11)"
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
 
-          <p class="subtitle-1 pt-12">All icons</p>
+          <p class="subtitle-1 pt-12">{{ $t("icon.all") }}</p>
           <v-row>
             <v-col
               v-for="(icon, i) in icons.slice(11, icons.length)"
@@ -80,8 +80,8 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="cancel">Cancel</v-btn>
-          <v-btn color="primary" @click="save">OK</v-btn>
+          <v-btn text @click="cancel">{{ $t("commands.cancel") }}</v-btn>
+          <v-btn color="primary" @click="save">{{ $t("commands.ok") }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

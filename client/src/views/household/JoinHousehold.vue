@@ -211,7 +211,9 @@ export default {
     finish() {
       this.$store.dispatch("fetchHouseholdUsers");
       this.$router.push({ name: "Dashboard" });
-      this.introductionState = 3;
+      if (this.introductionState != 0) {
+        this.introductionState = 3;
+      }
     }
   }
 };

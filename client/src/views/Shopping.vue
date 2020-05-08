@@ -2,12 +2,12 @@
   <v-container>
     <v-row>
       <v-col cols="12" lg="10" offset-lg="1" xl="8" offset-xl="2">
-        <h1 class="display-2 pb-6">Shopping</h1>
+        <h1 class="display-2 pb-6">{{ $t("shopping.title") }}</h1>
       </v-col>
       <v-col cols="12" md="5" lg="4" offset-lg="1" xl="3" offset-xl="2">
         <v-card style="height: 100%" :elevation="6">
           <v-card-title>
-            Lists
+            {{ $t("shopping.hLists") }}
             <v-spacer></v-spacer>
             <edit-shopping-list-dialog
               ref="editDialog"
@@ -17,7 +17,7 @@
             <v-btn
               icon
               :loading="loading"
-              aria-label="Synchronize shopping lists"
+              :aria-label="$t('shopping.sync')"
               @click="updateRemoteFunction(true)"
             >
               <v-icon>refresh</v-icon>
@@ -63,7 +63,7 @@
             <v-icon style="font-size: 10em" class="text--disabled"
               >shopping_cart</v-icon
             >
-            <br />Go make a list, shopping is fun!
+            <br />{{ $t("shopping.emptyList") }}
           </div>
         </v-card>
       </v-col>
@@ -82,18 +82,18 @@
               :disabled="!selectedList"
               @click="pushItem"
             >
-              New Item
+              {{ $t("shopping.newItem") }}
             </v-btn>
           </v-card-title>
 
           <v-card-text>
             <v-row class="my-1 mr-4" align="center">
               <strong class="mx-4 info--text text--darken-2">
-                Remaining: {{ remainingTasks }}
+                {{ $t("shopping.remaining") }}: {{ remainingTasks }}
               </strong>
               <v-divider vertical></v-divider>
               <strong class="mx-4 success--text text--darken-2">
-                Completed: {{ completedTasks }}
+                {{ $t("shopping.completed") }}: {{ completedTasks }}
               </strong>
               <v-spacer></v-spacer>
               <v-progress-circular
@@ -161,7 +161,7 @@
               <v-icon style="font-size: 10em" class="text--disabled"
                 >shopping_basket</v-icon
               >
-              <br />Happy shopping!
+              <br />{{ $t("shopping.emptyShopping") }}
             </div></v-card-text
           >
           <div class="ma-4">
@@ -211,7 +211,9 @@ export default {
       return this.lists.find(el => el.id == this.selectedListId);
     },
     selectedListName() {
-      return this.selectedList ? this.selectedList.name : "No list selected";
+      return this.selectedList
+        ? this.selectedList.name
+        : this.$t("shopping.noselect");
     },
     selectedListIcon() {
       return this.selectedList ? this.selectedList.icon : "";
@@ -249,7 +251,7 @@ export default {
       if (navigator.onLine) this.updateRemoteFunction();
       window.addEventListener("online", this.updateRemoteFunction);
     } catch (err) {
-      this.$store.dispatch("showSnackbar", "Sync failed: " + err);
+      this.$store.dispatch("showSnackbar", this.$t("shopping.syncErr") + err);
     }
   },
 

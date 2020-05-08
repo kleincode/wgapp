@@ -2,13 +2,15 @@
   <v-dialog v-model="dialogShown" max-width="800" scrollable>
     <v-card :loading="loading">
       <v-card-title class="headline" primary-title>
-        Receipt - {{ expense.description }} -
+        {{ $t("finances.receipt.title") }} - {{ expense.description }} -
         {{ getCurrency(expense.amount / 100) }}
       </v-card-title>
 
       <v-card-text>
         <div v-if="!receiptExists" class="pt-12 pb-12 grey--text">
-          {{ loading ? "Loading receipt..." : "No receipt uploaded yet" }}
+          {{
+            loading ? $t("finances.receipt.load") : $t("finances.receipt.noRec")
+          }}
         </div>
         <v-row justify="center">
           <img
@@ -23,9 +25,9 @@
               v-model="receiptFile"
               type="file"
               accept="image/png, image/jpeg, image/bmp"
-              placeholder="Upload your receipt"
+              :placeholder="$t('finances.receipt.upload')"
               prepend-icon="mdi-camera"
-              label="Receipt"
+              :label="$t('finances.receipt.lbl')"
             ></v-file-input>
           </v-col>
           <v-col cols="12" md="4" lg="3">
@@ -36,7 +38,7 @@
               :disabled="!receiptFile"
               @click="triggerUpload"
             >
-              Upload
+              {{ $t("commands.upload") }}
             </v-btn>
           </v-col>
         </v-row>
@@ -50,11 +52,11 @@
           color="red"
           @click="deleteReceipt"
         >
-          Delete receipt
+          {{ $t("finances.receipt.del") }}
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="dialogShown = false">
-          close
+          {{ $t("commands.close") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -82,7 +84,10 @@ export default {
     },
     async triggerUpload() {
       if (!this.receiptFile) {
-        this.$store.dispatch("showSnackbar", "Please specify an image");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("finances.receipt.imgHint")
+        );
         return;
       }
       this.loading = true;
@@ -98,7 +103,7 @@ export default {
         error: err => {
           this.$store.dispatch(
             "showSnackbar",
-            "Error while compressing the image."
+            this.$t("finances.receipt.compressHint")
           );
           console.log(err.message);
           this.loading = false;
@@ -118,14 +123,20 @@ export default {
           }
         });
         if (data.success) {
-          this.$store.dispatch("showSnackbar", "Receipt uploaded");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("finances.receipt.successUpload")
+          );
           setTimeout(() => this.fetchReceipt(), 200);
         } else {
-          this.$store.dispatch("showSnackbar", data.message || "Upload error");
+          this.$store.dispatch(
+            "showSnackbar",
+            data.message || this.$t("finances.receipt.upErr")
+          );
         }
         this.loading = false;
       } catch (err) {
-        this.$store.dispatch("showSnackbar", "Error while uploading receipt.");
+        this.$store.dispatch("showSnackbar", this.$t("finances.receipt.upErr"));
         console.error(err);
         this.loading = false;
       }
@@ -138,16 +149,22 @@ export default {
           fid: this.expense.fid
         });
         if (data.success) {
-          this.$store.dispatch("showSnackbar", "Receipt deleted.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("finances.receipt.successDel")
+          );
         } else
           this.$store.dispatch(
             "showSnackbar",
-            data.message || "Could not delete receipt."
+            data.message || this.$t("finances.receipt.delFail")
           );
         this.loading = false;
         setTimeout(() => this.fetchReceipt(), 200);
       } catch (err) {
-        this.$store.dispatch("showSnackbar", "Error while deleting receipt.");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("finances.receipt.delErr")
+        );
         console.error(err);
         this.loading = false;
       }

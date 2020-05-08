@@ -4,8 +4,12 @@
       <v-btn exact icon color="primary" class="mt-2 mr-2" @click="back">
         <v-icon>keyboard_arrow_left</v-icon>
       </v-btn>
-      <div v-if="editMode" class="display-2 pb-6">Edit task - "{{ name }}"</div>
-      <div v-if="!editMode" class="display-2 pb-6">Add task - "{{ name }}"</div>
+      <div v-if="editMode" class="display-2 pb-6">
+        {{ $t("tasks.editTask.titleEdit") }} - "{{ name }}"
+      </div>
+      <div v-if="!editMode" class="display-2 pb-6">
+        {{ $t("tasks.editTask.titleAdd") }} - "{{ name }}"
+      </div>
     </div>
     <v-card outlined :loading="loading">
       <div class="container">
@@ -14,7 +18,7 @@
             v-model="mode"
             :items="modes"
             item-value="value"
-            label="Task Mode"
+            :label="$t('tasks.editTask.taskMode')"
             outlined
           ></v-select>
           <v-row>
@@ -22,11 +26,11 @@
               <v-text-field
                 v-model="name"
                 :counter="128"
-                label="Name"
+                :label="$t('tasks.editTask.name')"
                 required
                 outlined
               ></v-text-field>
-              <div class="title">Member mode</div>
+              <div class="title">{{ $t("tasks.editTask.memberMode") }}</div>
               <v-row>
                 <v-col cols="12" md="6">
                   <v-radio-group
@@ -51,7 +55,7 @@
                     v-model="selectedMember"
                     :items="getHouseholdUsersAsItemList"
                     item-value="value"
-                    label="Assigned to"
+                    :label="$t('tasks.editTask.assigned')"
                     outlined
                     :disabled="iterating && mode != 'Single'"
                   ></v-select>
@@ -68,7 +72,9 @@
               ></IconChooser>
             </v-col>
           </v-row>
-          <div v-show="mode != 'On-Demand'" class="title">Time & Date</div>
+          <div v-show="mode != 'On-Demand'" class="title">
+            {{ $t("tasks.editTask.titleTime") }}
+          </div>
           <v-row>
             <v-col cols="12" lg="4" md="6">
               <v-menu
@@ -83,7 +89,7 @@
                   <v-text-field
                     v-show="mode != 'On-Demand'"
                     v-model="date"
-                    label="Choose your start day"
+                    :label="$t('tasks.editTask.lblStart')"
                     prepend-icon="event"
                     readonly
                     outlined
@@ -112,7 +118,7 @@
                   <v-text-field
                     v-show="mode != 'On-Demand'"
                     v-model="time"
-                    label="Choose your task time"
+                    :label="$t('tasks.editTask.lblTime')"
                     prepend-icon="access_time"
                     readonly
                     outlined
@@ -132,7 +138,7 @@
               <v-switch
                 v-show="mode != 'On-Demand'"
                 v-model="reminder"
-                label="Toggle Reminder"
+                :label="$t('tasks.editTask.lblReminder')"
               ></v-switch>
             </v-col>
             <v-col cols="12" lg="4" md="6">
@@ -141,7 +147,7 @@
                 v-model="chosenDays"
                 :items="days"
                 chips
-                label="Repeat on"
+                :label="$t('tasks.editTask.lblRepeatOn')"
                 multiple
                 outlined
               ></v-select>
@@ -151,7 +157,7 @@
                 v-show="mode == 'Repeating'"
                 v-model="repetitionEvery"
                 type="number"
-                label="Repeat every"
+                :label="$t('tasks.editTask.lblRepeatEvery')"
                 required
                 outlined
               ></v-text-field>
@@ -161,33 +167,37 @@
                 v-show="mode == 'Repeating'"
                 v-model="repetitionUnit"
                 :items="repetitionUnits"
-                label="Repetition unit"
+                :label="$t('tasks.editTask.lblRepeatUnit')"
                 outlined
               ></v-select>
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions style="text-align: right; display: block">
-          <v-btn large color="primary" @click="postChanges()">save</v-btn>
-          <v-btn large :to="{ name: 'Tasks' }">cancel</v-btn
+          <v-btn large color="primary" @click="postChanges()">{{
+            $t("commands.save")
+          }}</v-btn>
+          <v-btn large :to="{ name: 'Tasks' }">{{
+            $t("commands.cancel")
+          }}</v-btn
           ><v-divider class="mx-4" inset vertical></v-divider>
           <v-dialog v-model="deleteDialog" width="500">
             <template v-slot:activator="{ on }">
-              <v-btn large outlined color="error darken-2" v-on="on"
-                >delete</v-btn
-              >
+              <v-btn large outlined color="error darken-2" v-on="on">{{
+                $t("commands.delete")
+              }}</v-btn>
             </template>
             <v-card>
               <v-card-title class="headline" primary-title>
-                Do you really want to delete this task?
+                {{ $t("tasks.editTask.deleteDialog") }}
               </v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="error" text @click="deleteTask">
-                  delete
+                  {{ $t("commands.delete") }}
                 </v-btn>
                 <v-btn text @click="deleteDialog = false">
-                  cancel
+                  {{ $t("commands.cancel") }}
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -197,7 +207,9 @@
     </v-card>
     <v-snackbar v-model="snackbar">
       {{ snackText }}
-      <v-btn color="primary" text @click="snackbar = false">Close</v-btn>
+      <v-btn color="primary" text @click="snackbar = false">{{
+        $t("commands.close")
+      }}</v-btn>
     </v-snackbar>
   </v-container>
 </template>
@@ -227,15 +239,7 @@ export default {
     selectedIcon: 0,
     selectedMember: 0,
     date: new Date().toISOString().substr(0, 10),
-    days: [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ],
+    days: [],
     chosenDays: [],
     time: null,
     reminder: false,
@@ -255,6 +259,15 @@ export default {
   computed: {
     ...mapGetters(["getHouseholdUsersAsItemList"])
   },
+  created() {
+    this.days.push(this.$t("weekdays.mon"));
+    this.days.push(this.$t("weekdays.tue"));
+    this.days.push(this.$t("weekdays.wed"));
+    this.days.push(this.$t("weekdays.thu"));
+    this.days.push(this.$t("weekdays.fri"));
+    this.days.push(this.$t("weekdays.sat"));
+    this.days.push(this.$t("weekdays.sun"));
+  },
   mounted() {
     this.id = this.$route.params.id;
     this.editMode = !!this.$route.params.id;
@@ -273,7 +286,7 @@ export default {
           if (data.data.length == 0 || data.data.length > 1) {
             this.$store.dispatch(
               "showSnackbar",
-              "Error while fetching tasks. Multiple or no task received."
+              this.$t("tasks.editTask.errors.number")
             );
           }
           let task = data.data[0];
@@ -296,14 +309,14 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Error while fetching settings data. Please try again later."
+            this.$t("tasks.editTask.errors.settings")
           );
           console.error(data);
         }
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          "Error while fetching settings data. Please try again later."
+          this.$t("tasks.editTask.errors.settingsErr")
         );
         console.error(err);
       }
@@ -366,17 +379,17 @@ export default {
         reminder = false;
       }
       if (name.length == 0) {
-        this.snackText = "You need to specify a name.";
+        this.snackText = this.$t("tasks.editTask.messages.name");
         this.snackbar = true;
         return;
       }
       if ((!repetitionEvery || repetitionEvery == 0) && mode == 1) {
-        this.snackText = "You need to specify a valid intervall.";
+        this.snackText = this.$t("tasks.editTask.messages.intervall");
         this.snackbar = true;
         return;
       }
       if (repetitionDays.length == 0 && mode == 1) {
-        this.snackText = "You need to specify at least one weekday.";
+        this.snackText = this.$t("tasks.editTask.messages.weekday");
         this.snackbar = true;
         return;
       }
@@ -417,12 +430,12 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              "Successfully edited the task."
+              this.$t("tasks.editTask.messages.success")
             );
           } else {
             this.$store.dispatch(
               "showSnackbar",
-              "Error while editing the task."
+              this.$t("tasks.editTask.errors.edit")
             );
           }
         } else {
@@ -442,12 +455,12 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              "Successfully added the new task."
+              this.$t("tasks.editTask.messages.success")
             );
           } else {
             this.$store.dispatch(
               "showSnackbar",
-              "Error while adding the new task."
+              this.$t("tasks.editTask.errors.add")
             );
             console.error(data);
           }
@@ -455,7 +468,7 @@ export default {
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          "Error while connecting to the server. Please try again later."
+          this.$t("tasks.editTask.errors.addErr")
         );
         console.log(err);
       }
@@ -479,15 +492,21 @@ export default {
           id
         });
         if (data.success) {
-          this.$store.dispatch("showSnackbar", "Deleted task.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("tasks.editTask.messages.delete")
+          );
         } else {
-          this.$store.dispatch("showSnackbar", "Error while deleting task.");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("tasks.editTask.errors.delete")
+          );
           console.error(data);
         }
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          "Error while connecting to the server. Please try again later."
+          this.$t("tasks.editTask.errors.deleteErr")
         );
       }
       this.$router.push({ name: "Tasks" });

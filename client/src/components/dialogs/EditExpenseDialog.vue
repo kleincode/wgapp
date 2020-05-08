@@ -9,7 +9,7 @@
       <v-card :loading="loading">
         <v-card-title>
           <span class="headline">{{
-            editMode ? "Edit expense" : "New expense"
+            editMode ? $t("finances.expense.edit") : $t("finances.expense.new")
           }}</span>
         </v-card-title>
 
@@ -20,7 +20,7 @@
                 <v-text-field
                   ref="description"
                   v-model="value.description"
-                  label="Description"
+                  :label="$t('finances.expense.desc')"
                   outlined
                   counter="160"
                   maxlength="160"
@@ -32,7 +32,7 @@
                 <v-text-field
                   ref="amount"
                   v-model="value.amount"
-                  label="Amount"
+                  :label="$t('finances.amount')"
                   outlined
                   type="number"
                   step=".01"
@@ -49,14 +49,16 @@
           <v-checkbox
             v-if="!editMode"
             v-model="addReceipt"
-            label="Add receipt"
+            :label="$t('finances.expense.addRec')"
             class="ma-0"
           ></v-checkbox>
           <v-spacer></v-spacer>
-          <v-btn color="red" text @click="reset">Cancel</v-btn>
-          <v-btn color="green" text type="submit" :disabled="!formValid"
-            >Save</v-btn
-          >
+          <v-btn color="red" text @click="reset">{{
+            $t("commands.cancel")
+          }}</v-btn>
+          <v-btn color="green" text type="submit" :disabled="!formValid">{{
+            $t("commands.save")
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -78,26 +80,33 @@ export default {
   data: () => ({
     dialogShown: false,
     formValid: null,
-    descriptionRules: [
-      v => !!v || "Please provide an expense description!",
-      v => (!!v && v.length <= 160) || "Description is too long."
-    ],
-    amountRules: [
-      v => !!v || "Please provide an amount!",
-      v => {
-        let num = parseFloat(v);
-        if (isNaN(num)) return "Please provide a valid amount.";
-        else if (num < 0) return "Negative amounts are not permitted";
-        else if (Math.abs(num) < 0.01)
-          return "Please provide a non-zero number.";
-        else return true;
-      }
-    ],
     loading: false,
     editMode: false,
     editId: null,
     addReceipt: false
   }),
+  computed: {
+    descriptionRules() {
+      return [
+        v => !!v || this.$t("finances.editMon.rules.name"),
+        v =>
+          (!!v && v.length <= 160) || this.$t("finances.editMon.rules.length")
+      ];
+    },
+    amountRules() {
+      return [
+        v => !!v || this.$t("finances.editMon.rules.amount"),
+        v => {
+          let num = parseFloat(v);
+          if (isNaN(num)) return this.$t("finances.editMon.rules.validAm");
+          else if (num < 0) return this.$t("finances.editMon.rules.negative");
+          else if (Math.abs(num) < 0.01)
+            return this.$t("finances.editMon.rules.nonzero");
+          else return true;
+        }
+      ];
+    }
+  },
   methods: {
     updateValue(val) {
       this.$emit("input", val || this.value);
@@ -129,8 +138,8 @@ export default {
           this.$store.dispatch(
             "showSnackbar",
             this.editMode
-              ? "Expense updated successfully."
-              : "Expense added successfully."
+              ? this.$t("finances.expense.updated")
+              : this.$t("finances.expense.added")
           );
           // Item committed, open receipt dialog with new item data if 'add receipt' was checked
           this.$emit(
@@ -141,10 +150,7 @@ export default {
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
         this.loading = false;
-        this.$store.dispatch(
-          "showSnackbar",
-          "Communication error. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("general.comErr"));
         console.error(err);
       }
     },

@@ -7,7 +7,9 @@
       <v-card :loading="loading">
         <v-card-title>
           <span class="headline">{{
-            editMode ? "Edit monthly charge" : "New monthly charge"
+            editMode
+              ? $t("finances.editMon.titleEdit")
+              : $t("finances.editMon.titleNew")
           }}</span>
         </v-card-title>
 
@@ -29,7 +31,7 @@
                 <v-text-field
                   ref="name"
                   v-model="value.name"
-                  label="Name"
+                  :label="$t('finances.name')"
                   outlined
                   counter="160"
                   maxlength="160"
@@ -39,7 +41,7 @@
                 <v-text-field
                   ref="amount"
                   v-model="value.amount"
-                  label="Amount"
+                  :label="$t('finances.amount')"
                   outlined
                   type="number"
                   step=".01"
@@ -50,23 +52,17 @@
                 <v-switch
                   v-model="value.all"
                   class="mt-n4"
-                  label="Payed by all"
+                  :label="$t('finances.payedbyall')"
                 ></v-switch>
                 <v-select
                   v-model="value.uid"
                   outlined
                   :items="getHouseholdUsersAsItemList"
                   item-value="value"
-                  label="Payed by"
+                  :label="$t('finances.payedby')"
                   :disabled="value.all"
                   :rules="
-                    !value.all
-                      ? [
-                          v =>
-                            !!v ||
-                            'Specify a paying member or select payed by all!'
-                        ]
-                      : []
+                    !value.all ? [v => !!v || $t('finances.editMon.msg')] : []
                   "
                 >
                 </v-select>
@@ -77,10 +73,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="reset">Cancel</v-btn>
-          <v-btn color="primary" text type="submit" :disabled="!formValid"
-            >Save</v-btn
-          >
+          <v-btn text @click="reset">{{ $t("commands.cancel") }}</v-btn>
+          <v-btn color="primary" text type="submit" :disabled="!formValid">{{
+            $t("commands.save")
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -109,28 +105,32 @@ export default {
   data: () => ({
     dialogShown: false,
     formValid: null,
-    nameRules: [
-      v => !!v || "Please provide an charge name!",
-      v => (!!v && v.length <= 160) || "name is too long."
-    ],
-    amountRules: [
-      v => !!v || "Please provide an amount!",
-      v => {
-        let num = parseFloat(v);
-        if (isNaN(num)) return "Please provide a valid amount.";
-        else if (num < 0) return "Negative amounts are not permitted";
-        else if (Math.abs(num) < 0.01)
-          return "Please provide a non-zero number.";
-        else return true;
-      }
-    ],
-
     loading: false,
     editMode: false,
     editId: null,
     selectedIcon: 0
   }),
   computed: {
+    nameRules() {
+      return [
+        v => !!v || this.$t("finances.editMon.rules.name"),
+        v =>
+          (!!v && v.length <= 160) || this.$t("finances.editMon.rules.length")
+      ];
+    },
+    amountRules() {
+      return [
+        v => !!v || this.$t("finances.editMon.rules.amount"),
+        v => {
+          let num = parseFloat(v);
+          if (isNaN(num)) return this.$t("finances.editMon.rules.validAm");
+          else if (num < 0) return this.$t("finances.editMon.rules.negative");
+          else if (Math.abs(num) < 0.01)
+            return this.$t("finances.editMon.rules.nonzero");
+          else return true;
+        }
+      ];
+    },
     ...mapGetters(["getHouseholdUsersAsItemList"])
   },
   methods: {
@@ -174,18 +174,15 @@ export default {
           this.$store.dispatch(
             "showSnackbar",
             this.editMode
-              ? "Monthly charge updated successfully."
-              : "Monthly charge added successfully."
+              ? this.$t("finances.editMon.updated")
+              : this.$t("finances.editMon.added")
           );
           this.$emit("committed");
           this.reset();
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
         this.loading = false;
-        this.$store.dispatch(
-          "showSnackbar",
-          "Communication error. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("general.comErr"));
         console.error(err);
       }
     },

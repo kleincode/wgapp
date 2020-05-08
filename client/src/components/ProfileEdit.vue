@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="headline">Edit profile</h1>
+    <h1 class="headline">{{ $t("profile.edit.title") }}</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4" class="text-center">
         <v-hover v-slot:default="{ hover }">
@@ -31,30 +31,32 @@
           </v-avatar>
         </v-hover>
         <br />
-        <v-btn text @click="deleteProfilePicture()">remove</v-btn>
+        <v-btn text @click="deleteProfilePicture()">{{
+          $t("commands.remove")
+        }}</v-btn>
       </v-col>
       <v-col cols="12" md="6" lg="8" class="pa-3">
         <v-text-field
           v-model="firstName"
-          label="First name"
+          :label="$t('login.first')"
           outlined
         ></v-text-field>
         <v-text-field
           v-model="lastName"
-          label="Last Name"
+          :label="$t('login.last')"
           outlined
         ></v-text-field>
         <v-text-field
           v-model="nickname"
-          label="Nickname"
+          :label="$t('profile.nick')"
           outlined
-          hint="Will be used as the displayed name"
+          :hint="$t('profile.edit.nickHint')"
         ></v-text-field>
         <v-text-field
           v-model="email"
           outlined
           :rules="emailRules"
-          label="E-mail"
+          :label="$t('login.mail')"
           required
         ></v-text-field>
         <v-text-field
@@ -64,7 +66,7 @@
           :rules="[passwordRules.min]"
           :type="showPassword ? 'text' : 'password'"
           name="input-10-2"
-          label="Old Password"
+          :label="$t('profile.edit.old')"
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-text-field
@@ -74,7 +76,7 @@
           :rules="[passwordRules.required, passwordRules.min]"
           :type="showPassword1 ? 'text' : 'password'"
           name="input-10-2"
-          label="New Password"
+          :label="$t('profile.edit.new')"
           autocomplete="new-password"
           @click:append="showPassword1 = !showPassword1"
         ></v-text-field>
@@ -85,7 +87,7 @@
           :rules="[passwordRules.required, passwordRules.min]"
           :type="showPassword2 ? 'text' : 'password'"
           name="input-10-2"
-          label="Repeat New Password"
+          :label="$t('profile.edit.rep')"
           autocomplete="new-password"
           @click:append="showPassword2 = !showPassword2"
         ></v-text-field>

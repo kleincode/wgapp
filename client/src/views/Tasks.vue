@@ -9,7 +9,7 @@
           :loading="loading"
           style="height: 100%"
         >
-          <h2 class="title pt-8">Today's Tasks</h2>
+          <h2 class="title pt-8">{{ $t("tasks.todaystasks") }}</h2>
           <div class="container">
             <v-row justify="center">
               <v-col cols="12" md="10">
@@ -19,7 +19,7 @@
                   :class="getTodaysTasks[0].missed ? 'red' : 'accent'"
                   :elevation="6"
                 >
-                  <div class="overline">DUE TODAY</div>
+                  <div class="overline">{{ $t("tasks.duetoday") }}</div>
                   <v-icon style="font-size: 10em" x-large>
                     {{ getIcon(getTodaysTasks[0].icon) }}
                   </v-icon>
@@ -61,15 +61,17 @@
                 </v-card>
                 <v-card
                   v-else
-                  class="main-task text-center secondary"
+                  class="main-task text-center secondary lighten-2"
                   :elevation="6"
                 >
-                  <div class="overline text--disabled">DUE TODAY</div>
+                  <div class="overline text--disabled">
+                    {{ $t("tasks.duetoday") }}
+                  </div>
                   <v-icon class="text--disabled" style="font-size: 10em" x-large
                     >bathtub</v-icon
                   >
                   <div class="font-regular pt-4 display-1 text--disabled">
-                    Just chillin'
+                    {{ $t("tasks.chill") }}
                   </div>
                   <div class="caption pt-2 text--disabled">--:--</div>
                   <v-divider class="mt-4 mb-4"></v-divider>
@@ -82,7 +84,7 @@
           </div>
 
           <v-divider class="mb-4"></v-divider>
-          <div class="overline">other:</div>
+          <div class="overline">{{ $t("tasks.other") }}</div>
           <v-list avatar class="text-left pl-4">
             <div v-if="getTodaysTasks.length > 1">
               <v-list-item
@@ -143,9 +145,9 @@
                 <v-icon class="text--disabled">hourglass_empty</v-icon>
               </v-list-item-avatar>
               <v-list-item-content>
-                <v-list-item-title class="text--disabled"
-                  >Nothing to do</v-list-item-title
-                >
+                <v-list-item-title class="text--disabled">{{
+                  $t("tasks.nothing")
+                }}</v-list-item-title>
                 <v-list-item-subtitle>
                   <div class="overline text--disabled">--:--</div>
                 </v-list-item-subtitle>
@@ -187,9 +189,9 @@
       </v-col>
     </v-row>
     <v-snackbar v-model="taskCheckSnack">
-      Checked {{ checkedTask ? checkedTask.name : "" }}
+      {{ $t("tasks.checked") }} {{ checkedTask ? checkedTask.name : "" }}
       <v-btn color="primary" text @click="undoCheckTask">
-        undo
+        {{ $t("commands.undo") }}
       </v-btn>
     </v-snackbar>
   </v-container>
@@ -250,7 +252,7 @@ export default {
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          err || "Could not fetch tasks. Please try again later."
+          this.$i18n.t("tasks.errors.fetchTask")
         );
         console.warn(err);
       }
@@ -273,7 +275,7 @@ export default {
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          err || "Could not check task. Please try again later."
+          this.$i18n.t("tasks.errors.checkTask")
         );
         console.warn(err);
       }
@@ -290,7 +292,7 @@ export default {
         });
         await this.fetchTasks();
       } catch (err) {
-        this.$store.dispatch("showSnackbar", err || "Undo failed :/");
+        this.$store.dispatch("showSnackbar", this.$i18n.t("tasks.errors.undo"));
         console.warn(err);
       }
       this.checkedTask = null;
@@ -302,15 +304,16 @@ export default {
         await this.$store.dispatch("tasks/triggerReminder", task);
         this.$store.dispatch(
           "showSnackbar",
-          "You've reminded " +
+          this.$i18n.t("tasks.reminder.part1") +
             this.getUserName(task.assigned) +
-            " of " +
-            task.name
+            this.$i18n.t("tasks.reminder.part2") +
+            task.name +
+            this.$i18n.t("tasks.reminder.part3")
         );
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          err || "Error triggering the reminder."
+          this.$i18n.t("tasks.errors.reminder")
         );
       }
       this.loading = false;

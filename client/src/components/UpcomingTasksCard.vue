@@ -3,7 +3,7 @@
     <v-card-title>
       <v-row>
         <v-col cols="9" md="10" lg="10">
-          <h2 class="title">Upcoming Tasks</h2>
+          <h2 class="title">{{ $t("tasks.upcom.title") }}</h2>
         </v-col>
         <v-col class="text-right" cols="3" md="2" lg="2">
           <v-btn fab class="mx-2 primary" :to="{ name: 'AddTask' }">
@@ -14,7 +14,7 @@
     </v-card-title>
     <v-card-text>
       <!--TIMED TASKS -->
-      <div class="title">Timed tasks</div>
+      <div class="title">{{ $t("tasks.upcom.timed") }}</div>
       <v-list v-if="timedTasks.length > 0">
         <v-list-item
           v-for="(task, i) in timedTasks"
@@ -33,8 +33,8 @@
               </template>
               <span>{{
                 task.mode == 1
-                  ? "This is a repeating task"
-                  : "This is a one-time task"
+                  ? $t("tasks.upcom.repDesc")
+                  : $t("tasks.upcom.oneDesc")
               }}</span>
             </v-tooltip>
           </v-list-item-avatar>
@@ -89,11 +89,11 @@
         <v-icon style="font-size: 10em" class="text--disabled"
           >golf_course</v-icon
         >
-        <br />Congratulations, you've got nothing to do!
+        <br />{{ $t("tasks.upcom.emptyRep") }}
       </div>
 
       <!--ON DEMAND TASKS -->
-      <div class="title">On-Demand Tasks</div>
+      <div class="title">{{ $t("tasks.upcom.ondem") }}</div>
       <v-list v-if="onDemandTasks.length > 0">
         <v-list-item
           v-for="(task, i) in onDemandTasks"
@@ -108,7 +108,7 @@
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
               <div class="overline pl-2 pt-1">
-                - last: {{ formatLastExecution(task) }}
+                - {{ $t("tasks.upcom.last") }}: {{ formatLastExecution(task) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -154,7 +154,7 @@
         <v-icon style="font-size: 10em" class="text--disabled"
           >access_alarm</v-icon
         >
-        <br />Are you sure there's really nothing you should do?
+        <br />{{ $t("tasks.upcom.emptyOnDem") }}
       </div>
     </v-card-text>
   </v-card>
@@ -188,7 +188,7 @@ export default {
   },
   methods: {
     formatLastExecution(task) {
-      if (task.lastExecution.toString() == "Invalid Date") {
+      if (task.lastExecution.toString() == this.$t("tasks.upcom.invalid")) {
         return "none";
       } else {
         return formatDateString(task.lastExecution);

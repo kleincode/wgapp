@@ -1,17 +1,17 @@
 <template>
   <v-card flat tile>
     <v-card-text>
-      <div class="headline">Integrations</div>
+      <div class="display-1 mb-2">{{ $t("settings.integrations.title") }}</div>
       <!-- CALENDAR -->
-      <div class="display-1 mb-2">Calendar</div>
+      <div class="title mb-2">
+        {{ $t("settings.integrations.calendar.title") }}
+      </div>
       <p>
-        Keep track of your shared activites and duties using the Google Calendar
-        API. If enabled, the calendar can be reached via the new link in your
-        navigation drawer.
+        {{ $t("settings.integrations.calendar.exp") }}
       </p>
       <v-switch
         v-model="calendarEnabled"
-        label="Enable Google Calendar integration"
+        :label="$t('settings.integrations.calendar.lbl')"
       ></v-switch>
       <div
         :style="{
@@ -23,23 +23,25 @@
           color="primary"
           :disabled="!calendarEnabled"
           @click="calendarSignIn"
-          >Sign in</v-btn
+          >{{ $t("commands.signing") }}</v-btn
         >
         <v-btn
           v-if="signInState == 1"
           color="red"
           :disabled="!calendarEnabled"
           @click="calendarSignOut"
-          >Sign out</v-btn
+          >{{ $t("commands.signout") }}</v-btn
         >
         <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
-          <div class="overline">Status:</div>
+          <div class="overline">
+            {{ $t("settings.integrations.calendar.status") }}:
+          </div>
           {{ signInDescription }}
         </div>
       </div>
       <!-- PHILIPS HUE -->
-      <div class="title pt-6">Philipps Hue</div>
-      Coming soon (or maybe not so soon).
+      <div class="title pt-6">{{ $t("settings.integrations.hue.title") }}</div>
+      {{ $t("settings.integrations.hue.exp") }}
     </v-card-text>
   </v-card>
 </template>

@@ -1,4 +1,5 @@
 import zipcelx from "zipcelx";
+import i18n from "@/i18n";
 
 function exportXLSX(lastBill, max, cur, loc, jsonData) {
   console.log(jsonData);
@@ -8,11 +9,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
       data: [
         [
           {
-            value: "Compensation",
-            type: "string"
-          },
-          {
-            value: "Payments",
+            value: i18n.t("finances.compPay"),
             type: "string"
           }
         ],
@@ -22,7 +19,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
             type: "string"
           },
           {
-            value: "until",
+            value: i18n.t("finances.export.until"),
             type: "string"
           },
           {
@@ -33,14 +30,14 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
         [],
         [
           {
-            value: "Expenses",
+            value: i18n.t("finances.exp"),
             type: "string"
           }
         ],
         [
           {},
           {
-            value: "Total",
+            value: i18n.t("finances.billman.tot"),
             type: "string"
           },
           {
@@ -51,7 +48,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
         [
           { value: "", type: "string" },
           {
-            value: "Per Person",
+            value: i18n.t("finances.billman.pp"),
             type: "string"
           },
           {
@@ -66,7 +63,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
     config.sheet.data.push([
       { value: "", type: "string" },
       {
-        value: "Monthly total",
+        value: i18n.t("finances.billman.monTot"),
         type: "string"
       },
       {
@@ -78,7 +75,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
   config.sheet.data.push([]);
   config.sheet.data.push([
     {
-      value: "Member Expenses",
+      value: i18n.t("finances.memberExp"),
       type: "string"
     }
   ]);
@@ -99,7 +96,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
   if (jsonData.memberDebts != undefined) {
     config.sheet.data.push([
       {
-        value: "Member Debts",
+        value: i18n.t("finances.export.debts"),
         type: "string"
       }
     ]);
@@ -125,7 +122,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
 
   config.sheet.data.push([
     {
-      value: "Resulting Compensation Payments",
+      value: i18n.t("finances.export.res"),
       type: "string"
     }
   ]);
@@ -135,15 +132,15 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
       type: "string"
     },
     {
-      value: "Paying",
+      value: i18n.t("finances.billman.pay"),
       type: "string"
     },
     {
-      value: "Receiving",
+      value: i18n.t("finances.billman.rec"),
       type: "string"
     },
     {
-      value: "Amount",
+      value: i18n.t("finances.billman.am"),
       type: "string"
     }
   ]);
@@ -168,8 +165,13 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
       }
     ]);
   });
-
-  console.log(config);
+  config.sheet.data.push([]);
+  config.sheet.data.push([
+    {
+      value: "Jeff - Organizer",
+      type: "string"
+    }
+  ]);
   zipcelx(config);
 }
 

@@ -1,0 +1,11 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "calendar": "Kalender",
+    "shopping": "Einkaufsliste",
+    "finances": "Finanzen",
+    "tasks": "Aufgaben",
+    "household": "Haushalt",
+    "settings": "Einstellungen"
+  }
+}

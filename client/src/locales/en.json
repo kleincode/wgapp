@@ -1,0 +1,558 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "shopping": "Shopping",
+    "finances": "Finances",
+    "tasks": "Tasks",
+    "household": "Manage Household",
+    "settings": "Settings"
+  },
+  "general": {
+    "member": "Member",
+    "members": "Members",
+    "household": "household",
+    "comErr": "Communication error. Please try again later."
+  },
+  "commands": {
+    "close": "Close",
+    "refresh": "Refresh",
+    "undo": "Undo",
+    "save": "Save",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "check": "Check",
+    "signin": "Sign in",
+    "signout": "Sign out",
+    "loading": "Loading",
+    "ok": "Ok",
+    "continue": "Continnue",
+    "next": "Next",
+    "finish": "Finish",
+    "back": "Back",
+    "remove": "Remove",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "upload": "Upload"
+  },
+  "app": {
+    "profile": "My profile",
+    "footer": "Made in self-isolation - 2020",
+    "update": "A new update was installed. Please refresh."
+  },
+  "weekdays": {
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday"
+  },
+  "time": {
+    "weeks": "Weeks",
+    "months": "Months"
+  },
+  "tasks": {
+    "todaystasks": "Today's tasks",
+    "duetoday": "DUE TODAY",
+    "chill": "Just chillin'",
+    "other": "other",
+    "nothing": "Nothing to do",
+    "checked": "Checked",
+    "reminder": {
+      "part1": "You've reminded ",
+      "part2": " of ",
+      "part3": ""
+    },
+    "errors": {
+      "fetchTask": "Could not fetch tasks. Please try again later.",
+      "checkTask": "Could not check task. Please try again later.",
+      "undo": "Undo failed :/",
+      "reminder": "Error triggering the reminder."
+    },
+    "editTask": {
+      "titleEdit": "Edit task",
+      "titleAdd": "Add task",
+      "taskMode": "Task Mode",
+      "name": "Name",
+      "memberMode": "Member mode",
+      "assigned": "Assigned to",
+      "titleTime": "Time & Date",
+      "lblStart": "Choose your start day",
+      "lblTime": "Choose your task time",
+      "lblReminder": "Toggle Reminder",
+      "lblRepeatOn": "Repeat on",
+      "lblRepeatEvery": "Repeat every",
+      "lblRepeatUnit": "Repetition unit",
+      "deleteDialog": "Do you really want to delete this task?",
+      "errors": {
+        "number": "Error while fetching tasks. Multiple or no task received.",
+        "settings": "Couldn't fetch settings data. Please try again later.",
+        "settingsErr": "Error while fetching settings data. Please try again later.",
+        "add": "Couldn't add new task. Please try again later.",
+        "addErr": "Error while connecting to the server. Please try again later.",
+        "delete": "Couldn't delete task. Please try again later",
+        "deleteErr": "Error while connecting to the server. Please try again later.",
+        "edit": "Couldn't delete the task."
+      },
+      "messages": {
+        "name": "You need to specify a name.",
+        "intervall": "You need to specify a valid intervall.",
+        "weekday": "You need to specify at least one weekday.",
+        "success": "Successfully edited the task.",
+        "delete": "Deleted task."
+      }
+    },
+    "upcom": {
+      "title": "Upcoming tasks",
+      "timed": "Timed tasks",
+      "ondem": "On-Demand Tasks",
+      "repDesc": "This is a repeating task",
+      "oneDesc": "This is a one-time task",
+      "emptyRep": "Congratulations, you've got nothing to do!",
+      "last": "last",
+      "emptyOnDem": "Are you sure there's really nothing you should do?",
+      "invalid": "Invalid Date"
+    },
+    "log": {
+      "title": "Task log",
+      "empty": "You really need to start getting stuff done!"
+    },
+    "rep": {
+      "title": "Manage repeating tasks",
+      "empty": "This demoralizing daily routine, right?"
+    }
+  },
+  "shopping": {
+    "title": "Shopping",
+    "hLists": "Lists",
+    "sync": "Synchronize shopping lists",
+    "emptyList": "Go make a list, shopping is fun!",
+    "emptyShopping": "Happy shopping!",
+    "newItem": "New Item",
+    "remaining": "Remaining",
+    "completed": "Completed",
+    "noselect": "No list selected",
+    "syncErr": "Sync failed: ",
+    "expense": {
+      "transfer": "Transfer to finances",
+      "add": "Add expense",
+      "desc": "Add a new expense corresponding to this shopping list.",
+      "success": "Successfully added new shopping expense.",
+      "fail": "Couldn't add expense to database. Please try again later.",
+      "err": "Error during adding expense to database. Please try again later."
+    },
+    "list": {
+      "lblCreate": "Create shopping list",
+      "edit": "Edit shopping list",
+      "new": "New shopping list",
+      "msgName": "Please provide a list name!",
+      "msgLength": "List name is too long.",
+      "fail": "Adding list failed."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "introTitle": "We're not yet here!",
+    "introText": "Move on with your tutorial of click 'End tutorial' at the bottom.",
+    "general": {
+      "title": "General",
+      "appearance": {
+        "title": "Appearance",
+        "exp": "Vanilla or chocolate? That's a question every worthy soldier has to answer for themselves. Just be careful: The blinding light might daze you.",
+        "lblDark": "Dark design"
+      },
+      "lang": {
+        "title": "Language",
+        "exp": "We currently support English and German. If you want to help us translate Jeff into your you're very welcome to do so. Just contact us!",
+        "lbl": "Select language"
+      },
+      "locale": {
+        "title": "Locale",
+        "exp": "The locale settings affect the way dates, times, and currencies are displayed.",
+        "system": "Use system locale ",
+        "custom": "Custom locale",
+        "customHint": "A locale can include a language only (like en) or a specific country (like en-US)",
+        "desc": "Note that the currency setting only changes the symbol used for displaying money amounts. No conversion is applied. If your household is an international conglomerate, we apologize for the inconvenience caused by this inadequacy.",
+        "cur":"Currency",
+        "sample": "Sample"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "exp": "Notifications remind you of important upcoming tasks.",
+        "controller": [
+          "Your system does not support push notifications.",
+          "Enabling push notifications failed.",
+          "The permission to send push notifications was denied on your system. Please check your website settings and allow them if you want to use this feature."
+        ]
+      },
+      "intro": {
+        "title": "Restart Introduction",
+        "exp": "If you missed something in my introduction just restart it right here.",
+        "lbl": "Restart introduction"
+      }
+    },
+    "dashboard": {
+      "clock": {
+        "title": "Clock Widget",
+        "exp": "A revolutionary time-telling device. Follows the laws of special and general relativity.",
+        "lblToggle": "Enable clock widget",
+        "note": "Note: ",
+        "noteText": "The clock widget displays time according to your ",
+        "noteLink": "locale settings"
+      },
+      "weather": {
+        "title": "Weather Widget",
+        "exp": "Provides you with the latest weather data using the free",
+        "lblToggle": "Enable weather widget",
+        "title2": "API call settings",
+        "exp2": "Please sign up for an API key at",
+        "exp3": "or freeload one from your roommates.",
+        "key": "API key",
+        "zip": "ZIP code",
+        "country": "Country code",
+        "open": "Open Weather API:",
+        "unit": "Temperature unit"
+      },
+      "tasks": {
+        "title": "Tasks Widget",
+        "exp": "This widget makes sure things are getting done in your home. No one ever dared to question its authority.",
+        "lblToggle": "Enable tasks widget"
+      },
+      "finances": {
+        "title": "Finances Widget",
+        "exp": "Never lose track of your household expenses so not a single penny will go missing.",
+        "lblToggle": "Enable finances widget"
+      },
+      "disturb": {
+        "title": "Do Not Disturb Widget",
+        "exp": "You want to study or just be left alone for a while? When you activate this widget you can see if somebody dont want to be disturbed. Just activate the do not disturb mode with click of a button right from the widget.",
+        "lblToggle": "Enable do not disturb widget"
+      },
+      "home": {
+        "title": "Home Widget",
+        "exp": "You want to let everybody know that you're home? Just hit the bell in the widget and everybody will be notified.",
+        "lblToggle": "Enable home widget"
+      }
+    },
+    "integrations": {
+      "title": "Integrations",
+      "calendar": {
+        "title": "Calendar",
+        "exp": "Keep track of your shared activites and duties using the Google Calendar API. If enabled, the calendar can be reached via the new link in your navigation drawer.",
+        "lbl": "Enable Google Calendar integration",
+        "status": "Status"
+      },
+      "hue": {
+        "title": "Philipps Hue",
+        "exp": "Coming soon (or maybe not so soon)."
+      }
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "username",
+    "nick": "Nickname",
+    "mail": "E-Mail",
+    "password": "password",
+    "expenses": "Latest expenses",
+    "noexpenses": "No expenses",
+    "monexpenses": "Monthly charges",
+    "nomonexpenses": "No monthly charges",
+    "errors": {
+      "users": "Couldn't fetch user expenses.",
+      "usersErr": "Error while fetching user expenses.",
+      "mon": "Couldn't fetch monthly data. Please try again later.",
+      "monErr": "Error during fetching monthly data. Please try again later."
+    },
+    "edit": {
+      "title": "Edit profile",
+      "nickHint": "Will be used as the displayed name",
+      "old": "Old Password",
+      "new": "New Password",
+      "rep": "Repeat new password"
+    },
+    "upload": {
+      "title": "Upload Profile Picture",
+      "place": "Upload your profile picture",
+      "hintImage": "Please specify an image",
+      "hintCompress": "Error while compressing the image.",
+      "upload": "Profile picture uploaded",
+      "upErr": "Error while uploading profile picture."
+    }
+  },
+  "login": {
+    "welcome": "Welcome!",
+    "login": "Login",
+    "register": "Register",
+    "mail": "E-mail",
+    "first": "First name",
+    "last": "Last name",
+    "password": "Password",
+    "rep": "Repeat password",
+    "messages": {
+      "required": "This field is required!",
+      "mail1": "E-mail is required!",
+      "mail2": "E-mail must be valid!",
+      "password1": "Password is required",
+      "password2": "Password must be at least 8 characters.",
+      "input": "Please check your input.",
+      "match": "Your passwords do not match. Please try again."
+    },
+    "errors": {
+      "register": "Error registering. Please try again."
+    }
+  },
+  "finances": {
+    "title": "Finances",
+    "lblSpan": "Choose time span",
+    "memberExp": "Member Expenses",
+    "exp": "Expenses",
+    "moncharge": "Monthly Charges",
+    "monchargeExp": " Monthly charges are billed at the first day of every month.",
+    "payedby": "payed by",
+    "overview": "Overview Expenses",
+    "editMonBud": "Edit monthly budget",
+    "name": "Name",
+    "amount": "Amount",
+    "payedbyall": "Payed by all",
+    "curUsed": "currently used",
+    "curTarTotal": "current target total",
+    "compPay": "Compensation Payments",
+    "compPayExp": "Calculate compensation payments for all member expenses since the last billing.",
+    "lastBill": "last bill",
+    "openBill": "Open Bill Manager",
+    "memberTrend": "Member Trend Expenses",
+    "confirmDelete": "Are you sure you want to delete",
+    "billman": {
+      "title": "Bill Manager",
+      "confirmFinish": "Are you sure you want to finish these payments? You can't undo this action.",
+      "noexp": "No new expenses available",
+      "newBill": "New Bill",
+      "monTot": "Monthly total",
+      "tot": "Total",
+      "pp": "per person",
+      "pay": "Paying",
+      "rec": "Receives",
+      "am": "Amount",
+      "includeMon": "Include monthly charge",
+      "save": "Save payments",
+      "history": "Bill history",
+      "from": "From",
+      "to": "To",
+      "export": "Export",
+      "errors": {
+        "history": "Couldn't fetch bill history. Please try again later.",
+        "historyErr": "Error while fetching bill history. Please try again later."
+      }
+    },
+    "receipt": {
+      "title": "Receipt",
+      "load": "Loading receipt...",
+      "noRec": "No receipt uploaded yet",
+      "upload": "Upload your receipt",
+      "lbl": "Receipt",
+      "del": "Delete receipt",
+      "imgHint": "Please specify an image",
+      "compressHint": "Error while compressing the image.",
+      "upErr": "Error while uploading receipt.",
+      "successUpload": "Receipt uploaded",
+      "successDel": "Receipt deleted.",
+      "delFail": "Could not delete receipt.",
+      "delErr": "Error while deleting receipt."
+    },
+    "editMon": {
+      "titleEdit": "Edit monthly charge",
+      "titleNew": "New monthly charge",
+      "msg": "Specify a paying member or select payed by all!",
+      "rules": {
+        "name": "Please provide an charge name!",
+        "length": "name is too long.",
+        "amount": "Please provide an amount!",
+        "validAm": "Please provide a valid amount.",
+        "negative": "Negative amounts are not permitted",
+        "nonzero": "Please provide a non-zero number."
+      },
+      "updated": "Monthly charge updated successfully.",
+      "added": "Monthly charge added successfully."
+    },
+    "expense": {
+      "edit": "Edit expense",
+      "new": "New expense",
+      "desc": "Description",
+      "addRec": "Add receipt",
+      "added": "Expense added successfully.",
+      "updated":"Expense updated successfully."
+    },
+    "export": {
+      "until": " until ",
+      "debts": "Member Debts",
+      "res": "Resulting Compensation Payments"
+    }
+  },
+  "dashboard": {
+    "householdTitle": "You're not in a household yet.",
+    "householdMsg": "Please join a household or create your own.",
+    "join": "join household",
+    "create": "create household",
+    "message": {
+      "lateNight": [
+        "Any late night thoughts, ",
+        "How's the party going "
+      ],
+      "morning": [
+        "Morning sunshine!",
+        "Wakey wakey rise n’ shine!",
+        "Rise and shine, it's time for wine!",
+        "Have a great day, ",
+        "Good Morning, "
+      ],
+      "noon": [
+        "Hi, ",
+        "What's up, ",
+        "How you doin?"
+      ],
+      "afternoon": [
+        "Hi, ",
+        "Nice to see you, ",
+        "How was your day, "
+      ],
+      "evening": [
+        "Netflix and chill?",
+        "Good evening, ",
+        "How was your day, "
+      ],
+      "night": [
+        "Good Night, ",
+        "Go get your beauty sleep, ",
+        "Sleep well, "
+      ]
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "lblSel": "Select Calendars",
+    "lblNotSigned": "Not signed in",
+    "others": "others",
+    "warning": "Please refer to the to {settings} activate this feature.",
+    "warnSettings": "settings",
+    "warning2": "Please refer to the {settings} to connect to the Google services.",
+    "time": [
+      "Day",
+      "Week",
+      "Month",
+      "4 days"
+    ],
+    "nodesc": "No description"
+  },
+  "household": {
+    "title": "Members",
+    "leave": "Leave household",
+    "lea": "Leave",
+    "stay": "Stay",
+    "info": "Info",
+    "created": "Created",
+    "confirmLeave": "Are you sure you want to leave this household?",
+    "confirmExp": "This operation can only be undone using an invite link. You old data will be lost",
+    "types": [
+      "Shared apartment", "Couple", "Family"
+    ],
+    "errors": {
+      "assigned": "You are not assigned to a household yet. Please create one now.",
+      "connect": "Could not connect to server.",
+      "unkown": "Unknown error."
+    },
+    "create": {
+      "title": "Create new household",
+      "nameDesc": "Give your household a sweet little name. Don't worry, you will be able to change it later.",
+      "lblName": "Household name",
+      "configure": "Configure household",
+      "lblType": "Household type",
+      "invite": "Invite members",
+      "inviteDesc": "It feels so lonely without some roommates. Invite them via the link below.",
+      "finishDesc": "Congratulations, your new household has been setup successfully. Continue to check out your dashboard.",
+      "dashboard": "Go to dashboard",
+      "ruleName": "Please provide a name!",
+      "ruleNameLong": "Name is too long!",
+      "messages": {
+        "input": "Please check your input.",
+        "copied": "Copied to clipboard. Happy pasting! :)"
+      },
+      "errors": {
+        "creating": "Error while creating household."
+      }
+    },
+    "invite": {
+      "title": "Invite members",
+      "btn": "Invite",
+      "desc": "Please use this link to invite members to join this household",
+      "copied": "Copied to clipboard. Happy pasting! :)",
+      "fail": "Couldn't fetch invite link. Please try again later.",
+      "error": "Error fetching invite link. Please try again later."
+    }
+  },
+  "store": {
+    "errors": {
+      "auth": "User auth failed",
+      "users": "Error while fetching household users"
+    },
+    "unkown": "Unkown user",
+    "nameless": "Nameless user",
+    "tasks": {
+      "undoOnDemand": "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
+    },
+    "format": {
+      "justnow": "just now",
+      "year": "1 year | {count} years",
+      "month": "1 month | {count} months",
+      "week": "1 week | {count} weeks",
+      "day": "1 day | {count} days",
+      "hour": "1 hour | {count} hours",
+      "minute": "1 minute | {count} minutes",
+      "in": "in",
+      "ago": "ago"
+    }
+  },
+  "icon": {
+    "btn": "Change Icon",
+    "title": "Icon Chooser",
+    "common": "Common icons",
+    "all": "All icons"
+  },
+  "widgets": {
+    "settings": "Widget settings",
+    "weather": {
+      "title": "Weather",
+      "config": "This widget is not configured correctly.",
+      "never": "Never"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "unnamed": "Unnamed task",
+      "today": "Today",
+      "done": "You're done for today!",
+      "page": "Tasks page",
+      "not": "Notification sent to "
+    },
+    "disturb": {
+      "title": "Do Not Disturb",
+      "connect": "Could not connect to server.",
+      "err": "Error toggling user status."
+    },
+    "home": {
+      "title": "Home",
+      "msg": "\"I'm home!\""
+    },
+    "finances": {
+      "title": "Finances",
+      "today": "Today",
+      "unnamed": "Unnamed ecpense",
+      "empty": "Why don't you buy something?",
+      "page": "Finances page"
+    },
+    "clock": {
+      "title": "Clock"
+    }
+  }
+}

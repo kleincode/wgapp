@@ -1,6 +1,6 @@
 <template>
   <Widget
-    title="Tasks"
+    :title="$t('widgets.tasks.title')"
     :content-pad="false"
     :context-items="contextItems"
     :loading="loading"
@@ -34,12 +34,12 @@
                 class="task-entry"
                 :color="task.missed ? 'red' : false"
               >
-                {{ task.name || "Unnamed task" }}
+                {{ task.name || $t("widgets.tasks.unnamed") }}
                 <div
                   class="overline pl-2 pt-1"
                   :class="task.missed ? 'red--text' : false"
                 >
-                  - {{ task.time || "Today" }}
+                  - {{ task.time || $t("widgets.tasks.today") }}
                 </div>
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -74,7 +74,7 @@
       <v-icon style="font-size: 4em" class="text--disabled"
         >access_alarm</v-icon
       >
-      <br />You're done for today!
+      <br />{{ $t("widgets.tasks.done") }}
     </div>
   </Widget>
 </template>
@@ -98,7 +98,7 @@ export default {
       return [
         {
           action: "refresh",
-          text: "Refresh",
+          text: this.$t("commands.refresh"),
           icon: "refresh",
           subtext:
             "Updated " +
@@ -106,12 +106,12 @@ export default {
         },
         {
           action: "tasks",
-          text: "Tasks page",
+          text: this.$t("widgets.tasks.page"),
           icon: "list"
         },
         {
           action: "settings",
-          text: "Widget Settings",
+          text: this.$t("widgets.settings"),
           icon: "settings"
         }
       ];
@@ -146,7 +146,7 @@ export default {
         await this.$store.dispatch("tasks/triggerReminder", task);
         this.$store.dispatch(
           "showSnackbar",
-          "Notification sent to " + this.getUserName(task.assigned)
+          this.$t("widgets.tasks.not") + this.getUserName(task.assigned)
         );
       } catch (err) {
         this.$store.dispatch("showSnackbar", err);
