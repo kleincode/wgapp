@@ -105,7 +105,11 @@
                 <v-spacer></v-spacer>
                 <v-btn color="primary" type="submit" :loading="loading">
                   <v-icon left>arrow_forward</v-icon>
-                  {{ [$t("login.login"), $t("login.register"), "Send e-mail"][registerMode] }}
+                  {{
+                    [$t("login.login"), $t("login.register"), "Send e-mail"][
+                      registerMode
+                    ]
+                  }}
                 </v-btn>
               </v-card-actions>
             </v-form>

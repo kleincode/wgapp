@@ -1,110 +1,131 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="menuVisible"
-      app
-      clipped
-      color="secondary"
-      class="elevation-12"
-    >
-      <v-list dense nav dark>
-        <v-list-item three-line class="px-0">
-          <v-list-item-avatar :color="!hasProfilePicture ? 'primary' : ''">
-            <span v-if="!hasProfilePicture" class="white--text title"
-              >{{
-                !!userFirstName
-                  ? userFirstName.substring(0, 1).toUpperCase()
-                  : ""
-              }}{{
-                !!userFirstName
-                  ? userLastName.substring(0, 1).toUpperCase()
-                  : ""
-              }}</span
-            >
-            <v-img v-else :src="profilePictureData"></v-img>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title class="title"
-              >{{ userFirstName }} {{ userLastName }}</v-list-item-title
-            >
-            <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
-            <v-list-item-subtitle v-if="userInHousehold">
-              <v-icon small>account_circle</v-icon>&nbsp;
-              <router-link class="white--text" :to="{ name: 'Profile' }">
-                {{ $t("app.profile") }}
-              </router-link>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-divider></v-divider>
-        <v-list-item
-          v-for="item in menuContents"
-          :key="item.name"
-          link
-          :to="item.path"
-        >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+    <v-overlay :value="loading" opacity="0.9" color="white">
+      <v-row justify="center">
+        <v-col cols="5">
+          <v-img src="@/assets/jeff-without.svg" class="mb-3"></v-img>
+        </v-col>
+        <v-col cols="12" class="text-center">
+          <h1 class="display-1 black--text mb-6">Jeff - Organizer</h1>
+          <v-progress-circular
+            indeterminate
+            :size="70"
+            :width="7"
+            color="primary"
+            class="mb-4"
+          ></v-progress-circular>
+          <br />
+          <span class="black--text overline">loading</span>
+        </v-col>
+      </v-row>
+    </v-overlay>
+    <div v-if="!loading">
+      <v-navigation-drawer
+        v-model="menuVisible"
+        app
+        clipped
+        color="secondary"
+        class="elevation-12"
+      >
+        <v-list dense nav dark>
+          <v-list-item three-line class="px-0">
+            <v-list-item-avatar :color="!hasProfilePicture ? 'primary' : ''">
+              <span v-if="!hasProfilePicture" class="white--text title"
+                >{{
+                  !!userFirstName
+                    ? userFirstName.substring(0, 1).toUpperCase()
+                    : ""
+                }}{{
+                  !!userFirstName
+                    ? userLastName.substring(0, 1).toUpperCase()
+                    : ""
+                }}</span
+              >
+              <v-img v-else :src="profilePictureData"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title class="title"
+                >{{ userFirstName }} {{ userLastName }}</v-list-item-title
+              >
+              <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
+              <v-list-item-subtitle v-if="userInHousehold">
+                <v-icon small>account_circle</v-icon>&nbsp;
+                <router-link class="white--text" :to="{ name: 'Profile' }">
+                  {{ $t("app.profile") }}
+                </router-link>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-divider></v-divider>
+          <v-list-item
+            v-for="item in menuContents"
+            :key="item.name"
+            link
+            :to="item.path"
+          >
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-      <template v-slot:append>
-        <v-chip
-          v-if="offline"
-          color="orange"
-          text-color="white"
-          label
-          class="ma-2 center"
-        >
-          <v-icon left>
-            offline_bolt
-          </v-icon>
-          Offline
-        </v-chip>
-      </template>
-    </v-navigation-drawer>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.name }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <template v-slot:append>
+          <v-chip
+            v-if="offline"
+            color="orange"
+            text-color="white"
+            label
+            class="ma-2 center"
+          >
+            <v-icon left>
+              offline_bolt
+            </v-icon>
+            Offline
+          </v-chip>
+        </template>
+      </v-navigation-drawer>
 
-    <v-app-bar app color="primary" class="white--text" clipped-left>
-      <v-app-bar-nav-icon
-        color="white"
-        aria-label="Menu"
-        @click="menuVisible = !menuVisible"
-      ></v-app-bar-nav-icon>
-      <v-toolbar-title>Jeff</v-toolbar-title>
-    </v-app-bar>
+      <v-app-bar app color="primary" class="white--text" clipped-left>
+        <v-app-bar-nav-icon
+          color="white"
+          aria-label="Menu"
+          @click="menuVisible = !menuVisible"
+        ></v-app-bar-nav-icon>
+        <v-toolbar-title>Jeff</v-toolbar-title>
+      </v-app-bar>
 
-    <v-content>
-      <v-container fluid>
-        <transition name="fade-transition" mode="out-in">
-          <router-view></router-view>
-        </transition>
-      </v-container>
-    </v-content>
+      <v-content>
+        <v-container fluid>
+          <transition name="fade-transition" mode="out-in">
+            <router-view></router-view>
+          </transition>
+        </v-container>
+      </v-content>
 
-    <v-footer app inset class="text-center">
-      <div style="width: 100%;">{{ $t("app.footer") }}</div>
-    </v-footer>
-    <v-snackbar v-model="snackbarShow" :timeout="4000">
-      <span>{{ snackbarMessage }}</span>
-      <v-btn text small color="red" @click="snackbarShow = false">{{
-        $t("commands.close")
-      }}</v-btn>
-    </v-snackbar>
-    <v-snackbar v-model="isUpdateAvailable" :timeout="0">
-      <span>{{ $t("app.update") }}</span>
-      <v-btn text small color="primary" @click="updateAvailable">{{
-        $t("commands.refresh")
-      }}</v-btn>
-    </v-snackbar>
-    <Introduction
-      v-if="
-        this.$store.state.userSettings.introductionState > 0 && isAuthorized
-      "
-    ></Introduction>
+      <v-footer app inset class="text-center">
+        <div style="width: 100%;">{{ $t("app.footer") }}</div>
+      </v-footer>
+      <v-snackbar v-model="snackbarShow" :timeout="4000">
+        <span>{{ snackbarMessage }}</span>
+        <v-btn text small color="red" @click="snackbarShow = false">{{
+          $t("commands.close")
+        }}</v-btn>
+      </v-snackbar>
+      <v-snackbar v-model="isUpdateAvailable" :timeout="0">
+        <span>{{ $t("app.update") }}</span>
+        <v-btn text small color="primary" @click="updateAvailable">{{
+          $t("commands.refresh")
+        }}</v-btn>
+      </v-snackbar>
+      <Introduction
+        v-if="
+          this.$store.state.userSettings.introductionState > 0 && isAuthorized
+        "
+      ></Introduction>
+    </div>
   </v-app>
 </template>
 
@@ -113,6 +134,7 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import Introduction from "@/components/dialogs/introduction/Introduction.vue";
+import { loadLocaleMessagesAsync } from "@/i18n.js";
 
 export default {
   name: "App",
@@ -120,7 +142,8 @@ export default {
     Introduction
   },
   data: () => ({
-    menuVisible: null
+    menuVisible: null,
+    loading: true
   }),
   computed: {
     snackbarShow: {
@@ -206,10 +229,18 @@ export default {
     await this.$store.dispatch("userSettings/sync");
     await this.$store.dispatch("fetchProfileImg");
     this.$vuetify.theme.dark = this.$store.state.userSettings.darkMode;
+    this.loadLocaleMessages(this.$i18n.locale);
   },
   methods: {
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
+    },
+    loadLocaleMessages(locale) {
+      console.log("loading");
+      this.loading = true;
+      loadLocaleMessagesAsync(locale).then(() => {
+        this.loading = false;
+      });
     }
   }
 };

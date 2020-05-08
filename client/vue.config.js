@@ -30,6 +30,7 @@ module.exports = {
       .options({
         fix: true
       });
+    config.plugins.delete("prefetch");
   },
 
   configureWebpack: config => {
@@ -45,7 +46,7 @@ module.exports = {
       locale: "en",
       fallbackLocale: "en",
       localeDir: "locales",
-      enableInSFC: true
+      enableInSFC: false
     }
   }
 };
