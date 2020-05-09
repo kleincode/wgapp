@@ -22,7 +22,7 @@
       <v-col cols="12" md="4" class="text-center">
         <StatCard
           title="Errors in 24h"
-          :value="23"
+          :value="4"
           icon="error"
           :error="error"
           color="warning"
@@ -35,7 +35,7 @@
         <v-card :elevation="7">
           <v-card-title class="headline">New critical errors</v-card-title>
           <v-card-content>
-            <ErrorLog :logs="logs" class="pa-2"></ErrorLog>
+            <ErrorLog :logs="critErrors" class="pa-2"></ErrorLog>
           </v-card-content>
         </v-card>
       </v-col>
@@ -43,7 +43,11 @@
         <v-card :elevation="7">
           <v-card-title class="headline">Last reviewed errors</v-card-title>
           <v-card-content>
-            <ErrorLog :logs="logs" class="pa-2" :reviewed="true"></ErrorLog>
+            <ErrorLog
+              :logs="reviewedErrors"
+              class="pa-2"
+              :reviewed="true"
+            ></ErrorLog>
           </v-card-content>
         </v-card>
       </v-col>
@@ -56,10 +60,10 @@
               label="Log level"
               style="max-width: 250px"
               v-model="level"
-              :items="levels"
+              :items="getLevels"
             ></v-select>
           </v-card-title>
-          <Log :logs="logs" class="pa-2"></Log>
+          <Log :logs="completeLog" class="pa-2"></Log>
         </v-card>
       </v-col>
     </v-row>
@@ -70,6 +74,8 @@
 import StatCard from "@/components/StatCard.vue";
 import ErrorLog from "@/components/ErrorLog.vue";
 import Log from "@/components/Log.vue";
+
+import loglevels from "@/assets/loglevels.js";
 
 export default {
   name: "Home",
@@ -84,6 +90,8 @@ export default {
       {
         cat: 0,
         title: "Some error",
+        level: 0,
+        reviewed: false,
         timestamp: 1589041616232,
         stack: `SyntaxError: J:DokumenteNodeJSWGAppwgappadminsrccomponentsLog.vue: Unexpected token, expected "," (26:4)
   24 |   name: "Log",
@@ -107,53 +115,59 @@ export default {
       {
         cat: 1,
         title: "Another error",
+        level: 0,
+        reviewed: true,
         timestamp: 1589041616000,
         stack: "This is a stacktrace"
       },
       {
         cat: 2,
         title: "Another error",
+        level: 2,
+        reviewed: false,
         timestamp: 1589031610500,
-        stack: "This is a stacktrace"
+        stack: "Well it's only a info"
       },
       {
         cat: 3,
         title: "Another error",
+        level: 1,
+        reviewed: true,
         timestamp: 1588021610000,
-        stack: "This is a stacktrace"
+        stack: "I think that's a warning"
       },
       {
         cat: 4,
         title: "Another error",
+        level: 3,
+        reviewed: true,
         timestamp: 1587011600550,
-        stack: "This is a stacktrace"
+        stack: "This is a stacktrace. That's very fine."
       },
       {
         cat: 5,
         title: "Another error",
+        level: 3,
+        reviewed: false,
         timestamp: 1586001600050,
-        stack: "This is a stacktrace"
+        stack: "This is a stacktrace. That's very fine."
       }
     ],
-    levels: [
-      {
-        text: "ERROR",
-        value: 0
-      },
-      {
-        text: "WARNING",
-        value: 1
-      },
-      {
-        text: "INFO",
-        value: 2
-      },
-      {
-        text: "ALL",
-        value: 3
-      }
-    ],
-    level: 0
-  })
+    level: 2
+  }),
+  computed: {
+    getLevels() {
+      return loglevels;
+    },
+    completeLog() {
+      return this.logs.filter(log => log.level <= this.level);
+    },
+    critErrors() {
+      return this.logs.filter(log => !log.reviewed);
+    },
+    reviewedErrors() {
+      return this.logs.filter(log => log.reviewed);
+    }
+  }
 };
 </script>

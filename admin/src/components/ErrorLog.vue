@@ -3,8 +3,8 @@
     <v-expansion-panel :elevation="4" v-for="(log, i) in logs" :key="i">
       <v-expansion-panel-header>
         <div style="display: flex">
-          <v-chip :color="categories[log.cat].color">{{
-            categories[log.cat].text
+          <v-chip :color="getCategory(log.cat).color">{{
+            getCategory(log.cat).text
           }}</v-chip>
           <span class="title ml-3">{{ log.title }}</span>
           <v-spacer></v-spacer>
@@ -16,7 +16,9 @@
       <v-expansion-panel-content class="pt-3">
         <span class="stacktrace">{{ log.stack }}</span>
         <div class="text-right" v-if="!reviewed">
-          <v-btn color="green">Mark as Reviewed</v-btn>
+          <v-btn color="green" @click="setReviewed(log)"
+            >Mark as Reviewed</v-btn
+          >
         </div>
       </v-expansion-panel-content>
     </v-expansion-panel>
@@ -24,36 +26,10 @@
 </template>
 
 <script>
+import errorcategories from "@/assets/errorcategories.js";
+
 export default {
   name: "Log",
-  data: () => ({
-    categories: [
-      {
-        text: "General",
-        color: "blue"
-      },
-      {
-        text: "Dashboard",
-        color: "purple darken-2"
-      },
-      {
-        text: "Tasks",
-        color: "amber darken-2"
-      },
-      {
-        text: "Finances",
-        color: "cyan"
-      },
-      {
-        text: "Household",
-        color: "green lighten-1"
-      },
-      {
-        text: "Shopping",
-        color: "pink darken-2"
-      }
-    ]
-  }),
   props: {
     logs: {
       type: Array,
@@ -64,7 +40,14 @@ export default {
       default: () => false
     }
   },
-  methods: {}
+  methods: {
+    getCategory(index) {
+      return errorcategories[index];
+    },
+    setReviewed(log) {
+      console.log("Mark log as reviewed.", log);
+    }
+  }
 };
 </script>
 
