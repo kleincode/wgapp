@@ -2,49 +2,52 @@
   <v-container>
     <h1 class="display-2 mt-12 mb-6">Statistics</h1>
     <v-row justify="center">
-      <v-col cols="12" md="4" class="text-center mb-2">
+      <v-col cols="12" md="3" class="text-center mb-2">
+        <StatCard title="Users" :value="42" icon="person"></StatCard>
+      </v-col>
+      <v-col cols="12" md="3" class="text-center">
+        <StatCard title="Households" :value="13" icon="home"></StatCard>
+      </v-col>
+      <v-col cols="12" md="3" class="text-center">
+        <StatCard title="Errors in 24h" :value="23" icon="error" :error="error"></StatCard>
+      </v-col>
+    </v-row>
+    <h1 class="display-2 mt-12 mb-4">Logs</h1>
+    <v-row>
+      <v-col cols="12" md="6">
         <v-card :elevation="7">
-          <v-card-content class="pa-8">
-            <v-row justify="center">
-              <v-col cols="12" md="2">
-                <v-icon color="black" style="font-size: 8em">person</v-icon>
-              </v-col>
-              <v-col cols="12" md="5">
-                <div class="display-4 mb-3">24</div>
-                <div class="overline" style="font-size: 1em !important">
-                  Users
-                </div>
-              </v-col>
-            </v-row>
+          <v-card-title class="headline">Critical errors</v-card-title>
+          <v-card-content>
+            <Log :logs="logs"></Log>
           </v-card-content>
         </v-card>
       </v-col>
-      <v-col cols="12" md="4" class="text-center">
+      <v-col cols="12" md="6">
         <v-card :elevation="7">
-          <v-card-content class="pa-8">
-            <v-row justify="center">
-              <v-col cols="12" md="2">
-                <v-icon color="black" style="font-size: 8em">home</v-icon>
-              </v-col>
-              <v-col cols="12" md="5">
-                <div class="display-4 mb-3">24</div>
-                <div class="overline" style="font-size: 1em !important">
-                  Households
-                </div>
-              </v-col>
-            </v-row>
-          </v-card-content>
+          <v-card-title class="headline">Other errors</v-card-title>
         </v-card>
       </v-col>
     </v-row>
-    <v-card class="mt-8">
-      <v-card-title class="display-2">Log</v-card-title>
-    </v-card>
   </v-container>
 </template>
 
 <script>
+import StatCard from "@/components/StatCard.vue";
+import Log from "@/components/Log.vue";
+
 export default {
-  name: "Home"
+  name: "Home",
+  components: {
+    StatCard,
+    Log
+  },
+  data: () => ({
+    error: false,
+    logs: [
+      {
+        title: "Some error"
+      }
+    ]
+  })
 };
 </script>
