@@ -7,11 +7,15 @@
             categories[log.cat].text
           }}</v-chip>
           <span class="title ml-3">{{ log.title }}</span>
+          <v-spacer></v-spacer>
+          <v-chip small class="mr-2 mt-1">
+            {{ new Date(log.timestamp).toLocaleString() }}</v-chip
+          >
         </div>
       </v-expansion-panel-header>
       <v-expansion-panel-content class="pt-3">
         <span class="stacktrace">{{ log.stack }}</span>
-        <div class="text-right">
+        <div class="text-right" v-if="!reviewed">
           <v-btn color="green">Mark as Reviewed</v-btn>
         </div>
       </v-expansion-panel-content>
@@ -43,6 +47,10 @@ export default {
       {
         text: "Household",
         color: "green lighten-1"
+      },
+      {
+        text: "Shopping",
+        color: "pink darken-2"
       }
     ]
   }),
@@ -50,6 +58,10 @@ export default {
     logs: {
       type: Array,
       default: () => []
+    },
+    reviewed: {
+      type: Boolean,
+      default: () => false
     }
   },
   methods: {}

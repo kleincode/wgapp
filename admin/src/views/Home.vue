@@ -2,18 +2,30 @@
   <v-container>
     <h1 class="display-2 mt-12 mb-6">Statistics</h1>
     <v-row justify="center">
-      <v-col cols="12" md="3" class="text-center mb-2">
-        <StatCard title="Users" :value="42" icon="person"></StatCard>
+      <v-col cols="12" md="4" class="text-center mb-2">
+        <StatCard
+          title="Users"
+          :value="42"
+          icon="person"
+          color="primary"
+          :trend="1"
+        ></StatCard>
       </v-col>
-      <v-col cols="12" md="3" class="text-center">
-        <StatCard title="Households" :value="13" icon="home"></StatCard>
+      <v-col cols="12" md="4" class="text-center">
+        <StatCard
+          title="Households"
+          :value="13"
+          :trend="-1"
+          icon="home"
+        ></StatCard>
       </v-col>
-      <v-col cols="12" md="3" class="text-center">
+      <v-col cols="12" md="4" class="text-center">
         <StatCard
           title="Errors in 24h"
           :value="23"
           icon="error"
           :error="error"
+          color="warning"
         ></StatCard>
       </v-col>
     </v-row>
@@ -21,7 +33,7 @@
     <v-row>
       <v-col cols="12">
         <v-card :elevation="7">
-          <v-card-title class="headline">Critical errors</v-card-title>
+          <v-card-title class="headline">New critical errors</v-card-title>
           <v-card-content>
             <ErrorLog :logs="logs" class="pa-2"></ErrorLog>
           </v-card-content>
@@ -29,15 +41,24 @@
       </v-col>
       <v-col cols="12">
         <v-card :elevation="7">
-          <v-card-title class="headline">Reviewed errors</v-card-title>
+          <v-card-title class="headline">Last reviewed errors</v-card-title>
           <v-card-content>
-            <ErrorLog :logs="logs" class="pa-2"></ErrorLog>
+            <ErrorLog :logs="logs" class="pa-2" :reviewed="true"></ErrorLog>
           </v-card-content>
         </v-card>
       </v-col>
       <v-col cols="12">
         <v-card :elevation="7">
-          <v-card-title class="headline">Complete log</v-card-title>
+          <v-card-title class="headline"
+            >Complete log (48h)
+            <v-spacer></v-spacer>
+            <v-select
+              label="Log level"
+              style="max-width: 250px"
+              v-model="level"
+              :items="levels"
+            ></v-select>
+          </v-card-title>
           <Log :logs="logs" class="pa-2"></Log>
         </v-card>
       </v-col>
@@ -63,7 +84,7 @@ export default {
       {
         cat: 0,
         title: "Some error",
-        timestamp: 1589041616211,
+        timestamp: 1589041616232,
         stack: `SyntaxError: J:DokumenteNodeJSWGAppwgappadminsrccomponentsLog.vue: Unexpected token, expected "," (26:4)
   24 |   name: "Log",
   25 |   data: () => ({ssds
@@ -86,28 +107,53 @@ export default {
       {
         cat: 1,
         title: "Another error",
-        timestamp: 1589041616211,
+        timestamp: 1589041616000,
         stack: "This is a stacktrace"
       },
       {
         cat: 2,
         title: "Another error",
-        timestamp: 1589041616211,
+        timestamp: 1589031610500,
         stack: "This is a stacktrace"
       },
       {
         cat: 3,
         title: "Another error",
-        timestamp: 1589041616211,
+        timestamp: 1588021610000,
         stack: "This is a stacktrace"
       },
       {
         cat: 4,
         title: "Another error",
-        timestamp: 1589041616211,
+        timestamp: 1587011600550,
+        stack: "This is a stacktrace"
+      },
+      {
+        cat: 5,
+        title: "Another error",
+        timestamp: 1586001600050,
         stack: "This is a stacktrace"
       }
-    ]
+    ],
+    levels: [
+      {
+        text: "ERROR",
+        value: 0
+      },
+      {
+        text: "WARNING",
+        value: 1
+      },
+      {
+        text: "INFO",
+        value: 2
+      },
+      {
+        text: "ALL",
+        value: 3
+      }
+    ],
+    level: 0
   })
 };
 </script>
