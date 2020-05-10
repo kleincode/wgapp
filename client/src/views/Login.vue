@@ -23,16 +23,31 @@
                   <div v-if="registerMode == 3">
                     <v-row>
                       <v-col cols="auto">
-                        <v-progress-circular
-                          :size="50"
-                          color="primary"
-                          indeterminate
-                        ></v-progress-circular>
+                        <v-fade-transition>
+                          <v-progress-circular
+                            v-if="verifyState == 0"
+                            :size="50"
+                            color="primary"
+                            indeterminate
+                          ></v-progress-circular>
+                          <v-avatar v-if="verifyState == 1" color="success">
+                            <v-icon dark>verified_user</v-icon>
+                          </v-avatar>
+                          <v-avatar v-if="verifyState == 2" color="error">
+                            <v-icon dark>error</v-icon>
+                          </v-avatar>
+                        </v-fade-transition>
                       </v-col>
                       <v-col align-self="center">
-                        <span class="headline">
+                        <span v-if="verifyState == 0" class="headline">
                           Verifying your email address...
                         </span>
+                        <p v-if="verifyState == 1">
+                          Your email was verified.
+                        </p>
+                        <p v-if="verifyState == 2">
+                          Your email could not be verified.
+                        </p>
                       </v-col>
                     </v-row>
                   </div>
@@ -117,6 +132,14 @@
                 >
                   {{ $t("login.forgot") }}
                 </v-btn>
+                <v-btn
+                  v-if="registerMode == 3 && verifyState == 1"
+                  color="secondary"
+                  text
+                  @click="registerMode = 0"
+                >
+                  {{ $t("login.login") }}
+                </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
                   v-if="registerMode < 3"
@@ -130,6 +153,13 @@
                       registerMode
                     ]
                   }}
+                </v-btn>
+                <v-btn
+                  v-if="registerMode == 3 && verifyState == 2"
+                  color="primary"
+                  :loading="loading"
+                >
+                  Resend email
                 </v-btn>
               </v-card-actions>
             </v-form>
@@ -160,7 +190,8 @@ export default {
     showSnackbar: false,
     snackbarMessage: "Loading...",
     formValid: null,
-    validating: false
+    validating: false,
+    verifyState: 0
   }),
   computed: {
     standardFieldRules() {
@@ -181,6 +212,21 @@ export default {
   },
   created() {
     this.snackbarMessage = this.$t("commands.loading") + "...";
+  },
+  async mounted() {
+    if (this.$route.query.verify) {
+      this.registerMode = 3;
+      try {
+        const { data } = await this.$http.post("/_/verifyemail", {
+          token: this.$route.query.verify
+        });
+        if (data.success) this.verifyState = 1;
+        else throw data.message;
+      } catch (err) {
+        this.verifyState = 2;
+        if (err) this.$store.dispatch("showSnackbar", err);
+      }
+    }
   },
   methods: {
     alertSnackbar(msg) {
