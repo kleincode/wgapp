@@ -27,14 +27,15 @@ module.exports = ({ db }) => ({
       } else {
         const ta = await db.beginTransaction();
         const { results } = await ta.query(
-          "SELECT COUNT(*) AS 'count' FROM users WHERE ? AND ?",
-          [{ email }, { cpwtoken }]
+          "SELECT COUNT(*) AS 'count' FROM users JOIN usertokens ON usertokens.uid = users.id WHERE users.email = ? AND usetokens.type = ? AND usertokens.token = ?",
+          [email, "forgotpassword", cpwtoken]
         );
         if(results && results.length && results[0].count) {
           // Valid, update password
           const pass = await BCrypt.hash(password, AUTH_SALT_ROUNDS);
           try {
-            await ta.query("UPDATE users SET ? WHERE ?", [{ pass, cpwtoken: null }, { email }]);
+            await ta.query("UPDATE users SET ? WHERE ?", [{ pass }, { email }]);
+            await ta.query("DELETE FROM usertokens WHERE ?", [{ token: cpwtoken }]);
             await ta.commit();
             success("Password updated.");
           } catch(err) {

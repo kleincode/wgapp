@@ -8,13 +8,35 @@
               <v-toolbar-title>{{ $t("login.welcome") }}</v-toolbar-title>
               <template v-slot:extension>
                 <v-tabs v-model="registerMode" centered color="white" optional>
-                  <v-tab>{{ $t("login.login") }}</v-tab>
-                  <v-tab>{{ $t("login.register") }}</v-tab>
+                  <v-tab :disabled="registerMode == 3">{{
+                    $t("login.login")
+                  }}</v-tab>
+                  <v-tab :disabled="registerMode == 3">{{
+                    $t("login.register")
+                  }}</v-tab>
                 </v-tabs>
               </template>
             </v-toolbar>
             <v-form ref="form" @submit.prevent="submitForm">
               <v-card-text>
+                <v-expand-transition>
+                  <div v-if="registerMode == 3">
+                    <v-row>
+                      <v-col cols="auto">
+                        <v-progress-circular
+                          :size="50"
+                          color="primary"
+                          indeterminate
+                        ></v-progress-circular>
+                      </v-col>
+                      <v-col align-self="center">
+                        <span class="headline">
+                          Verifying your email address...
+                        </span>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </v-expand-transition>
                 <v-expand-transition>
                   <p v-if="registerMode == 2" class="my-0">
                     {{ $t("login.msg") }}
@@ -23,10 +45,11 @@
                   </p>
                 </v-expand-transition>
                 <v-text-field
+                  v-if="registerMode < 3"
                   v-model="email"
                   :label="$t('login.mail')"
                   prepend-icon="person"
-                  type="text"
+                  type="email"
                   outlined
                   :rules="validating ? emailRules : []"
                 />
@@ -58,7 +81,7 @@
                 </v-expand-transition>
                 <v-expand-transition>
                   <v-text-field
-                    v-if="registerMode != 2"
+                    v-if="registerMode < 2"
                     v-model="password"
                     :label="$t('login.password')"
                     prepend-icon="lock"
@@ -95,7 +118,12 @@
                   {{ $t("login.forgot") }}
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" type="submit" :loading="loading">
+                <v-btn
+                  v-if="registerMode < 3"
+                  color="primary"
+                  type="submit"
+                  :loading="loading"
+                >
                   <v-icon left>arrow_forward</v-icon>
                   {{
                     [$t("login.login"), $t("login.register"), "Send e-mail"][

@@ -20,8 +20,8 @@ module.exports = ({ db }) => ({
         fail("Incomplete token.");
       } else {
         const { results } = await db.query(
-          "SELECT COUNT(*) AS 'count' FROM users WHERE ? AND ?",
-          [{ email }, { cpwtoken }]
+          "SELECT COUNT(*) AS 'count' FROM users JOIN usertokens ON usertokens.uid = users.id WHERE users.email = ? AND usertokens.type = ? AND usertokens.token = ?",
+          [email, "resetpassword", cpwtoken]
         );
         if(results && results.length && results[0].count) {
           success({ message: "Valid.", email });
