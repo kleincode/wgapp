@@ -5,7 +5,7 @@
         <v-col cols="12" md="12" lg="3">
           <v-icon color="white" style="font-size: 6em">{{ icon }}</v-icon>
         </v-col>
-        <v-col cols="6" md="6" lg="5">
+        <v-col cols="6" md="8" lg="5" class="pl-6">
           <div class="display-4 mb-3">
             {{ value }}
           </div>
@@ -13,11 +13,11 @@
             {{ title }}
           </div>
         </v-col>
-        <v-col cols="6" md="6" lg="1">
-          <v-icon style="font-size: 4em" class="success--text" v-if="trend == 1"
+        <v-col cols="6" md="4" lg="1">
+          <v-icon style="font-size: 3em" class="success--text" v-if="trend == 1"
             >trending_up</v-icon
           >
-          <v-icon style="font-size: 4em" class="error--text" v-if="trend == -1"
+          <v-icon style="font-size: 3em" class="error--text" v-if="trend == -1"
             >trending_down</v-icon
           >
         </v-col>
