@@ -5,23 +5,17 @@
       <v-col cols="12" md="4" class="text-center mb-2">
         <StatCard
           title="Users"
-          :value="42"
+          :value="users"
           icon="person"
           color="primary"
-          :trend="1"
         ></StatCard>
       </v-col>
       <v-col cols="12" md="4" class="text-center">
-        <StatCard
-          title="Households"
-          :value="13"
-          :trend="-1"
-          icon="home"
-        ></StatCard>
+        <StatCard title="Households" :value="households" icon="home"></StatCard>
       </v-col>
       <v-col cols="12" md="4" class="text-center">
         <StatCard
-          title="Errors in 24h"
+          title="Errors in 48h"
           :value="errorCount"
           icon="error"
           :error="error"
@@ -44,6 +38,7 @@
             :logs="reviewedErrors"
             class="pa-2"
             :reviewed="true"
+            @reload="reload"
           ></ErrorLog>
         </v-card>
       </v-col>
@@ -82,7 +77,9 @@ export default {
   },
   data: () => ({
     logs: [],
-    level: 2
+    level: 2,
+    users: 0,
+    households: 0
   }),
   computed: {
     getLevels() {
@@ -104,17 +101,23 @@ export default {
       return this.errorCount > 10;
     }
   },
-  async mounted() {
-    try {
-      let { data } = await this.$http.get("/_/fetchlog");
-      console.log(data);
-      if (data.success) {
-        this.logs = data.data;
-      } else {
-        console.error("Error fetching log");
+  mounted() {
+    this.reload();
+  },
+  methods: {
+    async reload() {
+      try {
+        let { data } = await this.$http.get("/_/fetchlog");
+        if (data.success) {
+          this.logs = data.data;
+          this.users = data.users[0].c;
+          this.households = data.households[0].c;
+        } else {
+          console.error("Error fetching log");
+        }
+      } catch (err) {
+        console.error("Error fetching log", err);
       }
-    } catch (err) {
-      console.error("Error fetching log", err);
     }
   }
 };

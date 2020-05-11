@@ -19,10 +19,18 @@
         <span class="stacktrace">
           {{ log.stacktrace }}
         </span>
-        <v-divider v-if="log.req != {} && log.stacktrace != ''"></v-divider>
-        <span class="stacktrace" v-if="log.req != {}">
-          {{ log.req }}
-        </span>
+        <div v-if="!(Object.keys(log.req).length === 0)">
+          <v-divider v-if="log.stacktrace != ''"></v-divider>
+          <div v-if="log.req.uid">
+            <span class="font-weight-bold">UID: </span> {{ log.req.uid }}
+          </div>
+          <div v-if="!(Object.keys(log.req.body).length === 0)">
+            <span class="font-weight-bold">BODY: </span> {{ log.req.body }}
+          </div>
+          <div v-if="!(Object.keys(log.req.query).length === 0)">
+            <span class="font-weight-bold">QUERY: </span> {{ log.req.query }}
+          </div>
+        </div>
         <div class="text-right" v-if="!reviewed">
           <v-btn color="green" @click="setReviewed(log)"
             >Mark as Reviewed</v-btn
@@ -52,8 +60,14 @@ export default {
     getCategory(index) {
       return errorcategories[index];
     },
-    setReviewed(log) {
-      console.log("Mark log as reviewed.", log);
+    async setReviewed(log) {
+      const { data } = await this.$http.post("/_/updatelog", {
+        id: log.id,
+        reviewed: true
+      });
+      if (data.success) {
+        log.reviewed = true;
+      }
     }
   }
 };

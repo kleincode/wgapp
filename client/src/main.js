@@ -22,6 +22,8 @@ import UUID from "vue-uuid";
 
 import i18n from "./i18n";
 
+import "@assets/logger.js";
+
 Vue.use(UUID);
 
 //Authorization: load token and refresh user data on startup

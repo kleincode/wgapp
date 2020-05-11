@@ -1,24 +1,16 @@
 <template>
   <v-card :elevation="7" :color="error ? 'red' : color">
     <v-row justify="center" align="center">
-      <v-col cols="12" md="12" lg="3">
+      <v-col cols="12" md="12" lg="3" class="text-center">
         <v-icon color="white" style="font-size: 6em">{{ icon }}</v-icon>
       </v-col>
-      <v-col cols="6" md="8" lg="5" class="pl-6">
+      <v-col cols="6" md="12" lg="5" class="pl-6">
         <div class="display-4 mb-3">
           {{ value }}
         </div>
         <div class="overline" style="font-size: 1em !important">
           {{ title }}
         </div>
-      </v-col>
-      <v-col cols="6" md="4" lg="1">
-        <v-icon style="font-size: 3em" class="success--text" v-if="trend == 1"
-          >trending_up</v-icon
-        >
-        <v-icon style="font-size: 3em" class="error--text" v-if="trend == -1"
-          >trending_down</v-icon
-        >
       </v-col>
     </v-row>
   </v-card>
@@ -47,10 +39,6 @@ export default {
     color: {
       type: String,
       default: () => ""
-    },
-    trend: {
-      type: Number,
-      default: () => 0
     }
   }
 };

@@ -66,10 +66,10 @@ Helpers.pushLog = async ({ db }, level, category, handlerName, message, stacktra
     if (!req) {
       req = {};
     }
-    const {body, query} = req;
+    const {body, query, uid} = req;
     const { results: { affectedRows } } = await db.query(
       "INSERT INTO log (level, category, handlername, message, stacktrace, req) VALUES (?, ?, ?, ?, ?, ?)",
-      [level, category, handlerName, message.toString(), stacktrace.toString(), JSON.stringify({body, query})]
+      [level, category, handlerName, message.toString(), stacktrace.toString(), JSON.stringify({body, query, uid})]
     );
     if (affectedRows != 1) {
       console.warn("WARN in pushLog: Couldn't push log for " + message + " by " + handlerName + ": " + stacktrace);

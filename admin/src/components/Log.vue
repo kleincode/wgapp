@@ -2,7 +2,7 @@
   <v-list
     style="max-height: 700px; overflow: scroll; overflow-x: hidden; display: flex; flex-direction: column-reverse;"
   >
-    <div v-for="(log, i) in logs" :key="i">
+    <div v-for="(log, i) in reversedLogs" :key="i">
       <v-list-item style="display: inherit">
         <v-list-item-title class="title"> </v-list-item-title>
         <v-list-item-subtitle>
@@ -14,9 +14,11 @@
                   new Date(log.date).toLocaleString()
               }}
             </v-chip>
-            <span>{{ log.handlername + ": " + log.message }}</span>
+            <span class="text--primary">{{
+              log.handlername + ": " + log.message
+            }}</span>
             <div v-if="log.stacktrace != ''">{{ log.stacktrace }}</div>
-            <div v-if="log.req != {}">{{ log.req }}</div>
+            <div v-if="!(Object.keys(log.req).length === 0)">{{ log.req }}</div>
           </div>
         </v-list-item-subtitle>
       </v-list-item>
@@ -34,6 +36,11 @@ export default {
     logs: {
       type: Array,
       default: () => []
+    }
+  },
+  computed: {
+    reversedLogs() {
+      return Array.from(this.logs).reverse();
     }
   },
   methods: {
