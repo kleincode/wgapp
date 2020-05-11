@@ -7,8 +7,8 @@ const Helpers = require("../components/Helpers");
 const profileFolder = path.join(__dirname, "..", "images", "profile");
 
 fs.mkdir(profileFolder, { recursive: true }, err => {
-  if(err) Helpers.pushLog(0, 0, "Server", "Error creating profile folder.", err);
-  else Helpers.pushLog(2, 0, "Server", "Created profile folder.");
+  if(err) Helpers.pushLog(dbInstance, 0, 0, "Server", "Error creating profile folder.", err);
+  else Helpers.pushLog(dbInstance, 2, 0, "Server", "Created profile folder.");
 });
 
 const storage = multer.diskStorage({

@@ -49,3 +49,4 @@ const webpush = require('web-push');
 webpush.setVapidDetails('mailto:dev@kleinco.de', process.env.PUSH_PUBLIC_KEY, process.env.PUSH_PRIVATE_KEY);
 
 require("./components/PushScheduler").registerJobs(db);
+require("./components/LogCleanup").initTimer(db);

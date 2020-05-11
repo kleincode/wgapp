@@ -57,17 +57,21 @@ Helpers.sendNotificationToUser = async (db, uid, payload) => {
 };
 
 
-Helpers.pushLog = async (level, category, handlerName, message, stacktrace) => {
+Helpers.pushLog = async (db, level, category, handlerName, message, stacktrace) => {
   if (!message) {
     message = handlerName;
   }
   try {
-    const { results: { changedRows } } = await db.query(
-      "INSERT INTO log (level, category, message, stacktrace) VALUES (?, ?, ?, ?)",
-      [level, category, message, stacktrace]
+    if (!stacktrace) {
+      stacktrace = "";
+    }
+    const { results: { affectedRows } } = await db.query(
+      "INSERT INTO log (level, category, handlername, message, stacktrace) VALUES (?, ?, ?, ?, ?)",
+      [level, category, handlerName, message, stacktrace.toString()]
     );
-    if (changedRows != 1) {
-      console.warn("WARN in pushLog: Couldn't push log for " + message + ": " + stacktrace);
+    if (affectedRows != 1) {
+      console.log(affectedRows);
+      console.warn("WARN in pushLog: Couldn't push log for " + message + " by " + handlerName + ": " + stacktrace);
     }
   } catch (err) {
     console.error("FATAL ERROR in pushLog: " + err);

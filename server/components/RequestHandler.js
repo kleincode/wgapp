@@ -42,7 +42,7 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
       else res.status(200).send({ message: send, success: false }).end();
     };
     let error = (send, cat, log) => {
-      Helpers.pushLog(0, cat, handlerName, send, log);
+      Helpers.pushLog(provideToHandler, 0, cat, handlerName, send, log);
       if (typeof send === "object") res.status(500).send({ ...send, success: false }).end();
       else res.status(500).send({ message: send, success: false }).end();
     };
@@ -139,7 +139,7 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
       await handlerProps.handler(req, { success, fail, error, res });
     } catch (err) {
       console.error(`FATAL: AN UNHANDLED SERVER EXCEPTION OCCURED (${handlerName})`);
-      error("Internal server exception", err);
+      error("Internal server exception", 0, err);
     }
 
   };
