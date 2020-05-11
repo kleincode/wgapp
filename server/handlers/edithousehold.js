@@ -26,17 +26,17 @@ module.exports = ({ db }) => ({
           [updateVals, hid]
         );
         if (affectedRows < 1) {
-          fail("You don't have permission to change this entry.");
+          fail("You don't have permissions to change this entry.", 5);
         } else if (changedRows < 1) {
           success("No changes made.");
         } else {
           success("Updated household");
         }
       } else {
-        error("You are in no household or your household was deleted.");
+        error("You are in no household or your household was deleted. HID couldn't be fetched", 5);
       }
     } catch (err) {
-      error("Error while updating database.", err);
+      error("Error while editing household in database.", 5, err);
     }
   }
 });

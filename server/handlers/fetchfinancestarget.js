@@ -17,10 +17,10 @@ module.exports = ({ db }) => ({
           success({message: "Received financestarget.", results});
         }
       } catch(err) {
-        error("Error while fetching finances from database", err);
+        error("Error while fetching finances target from database", 4, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

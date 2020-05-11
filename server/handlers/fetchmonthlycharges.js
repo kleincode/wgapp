@@ -14,10 +14,10 @@ module.exports = ({ db }) => ({
             success({ message: "Empty.", data: [] });
           } else success({ message: "monthly charges received", data: results });
         } catch (err) {
-          error("Error while fetching monthly charges from database.", err);
+          error("Error while fetching monthly charges from database.", 4, err);
         }
       } else {
-        fail("Please join a household to use this feature.");
+        fail("Please join a household to use this feature.", 0);
       }
     }
   });

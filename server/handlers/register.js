@@ -33,7 +33,7 @@ module.exports = ({ db }) => ({
         const { results: userResults } = await db.query(`SELECT COUNT(*) AS c FROM users WHERE ?`, {email: email});
 
         if(userResults[0].c > 0) {
-          fail("This email address is already registered.");
+          fail("This email address is already registered.", 1);
         } else try {
           //Actual register process begins here
           const hash = await BCrypt.hash(password, AUTH_SALT_ROUNDS);
@@ -45,16 +45,16 @@ module.exports = ({ db }) => ({
             );
             success(`You were successfully registered, ${firstname}.`);
           } catch(err) {
-            error("The registration process failed.", err);
+            error("The registration process failed.", 1, err);
           }
         } catch(err) {
-          error("Error during encryption process.", err);
+          error("Error during encryption process.", 1, err);
         }
       } catch(err) {
-        error("Error while fetching users from database.", err);
+        error("Error while fetching users from database.", 1, err);
       }
     } else {
-      fail("The given email address is invalid.");
+      fail("The given email address is invalid.", 1);
     }
   }
 });

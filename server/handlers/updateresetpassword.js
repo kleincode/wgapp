@@ -23,7 +23,7 @@ module.exports = ({ db }) => ({
     try {
       const { email, cpwtoken } = JWT.verify(token, JWT_SECRET);
       if(!email || !cpwtoken) {
-        fail("Incomplete token.");
+        fail("Incomplete token.", 1);
       } else {
         const ta = await db.beginTransaction();
         const { results } = await ta.query(
@@ -39,15 +39,15 @@ module.exports = ({ db }) => ({
             success("Password updated.");
           } catch(err) {
             await ta.rollback();
-            fail("Updating password failed.");
+            fail("Updating password failed.", 1);
           }
         } else {
           await ta.rollback();
-          fail("Invalid token contents.");
+          fail("Invalid token contents.", 1);
         }
       }
     } catch(err) {
-      fail("Invalid token.");
+      fail("Invalid token.", 1);
     }
   }
 });

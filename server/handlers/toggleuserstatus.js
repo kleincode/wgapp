@@ -12,7 +12,7 @@ module.exports = ({ db }) => ({
       let { results } = await db.query("UPDATE users SET status = ? WHERE id = ?", [body.value, uid]);
       success({ message: "Updated user status.", results });
     } catch (err) {
-      error("Error while update user status database", err);
+      error("Error while update user status in database", 2, err);
     }
   }
 });

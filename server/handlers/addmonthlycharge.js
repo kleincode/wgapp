@@ -28,7 +28,7 @@ module.exports = ({ db }) => ({
         if (body.uid > 0) {
           const assignedHid = await Helpers.fetchHouseholdID(db, body.uid);
           if (requestHid != assignedHid) {
-            fail("The assigned member is not part of your household.");
+            fail("The assigned member is not part of your household.", 0);
             return;
           }
         }
@@ -36,7 +36,7 @@ module.exports = ({ db }) => ({
         await db.query("INSERT INTO monthlycharges (hid, uid, name, amount, icon) VALUES (?, ?, ?, ?, ?)", [requestHid, body.uid, body.name, body.amount, body.icon]);
         success("Expense inserted successfully.");
       } catch (err) {
-        error("Error while inserting monthly charge into database.", err);
+        error("Error while inserting monthly charge into database.", 4, err);
       }
     }
   

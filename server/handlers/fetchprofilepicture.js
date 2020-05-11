@@ -16,27 +16,27 @@ module.exports = ({ db }) => ({
   },
   handler: async ({ body, query, uid }, { success, fail, error, res }) => {
     try {
-    const hid = await Helpers.fetchHouseholdID(db, uid);
-    const { selUid } = query;
-    let id = 0;
-    if (selUid == -1) {
-      id = uid;
-    } else {
-      id = selUid;
+      const hid = await Helpers.fetchHouseholdID(db, uid);
+      const { selUid } = query;
+      let id = 0;
+      if (selUid == -1) {
+        id = uid;
+      } else {
+        id = selUid;
+      }
+      const { results } = await db.query(
+        "SELECT image FROM users WHERE id = ? AND hid = ?",
+        [id, hid]
+      );
+      if (results.length == 0) {
+        fail("No user found with id " + id + ".", 1);
+      } else if (!results[0].image) {
+        success("No profile picture.");
+      } else {
+        res.sendFile(path.join(picturesFolder, `${id}.jpg`));
+      }
+    } catch (err) {
+      error("Error fetching profile picture", 1, err);
     }
-    const { results } = await db.query(
-      "SELECT image FROM users WHERE id = ? AND hid = ?",
-      [id, hid]
-    );
-    if(results.length == 0) {
-      fail("No user found with id " + id + ".");
-    } else if(!results[0].image) {
-      success("No profile picture.");
-    } else {
-      res.sendFile(path.join(picturesFolder, `${id}.jpg`));
-    }
-  } catch (err) {
-    error("Error fetching profile picture");
-  }
   }
 });

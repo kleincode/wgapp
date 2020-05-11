@@ -1,6 +1,7 @@
 const path = require("path");
 const JWT = require("jsonwebtoken");
 const JWT_SECRET = process.env.AUTH_TOKEN_SECRET || "[%N[ED0pGs&3QApB";
+const Helpers = require("../components/Helpers");
 
 async function checkAuthorized(req, res, next) {
   let token = req.headers["x-access-token"];
@@ -36,12 +37,14 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
       if (typeof send === "object") res.status(200).send({ ...send, success: true }).end();
       else res.status(200).send({ message: send, success: true }).end();
     };
-    let fail = (send) => {
+    let fail = (send, cat) => {
+      Helpers.pushLog(provideToHandler, 3, cat, handlerName, send, req);
       if (typeof send === "object") res.status(200).send({ ...send, success: false }).end();
       else res.status(200).send({ message: send, success: false }).end();
     };
-    let error = (send, log) => {
-      if (log) console.error("Error at " + handlerName + ":", log);
+    let error = (send, cat, log) => {
+      Helpers.pushLog(provideToHandler, 0, cat, handlerName, send, log, req);
+      console.error(send, log);
       if (typeof send === "object") res.status(500).send({ ...send, success: false }).end();
       else res.status(500).send({ message: send, success: false }).end();
     };
@@ -137,8 +140,8 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
     try {
       await handlerProps.handler(req, { success, fail, error, res });
     } catch (err) {
-      console.error(`FATAL: AN UNHANDLED SERVER EXCEPTION OCCURED (${handlerName})`);
-      error("Internal server exception", err);
+      Helpers.pushLog({db}, 0, 0, "Server", `FATAL: AN UNHANDLED SERVER EXCEPTION OCCURED (${handlerName})`, req);
+      error("Internal server exception", 0, err);
     }
 
   };

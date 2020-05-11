@@ -17,21 +17,29 @@ module.exports = ({ db }) => ({
     }
   },
   handler: async ({ body, query, uid }, { success, fail, error, res }) => {
-    const hid = await Helpers.fetchHouseholdID(db, uid);
-    if (hid) {
-      const { results } = await db.query(
-        "SELECT receipt FROM finances WHERE id = ? AND hid = ?",
-        [query.fid, hid]
-      );
-      if(results.length == 0) {
-        fail("You don't have permission to view this image.");
-      } else if(!results[0].receipt) {
-        success("No receipt.");
+    try {
+      const hid = await Helpers.fetchHouseholdID(db, uid);
+      if (hid) {
+        try {
+          const { results } = await db.query(
+            "SELECT receipt FROM finances WHERE id = ? AND hid = ?",
+            [query.fid, hid]
+          );
+          if (results.length == 0) {
+            fail("You don't have permissions to view this image.", 1);
+          } else if (!results[0].receipt) {
+            success("No receipt.");
+          } else {
+            res.sendFile(path.join(receiptFolder, `${query.fid}.jpg`));
+          }
+        } catch (err) {
+          error("Error while fetching receipt.", 4, err);
+        }
       } else {
-        res.sendFile(path.join(receiptFolder, `${query.fid}.jpg`));
+        fail("Please join a household to use this feature.", 0);
       }
-    } else {
-      fail("Please join a household to use this feature.");
+    } catch (err) {
+      error("Error while fetching hid from database.", 0, err);
     }
   }
 });

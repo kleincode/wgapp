@@ -26,20 +26,22 @@ module.exports = ({ db }) => ({
           [false, body.fid, hid]
         );
         if(affectedRows == 0) {
-          fail("You do not have permission to perform this operation.");
+          fail("You do not have permission to perform this operation.", 4);
         } else if(changedRows == 0) {
           success("No changes made.");
         } else {
           fs.unlink(path.join(receiptFolder, `${body.fid}.jpg`), err => {
-            if(err) console.warn(err);
+            if(err) {
+              Helpers.pushLog({db}, 0, 4, "delreceipt", "Error deleting receipt.", { body, query, uid });
+            }
           });
           success("Receipt deleted.");
         }
       } catch (err) {
-        error("Error while deleting receipt in database.", err);
+        error("Error while deleting receipt in database.", 4, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

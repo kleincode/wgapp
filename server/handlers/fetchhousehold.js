@@ -20,10 +20,10 @@ module.exports = ({ db }) => ({
           members
         });
       } catch (err) {
-        error("Error while fetching household data.", err);
+        error("Error while fetching household data.", 5, err);
       }
     } else {
-      fail({message: "Please join a household to use this feature.", exists: false});
+      fail({message: "Please join a household to use this feature.", exists: false}, 0);
     }
   }
 });

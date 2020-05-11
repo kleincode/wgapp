@@ -29,16 +29,16 @@ module.exports = ({ db }) => ({
         });
         if (results.length == 0) {
           if (id) {
-            fail({ message: "Task not found.", data: [] });
+            fail({ message: "Task not found.", data: [] }, 4);
           } else {
             success({ message: "Empty.", data: [] });
           }
         } else success({ message: "Tasks received", data: results, loggedTasks: loggedTasks });
       } catch (err) {
-        error("Error while fetching tasks from database.");
+        error("Error while fetching tasks from database.", 3, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

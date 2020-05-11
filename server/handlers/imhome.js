@@ -22,7 +22,7 @@ module.exports = ({ db }) => ({
       });
       success("Push reminder successfull.");
     } catch (err) {
-      error("Error while fetching assigned member from database.", err);
+      error("Error while fetching assigned member from database.", 2, err);
     }
   }
 

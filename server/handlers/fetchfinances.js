@@ -91,10 +91,10 @@ module.exports = ({ db }) => ({
           success({message: "Finances received.", page: page, entries: totalEntries, pages: Math.ceil(totalEntries / pageSize), data: expenseRows, totals: memberobj , trend: trendcurve});
         }
       } catch(err) {
-        error("Error while fetching finances from database", err);
+        error("Error while fetching finances from database", 4, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

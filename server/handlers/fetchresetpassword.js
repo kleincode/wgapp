@@ -17,7 +17,7 @@ module.exports = ({ db }) => ({
     try {
       const { email, cpwtoken } = JWT.verify(query.token, JWT_SECRET);
       if(!email || !cpwtoken) {
-        fail("Incomplete token.");
+        fail("Incomplete token.", 1);
       } else {
         const { results } = await db.query(
           "SELECT COUNT(*) AS 'count' FROM users WHERE ? AND ?",
@@ -26,11 +26,11 @@ module.exports = ({ db }) => ({
         if(results && results.length && results[0].count) {
           success({ message: "Valid.", email });
         } else {
-          fail("Invalid token contents.");
+          fail("Invalid token contents." ,1);
         }
       }
     } catch(err) {
-      fail("Invalid token.");
+      fail("Invalid token." ,1);
     }
   }
 });

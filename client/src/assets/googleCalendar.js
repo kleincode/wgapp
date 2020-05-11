@@ -55,7 +55,7 @@ function initClient() {
         updateSigninStatus(GoogleAuth.isSignedIn.get());
       },
       function(error) {
-        console.error(JSON.stringify(error, null, 2));
+        throw Error(error);
       }
     );
 }
