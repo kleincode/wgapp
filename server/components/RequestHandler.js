@@ -44,6 +44,7 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
     };
     let error = (send, cat, log) => {
       Helpers.pushLog(provideToHandler, 0, cat, handlerName, send, log, req);
+      console.error(send, log);
       if (typeof send === "object") res.status(500).send({ ...send, success: false }).end();
       else res.status(500).send({ message: send, success: false }).end();
     };
