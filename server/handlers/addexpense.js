@@ -41,10 +41,10 @@ module.exports = ({ db }) => ({
           }
         });
       } catch (err) {
-        error("Error while inserting expense into database.", err);
+        error("Error while inserting expense into database.", 4, err);
       }
     } catch (err) {
-      error("Error while fetching specified user from database.", err);
+      error("Error while fetching specified user from database.", 0, err);
     }
   }
 

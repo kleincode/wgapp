@@ -29,7 +29,7 @@ module.exports = ({ db }) => ({
           success({message: "Entries received.", data: results});
         }
       } catch(err) {
-        error("Error while fetching from database.", err);
+        error("Error while fetching expenses from database.", 4, err);
       }
     } else {
       fail("Please join a household to use this feature.");

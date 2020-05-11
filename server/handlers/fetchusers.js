@@ -13,6 +13,7 @@ module.exports = ({ db }) => ({
         results.forEach(u => userdata[u.id] = { firstname: u.firstname, lastname: u.lastname, nickname: u.nickname });
         success({ message: "User data fetched.", data: userdata });
       } catch (err) {
+        error("Error while fetching users.", 5, err);
       }
     } else {
       fail("Please join a household to use this feature.");

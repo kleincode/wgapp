@@ -147,7 +147,7 @@ module.exports = ({ db }) => ({
         fail("Please join a household to use this feature.");
       }
     } catch(err) {
-      error("Error while fetching household.", err);
+      error("Error while syncing shopping.", 6, err);
     }
   }
 });

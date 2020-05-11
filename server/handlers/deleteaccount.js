@@ -22,10 +22,10 @@ module.exports = ({ db }) => ({
             success("Successfully delete account.");
           }
         } catch (err) {
-          error("Error while deleting account in database.", err);
+          error("Error while deleting account in database.", 1, err);
         }
       } catch (err) {
-        error("Error while fetching hid from database.", err);
+        error("Error while fetching hid from database.", 0, err);
       }
     }
   });

@@ -27,10 +27,10 @@ module.exports = ({ db }) => ({
             success("Monthly charge deleted successfully.");
           }
         } catch (err) {
-          error("Error while deleting monthly charge in database.", err);
+          error("Error while deleting monthly charge in database.", 4, err);
         }
       } catch (err) {
-        error("Error while fetching hid from database.", err);
+        error("Error while fetching hid from database.", 0, err);
       }
     }
   });

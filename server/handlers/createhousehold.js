@@ -33,13 +33,13 @@ module.exports = ({ db }) => ({
             sec: key // security code (random number, needed for other members joining household)
           });
         } catch (err) {
-          error(`Error while fetching household security token: ${err.code}`, err);
+          error(`Error while fetching household security token: ${err.code}`, 5, err);
         }
       } catch (err) {
-        error(`Error while assigning user to household: ${err.code}`, err);
+        error(`Error while assigning user to household: ${err.code}`, 1, err);
       }
     } catch (err) {
-      error(`Error while creating household in database: ${err.code}`, err);
+      error(`Error while creating household in database: ${err.code}`, 5, err);
     }
   }
 });

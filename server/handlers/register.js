@@ -45,13 +45,13 @@ module.exports = ({ db }) => ({
             );
             success(`You were successfully registered, ${firstname}.`);
           } catch(err) {
-            error("The registration process failed.", err);
+            error("The registration process failed.", 1, err);
           }
         } catch(err) {
-          error("Error during encryption process.", err);
+          error("Error during encryption process.", 1, err);
         }
       } catch(err) {
-        error("Error while fetching users from database.", err);
+        error("Error while fetching users from database.", 1, err);
       }
     } else {
       fail("The given email address is invalid.");

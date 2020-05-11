@@ -36,7 +36,7 @@ module.exports = ({ db }) => ({
           await db.query("UPDATE users SET ? WHERE ?", [{ hid: householdRows[0].id }, { id: uid }]);
           success("The given household was successfully assigned to you.");
         } catch (err) {
-          error(`Error while assigning user to household: ${err.code}`, err);
+          error(`Error while assigning user to household: ${err.code}`, 5, err);
         }
       } else {
         // Fetch old household if any and request confirmation
@@ -74,11 +74,11 @@ module.exports = ({ db }) => ({
             });
           }
         } catch (err) {
-          error(`Error while trying to fetch current household from database.`, err);
+          error(`Error while trying to fetch current household from database.`, 5, err);
         }
       }
     } catch (err) {
-      error(`Error while looking up household in database.`, err);
+      error(`Error while looking up household in database.`, 5, err);
     }
   }
 });

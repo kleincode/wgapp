@@ -56,11 +56,11 @@ module.exports = ({ db }) => ({
           success({ message: "Task log removed"});
         }
         } catch (err) {
-          error("Error while deleting task in tasklog.", err);
+          error("Error while deleting task in tasklog.", 3, err);
         }
       }
     } catch (err) {
-      error("Error while inserting new task in tasklog.", err);
+      error("Error while inserting new task in tasklog.", 3, err);
     }
   }
 });

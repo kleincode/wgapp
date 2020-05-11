@@ -12,6 +12,6 @@ module.exports = ({ db }) => ({
       lastname: results[0].lastname,
       nickname: results[0].nickname
     });
-    else error("Internal Server Error: User not found. This should never happen.");
+    else error("Internal Server Error: User not found. This should never happen.", 1);
   }
 });

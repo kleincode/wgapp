@@ -35,7 +35,7 @@ module.exports = ({ db }) => ({
           }
         } else success({ message: "Tasks received", data: results, loggedTasks: loggedTasks });
       } catch (err) {
-        error("Error while fetching tasks from database.");
+        error("Error while fetching tasks from database.", 3, err);
       }
     } else {
       fail("Please join a household to use this feature.");

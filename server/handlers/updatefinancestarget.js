@@ -16,7 +16,7 @@ module.exports = ({ db }) => ({
         let { results } = await db.query("UPDATE financestarget SET amount = ? WHERE hid = ?", [body.amount, hid]);
         success({message: "Updated financestarget.", results});
       } catch(err) {
-        error("Error while fetching finances from database", err);
+        error("Error while updating finances target from database", 4, err);
       }
     } else {
       fail("Please join a household to use this feature.");

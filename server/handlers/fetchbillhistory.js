@@ -14,7 +14,7 @@ module.exports = ({ db }) => ({
         });
         success({message: "Received bill history.", results});
       } catch(err) {
-        error("Error while fetching billhistory from database", err);
+        error("Error while fetching bill history from database", 4, err);
       }
     } else {
       fail("Please join a household to use this feature.");

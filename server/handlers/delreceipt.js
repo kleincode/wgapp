@@ -36,7 +36,7 @@ module.exports = ({ db }) => ({
           success("Receipt deleted.");
         }
       } catch (err) {
-        error("Error while deleting receipt in database.", err);
+        error("Error while deleting receipt in database.", 4, err);
       }
     } else {
       fail("Please join a household to use this feature.");

@@ -36,11 +36,11 @@ module.exports = ({ db }) => ({
             fail("The given combination of email and password is incorrect.");
           }
         } catch(err) {
-          error("Error during encryption process.", err);
+          error("Error during encryption process.", 1, err);
         }
       }
     } catch (err) {
-      error("Error while fetching user data.", err);
+      error("Error while fetching user data.", 1, err);
     }
   }
 });

@@ -1,6 +1,7 @@
 const path = require("path");
 const JWT = require("jsonwebtoken");
 const JWT_SECRET = process.env.AUTH_TOKEN_SECRET || "[%N[ED0pGs&3QApB";
+const Helpers = require("../components/Helpers");
 
 async function checkAuthorized(req, res, next) {
   let token = req.headers["x-access-token"];
@@ -40,8 +41,8 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
       if (typeof send === "object") res.status(200).send({ ...send, success: false }).end();
       else res.status(200).send({ message: send, success: false }).end();
     };
-    let error = (send, log) => {
-      if (log) console.error("Error at " + handlerName + ":", log);
+    let error = (send, cat, log) => {
+      Helpers.pushLog(0, cat, handlerName, send, log);
       if (typeof send === "object") res.status(500).send({ ...send, success: false }).end();
       else res.status(500).send({ message: send, success: false }).end();
     };

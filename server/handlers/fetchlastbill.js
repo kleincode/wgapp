@@ -11,7 +11,7 @@ module.exports = ({ db }) => ({
         const { results } = await db.query("SELECT lastBill FROM lastbill WHERE hid = ?", [hid]);
         success({message: "Received last result.", results});
       } catch(err) {
-        error("Error while fetching finances from database", err);
+        error("Error while fetching last bill from database", 4, err);
       }
     } else {
       fail("Please join a household to use this feature.");

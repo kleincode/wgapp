@@ -35,10 +35,10 @@ module.exports = ({ db }) => ({
         await db.query("UPDATE tasks SET lastExecution = ?, assignedMember = ?, due = ? WHERE id = ?", [date, body.assignedMember, body.due, body.id]);
         success("Update successful.");
       } catch (err) {
-        error("Error while updating task in database.", err);
+        error("Error while updating task in database.", 3, err);
       }
     } catch (err) {
-      error("Error while fetching specified task from database.", err);
+      error("Error while fetching specified task from database.", 0, err);
     }
   }
 });

@@ -42,7 +42,7 @@ module.exports = ({ db }) => ({
         success("Entry edited.");
       }
     } catch (err) {
-      error("Error while deleting from database.", err);
+      error("Error while deleting monthly charge from database.", 4, err);
     }
   }
 });

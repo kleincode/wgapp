@@ -36,7 +36,7 @@ module.exports = ({ db }) => ({
       res.sendFile(path.join(picturesFolder, `${id}.jpg`));
     }
   } catch (err) {
-    error("Error fetching profile picture");
+    error("Error fetching profile picture", 1);
   }
   }
 });

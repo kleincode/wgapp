@@ -34,7 +34,7 @@ module.exports = ({ db }) => ({
         }
         success("Successfully updated last bill.");
       } catch(err) {
-        error("Error while updating bill history in database", err);
+        error("Error while updating bill history in database", 4, err);
       }
     } else {
       fail("Please join a household to use this feature.");

@@ -33,10 +33,10 @@ module.exports = ({ db }) => ({
           success("Updated household");
         }
       } else {
-        error("You are in no household or your household was deleted.");
+        error("You are in no household or your household was deleted. HID couldn't be fetched", 5);
       }
     } catch (err) {
-      error("Error while updating database.", err);
+      error("Error while editing household in database.", 5, err);
     }
   }
 });

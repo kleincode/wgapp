@@ -41,7 +41,7 @@ module.exports = ({ db }) => ({
         success("Entry deleted.");
       }
     } catch (err) {
-      error("Error while deleting from database.", err);
+      error("Error while editing expense in database.", 4, err);
     }
   }
 });

@@ -11,7 +11,7 @@ module.exports = ({ db }) => ({
         success("Household reset.");
       }
     } catch(err) {
-      error("Error while updating database.", err);
+      error("Error while updating database.", 5, err);
     }
   }
 });

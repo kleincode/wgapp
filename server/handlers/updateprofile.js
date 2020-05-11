@@ -49,11 +49,11 @@ module.exports = ({ db }) => ({
               fail("The entered old password is incorrect.");
             }
           } else {
-            error("Couldn't find user.");
+            error("Couldn't find user.", 1);
           }
         }
       } catch (err) {
-        error("Error while updating password.", err);
+        error("Error while updating password.", 1, err);
       }
       try {
       let query = "UPDATE users SET ";
@@ -88,7 +88,7 @@ module.exports = ({ db }) => ({
         fail("Nothing updated bc nothing provided");
       }
     } catch (err) {
-      error("Error while updating user profile.", err);
+      error("Error while updating user profile.", 1, err);
     }
   }
 });
