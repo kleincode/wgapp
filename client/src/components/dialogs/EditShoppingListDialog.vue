@@ -4,7 +4,7 @@
       <v-btn
         color="success"
         icon
-        :aria-label="$t('shopping.list.lblCreate')"
+        :aria-label="$t('shopping.list.create')"
         v-on="on"
       >
         <v-icon>add</v-icon>
@@ -91,8 +91,9 @@ export default {
   computed: {
     nameRules() {
       return [
-        v => !!v || this.$t("shopping.list.msgName"),
-        v => (!!v && v.length <= 160) || this.$t("shopping.list.msgLength")
+        v => !!v || this.$t("shopping.list.provideListName"),
+        v =>
+          (!!v && v.length <= 160) || this.$t("shopping.list.listNameTooLong")
       ];
     }
   },
@@ -130,7 +131,7 @@ export default {
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          err || this.$t("shopping.list.fail")
+          err || this.$t("shopping.list.addFail")
         );
         console.warn(err);
       }

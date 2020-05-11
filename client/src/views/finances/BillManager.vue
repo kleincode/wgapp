@@ -4,10 +4,10 @@
       v-model="finishPaymentDialog"
       @positive="finishPayments"
       @negative="finishPaymentDialog = false"
-      >{{ $t("finances.billman.confirmFinish") }}</confirm-dialog
+      >{{ $t("finances.billManager.confirmFinishPayments") }}</confirm-dialog
     >
     <div style="display:flex">
-      <h1 class="display-1">{{ $t("finances.billman.title") }}</h1>
+      <h1 class="display-1">{{ $t("finances.billManager.title") }}</h1>
       <v-spacer></v-spacer>
       <div class="caption mr-2 mt-1">{{ $t("finances.lastBill") }}:</div>
       {{ formatDateRelative(lastBill) }}
@@ -17,11 +17,11 @@
       <v-col cols="12" lg="8">
         <v-card :loading="loading" style="height: 100%" :elevation="6">
           <v-card-title class="headline">{{
-            $t("finances.billman.newBill")
+            $t("finances.billManager.newBill")
           }}</v-card-title>
           <v-card-text>
             <p v-if="empty" class="text-center headline pt-12 pb-12">
-              {{ $t("finances.billman.noexp") }}
+              {{ $t("finances.billManager.noExpensesAvailable") }}
             </p>
             <v-row v-if="!empty">
               <v-col cols="12" md="4">
@@ -78,7 +78,7 @@
                     class="text-center"
                   >
                     <div class="overline">
-                      {{ $t("finances.billman.monTot") }}
+                      {{ $t("finances.billManager.monthlyTotal") }}
                     </div>
                     <div class="display-1">{{ getCurrency(monthlyTotal) }}</div>
                   </v-col>
@@ -87,7 +87,9 @@
                     :md="includeMonthlyCharges ? '4' : '6'"
                     class="text-center primary--text"
                   >
-                    <div class="overline">{{ $t("finances.billman.tot") }}</div>
+                    <div class="overline">
+                      {{ $t("finances.billManager.total") }}
+                    </div>
                     <div class="display-1">{{ getCurrency(total) }}</div>
                   </v-col>
                   <v-col
@@ -95,25 +97,27 @@
                     :md="includeMonthlyCharges ? '4' : '6'"
                     class="text-center"
                   >
-                    <div class="overline">{{ $t("finances.billman.pp") }}</div>
+                    <div class="overline">
+                      {{ $t("finances.billManager.perPerson") }}
+                    </div>
                     <div class="display-1">{{ getCurrency(mean) }}</div>
                   </v-col>
                 </v-row>
                 <h2 class="headline mt-4 mb-2">
-                  {{ $t("finances.compPay") }}:
+                  {{ $t("finances.compensationPayments") }}:
                 </h2>
                 <v-simple-table :loading="loading">
                   <template v-slot:default>
                     <thead>
                       <tr>
                         <th class="text-left">
-                          {{ $t("finances.billman.pay") }}
+                          {{ $t("finances.billManager.paying") }}
                         </th>
                         <th class="text-left">
-                          {{ $t("finances.billman.rec") }}
+                          {{ $t("finances.billManager.receives") }}
                         </th>
                         <th class="text-left">
-                          {{ $t("finances.billman.am") }}
+                          {{ $t("finances.billManager.amount") }}
                         </th>
                       </tr>
                     </thead>
@@ -136,7 +140,7 @@
             <v-switch
               v-model="includeMonthlyCharges"
               class="pl-2"
-              :label="$t('finances.billman.includeMon')"
+              :label="$t('finances.billManager.includeMonthlyCharges')"
               @change="splitTotals"
             ></v-switch>
             <v-spacer></v-spacer>
@@ -155,7 +159,7 @@
               :disabled="empty"
               @click="finishPaymentDialog = true"
             >
-              {{ $t("finances.billman.save") }}
+              {{ $t("finances.billManager.savePayments") }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -164,7 +168,7 @@
         <v-card style="height: 100%" :loading="loadingHistory" :elevation="6">
           <v-card-title
             ><h1 class="headline">
-              {{ $t("finances.billman.history") }}
+              {{ $t("finances.billManager.billHistory") }}
             </h1></v-card-title
           >
           <v-card-text>
@@ -172,10 +176,14 @@
               <template v-slot:default>
                 <thead>
                   <tr>
-                    <th class="text-left">{{ $t("finances.billman.from") }}</th>
-                    <th class="text-left">{{ $t("finances.billman.to") }}</th>
                     <th class="text-left">
-                      {{ $t("finances.billman.export") }}
+                      {{ $t("finances.billManager.from") }}
+                    </th>
+                    <th class="text-left">
+                      {{ $t("finances.billManager.to") }}
+                    </th>
+                    <th class="text-left">
+                      {{ $t("finances.billManager.export") }}
                     </th>
                   </tr>
                 </thead>
@@ -331,7 +339,7 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("finances.billman.errors.data")
+            this.$t("finances.billManager.errors.fetchBillDataFailed")
           );
           this.dialog = false;
         }
@@ -339,7 +347,7 @@ export default {
         this.dialog = false;
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("finances.billman.errors.dataErr")
+          this.$t("finances.billManager.errors.fetchBillDataError")
         );
       }
       this.loading = false;
@@ -470,12 +478,12 @@ export default {
       if (data.success) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("finances.billman.success")
+          this.$t("finances.billManager.updated")
         );
       } else {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("finances.billman.errors.lastBill")
+          this.$t("finances.billManager.errors.updateLastBillError")
         );
       }
       this.loadingHistory = false;
@@ -502,14 +510,14 @@ export default {
           this.loadingHistory = false;
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("finances.billman.errors.history")
+            this.$t("finances.billManager.errors.fetchHistoryFailed")
           );
         }
       } catch (err) {
         this.loadingHistory = false;
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("finances.billman.errors.historyErr")
+          this.$t("finances.billManager.errors.fetchHistoryError")
         );
         console.error(err);
       }

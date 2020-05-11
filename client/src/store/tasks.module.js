@@ -218,7 +218,7 @@ const vuexModule = {
             break;
           }
           case 2:
-            throw i18n.t("store.tasks.undoOnDemand");
+            throw i18n.t("store.tasks.undoOnDemandError");
         }
       }
       // Perform checking on server

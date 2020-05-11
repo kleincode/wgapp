@@ -6,8 +6,8 @@
       :opacity="0.8"
       absolute
     >
-      <h1 class="display-2">{{ $t("settings.introTitle") }}</h1>
-      {{ $t("settings.introText") }}
+      <h1 class="display-2">{{ $t("settings.introLocked") }}</h1>
+      {{ $t("settings.introLockedDescription") }}
     </v-overlay>
     <v-row justify="center">
       <v-col xl="9" lg="10" md="12">

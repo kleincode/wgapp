@@ -7,11 +7,13 @@
         {{ $t("settings.integrations.calendar.title") }}
       </div>
       <p>
-        {{ $t("settings.integrations.calendar.exp") }}
+        {{ $t("settings.integrations.calendar.description") }}
       </p>
       <v-switch
         v-model="calendarEnabled"
-        :label="$t('settings.integrations.calendar.lbl')"
+        :label="
+          $t('settings.integrations.calendar.enableGoogleCalendarIntegration')
+        "
       ></v-switch>
       <div
         :style="{
@@ -34,14 +36,14 @@
         >
         <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
           <div class="overline">
-            {{ $t("settings.integrations.calendar.status") }}:
+            {{ $t("settings.integrations.calendar.state") }}
           </div>
           {{ signInDescription }}
         </div>
       </div>
       <!-- PHILIPS HUE -->
       <div class="title pt-6">{{ $t("settings.integrations.hue.title") }}</div>
-      {{ $t("settings.integrations.hue.exp") }}
+      {{ $t("settings.integrations.hue.description") }}
     </v-card-text>
   </v-card>
 </template>

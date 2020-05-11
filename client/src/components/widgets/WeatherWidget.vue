@@ -14,7 +14,7 @@
       >
     </template>
     <template v-else>
-      <p>{{ $t("widgets.weather.config") }}</p>
+      <p>{{ $t("widgets.weather.configError") }}</p>
       <v-btn text to="/settings/dashboard">{{
         $t("navigation.settings")
       }}</v-btn>

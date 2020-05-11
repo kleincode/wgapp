@@ -9,32 +9,32 @@
           {{ $t("settings.general.appearance.title") }}
         </div>
         <p>
-          {{ $t("settings.general.appearance.exp") }}
+          {{ $t("settings.general.appearance.description") }}
         </p>
         <v-switch
           v-model="darkDesign"
-          :label="$t('settings.general.appearance.lblDark')"
+          :label="$t('settings.general.appearance.darkDesign')"
         ></v-switch>
         <!--Language-->
         <div id="language" class="title pt-2">
-          {{ $t("settings.general.lang.title") }}
+          {{ $t("settings.general.language.title") }}
         </div>
         <p>
-          {{ $t("settings.general.lang.exp") }}
+          {{ $t("settings.general.language.description") }}
         </p>
         <v-select
           v-model="lang"
           :items="supportedLocales"
           item-text="name"
           item-value="code"
-          :label="$t('settings.general.lang.lbl')"
+          :label="$t('settings.general.language.selectLanguage')"
           @change="langChange"
         ></v-select>
         <!--Locale-->
         <div id="locale" class="title pt-2">
           {{ $t("settings.general.locale.title") }}
         </div>
-        {{ $t("settings.general.locale.exp") }}
+        {{ $t("settings.general.locale.description") }}
         <v-switch
           v-model="useBrowserLocale"
           :label="$t('settings.general.locale.system') + ` (${browserLocale})`"
@@ -50,12 +50,12 @@
           :return-object="false"
         ></v-combobox>
         <p class="pt-3">
-          {{ $t("settings.general.locale.desc") }}
+          {{ $t("settings.general.locale.explanation") }}
         </p>
         <v-select
           v-model="currency"
           :items="currencies"
-          :label="$t('settings.general.locale.cur')"
+          :label="$t('settings.general.locale.currency')"
           class="mt-3"
         ></v-select>
         <p>{{ $t("settings.general.locale.sample") }}: {{ currencySample }}</p>
@@ -64,17 +64,17 @@
         <div id="notifications" class="title pt-2">
           {{ $t("settings.general.notifications.title") }}
         </div>
-        <p>{{ $t("settings.general.notifications.exp") }}</p>
+        <p>{{ $t("settings.general.notifications.description") }}</p>
         <notification-controller></notification-controller>
 
         <div id="introduction" class="title pt-2">
-          {{ $t("settings.general.intro.title") }}
+          {{ $t("settings.general.intro.restartTitle") }}
         </div>
         <p>
-          {{ $t("settings.general.intro.exp") }}
+          {{ $t("settings.general.intro.restartDescription") }}
         </p>
         <v-btn color="primary" @click="restartIntro">{{
-          $t("settings.general.intro.lbl")
+          $t("settings.general.intro.restartButton")
         }}</v-btn>
       </div>
     </v-card-text>

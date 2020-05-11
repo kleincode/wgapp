@@ -20,7 +20,7 @@
       <v-card-text>
         <v-container>
           <p>
-            {{ $t("shopping.expense.desc") }}
+            {{ $t("shopping.expense.addDescription") }}
           </p>
           <v-text-field v-model="name"></v-text-field>
           <v-text-field
@@ -93,17 +93,20 @@ export default {
         if (data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("shopping.expense.success")
+            this.$t("shopping.expense.addSuccess")
           );
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("shopping.expense.fail")
+            this.$t("shopping.expense.addFail")
           );
         }
       } catch (err) {
         console.error(err);
-        this.$store.dispatch("showSnackbar", this.$t("shopping.expense.err"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("shopping.expense.addError")
+        );
       }
     }
   }

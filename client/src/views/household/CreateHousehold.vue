@@ -16,12 +16,12 @@
 
               <v-stepper-content step="1">
                 <p>
-                  {{ $t("household.create.nameDesc") }}
+                  {{ $t("household.create.nameMessage") }}
                 </p>
                 <v-form v-model="step1Valid" @submit.prevent="step1Submit">
                   <v-text-field
                     v-model="householdName"
-                    :label="$t('household.create.lblName')"
+                    :label="$t('household.create.householdName')"
                     outlined
                     counter="64"
                     :rules="householdNameRules"
@@ -33,7 +33,7 @@
               </v-stepper-content>
 
               <v-stepper-step :complete="stepperProgress > 2" step="2">{{
-                $t("household.create.configure")
+                $t("household.create.configureHousehold")
               }}</v-stepper-step>
 
               <v-stepper-content step="2">
@@ -44,7 +44,7 @@
                     :items="householdTypes"
                     item-text="description"
                     item-value="id"
-                    :label="$t('household.create.lblType')"
+                    :label="$t('household.create.householdType')"
                     class="mt-2"
                   ></v-select>
                   <v-btn color="primary" type="submit" :loading="loading">{{
@@ -57,12 +57,12 @@
               </v-stepper-content>
 
               <v-stepper-step :complete="stepperProgress > 3" step="3">{{
-                $t("household.create.invite")
+                $t("household.create.invitMembers")
               }}</v-stepper-step>
 
               <v-stepper-content step="3">
                 <p>
-                  {{ $t("household.create.inviteDesc") }}
+                  {{ $t("household.create.inviteMembersMessage") }}
                 </p>
                 <v-text-field
                   ref="addLink"
@@ -86,11 +86,11 @@
 
               <v-stepper-content step="4">
                 <p>
-                  {{ $t("household.create.finishDesc") }}
+                  {{ $t("household.create.finishMessage") }}
                 </p>
                 <v-btn color="primary" @click="finish">
                   <v-icon left>dashboard</v-icon>
-                  {{ $t("household.create.dashboard") }}</v-btn
+                  {{ $t("household.create.goToDashboard") }}</v-btn
                 >
               </v-stepper-content>
             </v-stepper>
@@ -122,8 +122,8 @@ export default {
   }),
   computed: {
     householdNameRules: [
-      v => !!v || this.$t("household.create.ruleName"),
-      v => (v && v.length <= 64) || this.$t("household.create.ruleNameLong")
+      v => !!v || this.$t("household.create.provideName"),
+      v => (v && v.length <= 64) || this.$t("household.create.nameTooLong")
     ],
     introductionState: {
       get() {
@@ -168,7 +168,7 @@ export default {
     },
     step1Submit() {
       if (this.step1Valid) this.stepperProgress = 2;
-      else this.alertSnackbar(this.$t("household.create.messages.input"));
+      else this.alertSnackbar(this.$t("household.create.messages.checkInput"));
     },
     async step2Submit() {
       this.loading = true;
@@ -181,7 +181,10 @@ export default {
           window.location.origin +
           `/household/join?h=${data.hid}&s=${data.sec}`;
         this.stepperProgress = 3;
-      } else this.alertSnackbar(this.$t("household.create.errors.creating"));
+      } else
+        this.alertSnackbar(
+          this.$t("household.create.errors.createHouseholdError")
+        );
       this.loading = false;
     },
     step3Submit() {

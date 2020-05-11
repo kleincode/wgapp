@@ -9,14 +9,14 @@
         v-model="choosenTimeSpan"
         :items="timespanes"
         item-value="value"
-        :label="$t('finances.lblSpan')"
+        :label="$t('finances.chooseTimeSpan')"
         @change="updateTable()"
       ></v-select>
     </div>
     <v-row align="stretch">
       <v-col cols="12" md="6" lg="4">
         <v-card style="height: 100%" :elevation="6">
-          <v-card-title>{{ $t("finances.memberExp") }}</v-card-title>
+          <v-card-title>{{ $t("finances.memberExpenses") }}</v-card-title>
           <v-list v-if="memberTotals.length > 0" three-line avatar>
             <v-subheader>{{ $t("general.members") }}</v-subheader>
             <v-list-item-group
@@ -64,14 +64,14 @@
             <v-icon style="font-size: 6em" class="text--disabled"
               >supervisor_account</v-icon
             >
-            <br />{{ $t("finances.empty.member") }}
+            <br />{{ $t("finances.empty.members") }}
           </div>
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
           <v-card-title>
-            {{ $t("finances.exp") }}
+            {{ $t("finances.expenses") }}
             <v-spacer></v-spacer>
             <edit-expense-dialog
               ref="editDialog"
@@ -85,7 +85,7 @@
             :options.sync="tableOptions"
             :server-items-length="tableTotalItems"
             :loading="tableLoading"
-            :no-data-text="$t('finances.empty.exp')"
+            :no-data-text="$t('finances.empty.expenses')"
             must-sort
           >
             <template v-slot:item.uid="{ item }">
@@ -124,7 +124,7 @@
           :elevation="6"
         >
           <v-card-title>
-            {{ $t("finances.moncharge") }}
+            {{ $t("finances.monthlyCharges") }}
             <v-spacer></v-spacer>
             <v-btn
               icon
@@ -139,7 +139,7 @@
             ></EditMonthlyChargesDialog>
           </v-card-title>
           <v-card-text>
-            {{ $t("finances.monchargeExp") }}
+            {{ $t("finances.monthlyChargesExplanation") }}
             <v-list v-if="monthlyCharges.length > 0">
               <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
                 <v-list-item-icon>
@@ -148,7 +148,7 @@
                 <v-list-item-content>
                   <v-list-item-title>{{ charge.name }}</v-list-item-title>
                   <v-list-item-subtitle
-                    >{{ $t("finances.payedby") }}:
+                    >{{ $t("finances.payedBy") }}:
                     {{ charge.responsibleUser }}
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -183,7 +183,7 @@
               <v-icon style="font-size: 6em" class="text--disabled"
                 >event</v-icon
               >
-              <br />{{ $t("finances.empty.moncharge") }}
+              <br />{{ $t("finances.empty.monthlyCharges") }}
             </div>
           </v-card-text>
         </v-card>
@@ -201,7 +201,9 @@
               </template>
               <v-card>
                 <v-card-title>
-                  <span class="headline">{{ $t("finances.editMonBud") }}</span>
+                  <span class="headline">{{
+                    $t("finances.editMonthlyBudget")
+                  }}</span>
                 </v-card-title>
                 <v-card-text>
                   <v-text-field
@@ -233,7 +235,7 @@
                 :class="usedTotal > relativeTotal ? 'red--text' : ''"
               >
                 <div class="text-center">
-                  <div class="overline">{{ $t("finances.curUsed") }}</div>
+                  <div class="overline">{{ $t("finances.currentlyUsed") }}</div>
                   <div class="display-1">{{ getCurrency(usedTotal) }}</div>
                 </div>
               </v-col>
@@ -242,7 +244,9 @@
               ></v-col>
               <v-col cols="12" md="4">
                 <div class="text-center">
-                  <div class="overline">{{ $t("finances.curTarTotal") }}</div>
+                  <div class="overline">
+                    {{ $t("finances.currentTargetTotal") }}
+                  </div>
                   <div class="display-1">
                     {{ getCurrency(relativeTotal) }}
                   </div>
@@ -257,7 +261,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ $t("finances.moncharge") }}
+                  {{ $t("finances.monthlyCharges") }}
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon>{{
@@ -272,7 +276,7 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ $t("finances.memberExp") }}
+                  {{ $t("finances.memberExpenses") }}
                 </v-list-item-title>
               </v-list-item-content>
               <v-list-item-icon>{{
@@ -289,10 +293,10 @@
           :elevation="6"
         >
           <v-card-title>
-            {{ $t("finances.compPay") }}
+            {{ $t("finances.compensationPayments") }}
           </v-card-title>
           <v-card-text>
-            {{ $t("finances.compPayExp") }}
+            {{ $t("finances.compensationPaymentsExplanation") }}
             <div class="text-center pt-8 pb-4">
               <span class="overline" style="font-size: 1em !important">
                 {{ $t("finances.lastBill") }}
@@ -302,14 +306,14 @@
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" block :to="{ name: 'BillManager' }">{{
-              $t("finances.openBill")
+              $t("finances.openBillManager")
             }}</v-btn></v-card-actions
           >
         </v-card>
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <v-card style="height: 100%">
-          <v-card-title>{{ $t("finances.memberTrend") }}</v-card-title>
+          <v-card-title>{{ $t("finances.memberTrendExpenses") }}</v-card-title>
           <v-card-text>
             <ExpenseChart ref="chart" :chart-data="getChartData"></ExpenseChart>
           </v-card-text>
@@ -322,10 +326,9 @@
       :loading="deleteDialogLoading"
       @positive="deleteConfirm"
       @negative="deleteDialogVisible = false"
-      >{{ $t("finances.confirmDelete") }} "{{
-        deleteDescription
-      }}"?</confirm-dialog
     >
+      {{ $t("finances.confirmDeleteItem", { item: deleteDescription }) }}
+    </confirm-dialog>
   </v-container>
 </template>
 <script>

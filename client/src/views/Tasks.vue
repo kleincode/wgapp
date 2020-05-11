@@ -250,10 +250,7 @@ export default {
           }
         });
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          this.$i18n.t("tasks.errors.fetchTask")
-        );
+        this.$store.dispatch("showSnackbar", this.$t("tasks.errors.fetchTask"));
         console.warn(err);
       }
       this.loading = false;
@@ -269,7 +266,7 @@ export default {
         //On-Demand
         this.$store.dispatch(
           "showSnackbar",
-          this.$i18n.t("store.tasks.undoOnDemand")
+          this.$t("store.tasks.undoOnDemandError")
         );
         this.loading = false;
         return;
@@ -283,10 +280,7 @@ export default {
         });
         await this.fetchTasks();
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          this.$i18n.t("tasks.errors.checkTask")
-        );
+        this.$store.dispatch("showSnackbar", this.$t("tasks.errors.checkTask"));
         console.warn(err);
       }
       this.loading = false;
@@ -302,7 +296,7 @@ export default {
         });
         await this.fetchTasks();
       } catch (err) {
-        this.$store.dispatch("showSnackbar", this.$i18n.t("tasks.errors.undo"));
+        this.$store.dispatch("showSnackbar", this.$t("tasks.errors.undo"));
         console.warn(err);
       }
       this.checkedTask = null;
@@ -314,16 +308,15 @@ export default {
         await this.$store.dispatch("tasks/triggerReminder", task);
         this.$store.dispatch(
           "showSnackbar",
-          this.$i18n.t("tasks.reminder.part1") +
-            this.getUserName(task.assigned) +
-            this.$i18n.t("tasks.reminder.part2") +
-            task.name +
-            this.$i18n.t("tasks.reminder.part3")
+          this.$t("tasks.reminderMessage", {
+            user: this.getUserName(task.assigned),
+            task: task.name
+          })
         );
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$i18n.t("tasks.errors.reminder")
+          this.$t("tasks.errors.triggerReminder")
         );
       }
       this.loading = false;

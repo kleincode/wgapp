@@ -20,7 +20,7 @@
                 <v-text-field
                   ref="description"
                   v-model="value.description"
-                  :label="$t('finances.expense.desc')"
+                  :label="$t('finances.expense.description')"
                   outlined
                   counter="160"
                   maxlength="160"
@@ -49,7 +49,7 @@
           <v-checkbox
             v-if="!editMode"
             v-model="addReceipt"
-            :label="$t('finances.expense.addRec')"
+            :label="$t('finances.expense.addReceipt')"
             class="ma-0"
           ></v-checkbox>
           <v-spacer></v-spacer>
@@ -88,20 +88,23 @@ export default {
   computed: {
     descriptionRules() {
       return [
-        v => !!v || this.$t("finances.editMon.rules.name"),
+        v => !!v || this.$t("finances.editMonthlyCharges.rules.provideName"),
         v =>
-          (!!v && v.length <= 160) || this.$t("finances.editMon.rules.length")
+          (!!v && v.length <= 160) ||
+          this.$t("finances.editMonthlyCharges.rules.nameTooLong")
       ];
     },
     amountRules() {
       return [
-        v => !!v || this.$t("finances.editMon.rules.amount"),
+        v => !!v || this.$t("finances.editMonthlyCharges.rules.provideAmount"),
         v => {
           let num = parseFloat(v);
-          if (isNaN(num)) return this.$t("finances.editMon.rules.validAm");
-          else if (num < 0) return this.$t("finances.editMon.rules.negative");
+          if (isNaN(num))
+            return this.$t("finances.editMonthlyCharges.rules.amountInvalid");
+          else if (num < 0)
+            return this.$t("finances.editMonthlyCharges.rules.negativeAmount");
           else if (Math.abs(num) < 0.01)
-            return this.$t("finances.editMon.rules.nonzero");
+            return this.$t("finances.editMonthlyCharges.rules.amountIsZero");
           else return true;
         }
       ];
@@ -150,7 +153,10 @@ export default {
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
         this.loading = false;
-        this.$store.dispatch("showSnackbar", this.$t("general.comErr"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("general.errors.communication")
+        );
         console.error(err);
       }
     },

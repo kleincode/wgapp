@@ -12,7 +12,16 @@
     "member": "Member",
     "members": "Members",
     "household": "household",
-    "comErr": "Communication error. Please try again later."
+    "errors": {
+      "communication": "Communication error. Please try again later.",
+      "connect": "Could not connect to server.",
+      "unknown": "Unknown error."
+    },
+    "units": {
+      "celsius": "Celsius",
+      "fahrenheit": "Fahrenheit",
+      "kelvin": "Kelvin"
+    }
   },
   "commands": {
     "close": "Close",
@@ -26,7 +35,7 @@
     "signout": "Sign out",
     "loading": "Loading",
     "ok": "Ok",
-    "continue": "Continnue",
+    "continue": "Continue",
     "next": "Next",
     "finish": "Finish",
     "back": "Back",
@@ -60,21 +69,17 @@
     "other": "other",
     "nothing": "Nothing to do",
     "checked": "Checked",
-    "reminder": {
-      "part1": "You've reminded ",
-      "part2": " of ",
-      "part3": ""
-    },
+    "reminderMessage": "You've reminded {user} of {task}",
     "errors": {
       "fetchTask": "Could not fetch tasks. Please try again later.",
       "checkTask": "Could not check task. Please try again later.",
       "undo": "Undo failed :/",
-      "reminder": "Error triggering the reminder."
+      "triggerReminder": "Error triggering the reminder."
     },
     "modes": {
       "single": "Single",
-      "rep": "Repeating",
-      "ondem": "On-Demand"
+      "repeating": "Repeating",
+      "ondemand": "On-Demand"
     },
     "editTask": {
       "titleEdit": "Edit task",
@@ -82,15 +87,15 @@
       "taskMode": "Task Mode",
       "name": "Name",
       "memberMode": "Member mode",
-      "assigned": "Assigned to",
-      "titleTime": "Time & Date",
-      "lblStart": "Choose your start day",
-      "lblTime": "Choose your task time",
-      "lblReminder": "Toggle Reminder",
-      "lblRepeatOn": "Repeat on",
-      "lblRepeatEvery": "Repeat every",
-      "lblRepeatUnit": "Repetition unit",
-      "deleteDialog": "Do you really want to delete this task?",
+      "assignedTo": "Assigned to",
+      "timeAndDate": "Time & Date",
+      "chooseStartDay": "Choose your start day",
+      "chooseTaskTime": "Choose your task time",
+      "toggleReminder": "Toggle Reminder",
+      "repeatOn": "Repeat on",
+      "repeatEvery": "Repeat every",
+      "repeatUnit": "Repetition unit",
+      "confirmDelete": "Do you really want to delete this task?",
       "errors": {
         "number": "Error while fetching tasks. Multiple or no task received.",
         "settings": "Couldn't fetch settings data. Please try again later.",
@@ -103,307 +108,310 @@
       },
       "messages": {
         "name": "You need to specify a name.",
-        "intervall": "You need to specify a valid intervall.",
+        "interval": "You need to specify a valid interval.",
         "weekday": "You need to specify at least one weekday.",
         "successEdit": "Successfully edited the task.",
         "successAdd": "Successfully added new task.",
         "delete": "Deleted task."
       }
     },
-    "upcom": {
+    "upcoming": {
       "title": "Upcoming tasks",
       "timed": "Timed tasks",
-      "ondem": "On-Demand Tasks",
-      "repDesc": "This is a repeating task",
-      "oneDesc": "This is a one-time task",
-      "emptyRep": "Congratulations, you've got nothing to do!",
+      "onDemand": "On-Demand Tasks",
+      "repeatingTaskDescription": "This is a repeating task",
+      "singleTaskDescription": "This is a one-time task",
+      "repeatingTasksEmpty": "Congratulations, you've got nothing to do!",
       "last": "last",
-      "emptyOnDem": "Are you sure there's really nothing you should do?",
-      "invalid": "Invalid Date"
+      "onDemandTasksEmpty": "Are you sure there's really nothing you should do?",
+      "invalidDate": "Invalid Date"
     },
     "log": {
       "title": "Task log",
       "empty": "You really need to start getting stuff done!"
     },
-    "rep": {
+    "repeatingTasks": {
       "title": "Manage repeating tasks",
       "empty": "This demoralizing daily routine, right?"
     }
   },
   "shopping": {
     "title": "Shopping",
-    "hLists": "Lists",
+    "lists": "Lists",
     "sync": "Synchronize shopping lists",
     "emptyList": "Go make a list, shopping is fun!",
     "emptyShopping": "Happy shopping!",
     "newItem": "New Item",
     "remaining": "Remaining",
     "completed": "Completed",
-    "noselect": "No list selected",
-    "syncErr": "Sync failed: ",
+    "noListSelected": "No list selected",
+    "syncError": "Sync failed: {message}",
     "expense": {
       "transfer": "Transfer to finances",
       "add": "Add expense",
-      "desc": "Add a new expense corresponding to this shopping list.",
-      "success": "Successfully added new shopping expense.",
-      "fail": "Couldn't add expense to database. Please try again later.",
-      "err": "Error during adding expense to database. Please try again later."
+      "addDescription": "Add a new expense corresponding to this shopping list.",
+      "addSuccess": "Successfully added new shopping expense.",
+      "addFail": "Couldn't add expense to database. Please try again later.",
+      "addError": "Error during adding expense to database. Please try again later."
     },
     "list": {
-      "lblCreate": "Create shopping list",
+      "create": "Create shopping list",
       "edit": "Edit shopping list",
       "new": "New shopping list",
-      "msgName": "Please provide a list name!",
-      "msgLength": "List name is too long.",
-      "fail": "Adding list failed."
+      "provideListName": "Please provide a list name!",
+      "listNameTooLong": "List name is too long.",
+      "addFail": "Adding list failed."
     }
   },
   "settings": {
     "title": "Settings",
-    "introTitle": "We're not yet here!",
-    "introText": "Move on with your tutorial of click 'End tutorial' at the bottom.",
+    "introLocked": "We're not yet here!",
+    "introLockedDescription": "Move on with your tutorial or click 'End tutorial' at the bottom.",
     "general": {
       "title": "General",
       "appearance": {
         "title": "Appearance",
-        "exp": "Vanilla or chocolate? That's a question every worthy soldier has to answer for themselves. Just be careful: The blinding light might daze you.",
-        "lblDark": "Dark design"
+        "description": "Vanilla or chocolate? That's a question every worthy soldier has to answer for themselves. Just be careful: The blinding light might daze you.",
+        "darkDesign": "Dark design"
       },
-      "lang": {
+      "language": {
         "title": "Language",
-        "exp": "We currently support English and German. If you want to help us translate Jeff into your you're very welcome to do so. Just contact us!",
-        "lbl": "Select language"
+        "description": "We currently support English and German. If you want to help us translate Jeff into your language you're very welcome to do so. Just contact us!",
+        "selectLanguage": "Select language"
       },
       "locale": {
         "title": "Locale",
-        "exp": "The locale settings affect the way dates, times, and currencies are displayed.",
-        "system": "Use system locale ",
+        "description": "The locale settings affect the way dates, times, and currencies are displayed.",
+        "system": "Use system locale",
         "custom": "Custom locale",
         "customHint": "A locale can include a language only (like en) or a specific country (like en-US)",
-        "desc": "Note that the currency setting only changes the symbol used for displaying money amounts. No conversion is applied. If your household is an international conglomerate, we apologize for the inconvenience caused by this inadequacy.",
-        "cur":"Currency",
+        "explanation": "Note that the currency setting only changes the symbol used for displaying money amounts. No conversion is applied. If your household is an international conglomerate, we apologize for the inconvenience caused by this inadequacy.",
+        "currency": "Currency",
         "sample": "Sample"
       },
       "notifications": {
         "title": "Notifications",
-        "exp": "Notifications remind you of important upcoming tasks.",
-        "controller": [
-          "Your system does not support push notifications.",
-          "Enabling push notifications failed.",
-          "The permission to send push notifications was denied on your system. Please check your website settings and allow them if you want to use this feature."
-        ]
+        "description": "Notifications remind you of important upcoming tasks.",
+        "controller": {
+          "notSupported": "Your system does not support push notifications.",
+          "registrationFailed": "Enabling push notifications failed.",
+          "permissionDenied": "The permission to send push notifications was denied on your system. Please check your website settings and allow them if you want to use this feature."
+        }
       },
       "intro": {
-        "title": "Restart Introduction",
-        "exp": "If you missed something in my introduction just restart it right here.",
-        "lbl": "Restart introduction"
+        "restartTitle": "Restart Introduction",
+        "restartDescription": "If you missed something in my introduction just restart it right here.",
+        "restartButton": "Restart introduction"
       }
     },
     "dashboard": {
       "clock": {
         "title": "Clock Widget",
-        "exp": "A revolutionary time-telling device. Follows the laws of special and general relativity.",
-        "lblToggle": "Enable clock widget",
-        "note": "Note: ",
-        "noteText": "The clock widget displays time according to your ",
-        "noteLink": "locale settings"
+        "description": "A revolutionary time-telling device. Follows the laws of special and general relativity.",
+        "enableWidget": "Enable clock widget",
+        "note": "Note:",
+        "localeNoteText": "The clock widget displays time according to your ",
+        "localeNoteLink": "locale settings"
       },
       "weather": {
         "title": "Weather Widget",
-        "exp": "Provides you with the latest weather data using the free",
-        "lblToggle": "Enable weather widget",
-        "title2": "API call settings",
-        "exp2": "Please sign up for an API key at",
-        "exp3": "or freeload one from your roommates.",
-        "key": "API key",
-        "zip": "ZIP code",
-        "country": "Country code",
-        "open": "Open Weather API:",
-        "unit": "Temperature unit"
+        "description": "Provides you with the latest weather data using the free",
+        "enableWidget": "Enable weather widget",
+        "apiSettingsTitle": "API call settings",
+        "apiSignUp1": "Please sign up for an API key at",
+        "apiSignUp2": "or freeload one from your roommates.",
+        "apiKey": "API key",
+        "zipCode": "ZIP code",
+        "countryCode": "Country code",
+        "openWeatherApi": "Open Weather API:",
+        "temperatureUnit": "Temperature unit"
       },
       "tasks": {
         "title": "Tasks Widget",
-        "exp": "This widget makes sure things are getting done in your home. No one ever dared to question its authority.",
-        "lblToggle": "Enable tasks widget"
+        "description": "This widget makes sure things are getting done in your home. No one ever dared to question its authority.",
+        "enableWidget": "Enable tasks widget"
       },
       "finances": {
         "title": "Finances Widget",
-        "exp": "Never lose track of your household expenses so not a single penny will go missing.",
-        "lblToggle": "Enable finances widget"
+        "description": "Never lose track of your household expenses so not a single penny will go missing.",
+        "enableWidget": "Enable finances widget"
       },
       "disturb": {
         "title": "Do Not Disturb Widget",
-        "exp": "You want to study or just be left alone for a while? When you activate this widget you can see if somebody dont want to be disturbed. Just activate the do not disturb mode with click of a button right from the widget.",
-        "lblToggle": "Enable do not disturb widget"
+        "description": "You want to study or just be left alone for a while? When you activate this widget you can see if somebody dont want to be disturbed. Just activate the do not disturb mode with click of a button right from the widget.",
+        "enableWidget": "Enable do not disturb widget"
       },
       "home": {
         "title": "Home Widget",
-        "exp": "You want to let everybody know that you're home? Just hit the bell in the widget and everybody will be notified.",
-        "lblToggle": "Enable home widget"
+        "description": "You want to let everybody know that you're home? Just hit the bell in the widget and everybody will be notified.",
+        "enableWidget": "Enable home widget"
       }
     },
     "integrations": {
       "title": "Integrations",
       "calendar": {
         "title": "Calendar",
-        "exp": "Keep track of your shared activites and duties using the Google Calendar API. If enabled, the calendar can be reached via the new link in your navigation drawer.",
-        "lbl": "Enable Google Calendar integration",
-        "status": "Status"
+        "description": "Keep track of your shared activites and duties using the Google Calendar API. If enabled, the calendar can be reached via the new link in your navigation drawer.",
+        "enableGoogleCalendarIntegration": "Enable Google Calendar integration",
+        "state": "State: "
       },
       "hue": {
-        "title": "Philipps Hue",
-        "exp": "Coming soon (or maybe not so soon)."
+        "title": "Philips Hue",
+        "description": "Coming soon (or maybe not so soon)."
       }
     }
   },
   "profile": {
     "title": "Profile",
-    "username": "username",
-    "nick": "Nickname",
-    "mail": "E-Mail",
-    "password": "password",
+    "username": "Username",
+    "nickname": "Nickname",
+    "email": "E-Mail",
+    "password": "Password",
     "expenses": "Latest expenses",
-    "noexpenses": "No expenses",
-    "monexpenses": "Monthly charges",
-    "nomonexpenses": "No monthly charges",
+    "noExpenses": "No expenses",
+    "monthlyExpenses": "Monthly charges",
+    "noMonthlyExpenses": "No monthly charges",
     "errors": {
-      "users": "Couldn't fetch user expenses.",
-      "usersErr": "Error while fetching user expenses.",
-      "mon": "Couldn't fetch monthly data. Please try again later.",
-      "monErr": "Error during fetching monthly data. Please try again later."
+      "fetchUserExpensesFailed": "Couldn't fetch user expenses.",
+      "fetchUserExpensesError": "Error while fetching user expenses.",
+      "fetchMonthlyExpensesFailed": "Couldn't fetch monthly data. Please try again later.",
+      "fetchMonthlyExpensesError": "Error during fetching monthly data. Please try again later."
     },
     "edit": {
       "title": "Edit profile",
-      "nickHint": "Will be used as the displayed name",
-      "old": "Old Password",
-      "new": "New Password",
-      "rep": "Repeat new password",
-      "mail": "E-mail is required",
-      "mailValid": "E-mail must be valid",
-      "msgs": {
-        "repFail": "Please repeat the new password correctly.",
-        "success": "Successfully updated profile.",
-        "delSuccess": "Successfully deleted profile picture."
+      "nicknameHint": "Will be used as the displayed name",
+      "currentPassword": "Old Password",
+      "newPassword": "New Password",
+      "repeatNewPassword": "Repeat new password",
+      "emailRequired": "E-mail is required",
+      "emailInvalid": "E-mail must be valid",
+      "messages": {
+        "profileUpdated": "Successfully updated profile.",
+        "profilePictureDeleted": "Successfully deleted profile picture."
       },
       "errors": {
-        "update": "Couldn't update profile.",
-        "updateErr": "Error while updating profile.",
-        "del": "Couldn't delete profile picture.",
-        "delErr": "Error while deleting profile picture."
+        "passwordsDoNotMatch": "Please repeat the new password correctly.",
+        "profileUpdateFailed": "Couldn't update profile.",
+        "profileUpdateError": "Error while updating profile.",
+        "deleteProfilePictureFailed": "Couldn't delete profile picture.",
+        "deleteProfilePictureError": "Error while deleting profile picture."
       }
     },
-    "upload": {
+    "uploadProfilePicture": {
       "title": "Upload Profile Picture",
-      "place": "Upload your profile picture",
-      "hintImage": "Please specify an image",
-      "hintCompress": "Error while compressing the image.",
-      "upload": "Profile picture uploaded",
-      "upErr": "Error while uploading profile picture."
+      "uploadhere": "Upload your profile picture",
+      "noImageSpecified": "Please specify an image",
+      "imageCompressionError": "Error while compressing the image.",
+      "uploaded": "Profile picture uploaded",
+      "uploadError": "Error while uploading profile picture."
     }
   },
   "login": {
     "welcome": "Welcome!",
     "login": "Login",
     "register": "Register",
-    "msg": "If you forgot your password, please provide your email so we can send you a link which allows you to change your password.",
-    "mail": "E-mail",
-    "first": "First name",
-    "last": "Last name",
+    "forgotPasswordMessage": "If you forgot your password, please provide your email so we can send you a link which allows you to change your password.",
+    "email": "E-mail",
+    "firstname": "First name",
+    "lastname": "Last name",
     "password": "Password",
-    "forgot": "Forgot password?",
-    "rep": "Repeat password",
+    "forgotPassword": "Forgot password?",
+    "repeatPassword": "Repeat password",
+    "verifying": "Verifying your email address...",
+    "verified": "Your email was verified.",
+    "resendEmail": "Resend email",
     "messages": {
       "required": "This field is required!",
-      "mail1": "E-mail is required!",
-      "mail2": "E-mail must be valid!",
-      "password1": "Password is required",
-      "password2": "Password must be at least 8 characters.",
-      "input": "Please check your input.",
-      "match": "Your passwords do not match. Please try again."
+      "maiLRequired": "E-mail is required!",
+      "mailInvalid": "E-mail must be valid!",
+      "passwordRequired": "Password is required",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "checkInput": "Please check your input.",
+      "passwordsDoNotMatch": "Your passwords do not match. Please try again."
     },
     "errors": {
       "register": "Error registering. Please try again later.",
-      "com": "Communication error. Please try again later."
+      "verify": "Your email could not be verified."
     }
   },
   "finances": {
     "title": "Finances",
-    "lblSpan": "Choose time span",
-    "memberExp": "Member Expenses",
-    "exp": "Expenses",
-    "moncharge": "Monthly Charges",
-    "monchargeExp": " Monthly charges are billed at the first day of every month.",
-    "payedby": "payed by",
+    "chooseTimeSpan": "Choose time span",
+    "memberExpenses": "Member Expenses",
+    "expenses": "Expenses",
+    "monthlyCharges": "Monthly Charges",
+    "monthlyChargesExplanation": " Monthly charges are billed at the first day of every month.",
+    "payedBy": "payed by",
     "overview": "Overview Expenses",
-    "editMonBud": "Edit monthly budget",
+    "editMonthlyBudget": "Edit monthly budget",
     "name": "Name",
     "amount": "Amount",
-    "payedbyall": "Payed by all",
-    "curUsed": "currently used",
-    "curTarTotal": "current target total",
-    "compPay": "Compensation Payments",
-    "compPayExp": "Calculate compensation payments for all member expenses since the last billing.",
+    "payedByAll": "Payed by all",
+    "currentlyUsed": "currently used",
+    "currentTargetTotal": "current target total",
+    "compensationPayments": "Compensation Payments",
+    "compensationPaymentsExplanation": "Calculate compensation payments for all member expenses since the last billing.",
     "lastBill": "last bill",
-    "openBill": "Open Bill Manager",
-    "memberTrend": "Member Trend Expenses",
-    "confirmDelete": "Are you sure you want to delete",
+    "openBillManager": "Open Bill Manager",
+    "memberTrendExpenses": "Member Trend Expenses",
+    "confirmDeleteItem": "Are you sure you want to delete {item}?",
     "empty": {
-      "member": "Spend some money and you will be listed here!",
-      "exp": "No expenses added",
-      "moncharge": "Add your monthly charges here."
+      "members": "Spend some money and you will be listed here!",
+      "expenses": "No expenses added",
+      "monthlyCharges": "Add your monthly charges here."
     },
-    "billman": {
+    "billManager": {
       "title": "Bill Manager",
       "confirmFinish": "Are you sure you want to finish these payments? You can't undo this action.",
-      "noexp": "No new expenses available",
+      "noExpensesAvailable": "No new expenses available",
       "newBill": "New Bill",
-      "monTot": "Monthly total",
-      "tot": "Total",
-      "pp": "per person",
-      "pay": "Paying",
-      "rec": "Receives",
-      "am": "Amount",
-      "includeMon": "Include monthly charge",
-      "save": "Save payments",
-      "history": "Bill history",
+      "monthlyTotal": "Monthly total",
+      "total": "Total",
+      "perPerson": "per person",
+      "paying": "Paying",
+      "receives": "Receives",
+      "amount": "Amount",
+      "includeMonthlyCharges": "Include monthly charge",
+      "savePayments": "Save payments",
+      "billHistory": "Bill history",
       "from": "From",
       "to": "To",
       "export": "Export",
       "errors": {
-        "history": "Couldn't fetch bill history. Please try again later.",
-        "historyErr": "Error while fetching bill history. Please try again later.",
-        "data": "Couldn't fetch Bill Manager data. Please try again later.",
-        "dataErr": "Error fetching Bill Manager data. Please try again later.",
-        "lastBill": "Error while updating last bill time. Please try again later."
+        "fetchHistoryFailed": "Couldn't fetch bill history. Please try again later.",
+        "fetchHistoryError": "Error while fetching bill history. Please try again later.",
+        "fetchBillDataFailed": "Couldn't fetch Bill Manager data. Please try again later.",
+        "fetchBillDataError": "Error fetching Bill Manager data. Please try again later.",
+        "updateLastBillError": "Error while updating last bill time. Please try again later."
       },
-      "success": "Successfully updated last bill."
+      "updated": "Successfully updated last bill."
     },
     "receipt": {
       "title": "Receipt",
-      "load": "Loading receipt...",
-      "noRec": "No receipt uploaded yet",
+      "loading": "Loading receipt...",
+      "noReceipt": "No receipt uploaded yet",
       "upload": "Upload your receipt",
-      "lbl": "Receipt",
-      "del": "Delete receipt",
-      "imgHint": "Please specify an image",
-      "compressHint": "Error while compressing the image.",
-      "upErr": "Error while uploading receipt.",
-      "successUpload": "Receipt uploaded",
-      "successDel": "Receipt deleted.",
-      "delFail": "Could not delete receipt.",
-      "delErr": "Error while deleting receipt."
+      "receipt": "Receipt",
+      "deleteReceipt": "Delete receipt",
+      "noImageSpecified": "Please specify an image",
+      "imageCompressionError": "Error while compressing the image.",
+      "uploadError": "Error while uploading receipt.",
+      "uploaded": "Receipt uploaded",
+      "deleted": "Receipt deleted.",
+      "deleteFailed": "Could not delete receipt.",
+      "deleteError": "Error while deleting receipt."
     },
-    "editMon": {
-      "titleEdit": "Edit monthly charge",
-      "titleNew": "New monthly charge",
-      "msg": "Specify a paying member or select payed by all!",
+    "editMonthlyCharges": {
+      "editMonthlyCharge": "Edit monthly charge",
+      "newMonthlyCharge": "New monthly charge",
+      "specifyPayingMember": "Specify a paying member or select payed by all!",
       "rules": {
-        "name": "Please provide an charge name!",
-        "length": "name is too long.",
-        "amount": "Please provide an amount!",
-        "validAm": "Please provide a valid amount.",
-        "negative": "Negative amounts are not permitted",
-        "nonzero": "Please provide a non-zero number."
+        "provideName": "Please provide a charge name!",
+        "nameTooLong": "name is too long.",
+        "provideAmount": "Please provide an amount!",
+        "amountInvalid": "Please provide a valid amount.",
+        "negativeAmount": "Negative amounts are not permitted",
+        "amountIsZero": "Please provide a non-zero number."
       },
       "updated": "Monthly charge updated successfully.",
       "added": "Monthly charge added successfully."
@@ -411,116 +419,118 @@
     "expense": {
       "edit": "Edit expense",
       "new": "New expense",
-      "desc": "Description",
-      "addRec": "Add receipt",
+      "description": "Description",
+      "addReceipt": "Add receipt",
       "added": "Expense added successfully.",
       "updated":"Expense updated successfully."
     },
     "export": {
       "until": " until ",
-      "debts": "Member Debts",
-      "res": "Resulting Compensation Payments"
+      "memberDebts": "Member Debts",
+      "results": "Resulting Compensation Payments"
     }
   },
   "dashboard": {
-    "householdTitle": "You're not in a household yet.",
-    "householdMsg": "Please join a household or create your own.",
-    "join": "join household",
-    "create": "create household",
-    "message": {
+    "notInHouseholdTitle": "You're not in a household yet.",
+    "notInHouseholdMessage": "Please join a household or create your own.",
+    "joinHousehold": "Join household",
+    "createHousehold": "Create household",
+    "greetings": {
       "lateNight": [
-        "Any late night thoughts, ",
-        "How's the party going "
+        "Any late night thoughts, {name}?",
+        "Ain't no party like a {name} party cuz a {name} party don't stop",
+        "I don't like the dark."
       ],
       "morning": [
         "Morning sunshine!",
         "Wakey wakey rise n’ shine!",
         "Rise and shine, it's time for wine!",
-        "Have a great day, ",
-        "Good Morning, "
+        "Have a great day, {name}!",
+        "Good Morning, {name}!",
+        "Roads? Where we're going we don't need...roads."
       ],
       "noon": [
-        "Hi, ",
-        "What's up, ",
-        "How you doin?"
+        "Hi, {name}!",
+        "What's up, {name}?",
+        "How you doin'?",
+        "Here comes the sun 🎵"
       ],
       "afternoon": [
-        "Hi, ",
-        "Nice to see you, ",
-        "How was your day, "
+        "Hi, {name}!",
+        "Nice to see you, {name}!",
+        "How was your day, {name}?"
       ],
       "evening": [
-        "Netflix and chill?",
-        "Good evening, ",
-        "How was your day, "
+        "Netflix and grill?",
+        "Good evening, {name}!",
+        "How was your day, {name}?"
       ],
       "night": [
-        "Good Night, ",
-        "Go get your beauty sleep, ",
-        "Sleep well, "
+        "Good night, {name}.",
+        "Go get your beauty sleep, {name}.",
+        "Sleep well, {name}.",
+        "Dream a little dream of me.."
       ]
     }
   },
   "calendar": {
     "title": "Calendar",
-    "lblSel": "Select Calendars",
-    "lblNotSigned": "Not signed in",
+    "selectCalendars": "Select Calendars",
+    "notSignedIn": "Not signed in",
     "others": "others",
-    "warning": "Please refer to the to {settings} activate this feature.",
-    "warnSettings": "settings",
-    "warning2": "Please refer to the {settings} to connect to the Google services.",
-    "time": [
-      "Day",
-      "Week",
-      "Month",
-      "4 days"
-    ],
-    "nodesc": "No description"
+    "notActivated": "Please refer to the {settings} activate this feature.",
+    "settingsLinkText": "settings",
+    "notConnected": "Please refer to the {settings} to connect to the Google services.",
+    "timeViews": {
+      "oneday":  "Day",
+      "oneweek": "Week",
+      "onemonth": "Month",
+      "fourdays": "4 days"
+    },
+    "noDescription": "No description"
   },
   "household": {
-    "title": "Members",
-    "leave": "Leave household",
-    "lea": "Leave",
+    "members": "Members",
+    "leaveHousehold": "Leave household",
+    "leave": "Leave",
     "stay": "Stay",
     "info": "Info",
     "created": "Created",
     "confirmLeave": "Are you sure you want to leave this household?",
-    "confirmExp": "This operation can only be undone using an invite link. You old data will be lost",
-    "successUpdate": "Successfully updated household information.",
+    "confirmLeave2": "This operation can only be undone using an invite link.",
+    "update": "Successfully updated household information.",
     "types": [
       "Shared apartment", "Couple", "Family"
     ],
     "errors": {
-      "assigned": "You are not assigned to a household yet. Please create one now.",
-      "connect": "Could not connect to server.",
-      "unkown": "Unknown error.",
-      "update": "Couldn't update household information.",
-      "updateErr": "Error updating household information."
+      "userNotAssignedToHousehold": "You are not assigned to a household yet. Please create one now.",
+      "updateFailed": "Couldn't update household information.",
+      "updateError": "Error updating household information."
     },
     "create": {
       "title": "Create new household",
-      "nameDesc": "Give your household a sweet little name. Don't worry, you will be able to change it later.",
-      "lblName": "Household name",
+      "nameMessage": "Give your household a sweet little name. Don't worry, you will be able to change it later.",
+      "householdName": "Household name",
       "configure": "Configure household",
-      "lblType": "Household type",
-      "invite": "Invite members",
-      "inviteDesc": "It feels so lonely without some roommates. Invite them via the link below.",
-      "finishDesc": "Congratulations, your new household has been setup successfully. Continue to check out your dashboard.",
-      "dashboard": "Go to dashboard",
-      "ruleName": "Please provide a name!",
-      "ruleNameLong": "Name is too long!",
+      "householdType": "Household type",
+      "inviteMembers": "Invite members",
+      "inviteMembersMessage": "It feels so lonely without some roommates. Invite them via the link below.",
+      "finishMessage": "Congratulations, your new household has been setup successfully. Continue to check out your dashboard.",
+      "goToDashboard": "Go to dashboard",
+      "provideName": "Please provide a name!",
+      "nameTooLong": "Name is too long!",
       "messages": {
-        "input": "Please check your input.",
+        "checkInput": "Please check your input.",
         "copied": "Copied to clipboard. Happy pasting! :)"
       },
       "errors": {
-        "creating": "Error while creating household."
+        "createHouseholdError": "Error while creating household."
       }
     },
     "invite": {
       "title": "Invite members",
-      "btn": "Invite",
-      "desc": "Please use this link to invite members to join this household",
+      "inviteButton": "Invite",
+      "inviteMessage": "Please use this link to invite members to join this household",
       "copied": "Copied to clipboard. Happy pasting! :)",
       "fail": "Couldn't fetch invite link. Please try again later.",
       "error": "Error fetching invite link. Please try again later."
@@ -531,10 +541,10 @@
       "auth": "User auth failed",
       "users": "Error while fetching household users"
     },
-    "unkown": "Unkown user",
-    "nameless": "Nameless user",
+    "unknownUser": "Unkown user",
+    "namelessUser": "Nameless user",
     "tasks": {
-      "undoOnDemand": "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
+      "undoOnDemandError": "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
     },
     "format": {
       "justnow": "just now",
@@ -548,31 +558,30 @@
       "ago": "ago"
     }
   },
-  "icon": {
-    "btn": "Change Icon",
+  "iconChooser": {
+    "changeIcon": "Change Icon",
     "title": "Icon Chooser",
-    "common": "Common icons",
-    "all": "All icons"
+    "commonIcons": "Common icons",
+    "allIcons": "All icons"
   },
   "widgets": {
     "settings": "Widget settings",
     "weather": {
       "title": "Weather",
-      "config": "This widget is not configured correctly.",
+      "configError": "This widget is not configured correctly.",
       "never": "Never"
     },
     "tasks": {
       "title": "Tasks",
-      "unnamed": "Unnamed task",
+      "unnamedTask": "Unnamed task",
       "today": "Today",
       "done": "You're done for today!",
-      "page": "Tasks page",
-      "not": "Notification sent to "
+      "tasksPage": "Tasks page",
+      "notificationSentTo": "Notification sent to {name}."
     },
-    "disturb": {
+    "doNotDisturb": {
       "title": "Do Not Disturb",
-      "connect": "Could not connect to server.",
-      "err": "Error toggling user status."
+      "updateUserStatusError": "Error toggling user status."
     },
     "home": {
       "title": "Home",
@@ -581,9 +590,9 @@
     "finances": {
       "title": "Finances",
       "today": "Today",
-      "unnamed": "Unnamed ecpense",
+      "unnamedExpense": "Unnamed expense",
       "empty": "Why don't you buy something?",
-      "page": "Finances page"
+      "financesPage": "Finances page"
     },
     "clock": {
       "title": "Clock"

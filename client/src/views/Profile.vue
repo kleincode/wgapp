@@ -41,11 +41,11 @@
                       </h1>
                       <template v-if="userNickName">
                         <div class="overline mt-6">
-                          {{ $t("profile.nick") }}
+                          {{ $t("profile.nickname") }}
                         </div>
                         <h1 class="headline">{{ userNickName }}</h1>
                       </template>
-                      <div class="overline mt-6">{{ $t("profile.mail") }}</div>
+                      <div class="overline mt-6">{{ $t("profile.email") }}</div>
                       <h1 class="headline">{{ userEmail }}</h1>
                       <div class="overline mt-6">
                         {{ $t("profile.password") }}
@@ -201,10 +201,10 @@
                   </v-list-item>
                 </v-list>
                 <div v-else class="text-center text--secondary mt-8 mb-8">
-                  {{ $t("profile.noexpenses") }}
+                  {{ $t("profile.noExpenses") }}
                 </div>
               </v-card-text>
-              <v-card-title>{{ $t("profile.monexpenses") }}</v-card-title>
+              <v-card-title>{{ $t("profile.monthlyExpenses") }}</v-card-title>
               <v-card-text>
                 <v-list v-if="getFilteredMonthlyCharges.length > 0">
                   <v-list-item
@@ -229,7 +229,7 @@
                   </v-list-item>
                 </v-list>
                 <div v-else class="text-center text--secondary mt-8 mb-8">
-                  {{ $t("profile.nomonexpenses") }}
+                  {{ $t("profile.noMonthlyExpenses") }}
                 </div>
               </v-card-text>
             </v-card>
@@ -334,13 +334,16 @@ export default {
         if (data.success) {
           this.expenses = data.data;
         } else {
-          this.$store.dispatch("showSnackbar", this.$t("profile.errors.users"));
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.errors.fetchUserExpensesFailed")
+          );
           console.warn(data);
         }
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("profile.errors.usersErr")
+          this.$t("profile.errors.fetchUserExpensesError")
         );
         console.error(err);
       }
@@ -368,11 +371,17 @@ export default {
             });
           });
         } else {
-          this.$store.dispatch("showSnackbar", this.$t("profile.errors.mon"));
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.errors.fetchMonthlyExpensesFailed")
+          );
           console.warn("Error during fetching monthly data", data);
         }
       } catch (err) {
-        this.$store.dispatch("showSnackbar", this.$t("profile.errors.monErr"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("profile.errors.fetchMonthlyExpensesError")
+        );
         console.error("Error during fetching monthly data");
       }
     },

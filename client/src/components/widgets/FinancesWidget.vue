@@ -26,7 +26,9 @@
           <v-list-item class="mb-4">
             <v-list-item-content>
               <v-list-item-title class="task-entry">
-                {{ expense.description || $t("widgets.finances.unnamed") }}
+                {{
+                  expense.description || $t("widgets.finances.unnamedExpense")
+                }}
                 <div class="overline pl-2 pt-1">
                   -
                   {{
@@ -93,7 +95,7 @@ export default {
         },
         {
           action: "finances",
-          text: this.$t("widgets.finances.page"),
+          text: this.$t("widgets.finances.financesPage"),
           icon: "money"
         },
         {
