@@ -94,7 +94,7 @@ module.exports = ({ db }) => ({
         error("Error while fetching finances from database", 4, err);
       }
     } else {
-      "Please join a household to use this feature.", 0);
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

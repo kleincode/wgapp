@@ -42,14 +42,12 @@ Helpers.sendNotificationToUser = async (db, uid, payload) => {
           // Unsubscribed
           try {
             await db.query("DELETE FROM pushclients WHERE ?", [{ endpoint }]);
-            console.log("Subscription at", endpoint, "user", uid, "was deleted automatically because of inactivity.");
+            Helpers.pushLog({db}, 3, 0, "Notification Server", "Subscription at", endpoint, "user", uid, "was deleted automatically because of inactivity.");
           } catch(err) {
-            console.warn("Subscription at", endpoint, "is gone but could not be deleted in database.");
-            console.warn(err);
+            Helpers.pushLog({db}, 0, 0, "Notification Server", "Subscription at", endpoint, "is gone but could not be deleted in database.", err);
           }
         } else {
-          console.log("Endpoint at", endpoint, "rejected push.");
-          console.log(err);
+          Helpers.pushLog({db}, 0, 0, "Notification Server", "Subscription at", endpoint, "Endpoint at", endpoint, "rejected push.", err);
         }
       }
     }
@@ -65,12 +63,14 @@ Helpers.pushLog = async ({ db }, level, category, handlerName, message, stacktra
     if (!stacktrace) {
       stacktrace = "";
     }
+    if (!req) {
+      req = "";
+    }
     const { results: { affectedRows } } = await db.query(
       "INSERT INTO log (level, category, handlername, message, stacktrace, req) VALUES (?, ?, ?, ?, ?, ?)",
       [level, category, handlerName, message.toString(), stacktrace.toString(), req.toString()]
     );
     if (affectedRows != 1) {
-      console.log(affectedRows);
       console.warn("WARN in pushLog: Couldn't push log for " + message + " by " + handlerName + ": " + stacktrace);
     }
   } catch (err) {

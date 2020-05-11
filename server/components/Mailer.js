@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const Helpers = require("./Helpers");
 
 const transporter = nodemailer.createTransport({
   pool: process.env.MAIL_USE_POOL ? process.env.MAIL_USE_POOL.toLowerCase() === "true" : true, // true by default

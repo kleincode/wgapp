@@ -31,7 +31,9 @@ module.exports = ({ db }) => ({
           success("No changes made.");
         } else {
           fs.unlink(path.join(receiptFolder, `${body.fid}.jpg`), err => {
-            if(err) console.warn(err);
+            if(err) {
+              Helpers.pushLog({db}, 0, 4, "delreceipt", "Error deleting receipt.", { body, query, uid });
+            }
           });
           success("Receipt deleted.");
         }

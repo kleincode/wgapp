@@ -58,7 +58,7 @@ module.exports = ({ db }) => ({
     upload(req, res, (err) => {
       if(err) {
         fail(err.message);
-        console.info(err);
+        Helpers.pushLog({db}, 0, 0, "uploadreceipt", "Error uploading receipt", err);
       } else {
         success("File uploaded.");
       }

@@ -34,7 +34,7 @@ module.exports = ({ db }) => ({
         success("No profile picture.");
       } else {
         res.sendFile(path.join(picturesFolder, `${id}.jpg`), null, (err) => {
-          Helpers.pushLog(db, 0, 0, "fetchprofilepicture", "Error fetching profile picture for " + uid + " in " + hid + " for selUid " + selUid, err);
+          Helpers.pushLog({db}, 0, 0, "fetchprofilepicture", "Error fetching profile picture for " + uid + " in " + hid + " for selUid " + selUid, err);
         });
       }
     } catch (err) {

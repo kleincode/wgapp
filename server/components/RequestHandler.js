@@ -139,7 +139,7 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
     try {
       await handlerProps.handler(req, { success, fail, error, res });
     } catch (err) {
-      console.error(`FATAL: AN UNHANDLED SERVER EXCEPTION OCCURED (${handlerName})`);
+      Helpers.pushLog({db}, 0, 0, "Server", `FATAL: AN UNHANDLED SERVER EXCEPTION OCCURED (${handlerName})`, req);
       error("Internal server exception", 0, err);
     }
 

@@ -10,6 +10,8 @@ const port = process.env.PORT || 3001;
 const Database = require("./components/MySQLDatabase");
 const registerRequestHandler = require("./components/RequestHandler");
 
+const Helpers = require("./components/Helpers");
+
 // Database config
 const db = new Database({
     logSql: true,
@@ -50,3 +52,4 @@ webpush.setVapidDetails('mailto:dev@kleinco.de', process.env.PUSH_PUBLIC_KEY, pr
 
 require("./components/PushScheduler").registerJobs(db);
 require("./components/LogCleanup").initTimer(db);
+Helpers.pushLog({db}, 2, 0, "Server", "### Starting up server");
