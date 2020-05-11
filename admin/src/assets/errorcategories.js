@@ -7,7 +7,7 @@ export default [
   {
     //1
     text: "Account",
-    color: "blue"
+    color: "teal"
   },
   {
     //2

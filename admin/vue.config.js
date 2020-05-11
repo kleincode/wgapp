@@ -8,4 +8,12 @@ module.exports = {
         fix: true
       });
   },
+  devServer: {
+    proxy: {
+      "/_/*": {
+        target: "http://localhost:3001",
+        secure: false
+      }
+    }
+  },
 };
