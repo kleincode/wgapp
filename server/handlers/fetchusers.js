@@ -16,7 +16,7 @@ module.exports = ({ db }) => ({
         error("Error while fetching users.", 5, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

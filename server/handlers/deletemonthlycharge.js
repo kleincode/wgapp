@@ -22,7 +22,7 @@ module.exports = ({ db }) => ({
             [body.id, requestHid]
           );
           if (affectedRows == 0) {
-            fail("You do not have permission to perform this operation.");
+            fail("You do not have permissions to perform this operation.", 4);
           } else {
             success("Monthly charge deleted successfully.");
           }

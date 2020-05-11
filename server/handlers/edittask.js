@@ -63,7 +63,7 @@ module.exports = ({ db }) => ({
         requestHid = await Helpers.fetchHouseholdID(db, uid),
         assignedHid = (uid == assignedUid) ? requestHid : await Helpers.fetchHouseholdID(db, assignedUid);
       if(assignedHid != requestHid) {
-        fail("The assigned member does not belong to your household");
+        fail("The assigned member does not belong to your household", 0);
         return;
       }
 
@@ -82,7 +82,7 @@ module.exports = ({ db }) => ({
           [updateVals, body.id, requestHid]
         );
         if(affectedRows == 0) {
-          fail("You do not have permission to perform this operation.");
+          fail("You do not have permission to perform this operation.", 3);
         } else if(changedRows == 0) {
           success("No changes made.");
         } else {

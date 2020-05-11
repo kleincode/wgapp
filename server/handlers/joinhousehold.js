@@ -29,7 +29,7 @@ module.exports = ({ db }) => ({
       );
       if (householdRows.length == 0) {
         // Household/security code combination does not exist
-        fail("Invalid household credentials. Please check your inputs.");
+        fail("Invalid household credentials. Please check your inputs.", 5);
       } else if (body.confirm) {
         // User confirmed -> update household
         try {
@@ -56,7 +56,7 @@ module.exports = ({ db }) => ({
               }
             });
           } else if(oldHouseholdRows[0].id == householdRows[0].id) {
-            fail("You're already a member of this household.");
+            fail("You're already a member of this household." ,5);
           } else {
             // User currently in household
             success({

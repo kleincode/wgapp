@@ -28,7 +28,7 @@ module.exports = ({ db }) => ({
         if (body.uid > 0) {
           const assignedHid = await Helpers.fetchHouseholdID(db, body.uid);
           if (requestHid != assignedHid) {
-            fail("The assigned member is not part of your household.");
+            fail("The assigned member is not part of your household.", 0);
             return;
           }
         }

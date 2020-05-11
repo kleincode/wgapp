@@ -57,7 +57,7 @@ Helpers.sendNotificationToUser = async (db, uid, payload) => {
 };
 
 
-Helpers.pushLog = async (db, level, category, handlerName, message, stacktrace) => {
+Helpers.pushLog = async ({ db }, level, category, handlerName, message, stacktrace, req) => {
   if (!message) {
     message = handlerName;
   }
@@ -66,8 +66,8 @@ Helpers.pushLog = async (db, level, category, handlerName, message, stacktrace) 
       stacktrace = "";
     }
     const { results: { affectedRows } } = await db.query(
-      "INSERT INTO log (level, category, handlername, message, stacktrace) VALUES (?, ?, ?, ?, ?)",
-      [level, category, handlerName, message, stacktrace.toString()]
+      "INSERT INTO log (level, category, handlername, message, stacktrace, req) VALUES (?, ?, ?, ?, ?, ?)",
+      [level, category, handlerName, message.toString(), stacktrace.toString(), req.toString()]
     );
     if (affectedRows != 1) {
       console.log(affectedRows);

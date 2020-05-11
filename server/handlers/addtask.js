@@ -72,7 +72,7 @@ module.exports = ({ db }) => ({
         assignedHid = uid == assignedUid ? requestHid : await Helpers.fetchHouseholdID(db, assignedUid);
 
       if (requestHid !== assignedHid) {
-        fail("The specifed user does not exist or does not belong to this household.");
+        fail("The specifed user does not exist or does not belong to this household.", 0);
       } else try {
         await db.query(
           "INSERT INTO tasks (hid, name, mode, icon, iteratingMode, assignedMember, repetitionDays, repetitionEvery, repetitionUnit, reminder, startDate, due) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, FROM_UNIXTIME(?), ?)",

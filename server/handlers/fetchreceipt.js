@@ -26,7 +26,7 @@ module.exports = ({ db }) => ({
             [query.fid, hid]
           );
           if (results.length == 0) {
-            fail("You don't have permission to view this image.");
+            fail("You don't have permissions to view this image.", 1);
           } else if (!results[0].receipt) {
             success("No receipt.");
           } else {
@@ -36,7 +36,7 @@ module.exports = ({ db }) => ({
           error("Error while fetching receipt.", 4, err);
         }
       } else {
-        fail("Please join a household to use this feature.");
+        fail("Please join a household to use this feature.", 0);
       }
     } catch (err) {
       error("Error while fetching hid from database.", 0, err);

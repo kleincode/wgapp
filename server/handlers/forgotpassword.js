@@ -43,7 +43,7 @@ module.exports = ({ db }) => ({
             error("Sending e-mail failed.", 1, err);
           }
         } else {
-          fail("Unknown e-mail address.");
+          fail("Unknown e-mail address.", 1);
         }
       } catch(err) {
         error("Error while fetching e-mail from database.", 1, err);

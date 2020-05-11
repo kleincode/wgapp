@@ -29,7 +29,7 @@ module.exports = ({ db }) => ({
         [id, hid]
       );
       if (results.length == 0) {
-        fail("No user found with id " + id + ".");
+        fail("No user found with id " + id + ".", 1);
       } else if (!results[0].image) {
         success("No profile picture.");
       } else {

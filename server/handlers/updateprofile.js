@@ -43,10 +43,10 @@ module.exports = ({ db }) => ({
               const hash = await BCrypt.hash(body.newPassword, AUTH_SALT_ROUNDS);
               const { results: passResults } = await db.query("UPDATE users SET pass = ? WHERE id = ?", [hash, uid]);
               if (passResults.changedRows != 1) {
-                fail("Couldn't update password");
+                error("Couldn't update password", 1);
               }
             } else {
-              fail("The entered old password is incorrect.");
+              fail("The entered old password is incorrect.", 1);
             }
           } else {
             error("Couldn't find user.", 1);
@@ -82,10 +82,10 @@ module.exports = ({ db }) => ({
         if (results2.affectedRows == 1) {
           success("Successfully updated profile");
         } else {
-          fail("Couldn't find user in db");
+          fail("Couldn't find user in db", 1);
         }
       } else {
-        fail("Nothing updated bc nothing provided");
+        fail("Nothing updated bc nothing provided", 1);
       }
     } catch (err) {
       error("Error while updating user profile.", 1, err);

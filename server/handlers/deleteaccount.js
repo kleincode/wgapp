@@ -17,7 +17,7 @@ module.exports = ({ db }) => ({
             [uid, requestHid]
           );
           if (affectedRows == 0) {
-            fail("Couldn't find user for delete.");
+            fail("Couldn't find user for delete.", 1);
           } else {
             success("Successfully delete account.");
           }

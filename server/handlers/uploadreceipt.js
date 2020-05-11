@@ -7,8 +7,8 @@ const Helpers = require("../components/Helpers");
 const receiptFolder = path.join(__dirname, "..", "images", "receipts");
 
 fs.mkdir(receiptFolder, { recursive: true }, err => {
-  if(err) Helpers.pushLog(dbInstance, 0, 0, "Server", "Error creating receipt folder.", err);
-  else Helpers.pushLog(dbInstance, 2, 0, "Server", "Created receipt folder.");
+  if(err) console.error("Error creating receipt folder.", err);
+  else console.log("Created receipt folder.");
 });
 
 const storage = multer.diskStorage({

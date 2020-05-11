@@ -28,7 +28,7 @@ module.exports = ({ db }) => ({
         [{ uid }, { endpoint }, { p256dh }, { auth }]
       );
       if(affectedRows < 1) {
-        fail("Invalid subscription credentials.");
+        fail("Invalid subscription credentials.", 0);
       } else {
         success("Unsubscribed.");
       }

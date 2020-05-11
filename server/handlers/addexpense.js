@@ -24,7 +24,7 @@ module.exports = ({ db }) => ({
         requestHid = await Helpers.fetchHouseholdID(db, uid),
         assignedHid = uid == assignedUid ? requestHid : await Helpers.fetchHouseholdID(db, assignedUid);
       if (requestHid !== assignedHid) {
-        fail("The specifed user does not exist or does not belong to this household.");
+        fail("The specifed user does not exist or does not belong to this household.", 0);
       } else try {
         const { results: { insertId } } = await db.query(
           "INSERT INTO finances (hid, uid, description, amount) VALUES (?, ?, ?, ?)",

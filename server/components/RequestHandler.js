@@ -37,12 +37,13 @@ module.exports = function registerRequestHandler(handlerPath, handlerName, app, 
       if (typeof send === "object") res.status(200).send({ ...send, success: true }).end();
       else res.status(200).send({ message: send, success: true }).end();
     };
-    let fail = (send) => {
+    let fail = (send, cat) => {
+      Helpers.pushLog(provideToHandler, 3, cat, handlerName, send, req);
       if (typeof send === "object") res.status(200).send({ ...send, success: false }).end();
       else res.status(200).send({ message: send, success: false }).end();
     };
     let error = (send, cat, log) => {
-      Helpers.pushLog(provideToHandler, 0, cat, handlerName, send, log);
+      Helpers.pushLog(provideToHandler, 0, cat, handlerName, send, log, req);
       if (typeof send === "object") res.status(500).send({ ...send, success: false }).end();
       else res.status(500).send({ message: send, success: false }).end();
     };

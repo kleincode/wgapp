@@ -20,10 +20,10 @@ module.exports = ({ db }) => ({
   },
   handler: async ({ body: { lastUpdate, items, lists }, uid }, { success, fail, error }) => {
     if(!(lists instanceof Array)) {
-      fail("Lists should be an array.");
+      fail("Lists should be an array.", 6);
       return;
     } else if(!(items instanceof Array)) {
-      fail("Items should be an array.");
+      fail("Items should be an array.", 6);
       return;
     }
     const now = Math.floor(Date.now() / 1000);
@@ -144,7 +144,7 @@ module.exports = ({ db }) => ({
           now
         });
       } else {
-        fail("Please join a household to use this feature.");
+        fail("Please join a household to use this feature.", 0);
       }
     } catch(err) {
       error("Error while syncing shopping.", 6, err);

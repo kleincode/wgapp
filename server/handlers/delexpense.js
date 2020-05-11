@@ -17,7 +17,7 @@ module.exports = ({ db }) => ({
       const hid = await Helpers.fetchHouseholdID(db, uid);
       const { results: { affectedRows } } = await db.query("DELETE FROM finances WHERE id = ? AND hid = ?", [body.id, hid]);
       if (affectedRows < 1) {
-        fail("You do not have permission to perform this operation.");
+        fail("You do not have permission to perform this operation.", 4);
       } else {
         success("Entry deleted.");
       }

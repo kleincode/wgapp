@@ -45,10 +45,10 @@ module.exports = ({ db }) => ({
             );
             success("Push notifications setup.");
           } catch(err) {
-            fail("Failed.");
+            error("Error adding pushclient in db.", 0);
           }
         } catch(err) {
-          if(err.statusCode == 410) fail("Subscription expired.");
+          if(err.statusCode == 410) fail("Subscription expired.", 0);
           else error("Error while sending test notification.", 0, err);
         }
       }

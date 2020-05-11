@@ -20,7 +20,7 @@ module.exports = ({ db }) => ({
         error("Error while fetching finances target from database", 4, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

@@ -24,7 +24,7 @@ module.exports = ({ db }) => ({
       const { results } = await db.query("SELECT id AS uid, pass FROM users WHERE ?", { email: providedEmail });
 
       if (!results || results.length == 0) {
-        fail("The given combination of email and password is incorrect.");
+        fail("The given combination of email and password is incorrect.", 1);
       } else {
         const { uid, pass } = results[0];
         try {
@@ -33,7 +33,7 @@ module.exports = ({ db }) => ({
             const token = JWT.sign({ uid }, JWT_SECRET);
             success({ message: "You were successfully logged in.", uid, providedEmail, token });
           } else {
-            fail("The given combination of email and password is incorrect.");
+            fail("The given combination of email and password is incorrect.", 1);
           }
         } catch(err) {
           error("Error during encryption process.", 1, err);
