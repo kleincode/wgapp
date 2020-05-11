@@ -22,7 +22,7 @@ import UUID from "vue-uuid";
 
 import i18n from "./i18n";
 
-import "@assets/logger.js";
+import "@/assets/logger.js";
 
 Vue.use(UUID);
 

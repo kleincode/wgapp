@@ -4,7 +4,7 @@
       <v-col cols="12" md="12" lg="3" class="text-center">
         <v-icon color="white" style="font-size: 6em">{{ icon }}</v-icon>
       </v-col>
-      <v-col cols="6" md="12" lg="5" class="pl-6">
+      <v-col cols="6" md="12" lg="6" class="pl-6">
         <div class="display-4 mb-3">
           {{ value }}
         </div>

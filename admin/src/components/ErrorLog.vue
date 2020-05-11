@@ -36,6 +36,9 @@
             >Mark as Reviewed</v-btn
           >
         </div>
+        <div class="text-right" v-else>
+          <v-btn color="red" @click="deleteReview(log)">delete</v-btn>
+        </div>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </v-expansion-panels>
@@ -67,6 +70,14 @@ export default {
       });
       if (data.success) {
         log.reviewed = true;
+      }
+    },
+    async deleteReview(log) {
+      const { data } = await this.$http.post("/_/dellog", {
+        id: log.id
+      });
+      if (data.success) {
+        this.$emit("deleteLog", { log });
       }
     }
   }

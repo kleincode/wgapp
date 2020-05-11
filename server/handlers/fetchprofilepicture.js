@@ -33,10 +33,10 @@ module.exports = ({ db }) => ({
       } else if (!results[0].image) {
         success("No profile picture.");
       } else {
-        res.sendFile(path.join(picturesFolder, `${id}.jpg`)).end();
+        res.sendFile(path.join(picturesFolder, `${id}.jpg`));
       }
     } catch (err) {
-      error("Error fetching profile picture", 1);
+      error("Error fetching profile picture", 1, err);
     }
   }
 });

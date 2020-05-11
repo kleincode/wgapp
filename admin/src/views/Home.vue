@@ -38,7 +38,7 @@
             :logs="reviewedErrors"
             class="pa-2"
             :reviewed="true"
-            @reload="reload"
+            @deleteLog="deleteLog"
           ></ErrorLog>
         </v-card>
       </v-col>
@@ -118,6 +118,9 @@ export default {
       } catch (err) {
         console.error("Error fetching log", err);
       }
+    },
+    deleteLog(log) {
+      this.logs.splice(this.logs.indexOf(log.log), 1);
     }
   }
 };
