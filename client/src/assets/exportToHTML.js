@@ -1,4 +1,5 @@
 import i18n from "@/i18n";
+import store from "../store";
 
 function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   let total = jsonData.total;
@@ -55,7 +56,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   memberTotals.forEach(member => {
     myWindow.document.write(
       "<li>" +
-        member.name +
+        store.getters.getFullUserName(member.name) +
         ": " +
         getCurrency(member.total / 100, currency, locale) +
         " </li>"
@@ -70,7 +71,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
     memberDebts.forEach(member => {
       myWindow.document.write(
         "<li>" +
-          member.name +
+          store.getters.getFullUserName(member.name) +
           ": " +
           getCurrency(member.total / 100, currency, locale) +
           " </li>"
@@ -93,9 +94,9 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   debts.forEach(debt => {
     myWindow.document.write(
       "<tr><td>" +
-        debt.paying +
+        store.getters.getFullUserName(debt.paying) +
         "</td><td>" +
-        debt.receiving +
+        store.getters.getFullUserName(debt.receiving) +
         "</td><td>" +
         getCurrency(debt.amount, currency, locale) +
         "</td></td>"

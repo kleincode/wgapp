@@ -1,5 +1,6 @@
 import zipcelx from "zipcelx";
 import i18n from "@/i18n";
+import store from "../store";
 
 function exportXLSX(lastBill, max, cur, loc, jsonData) {
   console.log(jsonData);
@@ -83,7 +84,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
     config.sheet.data.push([
       { value: "", type: "string" },
       {
-        value: member.name,
+        value: store.getters.getFullUserName(member.name),
         type: "string"
       },
       {
@@ -108,7 +109,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
           type: "string"
         },
         {
-          value: member.name,
+          value: store.getters.getFullUserName(member.name),
           type: "string"
         },
         {
@@ -152,11 +153,11 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
         type: "string"
       },
       {
-        value: member.paying,
+        value: store.getters.getFullUserName(member.paying),
         type: "string"
       },
       {
-        value: member.receiving,
+        value: store.getters.getFullUserName(member.receiving),
         type: "string"
       },
       {
