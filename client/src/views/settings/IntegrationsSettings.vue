@@ -60,7 +60,7 @@ import {
 export default {
   name: "IntegrationsSettings",
   data: () => ({
-    signInDescription: "Connecting...",
+    signInDescription: "",
     signInState: 0
   }),
   computed: {
@@ -94,13 +94,19 @@ export default {
     },
     updateSignInDescription() {
       if (signedIn)
-        this.signInDescription =
-          "Signed in (" +
-          (user && user.getBasicProfile
-            ? user.getBasicProfile().getEmail()
-            : "Unknown email") +
-          ")";
-      else this.signInDescription = "Not signed in";
+        this.signInDescription = this.$t(
+          "settings.integrations.calendar.signedIn",
+          {
+            email:
+              user && user.getBasicProfile
+                ? user.getBasicProfile().getEmail()
+                : "settings.integrations.calendar.unknownEmail"
+          }
+        );
+      else
+        this.signInDescription = this.$t(
+          "settings.integrations.calendar.notSignedIn"
+        );
     },
     onSignIn() {
       this.signInState = 1;
@@ -109,7 +115,9 @@ export default {
     },
     onSignOut() {
       this.signInState = 2;
-      this.signInDescription = "Not signed in";
+      this.signInDescription = this.$t(
+        "settings.integrations.calendar.notSignedIn"
+      );
     },
     calendarSignOut() {
       handleSignoutClick(this.onSignOut);
@@ -117,7 +125,9 @@ export default {
     },
     loadGapi() {
       this.signInState = 0;
-      this.signInDescription = "Loading Google API...";
+      this.signInDescription = this.$t(
+        "settings.integrations.calendar.loadingGapi"
+      );
       const gapiscript = document.createElement("script");
       gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
       window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);

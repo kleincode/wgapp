@@ -12,6 +12,8 @@
     "member": "Member",
     "members": "Members",
     "household": "household",
+    "connecting": "Connecting...",
+    "wait": "Please wait...",
     "errors": {
       "communication": "Communication error. Please try again later.",
       "connect": "Could not connect to server.",
@@ -205,6 +207,7 @@
       }
     },
     "dashboard": {
+      "title": "Dashboard",
       "clock": {
         "title": "Clock Widget",
         "description": "A revolutionary time-telling device. Follows the laws of special and general relativity.",
@@ -215,16 +218,23 @@
       },
       "weather": {
         "title": "Weather Widget",
-        "description": "Provides you with the latest weather data using the free",
+        "description": "Provides you with the latest weather data using the free {link} API.",
         "enableWidget": "Enable weather widget",
         "apiSettingsTitle": "API call settings",
-        "apiSignUp1": "Please sign up for an API key at",
-        "apiSignUp2": "or freeload one from your roommates.",
+        "apiSignUp": "Please sign up for an API key at {link} or freeload one from your roommates.",
         "apiKey": "API key",
         "zipCode": "ZIP code",
         "countryCode": "Country code",
         "openWeatherApi": "Open Weather API:",
-        "temperatureUnit": "Temperature unit"
+        "temperatureUnit": "Temperature unit",
+        "clickCheck": "Click 'Check' to make an API test call.",
+        "apiStates": {
+          "success": "Successful (city name: {city})",
+          "badRequest": "Bad request data: {message}",
+          "invalidKey": "Invalid API key",
+          "cityNotFound": "City not found",
+          "invalidAPIData": "Invalid API data"
+        }
       },
       "tasks": {
         "title": "Tasks Widget",
@@ -253,7 +263,11 @@
         "title": "Calendar",
         "description": "Keep track of your shared activites and duties using the Google Calendar API. If enabled, the calendar can be reached via the new link in your navigation drawer.",
         "enableGoogleCalendarIntegration": "Enable Google Calendar integration",
-        "state": "State: "
+        "state": "State: ",
+        "signedIn": "Signed in ({email})",
+        "unknownEmail": "Unknown email",
+        "notSignedIn": "Not signed in",
+        "loadingGapi": "Loading Google API..."
       },
       "hue": {
         "title": "Philips Hue",
@@ -276,6 +290,38 @@
       "fetchUserExpensesError": "Error while fetching user expenses.",
       "fetchMonthlyExpensesFailed": "Couldn't fetch monthly data. Please try again later.",
       "fetchMonthlyExpensesError": "Error during fetching monthly data. Please try again later."
+    },
+    "criticalActions": {
+      "title": "Unforgivable curses",
+      "description": "Don't worry though, as you're most likely not a wizard you will not be sent to Azkaban.",
+      "deleteLocalData": {
+        "button": "Delete local data ({kilobytes} KB)",
+        "buttonSizeUnknown": "Delete local data",
+        "confirmTitle": "Delete local data ({kilobytes} KB?)",
+        "confirmTitleSizeUnknown": "Delete local data?",
+        "confirmMessage": "Deleting stored local data forces Jeff to refetch all your household data remotely. Pages will load slower and actions will take longer to perform until the cache is repopulated. Note that this will not clear cached application assets. Continue?",
+        "positiveOption": "Do it!",
+        "negativeOption": "Cancel",
+        "deleted": "All local data deleted."
+      },
+      "logout": {
+        "button": "Logout",
+        "confirmTitle": "Logout and clear local data?",
+        "confirmMessage": "Logging out causes all authorization data saved on your machine to expire and all local household data to be deleted. Except for changing accounts, logging out is usually not necessary. Continue?",
+        "positiveOption": "Logout",
+        "negativeOption": "Cancel"
+      },
+      "deleteAccount": {
+        "button": "Delete account",
+        "confirmTitle": "Permanently delete your account?",
+        "confirmMessage1": "All your personal data (i.e. name, email, password, and nickname) will be permanently deleted from our server and from this device. Your household will remember you by the beautiful name of \"Unknown User\" and all your expenses and former tasks will remind them of you in a melancholic yet heartwarming way. You are to be logged out of this application and it will be as if all this never happened. Still - never will you be forgotten, Unknown User.",
+        "confirmMessage2": "But seriously: {bold} So, to end with the inspiring words of one of the great minds of our time:",
+        "confirmMessage2Bold": "This action cannot be undone.",
+        "confirmQuote": "Ooh, think twice.",
+        "confirmQuoteAuthor": "- Phil Collins",
+        "positiveOption": "Delete account",
+        "negativeOption": "Cancel"
+      }
     },
     "edit": {
       "title": "Edit profile",
@@ -322,7 +368,7 @@
     "resendEmail": "Resend email",
     "messages": {
       "required": "This field is required!",
-      "maiLRequired": "E-mail is required!",
+      "mailRequired": "E-mail is required!",
       "mailInvalid": "E-mail must be valid!",
       "passwordRequired": "Password is required",
       "passwordTooShort": "Password must be at least 8 characters.",
@@ -359,6 +405,21 @@
       "members": "Spend some money and you will be listed here!",
       "expenses": "No expenses added",
       "monthlyCharges": "Add your monthly charges here."
+    },
+    "errors": {
+      "fetchLastBillFailed": "Error during fetching last bill. Please try again later."
+    },
+    "expenseTable": {
+      "expense": "Expense",
+      "member": "Member",
+      "date": "Date",
+      "amount": "Amount",
+      "actions": "Actions"
+    },
+    "timespans": {
+      "currentMonth": "Current month",
+      "currentAndLastTwoMonths": "Current and last two months",
+      "currentYear": "Current year"
     },
     "billManager": {
       "title": "Bill Manager",
@@ -597,5 +658,16 @@
     "clock": {
       "title": "Clock"
     }
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "chooseNewPassword": "Please choose a new password.",
+    "expireNotice": "Please note that password reset tokens expire after one hour. After that, you will need to request a new token.",
+    "backToLogin": "Back to login",
+    "changePasswordButton": "Change password",
+    "noToken": "No valid token provided.",
+    "provideNewPassword": "Please provide a valid password.",
+    "updated": "Password updated. Please login.",
+    "updateFailed": "Update failed."
   }
 }

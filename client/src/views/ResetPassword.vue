@@ -5,7 +5,9 @@
         <v-col cols="12" sm="8" md="4">
           <v-card :elevation="12">
             <v-toolbar color="primary" dark>
-              <v-toolbar-title>Reset password</v-toolbar-title>
+              <v-toolbar-title>
+                {{ $t("resetPassword.title") }}
+              </v-toolbar-title>
             </v-toolbar>
             <v-form ref="form" v-model="formValid" @submit.prevent="submitForm">
               <v-card-text>
@@ -21,31 +23,31 @@
                       </v-col>
                       <v-col align-self="center">
                         <span class="headline">
-                          Please wait...
+                          {{ $t("general.wait") }}
                         </span>
                       </v-col>
                     </v-row>
                   </div>
                   <div v-if="state == 1">
                     <p>
-                      Please choose a new password.
+                      {{ $t("resetPassword.chooseNewPassword") }}
                     </p>
                     <v-text-field
                       v-model="email"
-                      label="E-mail"
+                      :label="$t('login.email')"
                       readonly
                       outlined
                     />
                     <v-text-field
                       v-model="password"
-                      label="Password"
+                      :label="$t('login.password')"
                       type="password"
                       :rules="passwordRules"
                       outlined
                     />
                     <v-text-field
                       v-model="repeatPassword"
-                      label="Repeat password"
+                      :label="$t('login.repeatPassword')"
                       type="password"
                       :rules="passwordRules"
                       outlined
@@ -56,8 +58,7 @@
                       {{ errorText }}
                     </p>
                     <p>
-                      Please note that password reset tokens expire after one
-                      hour. After that, you will need to request a new token.
+                      {{ $t("resetPassword.expireNotice") }}
                     </p>
                   </v-alert>
                 </v-expand-transition>
@@ -65,7 +66,7 @@
               <v-card-actions>
                 <v-btn v-if="state == 2" text :to="{ name: 'Login' }">
                   <v-icon left>arrow_back</v-icon>
-                  Back to login
+                  {{ $t("resetPassword.backToLogin") }}
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -75,7 +76,7 @@
                   :loading="buttonLoading"
                 >
                   <v-icon left>arrow_forward</v-icon>
-                  Change password
+                  {{ $t("resetPassword.changePasswordButton") }}
                 </v-btn>
               </v-card-actions>
             </v-form>
@@ -98,16 +99,20 @@ export default {
   data: () => ({
     state: 0,
     buttonLoading: false,
-    passwordRules: [
-      v => !!v || "Password is required!",
-      v => (v && v.length >= 8) || "Password must be at least 8 characters."
-    ],
     errorText: "Unknown error.",
     email: "",
     password: "",
     repeatPassword: "",
     formValid: false
   }),
+  computed: {
+    passwordRules() {
+      return [
+        v => !!v || this.$t("login.messages.passwordRequired"),
+        v => (v && v.length >= 8) || this.$t("login.messages.passwordTooShort")
+      ];
+    }
+  },
   mounted() {
     this.verifyToken();
   },
@@ -124,12 +129,11 @@ export default {
             this.state = 1;
           } else throw data.message;
         } catch (err) {
-          this.errorText =
-            err || "Communication error. Please check your connection.";
+          this.errorText = err || this.$t("general.errors.communication");
           this.state = 2;
         }
       } else {
-        this.errorText = "No valid token provided.";
+        this.errorText = this.$t("resetPassword.noToken");
         this.state = 2;
       }
     },
@@ -141,10 +145,13 @@ export default {
       if (!this.formValid) {
         this.$store.dispatch(
           "showSnackbar",
-          "Please provide a valid password."
+          this.$t("resetPassword.provideNewPassword")
         );
       } else if (this.password != this.repeatPassword) {
-        this.$store.dispatch("showSnackbar", "The two passwords don't match.");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("login.messages.passwordsDoNotMatch")
+        );
         this.password = "";
         this.repeatPassword = "";
       } else
@@ -156,12 +163,15 @@ export default {
           if (data.success) {
             this.$store.dispatch(
               "showSnackbar",
-              "Password updated. Please login."
+              this.$t("resetPassword.updated")
             );
             this.$router.push({ name: "Login" });
           } else throw data.message;
         } catch (err) {
-          this.$store.dispatch("showSnackbar", err || "Update failed.");
+          this.$store.dispatch(
+            "showSnackbar",
+            err || this.$t("resetPassword.updateFailed")
+          );
         }
     }
   }

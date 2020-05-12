@@ -40,25 +40,27 @@
 export default {
   name: "Settings",
   data: () => ({
-    overlay: true,
-    tabs: [
-      {
-        name: "General",
-        link: "general"
-      },
-      {
-        name: "Dashboard",
-        link: "dashboard"
-      },
-      {
-        name: "Integrations",
-        link: "integrations"
-      }
-    ]
+    overlay: true
   }),
   computed: {
     getState() {
       return this.$store.state.userSettings.introductionState;
+    },
+    tabs() {
+      return [
+        {
+          name: this.$t("settings.general.title"),
+          link: "general"
+        },
+        {
+          name: this.$t("settings.dashboard.title"),
+          link: "dashboard"
+        },
+        {
+          name: this.$t("settings.integrations.title"),
+          link: "integrations"
+        }
+      ];
     }
   }
 };

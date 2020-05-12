@@ -354,17 +354,6 @@ export default {
   data: () => ({
     userImages: {},
     memberTotals: [],
-    tableHeaders: [
-      {
-        text: "Expense",
-        align: "start",
-        value: "description"
-      },
-      { text: "Member", value: "uid", sortable: false },
-      { text: "Date", value: "date" },
-      { text: "Amount", value: "amount" },
-      { text: "Actions", value: "actions", sortable: false }
-    ],
     tableOptions: {
       sortBy: ["date"],
       sortDesc: [true]
@@ -397,17 +386,43 @@ export default {
     totalMonthlyBudget: 1300,
     tempTotalMonthlyBudget: 1300,
     loadingMonthlyBudget: false,
-    timespanes: [
-      { text: "current month", value: 0 },
-      { text: "current and last 2 months", value: 1 },
-      { text: "current year", value: 2 }
-    ],
     choosenTimeSpan: 0,
     lastBill: "",
     loadingLastBilling: false,
     trendValues: []
   }),
   computed: {
+    tableHeaders() {
+      return [
+        {
+          text: this.$t("finances.expenseTable.expense"),
+          align: "start",
+          value: "description"
+        },
+        {
+          text: this.$t("finances.expenseTable.member"),
+          value: "uid",
+          sortable: false
+        },
+        { text: this.$t("finances.expenseTable.date"), value: "date" },
+        { text: this.$t("finances.expenseTable.amount"), value: "amount" },
+        {
+          text: this.$t("finances.expenseTable.actions"),
+          value: "actions",
+          sortable: false
+        }
+      ];
+    },
+    timespans() {
+      return [
+        { text: this.$t("finances.timespans.currentMonth"), value: 0 },
+        {
+          text: this.$t("finances.timespans.currentAndLastTwoMonths"),
+          value: 1
+        },
+        { text: this.$t("finances.timespans.currentYear"), value: 2 }
+      ];
+    },
     memberTotalFunction() {
       const max = this.memberTotals[0].total,
         min = this.memberTotals[this.memberTotals.length - 1].total;
@@ -722,15 +737,12 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Error during fetching last bill. Please try again later."
+            this.$t("finances.erros.fetchLastBillFailed")
           );
           console.log("Error during fetching last bill", data);
         }
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Communication error. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("general.errors.connect"));
         console.error("Error during fetching last bill", err);
       }
       this.loadingLastBilling = false;
@@ -747,15 +759,12 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            "Communication error. Please try again later."
+            this.$t("general.errors.communication")
           );
           console.error("Error during fetching finances target.", data);
         }
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Communication error. Please try again later."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("general.errors.connect"));
         console.error("Error during fetching finances target.");
       }
       this.editBudgetDialog = false;

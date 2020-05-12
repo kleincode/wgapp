@@ -1,7 +1,7 @@
 <template>
   <v-card flat tile>
     <v-card-text>
-      <div class="display-1 mb-2">Dashboard</div>
+      <div class="display-1 mb-2">{{ $t("settings.dashboard.title") }}</div>
       <!-- CLOCK WIDGET -->
       <div id="clock" class="title pt-2">
         {{ $t("settings.dashboard.clock.title") }}
@@ -25,13 +25,13 @@
       <div id="weather" class="title pt-2">
         {{ $t("settings.dashboard.weather.title") }}
       </div>
-      <p>
-        {{ $t("settings.dashboard.weather.description") }}
-        <a href="https://openweathermap.org/" target="_blank"
-          >Open Weather Map</a
-        >
-        API.
-      </p>
+      <i18n tag="p" path="settings.dashboard.weather.description">
+        <template #link>
+          <a href="https://openweathermap.org/" target="_blank"
+            >Open Weather Map</a
+          >
+        </template>
+      </i18n>
       <v-switch
         v-model="weatherWidgetEnabled"
         :label="$t('settings.dashboard.weather.enableWidget')"
@@ -39,13 +39,13 @@
       <div class="subtitle-1 pt-2">
         {{ $t("settings.dashboard.weather.apiSettingsTitle") }}
       </div>
-      <p>
-        {{ $t("settings.dashboard.weather.apiSignUp1") }}
-        <a href="https://openweathermap.org/" target="_blank"
-          >Open Weather Map</a
-        >
-        {{ $t("settings.dashboard.weather.apiSignUp2") }}
-      </p>
+      <i18n tag="p" path="settings.dashboard.weather.apiSignUp">
+        <template #link>
+          <a href="https://openweathermap.org/" target="_blank"
+            >Open Weather Map</a
+          >
+        </template>
+      </i18n>
       <v-form v-model="weatherAPIValid" @submit.prevent="weatherAPICheck">
         <v-row class="pl-2 pr-2">
           <v-col cols="12" md="6" lg="8">
@@ -166,7 +166,7 @@ export default {
   name: "DashboardSettings",
   data: () => ({
     weatherAPIValid: true,
-    weatherAPIStatus: "Click 'Check' to make an API test call.",
+    weatherAPIStatus: "",
     weatherAPILoading: false,
     weatherAPISuccess: 0,
     rules: {
@@ -300,6 +300,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.weatherAPIStatus = this.$t("settings.dashboard.weather.clickCheck");
+  },
   methods: {
     async weatherAPICheck() {
       if (this.weatherAPIValid) {
@@ -318,26 +321,41 @@ export default {
           );
           this.weatherAPISuccess = 2;
           if (data.cod == 200) {
-            this.weatherAPIStatus = `Successful (city name: ${data.name})`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.success",
+              { city: data.name }
+            );
             this.weatherAPISuccess = 1;
           } else if (data.cod == 400) {
-            this.weatherAPIStatus = `Bad request data: ${data.message}`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.badRequest",
+              { message: data.message }
+            );
           } else if (data.cod == 401) {
-            this.weatherAPIStatus = `Invalid API key.`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.invalidKey"
+            );
           } else if (data.cod == 404) {
-            this.weatherAPIStatus = `City or country not found.`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.cityNotFound"
+            );
           } else {
             this.weatherAPIStatus = `Error ${data.cod}: ${data.message}`;
           }
         } catch (err) {
           this.weatherAPIStatus =
             "Request failed: " +
-            (err && err.message ? err.message : "Unknown error");
+            (err && err.message
+              ? err.message
+              : this.$t("general.errors.unknown"));
           this.weatherAPISuccess = 2;
         }
         this.weatherAPILoading = false;
       } else {
-        this.$store.dispatch("showSnackbar", "Invalid API data.");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("settings.dashboard.weather.apiStates.invalidAPIData")
+        );
       }
     }
   }
