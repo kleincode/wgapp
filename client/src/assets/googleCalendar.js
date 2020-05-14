@@ -62,7 +62,6 @@ async function initClient() {
  *  appropriately. After a sign-in, the API is called.
  */
 function updateSigninStatus(isSignedIn) {
-  console.log(isSignedIn);
   signedIn = isSignedIn;
   if (isSignedIn) {
     if (onSignedIn) onSignedIn();
@@ -133,9 +132,13 @@ async function createHomeCalendar() {
       const response = await gapi.client.calendar.calendars.insert({
         summary: data.name
       });
-      //TODO: write to db (households)
       await syncSharing(data.members, response.result.id);
-      return true;
+      try {
+        await axios.post("/_/addhomecalendar", { id: response.result.id });
+        return response.result.id;
+      } catch (err) {
+        console.error("Error adding calendar to db.", err);
+      }
     } catch (err) {
       console.error("Error adding calendar.", err);
     }
@@ -214,6 +217,7 @@ export {
   handleClientLoad,
   listCalendars,
   createHomeCalendar,
+  syncSharing,
   signedIn,
   gapiLoaded,
   user

@@ -40,33 +40,49 @@
         </div>
       </div>
       <div class="subtitle-1 mt-8 mb-2">
-        Automatic home calendar status:
-        <v-chip v-if="calendar" color="success" small text>Activated</v-chip>
-        <v-chip v-else color="warning" small text>No Calendar</v-chip>
+        Automatic home calendar status
+        <v-chip v-if="loadingCalendarStatus" small text>Loading...</v-chip>
+        <v-chip
+          v-if="!(calendarId === undefined) && calendarId != ''"
+          color="success"
+          small
+          text
+          >Activated</v-chip
+        >
+        <v-chip
+          v-if="!(calendarId === undefined) && calendarId == ''"
+          color="warning"
+          small
+          text
+          >No Calendar</v-chip
+        >
       </div>
       <p>
         You can create a Google Calendar which will automatically be shared with
         all members of this household. If new people join your household or
         activate their integration you need to resync the invitations.
       </p>
-      <v-progress-circular
-        v-if="loadingCalendar"
-        class="mr-2"
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
       <v-btn
-        v-if="!calendar && signInState == 1"
+        v-if="
+          !(calendarId === undefined) && calendarId == '' && signInState == 1
+        "
         color="success"
         :disabled="loadingCalendar"
+        :loading="loadingCalendar"
         @click="createHomeCalendar"
         >Create Home Calendar</v-btn
       >
-      <v-btn v-if="calendar && signInState == 1" :disabled="loadingCalendar"
+      <v-btn
+        v-if="
+          !(calendarId === undefined) && calendarId != '' && signInState == 1
+        "
+        :disabled="loadingCalendar"
         >Delete Home Calendar</v-btn
       >
       <v-btn
-        v-if="calendar && signInState == 1"
+        v-if="
+          !(calendarId === undefined) && calendarId != '' && signInState == 1
+        "
         :disabled="loadingCalendar"
         text
         >Resync invitations</v-btn
@@ -93,8 +109,9 @@ export default {
   data: () => ({
     signInDescription: "Connecting...",
     signInState: 0,
-    calendar: false,
-    loadingCalendar: false
+    loadingCalendar: false,
+    loadingCalendarStatus: false,
+    calendarId: undefined
   }),
   computed: {
     calendarEnabled: {
@@ -120,6 +137,7 @@ export default {
   mounted() {
     this.signInState = signedIn ? 1 : 2;
     this.updateSignInDescription();
+    this.fetchHomeCalendar();
   },
   methods: {
     calendarSignIn() {
@@ -130,6 +148,7 @@ export default {
       let res = await createHomeCalendar();
       this.loadingCalendar = false;
       if (res) {
+        this.calendarId = res;
         this.$store.dispatch(
           "showSnackbar",
           "Successfully created home calendar."
@@ -180,6 +199,23 @@ export default {
     calendarSignOut() {
       handleSignoutClick(this.onSignOut);
       this.signInState = 2;
+    },
+    async fetchHomeCalendar() {
+      try {
+        this.loadingCalendarStatus = true;
+        const { data } = await this.$http.get("/_/fetchhousehold");
+        if (!data.success) {
+          this.$store.dispatch(
+            "showSnackbar",
+            "Couldn't fetch household information."
+          );
+        } else {
+          this.calendarId = data.calendar;
+        }
+      } catch (err) {
+        console.error("Error fetching household information.", err);
+      }
+      this.loadingCalendarStatus = false;
     },
     loadGapi() {
       this.signInState = 0;

@@ -10,13 +10,14 @@ module.exports = ({ db }) => ({
       try {
         const { results: userResults } = await db.query(`SELECT id, status, gmail FROM users WHERE ?`, [{hid}]);
         let members = userResults;
-        const { results: householdResults } = await db.query(`SELECT name, type, registered FROM households WHERE ?`, [{id: hid}]);
+        const { results: householdResults } = await db.query(`SELECT name, type, registered, calendar FROM households WHERE ?`, [{id: hid}]);
         success({
           message: "Household data fetched.",
           exists: true,
           name: householdResults[0].name,
           type: householdResults[0].type,
           registered: householdResults[0].registered,
+          calendar: householdResults[0].calendar,
           members
         });
       } catch (err) {
