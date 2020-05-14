@@ -363,9 +363,6 @@ export default {
         return;
       // Out of fetched range --> refetch
       this.loading = true;
-      console.log(this.allCalendars);
-      console.log(this.allCalendarsStrings);
-      console.log(this.calendarsSelected);
       let calIds = [];
       this.calendarsSelected.forEach(cal => {
         let index = this.allCalendarsStrings.indexOf(cal);

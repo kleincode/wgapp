@@ -63,7 +63,7 @@ export default {
   }),
   computed: {
     calendarEnabled: {
-      set(val) {
+      async set(val) {
         this.$store.commit("userSettings/set_key", {
           key: "calendarEnabled",
           value: val
@@ -100,9 +100,30 @@ export default {
           ")";
       else this.signInDescription = "Not signed in";
     },
+    async updateGmailDB() {
+      try {
+        let gmail = user.getBasicProfile().getEmail();
+        const { data } = await this.$http.post("/_/updategmail", {
+          gmail: gmail
+        });
+        return data.success;
+      } catch (err) {
+        console.error("Error updating gmail in db.");
+        return false;
+      }
+    },
     onSignIn() {
       this.signInState = 1;
       this.updateSignInDescription();
+      let success = this.updateGmailDB();
+      if (success) {
+        this.$store.dispatch("showSnackbar", "Successfully logged in");
+      } else {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Couldn't update gmail address in db."
+        );
+      }
       setTimeout(this.updateSignInDescription, 1000);
     },
     onSignOut() {
