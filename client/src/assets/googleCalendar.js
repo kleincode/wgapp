@@ -152,9 +152,9 @@ async function createHomeCalendar() {
 // home calendar id
 async function syncSharing(inputMembers, calendarId) {
   try {
-    console.log("calID: " + calendarId);
+    console.log(inputMembers);
+    console.log(calendarId);
     const resACL = await gapi.client.calendar.acl.list({ calendarId });
-    console.log(resACL);
     let toDelete = [];
     let toAdd = [];
     let members = inputMembers.map(mem => mem.gmail).filter(mem => mem != "");
@@ -172,42 +172,38 @@ async function syncSharing(inputMembers, calendarId) {
         }
       }
     });
-    toAdd = members;
-    console.log("add: ", toAdd);
-    console.log("delete: ", toDelete);
-    let promises = [];
-    toAdd.forEach(add => {
-      promises.push(
-        gapi.client.calendar.acl.insert({
-          calendarId,
-          scope: {
-            type: "user",
-            value: add
-          },
-          role: "owner"
-        })
-      );
-    });
-    toDelete.forEach(del => {
-      promises.push(
-        gapi.client.calendar.acl.delete({
-          calendarId,
-          ruleId: del.id
-        })
-      );
-    });
-    Promise.all(promises)
-      .then(values => {
-        //alle übrigen in members: to delete
-        console.log(values);
-        return true;
-      })
-      .catch(err => {
-        console.error("Error syncing calendar.", err);
+    try {
+      toAdd = members;
+      let promises = [];
+      toAdd.forEach(add => {
+        promises.push(
+          gapi.client.calendar.acl.insert({
+            calendarId,
+            scope: {
+              type: "user",
+              value: add
+            },
+            role: "owner"
+          })
+        );
       });
+      toDelete.forEach(del => {
+        promises.push(
+          gapi.client.calendar.acl.delete({
+            calendarId,
+            ruleId: del.id
+          })
+        );
+      });
+      await Promise.all(promises);
+      return true;
+    } catch (err) {
+      console.error("Error syncing calendar.", err);
+    }
   } catch (err) {
     console.error("Error fetching calendar information.", err);
   }
+  return false;
 }
 
 export {

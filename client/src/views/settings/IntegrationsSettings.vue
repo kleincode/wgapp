@@ -85,6 +85,7 @@
         "
         :disabled="loadingCalendar"
         text
+        @click="resyncCalendar"
         >Resync invitations</v-btn
       >
       <!-- PHILIPS HUE -->
@@ -100,6 +101,7 @@ import {
   signedIn,
   gapiLoaded,
   user,
+  syncSharing,
   handleSignoutClick,
   createHomeCalendar
 } from "@/assets/googleCalendar.js";
@@ -111,7 +113,8 @@ export default {
     signInState: 0,
     loadingCalendar: false,
     loadingCalendarStatus: false,
-    calendarId: undefined
+    calendarId: undefined,
+    members: []
   }),
   computed: {
     calendarEnabled: {
@@ -200,6 +203,14 @@ export default {
       handleSignoutClick(this.onSignOut);
       this.signInState = 2;
     },
+    async resyncCalendar() {
+      let res = await syncSharing(this.members, this.calendarId);
+      if (res) {
+        this.$store.dispatch("showSnackbar", "Successfully resynced calendar.");
+      } else {
+        this.$store.dispatch("showSnackbar", "Couldn't resync calendar");
+      }
+    },
     async fetchHomeCalendar() {
       try {
         this.loadingCalendarStatus = true;
@@ -211,9 +222,14 @@ export default {
           );
         } else {
           this.calendarId = data.calendar;
+          this.members = data.members;
         }
       } catch (err) {
         console.error("Error fetching household information.", err);
+        this.$store.dispatch(
+          "showSnackbar",
+          "Error fetching household information."
+        );
       }
       this.loadingCalendarStatus = false;
     },
