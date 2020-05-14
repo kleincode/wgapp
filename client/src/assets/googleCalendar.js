@@ -1,3 +1,4 @@
+import axios from "../store/axios";
 /* global gapi */
 // Client ID and API key from the Developer Console
 var CLIENT_ID =
@@ -11,7 +12,7 @@ var DISCOVERY_DOCS = [
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+var SCOPES = "https://www.googleapis.com/auth/calendar";
 
 var GoogleAuth;
 
@@ -35,29 +36,25 @@ async function handleClientLoad(signedInCallback, notSignedInCallback) {
  *  Initializes the API client library and sets up sign-in state
  *  listeners.
  */
-function initClient() {
-  gapi.client
-    .init({
+async function initClient() {
+  try {
+    await gapi.client.init({
       apiKey: API_KEY,
       clientId: CLIENT_ID,
       discoveryDocs: DISCOVERY_DOCS,
       scope: SCOPES
-    })
-    .then(
-      function() {
-        GoogleAuth = gapi.auth2.getAuthInstance();
-        // Listen for sign-in state changes.
-        GoogleAuth.isSignedIn.listen(updateSigninStatus);
+    });
+    GoogleAuth = gapi.auth2.getAuthInstance();
+    // Listen for sign-in state changes.
+    GoogleAuth.isSignedIn.listen(updateSigninStatus);
 
-        user = GoogleAuth.currentUser.get();
+    user = GoogleAuth.currentUser.get();
 
-        // Handle the initial sign-in state.
-        updateSigninStatus(GoogleAuth.isSignedIn.get());
-      },
-      function(error) {
-        throw Error(error);
-      }
-    );
+    // Handle the initial sign-in state.
+    updateSigninStatus(GoogleAuth.isSignedIn.get());
+  } catch (error) {
+    throw Error(error);
+  }
 }
 
 /**
@@ -128,12 +125,95 @@ async function listUpcomingEvents(minDate, maxDate, calIDs, allCalendars) {
   return items;
 }
 
+async function createHomeCalendar() {
+  await initClient();
+  try {
+    const { data } = await axios.get("/_/fetchhousehold");
+    try {
+      const response = await gapi.client.calendar.calendars.insert({
+        summary: data.name
+      });
+      //TODO: write to db (households)
+      await syncSharing(data.members, response.result.id);
+      return true;
+    } catch (err) {
+      console.error("Error adding calendar.", err);
+    }
+  } catch (err) {
+    console.error("Error fetching household information.", err);
+  }
+  return false;
+}
+
+// inputMembers: [{firstname: "", gmail:"mail.."}]
+// home calendar id
+async function syncSharing(inputMembers, calendarId) {
+  try {
+    console.log("calID: " + calendarId);
+    const resACL = await gapi.client.calendar.acl.list({ calendarId });
+    console.log(resACL);
+    let toDelete = [];
+    let toAdd = [];
+    let members = inputMembers.map(mem => mem.gmail).filter(mem => mem != "");
+    resACL.result.items.forEach(acl => {
+      if (
+        acl.id.substr(0, 4) == "user" &&
+        !acl.id.includes("group.calendar.google.com")
+      ) {
+        let mail = acl.id.substr(5, acl.id.length - 5);
+        if (members.includes(mail)) {
+          //already shared
+          members.splice(members.indexOf(mail), 1);
+        } else {
+          toDelete.push(acl);
+        }
+      }
+    });
+    toAdd = members;
+    console.log("add: ", toAdd);
+    console.log("delete: ", toDelete);
+    let promises = [];
+    toAdd.forEach(add => {
+      promises.push(
+        gapi.client.calendar.acl.insert({
+          calendarId,
+          scope: {
+            type: "user",
+            value: add
+          },
+          role: "owner"
+        })
+      );
+    });
+    toDelete.forEach(del => {
+      promises.push(
+        gapi.client.calendar.acl.delete({
+          calendarId,
+          ruleId: del.id
+        })
+      );
+    });
+    Promise.all(promises)
+      .then(values => {
+        //alle übrigen in members: to delete
+        console.log(values);
+        return true;
+      })
+      .catch(err => {
+        console.error("Error syncing calendar.", err);
+      });
+  } catch (err) {
+    console.error("Error fetching calendar information.", err);
+  }
+}
+
 export {
   listUpcomingEvents,
   handleAuthClick,
   handleSignoutClick,
   handleClientLoad,
   listCalendars,
+  createHomeCalendar,
   signedIn,
   gapiLoaded,
   user

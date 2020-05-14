@@ -39,6 +39,38 @@
           {{ signInDescription }}
         </div>
       </div>
+      <div class="subtitle-1 mt-8 mb-2">
+        Automatic home calendar status:
+        <v-chip v-if="calendar" color="success" small text>Activated</v-chip>
+        <v-chip v-else color="warning" small text>No Calendar</v-chip>
+      </div>
+      <p>
+        You can create a Google Calendar which will automatically be shared with
+        all members of this household. If new people join your household or
+        activate their integration you need to resync the invitations.
+      </p>
+      <v-progress-circular
+        v-if="loadingCalendar"
+        class="mr-2"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+      <v-btn
+        v-if="!calendar && signInState == 1"
+        color="success"
+        :disabled="loadingCalendar"
+        @click="createHomeCalendar"
+        >Create Home Calendar</v-btn
+      >
+      <v-btn v-if="calendar && signInState == 1" :disabled="loadingCalendar"
+        >Delete Home Calendar</v-btn
+      >
+      <v-btn
+        v-if="calendar && signInState == 1"
+        :disabled="loadingCalendar"
+        text
+        >Resync invitations</v-btn
+      >
       <!-- PHILIPS HUE -->
       <div class="title pt-6">{{ $t("settings.integrations.hue.title") }}</div>
       {{ $t("settings.integrations.hue.exp") }}
@@ -52,14 +84,17 @@ import {
   signedIn,
   gapiLoaded,
   user,
-  handleSignoutClick
+  handleSignoutClick,
+  createHomeCalendar
 } from "@/assets/googleCalendar.js";
 
 export default {
   name: "IntegrationsSettings",
   data: () => ({
     signInDescription: "Connecting...",
-    signInState: 0
+    signInState: 0,
+    calendar: false,
+    loadingCalendar: false
   }),
   computed: {
     calendarEnabled: {
@@ -90,6 +125,19 @@ export default {
     calendarSignIn() {
       handleAuthClick(this.onSignIn, this.onSignOut);
     },
+    async createHomeCalendar() {
+      this.loadingCalendar = true;
+      let res = await createHomeCalendar();
+      this.loadingCalendar = false;
+      if (res) {
+        this.$store.dispatch(
+          "showSnackbar",
+          "Successfully created home calendar."
+        );
+      } else {
+        this.$store.dispatch("showSnackbar", "Error creating home calendar.");
+      }
+    },
     updateSignInDescription() {
       if (signedIn)
         this.signInDescription =
@@ -108,7 +156,8 @@ export default {
         });
         return data.success;
       } catch (err) {
-        console.error("Error updating gmail in db.");
+        this.$store.dispatch("showSnackbar", "Error updating gmail in db.");
+        console.error("Error updating gmail in db.", err);
         return false;
       }
     },
@@ -116,9 +165,7 @@ export default {
       this.signInState = 1;
       this.updateSignInDescription();
       let success = this.updateGmailDB();
-      if (success) {
-        this.$store.dispatch("showSnackbar", "Successfully logged in");
-      } else {
+      if (!success) {
         this.$store.dispatch(
           "showSnackbar",
           "Couldn't update gmail address in db."

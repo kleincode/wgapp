@@ -8,7 +8,7 @@ module.exports = ({ db }) => ({
     const hid = await Helpers.fetchHouseholdID(db, uid);
     if (hid) {
       try {
-        const { results: userResults } = await db.query(`SELECT id, status FROM users WHERE ?`, [{hid}]);
+        const { results: userResults } = await db.query(`SELECT id, status, gmail FROM users WHERE ?`, [{hid}]);
         let members = userResults;
         const { results: householdResults } = await db.query(`SELECT name, type, registered FROM households WHERE ?`, [{id: hid}]);
         success({

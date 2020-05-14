@@ -71,7 +71,7 @@
         </v-alert>
 
         <v-row>
-          <v-col>
+          <v-col cols="12">
             <!-- Calendar toolbar sheet -->
             <v-sheet :elevation="6">
               <v-toolbar flat>
