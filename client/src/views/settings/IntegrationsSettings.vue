@@ -59,8 +59,9 @@
       </div>
       <p>
         You can create a Google Calendar which will automatically be shared with
-        all members of this household. If new people join your household or
-        activate their integration you need to resync the invitations.
+        all members of this household who activated the Google Integration. If
+        new people join your household or activate their integration you need to
+        resync the invitations.
       </p>
       <v-btn
         v-if="
@@ -72,11 +73,19 @@
         @click="createHomeCalendar"
         >Create Home Calendar</v-btn
       >
+      <div
+        v-if="loadingCalendar || loadingResyncCalendar"
+        class="text--secondary overline mt-2"
+      >
+        We're sorry, this might take a while. Google is kinda slow with this
+        stuff...
+      </div>
       <v-btn
         v-if="
           !(calendarId === undefined) && calendarId != '' && signInState == 1
         "
         :disabled="loadingCalendar"
+        @click="deleteDialogVisible = true"
         >Delete Home Calendar</v-btn
       >
       <v-btn
@@ -85,9 +94,19 @@
         "
         :disabled="loadingCalendar"
         text
+        :loading="loadingResyncCalendar"
         @click="resyncCalendar"
         >Resync invitations</v-btn
       >
+      <confirm-dialog
+        v-model="deleteDialogVisible"
+        positive-option="Continue"
+        negative-option="Cancel"
+        :loading="loadingDeleteCalendar"
+        @positive="deleteHomeCalendar"
+        @negative="deleteDialogVisible = false"
+        >Do you really want to delete the home calendar? This can't be undone.
+      </confirm-dialog>
       <!-- PHILIPS HUE -->
       <div class="title pt-6">{{ $t("settings.integrations.hue.title") }}</div>
       {{ $t("settings.integrations.hue.exp") }}
@@ -95,6 +114,7 @@
   </v-card>
 </template>
 <script>
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 import {
   handleClientLoad,
   handleAuthClick,
@@ -103,18 +123,25 @@ import {
   user,
   syncSharing,
   handleSignoutClick,
+  deleteHomeCalendar,
   createHomeCalendar
 } from "@/assets/googleCalendar.js";
 
 export default {
   name: "IntegrationsSettings",
+  components: {
+    ConfirmDialog
+  },
   data: () => ({
     signInDescription: "Connecting...",
     signInState: 0,
     loadingCalendar: false,
+    loadingResyncCalendar: false,
+    loadingDeleteCalendar: false,
     loadingCalendarStatus: false,
     calendarId: undefined,
-    members: []
+    members: [],
+    deleteDialogVisible: false
   }),
   computed: {
     calendarEnabled: {
@@ -183,6 +210,22 @@ export default {
         return false;
       }
     },
+    async deleteHomeCalendar() {
+      try {
+        this.loadingDeleteCalendar = true;
+        await deleteHomeCalendar(this.calendarId);
+        this.deleteDialogVisible = false;
+        this.$store.dispatch(
+          "showSnackbar",
+          "Successfully deleted home calendar."
+        );
+        this.calendarId = "";
+      } catch (err) {
+        console.error(err);
+        this.$store.dispatch("showSnackbar", "Error deleting home calendar.");
+      }
+      this.loadingDeleteCalendar = false;
+    },
     onSignIn() {
       this.signInState = 1;
       this.updateSignInDescription();
@@ -204,12 +247,14 @@ export default {
       this.signInState = 2;
     },
     async resyncCalendar() {
+      this.loadingResyncCalendar = true;
       let res = await syncSharing(this.members, this.calendarId);
       if (res) {
         this.$store.dispatch("showSnackbar", "Successfully resynced calendar.");
       } else {
         this.$store.dispatch("showSnackbar", "Couldn't resync calendar");
       }
+      this.loadingResyncCalendar = false;
     },
     async fetchHomeCalendar() {
       try {

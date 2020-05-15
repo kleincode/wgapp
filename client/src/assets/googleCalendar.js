@@ -152,8 +152,6 @@ async function createHomeCalendar() {
 // home calendar id
 async function syncSharing(inputMembers, calendarId) {
   try {
-    console.log(inputMembers);
-    console.log(calendarId);
     const resACL = await gapi.client.calendar.acl.list({ calendarId });
     let toDelete = [];
     let toAdd = [];
@@ -206,6 +204,13 @@ async function syncSharing(inputMembers, calendarId) {
   return false;
 }
 
+async function deleteHomeCalendar(calendarId) {
+  let promises = [];
+  promises.push(gapi.client.calendar.calendars.delete({ calendarId }));
+  promises.push(axios.post("/_/addhomecalendar", { id: "" }));
+  await Promise.all(promises);
+}
+
 export {
   listUpcomingEvents,
   handleAuthClick,
@@ -214,6 +219,7 @@ export {
   listCalendars,
   createHomeCalendar,
   syncSharing,
+  deleteHomeCalendar,
   signedIn,
   gapiLoaded,
   user
