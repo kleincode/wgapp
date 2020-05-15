@@ -65,6 +65,7 @@
     "months": "Months"
   },
   "tasks": {
+    "title": "Tasks",
     "todaystasks": "Today's tasks",
     "duetoday": "DUE TODAY",
     "chill": "Just chillin'",
@@ -106,7 +107,7 @@
         "addErr": "Error while connecting to the server. Please try again later.",
         "delete": "Couldn't delete task. Please try again later",
         "deleteErr": "Error while connecting to the server. Please try again later.",
-        "edit": "Couldn't delete the task."
+        "edit": "Edit failed."
       },
       "messages": {
         "name": "You need to specify a name.",
@@ -194,6 +195,7 @@
       "notifications": {
         "title": "Notifications",
         "description": "Notifications remind you of important upcoming tasks.",
+        "enable": "Enable push notifications",
         "controller": {
           "notSupported": "Your system does not support push notifications.",
           "registrationFailed": "Enabling push notifications failed.",
@@ -213,8 +215,8 @@
         "description": "A revolutionary time-telling device. Follows the laws of special and general relativity.",
         "enableWidget": "Enable clock widget",
         "note": "Note:",
-        "localeNoteText": "The clock widget displays time according to your ",
-        "localeNoteLink": "locale settings"
+        "localeNoteText": "{note} The clock widget displays time according to your {localeSettings}.",
+        "localeSettings": "locale settings"
       },
       "weather": {
         "title": "Weather Widget",

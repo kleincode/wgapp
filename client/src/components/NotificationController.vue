@@ -2,7 +2,7 @@
   <div>
     <v-switch
       v-model="notificationsEnabled"
-      label="Enable push notifications"
+      :label="$t('settings.general.notifications.enable')"
       :loading="loading"
       :disabled="loading || notPermDenied"
       @change="onSwitchToggle"

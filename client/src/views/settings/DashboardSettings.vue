@@ -13,14 +13,16 @@
         v-model="clockWidgetEnabled"
         :label="$t('settings.dashboard.clock.enableWidget')"
       ></v-switch>
-      <p>
-        <b>{{ $t("settings.dashboard.clock.note") }}</b
-        >{{ $t("settings.dashboard.clock.localeNoteText") }}
-        <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }">{{
-          $t("settings.dashboard.clock.localeNoteLink")
-        }}</router-link
-        >.
-      </p>
+      <i18n tag="p" path="settings.dashboard.clock.localeNoteText">
+        <template #note>
+          <b>{{ $t("settings.dashboard.clock.note") }}</b>
+        </template>
+        <template #localeSettings>
+          <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }">{{
+            $t("settings.dashboard.clock.localeSettings")
+          }}</router-link>
+        </template>
+      </i18n>
       <!-- WEATHER WIDGET -->
       <div id="weather" class="title pt-2">
         {{ $t("settings.dashboard.weather.title") }}

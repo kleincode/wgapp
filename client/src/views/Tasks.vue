@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 class="display-2">Tasks</h1>
+    <h1 class="display-2">{{ $t("tasks.title") }}</h1>
     <v-row>
       <v-col cols="12" md="6" lg="4">
         <v-card
