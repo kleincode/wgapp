@@ -43,7 +43,7 @@
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
               <div class="overline pl-2 pt-1">
-                - {{ task.day }}, {{ task.time }}
+                - {{ formatDateRelative(task.nextDueDay) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -109,7 +109,7 @@
               {{ task.name }}
               <div class="overline pl-2 pt-1">
                 - {{ $t("tasks.upcoming.last") }}:
-                {{ formatLastExecution(task) }}
+                {{ formatDateRelative(task.lastExecution) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -163,7 +163,6 @@
 <script>
 import { mapGetters } from "vuex";
 import icons from "@/assets/icons.js";
-import { formatDateString } from "@/assets/tasksHelper.js";
 export default {
   name: "UpcomingTasksCard",
   props: {
@@ -185,18 +184,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters(["getUserName", "getUserInitials"]),
+    ...mapGetters("userSettings", ["formatDateRelative"])
   },
   methods: {
-    formatLastExecution(task) {
-      if (
-        task.lastExecution.toString() == this.$t("tasks.upcoming.invalidDate")
-      ) {
-        return "none";
-      } else {
-        return formatDateString(task.lastExecution);
-      }
-    },
     getIcons() {
       return icons;
     }

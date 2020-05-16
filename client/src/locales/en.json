@@ -14,6 +14,7 @@
     "household": "household",
     "connecting": "Connecting...",
     "wait": "Please wait...",
+    "today": "Today",
     "errors": {
       "communication": "Communication error. Please try again later.",
       "connect": "Could not connect to server.",
@@ -33,8 +34,8 @@
     "delete": "Delete",
     "cancel": "Cancel",
     "check": "Check",
-    "signin": "Sign in",
-    "signout": "Sign out",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
     "loading": "Loading",
     "ok": "Ok",
     "continue": "Continue",
@@ -74,6 +75,7 @@
     "nothing": "Nothing to do",
     "checked": "Checked",
     "reminderMessage": "You've reminded {user} of {task}",
+    "taskCheckedFor": "for: {name}",
     "errors": {
       "fetchTask": "Could not fetch tasks. Please try again later.",
       "checkTask": "Could not check task. Please try again later.",
@@ -611,16 +613,16 @@
     "tasks": {
       "undoOnDemandError": "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
     },
-    "format": {
+    "relativeDate": {
       "justnow": "just now",
       "year": "1 year | {count} years",
       "month": "1 month | {count} months",
       "week": "1 week | {count} weeks",
       "day": "1 day | {count} days",
       "hour": "1 hour | {count} hours",
-      "minute": "1 minute | {count} minutes",
-      "in": "in",
-      "ago": "ago"
+      "minute": "a minute | {count} minutes",
+      "in": "in {time}",
+      "ago": "{time} ago"
     }
   },
   "iconChooser": {
@@ -631,6 +633,8 @@
   },
   "widgets": {
     "settings": "Widget settings",
+    "lastUpdated": "Last updated: {time}",
+    "never": "never",
     "weather": {
       "title": "Weather",
       "configError": "This widget is not configured correctly.",
@@ -639,7 +643,6 @@
     "tasks": {
       "title": "Tasks",
       "unnamedTask": "Unnamed task",
-      "today": "Today",
       "done": "You're done for today!",
       "tasksPage": "Tasks page",
       "notificationSentTo": "Notification sent to {name}."
@@ -654,7 +657,6 @@
     },
     "finances": {
       "title": "Finances",
-      "today": "Today",
       "unnamedExpense": "Unnamed expense",
       "empty": "Why don't you buy something?",
       "financesPage": "Finances page"

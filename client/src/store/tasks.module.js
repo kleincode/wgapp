@@ -6,7 +6,6 @@ import {
   isToday,
   getOnDemandStatus,
   getSingleStatus,
-  formatDateString,
   nextAssignedMember,
   previousAssignedMember,
   dateToLocalTime
@@ -60,7 +59,6 @@ const vuexModule = {
                 mode: element.mode,
                 name: element.name,
                 assigned: element.assignedMember,
-                day: formatDateString(startDate),
                 nextDueDay: startDate,
                 startDate: startDate,
                 dueDay: startDate,
@@ -104,7 +102,6 @@ const vuexModule = {
                 repetitionEvery: element.repetitionEvery,
                 repetitionUnit: element.repetitionUnit,
                 assigned: element.assignedMember,
-                day: formatDateString(nextDueDay),
                 iteratingMode: element.iteratingMode,
                 nextDueDay: new Date(nextDueDay),
                 time: dateToLocalTime(startDate).substr(0, 5),

@@ -87,7 +87,7 @@
                   @click="setToday"
                 >
                   <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
-                  {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
+                  {{ $vuetify.breakpoint.smAndDown ? "" : $t("general.today") }}
                 </v-btn>
 
                 <!-- Calendar navigation and title -->

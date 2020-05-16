@@ -145,7 +145,7 @@ const vuexModule = {
       let seconds = Date.now() / 1000 - date;
       let sign = seconds < 0;
       seconds = Math.abs(seconds);
-      if (seconds < 60) return i18n.t("store.format.justnow");
+      if (seconds < 60) return i18n.t("store.relativeDate.justnow");
       let val = "";
       if (seconds > 60 * 60 * 24 * 7 * 5) {
         let dateThen = new Date(date * 1000),
@@ -157,27 +157,27 @@ const vuexModule = {
         );
         if (diffMonths > 12) {
           let num = Math.floor(diffMonths / 12);
-          val = i18n.tc("store.format.year", num, { count: num });
+          val = i18n.tc("store.relativeDate.year", num, { count: num });
         } else {
-          val = i18n.tc("store.format.month", diffMonths, {
+          val = i18n.tc("store.relativeDate.month", diffMonths, {
             count: diffMonths
           });
         }
       } else if (seconds > 60 * 60 * 24 * 7) {
         let count = Math.floor(seconds / (60 * 60 * 24 * 7));
-        val = i18n.tc("store.format.week", count, { count: count });
+        val = i18n.tc("store.relativeDate.week", count, { count: count });
       } else if (seconds > 60 * 60 * 24) {
         let count = Math.floor(seconds / (60 * 60 * 24));
-        val = i18n.tc("store.format.day", count, { count: count });
+        val = i18n.tc("store.relativeDate.day", count, { count: count });
       } else if (seconds > 60 * 60) {
         let count = Math.floor(seconds / (60 * 60));
-        val = i18n.tc("store.format.hour", count, { count: count });
+        val = i18n.tc("store.relativeDate.hour", count, { count: count });
       } else {
         let count = Math.floor(seconds / 60);
-        val = i18n.tc("store.format.minute", count, { count: count });
+        val = i18n.tc("store.relativeDate.minute", count, { count: count });
       }
-      if (sign) return i18n.t("store.format.in") + " " + val;
-      else return val + " " + i18n.t("store.format.ago");
+      if (sign) return i18n.t("store.relativeDate.in", { time: val });
+      else return i18n.t("store.relativeDate.ago", { time: val });
     }
   }
 };

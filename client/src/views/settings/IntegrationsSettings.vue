@@ -25,14 +25,14 @@
           color="primary"
           :disabled="!calendarEnabled"
           @click="calendarSignIn"
-          >{{ $t("commands.signing") }}</v-btn
+          >{{ $t("commands.signIn") }}</v-btn
         >
         <v-btn
           v-if="signInState == 1"
           color="red"
           :disabled="!calendarEnabled"
           @click="calendarSignOut"
-          >{{ $t("commands.signout") }}</v-btn
+          >{{ $t("commands.signOut") }}</v-btn
         >
         <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
           <div class="overline">

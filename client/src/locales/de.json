@@ -14,6 +14,7 @@
     "household": "Haushalt",
     "connecting": "Verbinde...",
     "wait": "Warte kurz...",
+    "today": "Heute",
     "errors": {
       "communication": "Der Server hört nicht auf mich. Lass es uns später noch einmal versuchen.",
       "connect": "Ich kann den Server nicht erreichen.",
@@ -33,8 +34,8 @@
     "delete": "Entfernen",
     "cancel": "Abbrechen",
     "check": "Überprüfen",
-    "signin": "Anmelden",
-    "signout": "Abmelden",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
     "loading": "Es LÄDT!",
     "ok": "OK",
     "continue": "Fortsetzen",
@@ -74,6 +75,7 @@
     "nothing": "Nichts zu tun",
     "checked": "Abgehakt",
     "reminderMessage": "Du hast {user} an '{task}' erinnert.",
+    "taskCheckedFor": "für: {name}",
     "errors": {
       "fetchTask": "Konnte Aufgaben nicht synchronisieren. Versuch's später noch einmal.",
       "checkTask": "Das Häkchen will nicht so recht. Versuch's später noch einmal.",
@@ -496,182 +498,182 @@
     }
   },
   "dashboard": {
-    "notInHouseholdTitle": "You're not in a household yet.",
-    "notInHouseholdMessage": "Please join a household or create your own.",
-    "joinHousehold": "Join household",
-    "createHousehold": "Create household",
+    "notInHouseholdTitle": "Du bist noch in keinem Haushalt.",
+    "notInHouseholdMessage": "Bitte zieh in einen Haushalt ein oder gründe einen eigenen.",
+    "joinHousehold": "In bestehenden Haushalt einziehen",
+    "createHousehold": "Neuen Haushalt erstellen",
     "greetings": {
       "lateNight": [
-        "Any late night thoughts, {name}?",
+        "Was geht dir durch den Kopf, {name}?",
         "Ain't no party like a {name} party cuz a {name} party don't stop",
-        "I don't like the dark."
+        "Ich mag keine Dunkelheit.",
+        "zzZZZzz"
       ],
       "morning": [
-        "Morning sunshine!",
+        "Guten Morgen, Sonnenschein!",
         "Wakey wakey rise n’ shine!",
-        "Rise and shine, it's time for wine!",
-        "Have a great day, {name}!",
-        "Good Morning, {name}!",
-        "Roads? Where we're going we don't need...roads."
+        "Lächeln!",
+        "Hab einen schönen Tag, {name}!",
+        "Guten Morgen, {name}!",
+        "Straßen? Wo wir hinfahren brauchen wir keine... Straßen."
       ],
       "noon": [
         "Hi, {name}!",
-        "What's up, {name}?",
+        "Was geht, {name}?",
         "How you doin'?",
         "Here comes the sun 🎵"
       ],
       "afternoon": [
         "Hi, {name}!",
-        "Nice to see you, {name}!",
-        "How was your day, {name}?"
+        "Schön dich zu sehen, {name}!",
+        "Wie war dein Tag, {name}?"
       ],
       "evening": [
         "Netflix and grill?",
-        "Good evening, {name}!",
-        "How was your day, {name}?"
+        "Guten Abend, {name}!",
+        "Wie war dein Tag, {name}?"
       ],
       "night": [
-        "Good night, {name}.",
-        "Go get your beauty sleep, {name}.",
-        "Sleep well, {name}.",
+        "Gute Nacht, {name}.",
+        "Halte deinen Schönheitsschlaf, {name}.",
+        "Schlaf gut, {name}.",
         "Dream a little dream of me.."
       ]
     }
   },
   "calendar": {
-    "title": "Calendar",
-    "selectCalendars": "Select Calendars",
-    "notSignedIn": "Not signed in",
-    "others": "others",
-    "notActivated": "Please refer to the {settings} activate this feature.",
-    "settingsLinkText": "settings",
-    "notConnected": "Please refer to the {settings} to connect to the Google services.",
+    "title": "Kalender",
+    "selectCalendars": "Kalender auswählen",
+    "notSignedIn": "Nicht angemeldet",
+    "others": "andere",
+    "notActivated": "Dieses Feature muss erst in den {settings} aktiviert werden.",
+    "settingsLinkText": "Einstellungen",
+    "notConnected": "Bitte verbinde in den {settings} dein Google-Konto.",
     "timeViews": {
-      "oneday":  "Day",
-      "oneweek": "Week",
-      "onemonth": "Month",
-      "fourdays": "4 days"
+      "oneday":  "Tag",
+      "oneweek": "Woche",
+      "onemonth": "Monat",
+      "fourdays": "4 Tage"
     },
-    "noDescription": "No description"
+    "noDescription": "Keine Beschreibung"
   },
   "household": {
-    "members": "Members",
-    "leaveHousehold": "Leave household",
-    "leave": "Leave",
-    "stay": "Stay",
+    "members": "Mitglieder",
+    "leaveHousehold": "Haushalt verlassen",
+    "leave": "Verlassen",
+    "stay": "Bleiben",
     "info": "Info",
-    "created": "Created",
-    "confirmLeave": "Are you sure you want to leave this household?",
-    "confirmLeave2": "This operation can only be undone using an invite link.",
-    "update": "Successfully updated household information.",
+    "created": "Erstellt",
+    "confirmLeave": "Willst du diesen Haushalt wirklich verlassen?",
+    "confirmLeave2": "Diese Aktion kann nur mit einer neuen Einladung von deinen Mitbewohnern rückgängig gemacht werden.",
+    "update": "Haushalt aktualisiert.",
     "types": [
-      "Shared apartment", "Couple", "Family"
+      "Wohngemeinschaft", "Paar", "Familie"
     ],
     "errors": {
-      "userNotAssignedToHousehold": "You are not assigned to a household yet. Please create one now.",
-      "updateFailed": "Couldn't update household information.",
-      "updateError": "Error updating household information."
+      "userNotAssignedToHousehold": "Du bist noch in keinen Haushalt eingezogen. Bitte erstelle dir erst einen.",
+      "updateFailed": "Aktualisierung fehlgeschlagen.",
+      "updateError": "Fehler beim Aktualisieren des Haushalts."
     },
     "create": {
-      "title": "Create new household",
-      "nameMessage": "Give your household a sweet little name. Don't worry, you will be able to change it later.",
-      "householdName": "Household name",
-      "configure": "Configure household",
-      "householdType": "Household type",
-      "inviteMembers": "Invite members",
-      "inviteMembersMessage": "It feels so lonely without some roommates. Invite them via the link below.",
-      "finishMessage": "Congratulations, your new household has been setup successfully. Continue to check out your dashboard.",
-      "goToDashboard": "Go to dashboard",
-      "provideName": "Please provide a name!",
-      "nameTooLong": "Name is too long!",
+      "title": "Haushalt gründen",
+      "nameMessage": "Wie soll dein neuer Haushalt heißen? Keine Sorge, du kannst ihn später problemlos ändern.",
+      "householdName": "Name",
+      "configure": "Haushalt konfigurieren",
+      "householdType": "Typ",
+      "inviteMembers": "Mitbewohner einladen",
+      "inviteMembersMessage": "Falls du Mitbewohner hast, kannst du sie mit diesem Link einladen:",
+      "finishMessage": "Glückwunsch, dein neuer Haushalt ist eingerichtet! Sieh dir doch als Nächstes deine Übersicht an.",
+      "goToDashboard": "Zur Übersicht",
+      "provideName": "Bitte denk dir einen Namen aus!",
+      "nameTooLong": "Denk dir doch einen kompakten, schnuckligen Namen aus.",
       "messages": {
-        "checkInput": "Please check your input.",
-        "copied": "Copied to clipboard. Happy pasting! :)"
+        "checkInput": "Bitte überprüfe deine Eingaben.",
+        "copied": "In die Zwischenablage kopiert. Feierliches Einfügen! :)"
       },
       "errors": {
-        "createHouseholdError": "Error while creating household."
+        "createHouseholdError": "Fehler beim Erstellen des Haushalts."
       }
     },
     "invite": {
-      "title": "Invite members",
-      "inviteButton": "Invite",
-      "inviteMessage": "Please use this link to invite members to join this household",
-      "copied": "Copied to clipboard. Happy pasting! :)",
-      "fail": "Couldn't fetch invite link. Please try again later.",
-      "error": "Error fetching invite link. Please try again later."
+      "title": "Mitbewohner einladen",
+      "inviteButton": "Einladen",
+      "inviteMessage": "Bitte nutze diesen Link, um neue Mitglieder zu diesem Haushalt einzuladen:",
+      "copied": "In die Zwischenablage kopiert. Feierliches Einfügen! :)",
+      "fail": "Konnte keinen Link generieren. Versuch's später noch einmal.",
+      "error": "Fehler beim Generieren des Links. Versuch's später noch einmal."
     }
   },
   "store": {
     "errors": {
-      "auth": "User auth failed",
-      "users": "Error while fetching household users"
+      "auth": "Authorisierung fehlgeschlagen",
+      "users": "Abrufen der Haushaltsmitglieder nicht möglich"
     },
-    "unknownUser": "Unkown user",
-    "namelessUser": "Nameless user",
+    "unknownUser": "Unbekannter Nutzer",
+    "namelessUser": "Namenloser Nutzer",
     "tasks": {
-      "undoOnDemandError": "You can't undo on-demand tasks. The task will automatically undone 2h after it was checked."
+      "undoOnDemandError": "Bedarfsaufgaben können nicht rückgängig gemacht werden."
     },
-    "format": {
-      "justnow": "just now",
-      "year": "1 year | {count} years",
-      "month": "1 month | {count} months",
-      "week": "1 week | {count} weeks",
-      "day": "1 day | {count} days",
-      "hour": "1 hour | {count} hours",
-      "minute": "1 minute | {count} minutes",
-      "in": "in",
-      "ago": "ago"
+    "relativeDate": {
+      "justnow": "gerade eben",
+      "year": "einem Jahr | {count} Jahren",
+      "month": "einem Monat | {count} Monaten",
+      "week": "einer Woche | {count} Wochen",
+      "day": "einem Tag | {count} Tagen",
+      "hour": "einer Stunde | {count} Stunden",
+      "minute": "einer Minute | {count} Minuten",
+      "in": "in {time}",
+      "ago": "vor {time}"
     }
   },
   "iconChooser": {
-    "changeIcon": "Change Icon",
-    "title": "Icon Chooser",
-    "commonIcons": "Common icons",
-    "allIcons": "All icons"
+    "changeIcon": "Symbol wählen",
+    "title": "Wähle ein Symbol",
+    "commonIcons": "Beliebte Symbole",
+    "allIcons": "Weniger beliebte Symbole"
   },
   "widgets": {
-    "settings": "Widget settings",
+    "settings": "Widget-Einstellungen",
+    "lastUpdated": "Letztes Update: {time}",
+    "never": "Nie",
     "weather": {
-      "title": "Weather",
-      "configError": "This widget is not configured correctly.",
-      "never": "Never"
+      "title": "Wetter",
+      "configError": "Dieses Widget ist nicht richtig konfiguriert."
     },
     "tasks": {
-      "title": "Tasks",
-      "unnamedTask": "Unnamed task",
-      "today": "Today",
-      "done": "You're done for today!",
-      "tasksPage": "Tasks page",
-      "notificationSentTo": "Notification sent to {name}."
+      "title": "Aufgaben",
+      "unnamedTask": "Unbenannte Aufgabe",
+      "done": "Alles geschafft für heute! :)",
+      "tasksPage": "Zu den Aufgaben",
+      "notificationSentTo": "{name} wurde höflich erinnert."
     },
     "doNotDisturb": {
-      "title": "Do Not Disturb",
-      "updateUserStatusError": "Error toggling user status."
+      "title": "Nicht stören",
+      "updateUserStatusError": "Fehler beim Wechseln des Benutzerstatus."
     },
     "home": {
-      "title": "Home",
-      "msg": "\"I'm home!\""
+      "title": "Zuhause",
+      "msg": "\"Ich bin zuhause!\""
     },
     "finances": {
-      "title": "Finances",
-      "today": "Today",
-      "unnamedExpense": "Unnamed expense",
-      "empty": "Why don't you buy something?",
-      "financesPage": "Finances page"
+      "title": "Finanzen",
+      "unnamedExpense": "Unbenannte Ausgabe",
+      "empty": "Geh mal einkaufen!",
+      "financesPage": "Zu den Finanzen"
     },
     "clock": {
-      "title": "Clock"
+      "title": "Uhr"
     }
   },
   "resetPassword": {
-    "title": "Reset password",
-    "chooseNewPassword": "Please choose a new password.",
-    "expireNotice": "Please note that password reset tokens expire after one hour. After that, you will need to request a new token.",
-    "backToLogin": "Back to login",
-    "changePasswordButton": "Change password",
-    "noToken": "No valid token provided.",
-    "provideNewPassword": "Please provide a valid password.",
-    "updated": "Password updated. Please login.",
-    "updateFailed": "Update failed."
+    "title": "Passwort zurücksetzen",
+    "chooseNewPassword": "Bitte vergib ein neues Passwort.",
+    "expireNotice": "Hinweis: Tokens zum Zurücksetzen des Passworts laufen nach einer Stunde ab. Danach wirst du einen neuen Link anfordern müssen.",
+    "backToLogin": "Zurück zum Login",
+    "changePasswordButton": "Passwort ändern",
+    "noToken": "Kein gültiges Token.",
+    "provideNewPassword": "Bitte gib ein gültiges Passwort an.",
+    "updated": "Password aktualisiert. Bitte melde dich nun an.",
+    "updateFailed": "Aktualisierung fehlgeschlagen."
   }
 }

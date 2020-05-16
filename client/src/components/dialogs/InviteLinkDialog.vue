@@ -11,7 +11,7 @@
         $t("household.invite.title")
       }}</v-card-title>
       <v-card-text>
-        <p>{{ $t("household.invite.inviteMessage") }}:</p>
+        <p>{{ $t("household.invite.inviteMessage") }}</p>
         <v-text-field
           ref="addLink"
           v-model="householdLink"

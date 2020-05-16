@@ -199,7 +199,6 @@
 <script>
 import icons from "@/assets/icons.js";
 import { mapState, mapGetters } from "vuex";
-import { formatDateString } from "@/assets/tasksHelper";
 import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
 import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
@@ -321,7 +320,6 @@ export default {
       }
       this.loading = false;
     },
-    format: formatDateString,
     getIcon: index => icons[index]
   }
 };

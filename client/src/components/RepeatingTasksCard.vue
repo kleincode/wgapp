@@ -14,7 +14,7 @@
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
               <div class="overline pl-2 pt-1">
-                - {{ task.day }}, {{ task.time }}
+                - {{ formatDateRelative(task.nextDueDay) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -72,7 +72,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters(["getUserName", "getUserInitials"]),
+    ...mapGetters("userSettings", ["formatDateRelative"])
   },
   methods: {
     getIcons() {

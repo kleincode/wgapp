@@ -31,10 +31,7 @@
                 }}
                 <div class="overline pl-2 pt-1">
                   -
-                  {{
-                    formatDateRelative(expense.date) ||
-                      $t("widgets.finances.today")
-                  }}
+                  {{ formatDateRelative(expense.date) || $t("general.today") }}
                 </div>
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -89,9 +86,11 @@ export default {
           action: "refresh",
           text: this.$t("commands.refresh"),
           icon: "refresh",
-          subtext:
-            "Updated " +
-            (this.lastUpdate ? this.formatTimeHM(this.lastUpdate) : "never")
+          subtext: this.$t("widgets.lastUpdated", {
+            time: this.lastUpdate
+              ? this.formatTimeHM(this.lastUpdate)
+              : this.$t("widgets.never")
+          })
         },
         {
           action: "finances",
