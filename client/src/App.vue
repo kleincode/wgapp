@@ -73,18 +73,24 @@
           </v-list-item>
         </v-list>
         <template v-slot:append>
-          <v-chip
-            v-if="offline"
-            color="orange"
-            text-color="white"
-            label
-            class="ma-2 center"
-          >
-            <v-icon left>
-              offline_bolt
-            </v-icon>
-            Offline
-          </v-chip>
+          <div class="pa-3">
+            <v-chip
+              v-if="offline"
+              color="orange"
+              text-color="white"
+              label
+              style="width: 90%"
+              class="ma-2 center"
+            >
+              <v-icon left>
+                offline_bolt
+              </v-icon>
+              Offline
+            </v-chip>
+            <v-btn color="white" class="" text :to="{ name: 'About' }" block
+              >About</v-btn
+            >
+          </div>
         </template>
       </v-navigation-drawer>
 
