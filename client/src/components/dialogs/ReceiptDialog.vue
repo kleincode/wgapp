@@ -9,7 +9,9 @@
       <v-card-text>
         <div v-if="!receiptExists" class="pt-12 pb-12 grey--text">
           {{
-            loading ? $t("finances.receipt.load") : $t("finances.receipt.noRec")
+            loading
+              ? $t("finances.receipt.loading")
+              : $t("finances.receipt.noReceipt")
           }}
         </div>
         <v-row justify="center">
@@ -27,7 +29,7 @@
               accept="image/png, image/jpeg, image/bmp"
               :placeholder="$t('finances.receipt.upload')"
               prepend-icon="mdi-camera"
-              :label="$t('finances.receipt.lbl')"
+              :label="$t('finances.receipt.receipt')"
             ></v-file-input>
           </v-col>
           <v-col cols="12" md="4" lg="3">
@@ -52,7 +54,7 @@
           color="red"
           @click="deleteReceipt"
         >
-          {{ $t("finances.receipt.del") }}
+          {{ $t("finances.receipt.deleteReceipt") }}
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn text @click="dialogShown = false">
@@ -86,7 +88,7 @@ export default {
       if (!this.receiptFile) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("finances.receipt.imgHint")
+          this.$t("finances.receipt.noImageSpecified")
         );
         return;
       }
@@ -103,7 +105,7 @@ export default {
         error: err => {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("finances.receipt.compressHint")
+            this.$t("finances.receipt.imageCompressionError")
           );
           console.log(err.message);
           this.loading = false;
@@ -125,18 +127,21 @@ export default {
         if (data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("finances.receipt.successUpload")
+            this.$t("finances.receipt.uploaded")
           );
           setTimeout(() => this.fetchReceipt(), 200);
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            data.message || this.$t("finances.receipt.upErr")
+            data.message || this.$t("finances.receipt.uploadError")
           );
         }
         this.loading = false;
       } catch (err) {
-        this.$store.dispatch("showSnackbar", this.$t("finances.receipt.upErr"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("finances.receipt.uploadError")
+        );
         console.error(err);
         this.loading = false;
       }
@@ -151,19 +156,19 @@ export default {
         if (data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("finances.receipt.successDel")
+            this.$t("finances.receipt.deleted")
           );
         } else
           this.$store.dispatch(
             "showSnackbar",
-            data.message || this.$t("finances.receipt.delFail")
+            data.message || this.$t("finances.receipt.deleteFailed")
           );
         this.loading = false;
         setTimeout(() => this.fetchReceipt(), 200);
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("finances.receipt.delErr")
+          this.$t("finances.receipt.deleteError")
         );
         console.error(err);
         this.loading = false;

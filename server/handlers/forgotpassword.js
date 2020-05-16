@@ -18,13 +18,15 @@ module.exports = ({ db }) => ({
     },
     handler: async ({ body: { email }, query }, { success, fail, error }) => {
       try {
-        const { results } = await db.query("SELECT `cpwtoken`, `firstname`, `lastname` FROM users WHERE ?", [{ email }]);
+        const { results } = await db.query("SELECT `id`, `firstname`, `lastname` FROM users WHERE ?", [{ email }]);
         if(results && results.length) {
-          let { cpwtoken, firstname, lastname } = results[0];
+          const { firstname, lastname, id: uid } = results[0];
+          const { results: tokenRes } = await db.query("SELECT `token` FROM usertokens WHERE ?", [{ uid }]);
+          let cpwtoken = tokenRes && tokenRes.length && tokenRes[0].token;
           if(!cpwtoken) try {
             // Need to generate new token
             cpwtoken = uuidv4();
-            await db.query("UPDATE users SET ? WHERE ?", [{ cpwtoken }, { email }]);
+            await db.query("INSERT INTO usertokens (`uid`, `type`, `token`) VALUES (?, ?, ?)", [ uid, "resetpassword", cpwtoken]);
           } catch(err) {
             error("Error while creating unique token.", 1, err);
             return;

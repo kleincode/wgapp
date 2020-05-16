@@ -1,11 +1,679 @@
 {
   "navigation": {
-    "dashboard": "Dashboard",
+    "dashboard": "Übersicht",
     "calendar": "Kalender",
-    "shopping": "Einkaufsliste",
+    "shopping": "Einkäufe",
     "finances": "Finanzen",
     "tasks": "Aufgaben",
-    "household": "Haushalt",
+    "household": "Haushalt verwalten",
     "settings": "Einstellungen"
+  },
+  "general": {
+    "member": "Mitbewohner",
+    "members": "Mitbewohner",
+    "household": "Haushalt",
+    "connecting": "Verbinde...",
+    "wait": "Warte kurz...",
+    "today": "Heute",
+    "errors": {
+      "communication": "Der Server hört nicht auf mich. Lass es uns später noch einmal versuchen.",
+      "connect": "Ich kann den Server nicht erreichen.",
+      "unknown": "Unbekannter Fehler."
+    },
+    "units": {
+      "celsius": "Celsius",
+      "fahrenheit": "Fahrenheit",
+      "kelvin": "Kelvin"
+    }
+  },
+  "commands": {
+    "close": "Schließen",
+    "refresh": "Aktualisieren",
+    "undo": "Rückgängig",
+    "save": "Speichern",
+    "delete": "Entfernen",
+    "cancel": "Abbrechen",
+    "check": "Überprüfen",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "loading": "Es LÄDT!",
+    "ok": "OK",
+    "continue": "Fortsetzen",
+    "next": "Weiter",
+    "finish": "Fertig",
+    "back": "Zurück",
+    "remove": "Entfernen",
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren",
+    "upload": "Hochladen",
+    "edit": "Bearbeiten"
+  },
+  "app": {
+    "profile": "Mein Profil",
+    "footer": "Made in self-isolation - 2020",
+    "update": "Ein neues Update ist verfügbar. Es wird beim nächsten Laden der App angewendet."
+  },
+  "weekdays": {
+    "mon": "Montag",
+    "tue": "Dienstag",
+    "wed": "Mittwoch",
+    "thu": "Donnerstag",
+    "fri": "Freitag",
+    "sat": "Samstag",
+    "sun": "Sonntag"
+  },
+  "time": {
+    "weeks": "Wochen",
+    "months": "Monate"
+  },
+  "tasks": {
+    "title": "Aufgaben",
+    "todaystasks": "Für heute",
+    "duetoday": "Bis heute",
+    "chill": "Chillen",
+    "other": "andere",
+    "nothing": "Nichts zu tun",
+    "checked": "Abgehakt",
+    "reminderMessage": "Du hast {user} an '{task}' erinnert.",
+    "taskCheckedFor": "für: {name}",
+    "errors": {
+      "fetchTask": "Konnte Aufgaben nicht synchronisieren. Versuch's später noch einmal.",
+      "checkTask": "Das Häkchen will nicht so recht. Versuch's später noch einmal.",
+      "undo": "Rückgängig machen fehlgeschlagen.",
+      "triggerReminder": "Erinnerung fehlgeschlagen."
+    },
+    "modes": {
+      "single": "Einmalig",
+      "repeating": "Wiederkehrend",
+      "ondemand": "Bei Bedarf"
+    },
+    "editTask": {
+      "titleEdit": "Aufgabe bearbeiten",
+      "titleAdd": "Aufgabe hinzufügen",
+      "taskMode": "Wiederholung",
+      "name": "Name",
+      "memberMode": "Verantwortlicher",
+      "assignedTo": "Mitglied zuweisen",
+      "timeAndDate": "Datum & Uhrzeit",
+      "chooseStartDay": "Wähle Starttag",
+      "chooseTaskTime": "Wähle Startzeit",
+      "toggleReminder": "Erinnerung",
+      "repeatOn": "An Wochentagen wiederholen",
+      "repeatEvery": "Wiederhole alle",
+      "repeatUnit": "Zeiteinheit",
+      "confirmDelete": "Bist du sicher, dass du diese Aufgabe löschen willst?",
+      "errors": {
+        "number": "Fehler beim Laden der Aufgaben (Multiple or no tasks received)",
+        "settings": "Konnte Einstellungsdaten nicht laden. Versuch's später noch einmal.",
+        "settingsErr": "Fehler beim Laden der Einstellungsdaten. Versuch's später noch einmal.",
+        "add": "Konnte Aufgabe nicht hinzufügen. Versuch's später noch einmal.",
+        "addErr": "Fehler beim Hinzufügen der Aufgabe. Versuch's später noch einmal.",
+        "delete": "Konnte Aufgabe nicht löschen. Versuch's später noch einmal.",
+        "deleteErr": "Fehler beim Löschen der Aufgabe. Versuch's später noch einmal.",
+        "edit": "Bearbeitung fehlgeschlagen."
+      },
+      "messages": {
+        "name": "Bitte gib einen Namen an.",
+        "interval": "Bitte gib ein gültiges Zeitintervall an.",
+        "weekday": "Kein Wochentag ausgewählt",
+        "successEdit": "Bearbeitung erfolgreich.",
+        "successAdd": "Hinzufügen erfolgreich.",
+        "delete": "Aufgabe gelöscht."
+      }
+    },
+    "upcoming": {
+      "title": "Anstehend",
+      "timed": "Geplante Aufgaben",
+      "onDemand": "Bei Bedarf",
+      "repeatingTaskDescription": "Wiederholte Aufgabe",
+      "singleTaskDescription": "Einzelaufgabe",
+      "repeatingTasksEmpty": "Glückwunsch, absolut nix los hier.",
+      "last": "Letzte Ausführung",
+      "onDemandTasksEmpty": "Vielleicht solltest du anfangen Dinge zu tun.",
+      "invalidDate": "Ungültiges Datum"
+    },
+    "log": {
+      "title": "Vergangene Aufgaben",
+      "empty": "Du hast noch nix erreicht."
+    },
+    "repeatingTasks": {
+      "title": "Wiederholte Aufgaben verwalten",
+      "empty": "Zu viel Alltagsroutine soll ja auch nicht gut sein."
+    }
+  },
+  "shopping": {
+    "title": "Einkäufe",
+    "lists": "Einkaufslisten",
+    "sync": "Einkaufslisten synchronisieren",
+    "emptyList": "Beginne, indem du eine Liste anlegst. Einkaufen macht Spaß!!!",
+    "emptyShopping": "Frohen Konsum!",
+    "newItem": "Neuer Eintrag",
+    "remaining": "Verbleibend",
+    "completed": "Erledigt",
+    "noListSelected": "Keine Liste ausgewählt",
+    "syncError": "Synchronisierung fehlgeschlagen: {message}",
+    "expense": {
+      "transfer": "Zu Finanzen übertragen",
+      "add": "Ausgabe hinzufügen",
+      "addDescription": "Füge eine neue Ausgabe zu deinen Finanzen für diese Einkaufsliste hinzu.",
+      "addSuccess": "Ausgabe hinzugefügt.",
+      "addFail": "Konnte die Ausgabe nicht hinzufügen. Versuch's später noch einmal.",
+      "addError": "Fehler beim Hinzufügen der Ausgabe. Versuch's später noch einmal."
+    },
+    "list": {
+      "create": "Einkaufsliste hinzufügen",
+      "edit": "Einkaufsliste bearbeiten",
+      "new": "Neue Einkaufsliste",
+      "provideListName": "Bitte vergib einen Namen!",
+      "listNameTooLong": "Der Name ist etwas zu lang.",
+      "addFail": "Fehler beim Hinzufügen der Liste."
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "introLocked": "Hier kommen wir schon noch hin...",
+    "introLockedDescription": "Setz das Tutorial fort oder klicke 'Tutorial beenden' am unteren Bildschirmrand.",
+    "general": {
+      "title": "Allgemein",
+      "appearance": {
+        "title": "Aussehen",
+        "description": "Vanille oder Schokolade? Hier spalten sich die Geister. Aber sei bloß vorsichtig: Das helle Licht könnte dich blenden.",
+        "darkDesign": "Dunkles Design"
+      },
+      "language": {
+        "title": "Sprache",
+        "description": "Falls deine Sprache noch nicht unterstützt wird, freuen wir uns über Übersetzungsmithilfe. Kontaktiere uns einfach!",
+        "selectLanguage": "Sprache wählen"
+      },
+      "locale": {
+        "title": "Region/Lokalisierung",
+        "description": "Die Regionseinstellungen beeinflussen die Darstellung von Daten, Zeiten und Geldbeträgen.",
+        "system": "Systemeinstellungen verwenden",
+        "custom": "Benutzerdefinierte Region",
+        "customHint": "Eine Regionsbeschreibung kann nur aus einer Sprache bestehen (z.B. de, en) oder auch ein bestimmtes Land beinhalten (z.B. de-DE, en-US).",
+        "explanation": "Hinweis: Diese Einstellung beeinflusst bloß die dargestellte Währung. Es werden keine Geldbeträge umgerechnet. Falls es sich bei deinem Haushalt um ein internationales Konglomerat handelt, bitten wir dich aus tiefstem Herzen um Entschuldigung für diese Unzulänglichkeit unsererseits.",
+        "currency": "Währung",
+        "sample": "Beispiel"
+      },
+      "notifications": {
+        "title": "Benachrichtigungen",
+        "description": "Du kannst Push-Benachrichtigungen als Erinnerung an anstehende Aufgaben erhalten.",
+        "enable": "Aktiviere Push-Benachrichtigungen",
+        "controller": {
+          "notSupported": "Dein System unterstützt keine Push-Benachrichtigungen.",
+          "registrationFailed": "Aktivierung fehlgeschlagen",
+          "permissionDenied": "Dein System verbietet das Senden von Push-Benachrichtigungen. Bitte überprüfe deine Websiteeinstellungen und erlaube Push-Benachrichtigungen, um dieses Feature zu nutzen."
+        }
+      },
+      "intro": {
+        "restartTitle": "Einführung erneut starten",
+        "restartDescription": "Falls du Teile der hochwertigen Achterbahnfahrt, die wir Einführung nennen, verpasst hast, klick einfach hier:",
+        "restartButton": "Einführung neu starten"
+      }
+    },
+    "dashboard": {
+      "title": "Übersicht",
+      "clock": {
+        "title": "Uhr",
+        "description": "Ein revolutionärer Zeitindikator. Folgt den Gesetzen der speziellen und algemeinen Relativitätstheorie.",
+        "enableWidget": "Aktiviere Uhr-Widget",
+        "note": "Hinweis:",
+        "localeNoteText": "{note} Die Zeitdarstellung wird von den {localeSettings} bestimmt.",
+        "localeSettings": "Regionseinstellungen"
+      },
+      "weather": {
+        "title": "Wetter",
+        "description": "Stellt die aktuellen Wetterdaten mithilfe der kostenlosen {link} API dar.",
+        "enableWidget": "Aktiviere Wetter-Widget",
+        "apiSettingsTitle": "API-Einstellungen",
+        "apiSignUp": "Bitte erstelle dir einen Key unter {link} oder schnorre dir einen von deinen Mitbewohnern.",
+        "apiKey": "API Key",
+        "zipCode": "PLZ",
+        "countryCode": "Ländercode",
+        "openWeatherApi": "Open Weather API:",
+        "temperatureUnit": "Temperatureinheit",
+        "clickCheck": "Klicke 'Überprüfen', um eine Testabfrage zu machen.",
+        "apiStates": {
+          "success": "Erfolgreich (Stadt: {city})",
+          "badRequest": "Ungültige Anfrage: {message}",
+          "invalidKey": "Ungültiger API Key",
+          "cityNotFound": "Stadt nicht gefunden",
+          "invalidAPIData": "Ungültige API-Daten"
+        }
+      },
+      "tasks": {
+        "title": "Aufgaben",
+        "description": "Dieses Widget sorgt dafür, dass in deinem Haushalt Großes geschafft wird. Niemand hat je gewagt, seine Autorität in Frage zu stellen.",
+        "enableWidget": "Aktiviere Aufgaben-Widget"
+      },
+      "finances": {
+        "title": "Finanzen",
+        "description": "Sei immer auf dem neuesten Stand deiner Finanzen, damit dir kein einziger Cent durch die Lappen geht. Die Steuern macht es dir nicht.",
+        "enableWidget": "Aktiviere Finanzen-Widget"
+      },
+      "disturb": {
+        "title": "Nicht stören",
+        "description": "Gehen dir deine Zimmergenossen auf die Nerven? Steht eine wichtige Prüfung an? Oder ist heute einfach wieder einer dieser Tage, wo jeder Augenkontakt schon zu viel Kontakt ist? Dann verlass' dich auf die Dienste dieses Widgets.",
+        "enableWidget": "Aktiviere Nicht-stören-Widget"
+      },
+      "home": {
+        "title": "\"Ich bin zuhause!\"",
+        "description": "Kennst du diese Uhr aus Harry Potter in dem Haus der Weasleys, die anzeigt, wer gerade zuhause ist? Das hier ist genauso, nur weniger cool und absolut idioten- und muggelsicher. Aber es hat Push-Benachrichtigungen (Nehmt das, Weasleys!).",
+        "enableWidget": "Aktiviere 'Ich bin zuhause!'-Widget"
+      }
+    },
+    "integrations": {
+      "title": "Integrationen",
+      "calendar": {
+        "title": "Kalender",
+        "description": "Behaltet eure gemeinsamen Aktivitäten im Auge mithilfe der Google Kalender API. Wenn aktiviert, ist der Kalender über den neuen Menüpunkt in der Navigationsleiste erreichbar.",
+        "enableGoogleCalendarIntegration": "Aktiviere Google Kalender Integration",
+        "state": "Status: ",
+        "signedIn": "Angemeldet ({email})",
+        "unknownEmail": "Unbekannte E-Mail",
+        "notSignedIn": "Nicht angemeldet",
+        "loadingGapi": "Lade Google API..."
+      },
+      "hue": {
+        "title": "Philips Hue",
+        "description": "Kommt bald (oder eher nicht so bald)."
+      }
+    }
+  },
+  "profile": {
+    "title": "Profil",
+    "username": "Benutzername",
+    "nickname": "Nickname",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "expenses": "Letzte Ausgaben",
+    "noExpenses": "Leer",
+    "monthlyExpenses": "Monatliche Ausgaben",
+    "noMonthlyExpenses": "Leer",
+    "errors": {
+      "fetchUserExpensesFailed": "Konnte Ausgaben nicht laden.",
+      "fetchUserExpensesError": "Fehler beim Laden der Ausgaben.",
+      "fetchMonthlyExpensesFailed": "Konnte monatliche Ausgaben nicht laden.",
+      "fetchMonthlyExpensesError": "Fehler beim Laden der monatlichen Ausgaben."
+    },
+    "criticalActions": {
+      "title": "Unverzeihliche Flüche",
+      "description": "Aber keine Sorge, da du vermutlich kein Zauberer bist, wirst du nicht nach Askaban geschickt.",
+      "deleteLocalData": {
+        "button": "Lokale Daten löschen ({kilobytes} KB)",
+        "buttonSizeUnknown": "Lokale Daten löschen",
+        "confirmTitle": "Lokale Daten löschen ({kilobytes} KB?)",
+        "confirmTitleSizeUnknown": "Lokale Daten löschen?",
+        "confirmMessage": "Wenn du alle lokalen Daten löschst, müssen all deine haushaltsbezogenen Daten neu geladen werden. Das Laden von Seiten und das Ausführen von Aktionen dauert vorübergehend länger, bis der Cache wieder gefüllt ist. Statische Daten wie App-Code und Medien werden nicht gelöscht. Fortfahren?",
+        "positiveOption": "So soll es sein!",
+        "negativeOption": "Abbrechen",
+        "deleted": "Lokale Daten gelöscht."
+      },
+      "logout": {
+        "button": "Abmelden",
+        "confirmTitle": "Abmelden und lokale Daten löschen?",
+        "confirmMessage": "Wenn du dich hier abmeldest, werden alle Authentifizierungsschlüssel und gecacheten Haushaltsdaten auf diesem Gerät gelöscht. Außer zum Wechsel von Accounts wird das Abmelden auf diesem Wege nicht empfohlen. Fortfahren?",
+        "positiveOption": "Abmelden",
+        "negativeOption": "Abbrechen"
+      },
+      "deleteAccount": {
+        "button": "Account löschen",
+        "confirmTitle": "Account dauerhaft löschen?",
+        "confirmMessage1": "All deine persönlichen Daten (d.h. Name, E-Mail, Passwort und Nickname) werden dauerhaft von unserem Server und von diesem Gerät gelöscht. Dein Haushalt wird dich von nun an unter dem schönen Namen \"Unbekannter Nutzer\" kennen und all deine Ausgaben und Aufgaben werden sie in traurigschöner Melancholie an dich erinnern. Du wirst aus dieser App ausgeloggt und es wird sein, als wäre all dies nie passiert. Aber eines ist sicher: Nie wirst du vergessen werden, Unbekannter Nutzer.",
+        "confirmMessage2": "Aber im Ernst: {bold} Daher, um mit den Worten von einem der größten Denker unserer Zeit zu enden:",
+        "confirmMessage2Bold": "Diese Aktion kann nicht rückgängig gemacht werden.",
+        "confirmQuote": "Ooh, think twice.",
+        "confirmQuoteAuthor": "- Phil Collins",
+        "positiveOption": "Account löschen",
+        "negativeOption": "Abbrechen"
+      }
+    },
+    "edit": {
+      "title": "Profil bearbeiten",
+      "nicknameHint": "So heißt du für deine Mitbewohner",
+      "currentPassword": "Altes Passwort",
+      "newPassword": "Neues Passwort",
+      "repeatNewPassword": "Neues Passwort wiederholen",
+      "emailRequired": "Bitte gib eine E-Mail an!",
+      "emailInvalid": "Ungültige E-Mail",
+      "messages": {
+        "profileUpdated": "Profil aktualisiert.",
+        "profilePictureDeleted": "Dein Profilbild wurde entfernt."
+      },
+      "errors": {
+        "passwordsDoNotMatch": "Die neuen Passwörter stimmen nicht überein.",
+        "profileUpdateFailed": "Konnte Profil nicht aktualisieren.",
+        "profileUpdateError": "Fehler beim Aktualisieren des Profils.",
+        "deleteProfilePictureFailed": "Konnte Profilbild nicht löschen.",
+        "deleteProfilePictureError": "Fehler beim Löschen des Profilbilds."
+      }
+    },
+    "uploadProfilePicture": {
+      "title": "Profilbild hochladen",
+      "profilePicture": "Profilbild",
+      "uploadhere": "Profilbild auswählen",
+      "noImageSpecified": "Bitte wähle ein Bild aus.",
+      "imageCompressionError": "Fehler beim Komprimieren des Bildes. Ist es eine gültige Pixelgrafik?",
+      "uploaded": "Profilbild hochgeladen",
+      "uploadError": "Fehler beim Hochladen des Profilbildes."
+    }
+  },
+  "login": {
+    "welcome": "Willkommen!",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "forgotPasswordMessage": "Falls du dein Passwort vergessen hast, gib bitte deine E-Mail ein, damit wir dir einen Link zuschicken können, über den du ein neues Passwort vergeben kannst.",
+    "email": "E-Mail",
+    "firstname": "Vorname",
+    "lastname": "Nachname",
+    "password": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "repeatPassword": "Passwort wiederholen",
+    "verifying": "Verifiziere deine E-Mail-Adresse...",
+    "verified": "Deine E-Mail-Adresse wurde bestätigt.",
+    "resendEmail": "E-Mail erneut senden",
+    "messages": {
+      "required": "Dieses Feld wird benötigt!",
+      "mailRequired": "Bitte gib eine E-Mail an!",
+      "mailInvalid": "Ungültige E-Mail",
+      "passwordRequired": "Bitte gib ein Passwort an!",
+      "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "checkInput": "Bitte überprüfe deine Eingaben.",
+      "passwordsDoNotMatch": "Die Passwörter stimmen nicht überein. Versuch's noch einmal."
+    },
+    "errors": {
+      "register": "Registrierung fehlgeschlagen. Bitte versuch es später noch einmal.",
+      "verify": "Deine E-Mail konnte nicht bestätigt werden."
+    }
+  },
+  "finances": {
+    "title": "Finanzen",
+    "chooseTimeSpan": "Wähle Zeitraum",
+    "memberExpenses": "Einzelausgaben",
+    "expenses": "Ausgabentabelle",
+    "monthlyCharges": "Monatliche Kosten",
+    "monthlyChargesExplanation": "Monatliche Kosten werden am ersten Tag jedes Monats abgerechnet.",
+    "payedBy": "Bezahlt von",
+    "overview": "Ausgabenübersicht",
+    "editMonthlyBudget": "Monatliches Budget bearbeiten",
+    "name": "Name",
+    "amount": "betrag",
+    "payedByAll": "Bezahlt von allen",
+    "currentlyUsed": "Bisher ausgegeben",
+    "currentTargetTotal": "Budget",
+    "compensationPayments": "Ausgleichszahlungen",
+    "compensationPaymentsExplanation": "Berechne optimale Ausgleichszahlungen für alle Mitglieder seit der letzten Abrechnung.",
+    "lastBill": "Letzte Abrechnung",
+    "openBillManager": "Abrechnungen verwalten",
+    "memberTrendExpenses": "Ausgabenverlauf",
+    "confirmDeleteItem": "Möchtest du \"{item}\" wirklich löschen?",
+    "empty": {
+      "members": "Lege eine neue Ausgabe an und du wirst hier eingetragen.",
+      "expenses": "Keine Ausgaben",
+      "monthlyCharges": "Füge hier monatliche Kosten hinzu."
+    },
+    "errors": {
+      "fetchLastBillFailed": "Fehler beim Laden der letzten Abrechnung. Bitte versuch's später noch einmal."
+    },
+    "expenseTable": {
+      "expense": "Beschreibung",
+      "member": "bezahlt von",
+      "date": "Datum",
+      "amount": "Betrag",
+      "actions": "Aktionen"
+    },
+    "timespans": {
+      "currentMonth": "Dieser Monat",
+      "currentAndLastTwoMonths": "Dieser und letzte zwei Monate",
+      "currentYear": "Dieses Jahr"
+    },
+    "billManager": {
+      "title": "Abrechnungen",
+      "confirmFinishPayments": "Bist du sicher, dass du alle angeführten Ausgaben abrechnen willst? Du kannst die Abrechnung nicht rückgängig machen.",
+      "noExpensesAvailable": "Keine Ausgaben seit letzter Abrechnung",
+      "newBill": "Neue Abrechnung",
+      "monthlyTotal": "Gesamt im Monat",
+      "total": "Gesamt",
+      "perPerson": "pro Person",
+      "paying": "Bezahlt",
+      "receives": "Erhält",
+      "amount": "Betrag",
+      "includeMonthlyCharges": "Monatliche Kosten in Abrechnung einschließen",
+      "savePayments": "Abrechnung speichern",
+      "billHistory": "Vergangene Abrechnungen",
+      "from": "Von",
+      "to": "Bis",
+      "export": "Export",
+      "errors": {
+        "fetchHistoryFailed": "Konnte vergangene Abrechnungen nicht laden. Bitte versuch's später noch einmal.",
+        "fetchHistoryError": "Fehler beim Laden der vergangenen Abrechnungen. Bitte versuch's später noch einmal.",
+        "fetchBillDataFailed": "Konnte Abrechnungsdaten nicht laden. Bitte versuch's später noch einmal.",
+        "fetchBillDataError": "Fehler beim Laden der Abrechnungsdaten. Bitte versuch's später noch einmal.",
+        "updateLastBillError": "Fehler beim Aktualisieren der Abrechnungen. Bitte versuch's später noch einmal."
+      },
+      "updated": "Abrechnung fertiggestellt."
+    },
+    "receipt": {
+      "title": "Rechnung",
+      "loading": "Rechnung lädt...",
+      "noReceipt": "Keine Rechnung hochgeladen",
+      "upload": "Rechnung hochladen",
+      "receipt": "Rechnung",
+      "deleteReceipt": "Rechnung löschen",
+      "noImageSpecified": "Bitte wähle ein Bild aus!",
+      "imageCompressionError": "Fehler beim Komprimieren des Bildes.",
+      "uploadError": "Upload fehlgeschlagen.",
+      "uploaded": "Rechnung hochgeladen.",
+      "deleted": "Rechnung gelöscht.",
+      "deleteFailed": "Löschen fehlgeschlagen.",
+      "deleteError": "Fehler beim Löschen der Rechnung."
+    },
+    "editMonthlyCharges": {
+      "editMonthlyCharge": "Bearbeiten",
+      "newMonthlyCharge": "Neuer Eintrag",
+      "specifyPayingMember": "Bitte gib an, wer die monatlichen Kosten bezahlt.",
+      "rules": {
+        "provideName": "Bitte gib dem Eintrag einen Namen.",
+        "nameTooLong": "Der Name ist zu lang.",
+        "provideAmount": "Bitte gib einen Geldbetrag an.",
+        "amountInvalid": "Bitte gib einen gültigen Geldbetrag an.",
+        "negativeAmount": "Negative Beträge sind nicht zulässig.",
+        "amountIsZero": "Bitte gib einen von Null verschiedenen Betrag an."
+      },
+      "updated": "Eintrag aktualisiert.",
+      "added": "Eintrag hinzugefügt."
+    },
+    "expense": {
+      "edit": "Ausgabe bearbeiten",
+      "new": "Neue Ausgabe",
+      "description": "Beschreibung",
+      "addReceipt": "Rechnung hinzufügen",
+      "added": "Ausgabe hinzugefügt.",
+      "updated":"Ausgabe aktualisiert."
+    },
+    "export": {
+      "until": " bis ",
+      "memberDebts": "Schulden",
+      "results": "Ausgleichszahlungen:"
+    }
+  },
+  "dashboard": {
+    "notInHouseholdTitle": "Du bist noch in keinem Haushalt.",
+    "notInHouseholdMessage": "Bitte zieh in einen Haushalt ein oder gründe einen eigenen.",
+    "joinHousehold": "In bestehenden Haushalt einziehen",
+    "createHousehold": "Neuen Haushalt erstellen",
+    "greetings": {
+      "lateNight": [
+        "Was geht dir durch den Kopf, {name}?",
+        "Ain't no party like a {name} party cuz a {name} party don't stop",
+        "Ich mag keine Dunkelheit.",
+        "zzZZZzz"
+      ],
+      "morning": [
+        "Guten Morgen, Sonnenschein!",
+        "Wakey wakey rise n’ shine!",
+        "Lächeln!",
+        "Hab einen schönen Tag, {name}!",
+        "Guten Morgen, {name}!",
+        "Straßen? Wo wir hinfahren brauchen wir keine... Straßen."
+      ],
+      "noon": [
+        "Hi, {name}!",
+        "Was geht, {name}?",
+        "How you doin'?",
+        "Here comes the sun 🎵"
+      ],
+      "afternoon": [
+        "Hi, {name}!",
+        "Schön dich zu sehen, {name}!",
+        "Wie war dein Tag, {name}?"
+      ],
+      "evening": [
+        "Netflix and grill?",
+        "Guten Abend, {name}!",
+        "Wie war dein Tag, {name}?"
+      ],
+      "night": [
+        "Gute Nacht, {name}.",
+        "Halte deinen Schönheitsschlaf, {name}.",
+        "Schlaf gut, {name}.",
+        "Dream a little dream of me.."
+      ]
+    }
+  },
+  "calendar": {
+    "title": "Kalender",
+    "selectCalendars": "Kalender auswählen",
+    "notSignedIn": "Nicht angemeldet",
+    "others": "andere",
+    "notActivated": "Dieses Feature muss erst in den {settings} aktiviert werden.",
+    "settingsLinkText": "Einstellungen",
+    "notConnected": "Bitte verbinde in den {settings} dein Google-Konto.",
+    "timeViews": {
+      "oneday":  "Tag",
+      "oneweek": "Woche",
+      "onemonth": "Monat",
+      "fourdays": "4 Tage"
+    },
+    "noDescription": "Keine Beschreibung"
+  },
+  "household": {
+    "members": "Mitglieder",
+    "leaveHousehold": "Haushalt verlassen",
+    "leave": "Verlassen",
+    "stay": "Bleiben",
+    "info": "Info",
+    "created": "Erstellt",
+    "confirmLeave": "Willst du diesen Haushalt wirklich verlassen?",
+    "confirmLeave2": "Diese Aktion kann nur mit einer neuen Einladung von deinen Mitbewohnern rückgängig gemacht werden.",
+    "update": "Haushalt aktualisiert.",
+    "types": [
+      "Wohngemeinschaft", "Paar", "Familie"
+    ],
+    "errors": {
+      "userNotAssignedToHousehold": "Du bist noch in keinen Haushalt eingezogen. Bitte erstelle dir erst einen.",
+      "updateFailed": "Aktualisierung fehlgeschlagen.",
+      "updateError": "Fehler beim Aktualisieren des Haushalts."
+    },
+    "create": {
+      "title": "Haushalt gründen",
+      "nameMessage": "Wie soll dein neuer Haushalt heißen? Keine Sorge, du kannst ihn später problemlos ändern.",
+      "householdName": "Name",
+      "configure": "Haushalt konfigurieren",
+      "householdType": "Typ",
+      "inviteMembers": "Mitbewohner einladen",
+      "inviteMembersMessage": "Falls du Mitbewohner hast, kannst du sie mit diesem Link einladen:",
+      "finishMessage": "Glückwunsch, dein neuer Haushalt ist eingerichtet! Sieh dir doch als Nächstes deine Übersicht an.",
+      "goToDashboard": "Zur Übersicht",
+      "provideName": "Bitte denk dir einen Namen aus!",
+      "nameTooLong": "Denk dir doch einen kompakten, schnuckligen Namen aus.",
+      "messages": {
+        "checkInput": "Bitte überprüfe deine Eingaben.",
+        "copied": "In die Zwischenablage kopiert. Feierliches Einfügen! :)"
+      },
+      "errors": {
+        "createHouseholdError": "Fehler beim Erstellen des Haushalts."
+      }
+    },
+    "invite": {
+      "title": "Mitbewohner einladen",
+      "inviteButton": "Einladen",
+      "inviteMessage": "Bitte nutze diesen Link, um neue Mitglieder zu diesem Haushalt einzuladen:",
+      "copied": "In die Zwischenablage kopiert. Feierliches Einfügen! :)",
+      "fail": "Konnte keinen Link generieren. Versuch's später noch einmal.",
+      "error": "Fehler beim Generieren des Links. Versuch's später noch einmal."
+    }
+  },
+  "store": {
+    "errors": {
+      "auth": "Authorisierung fehlgeschlagen",
+      "users": "Abrufen der Haushaltsmitglieder nicht möglich"
+    },
+    "unknownUser": "Unbekannter Nutzer",
+    "namelessUser": "Namenloser Nutzer",
+    "tasks": {
+      "undoOnDemandError": "Bedarfsaufgaben können nicht rückgängig gemacht werden."
+    },
+    "relativeDate": {
+      "justnow": "gerade eben",
+      "year": "einem Jahr | {count} Jahren",
+      "month": "einem Monat | {count} Monaten",
+      "week": "einer Woche | {count} Wochen",
+      "day": "einem Tag | {count} Tagen",
+      "hour": "einer Stunde | {count} Stunden",
+      "minute": "einer Minute | {count} Minuten",
+      "in": "in {time}",
+      "ago": "vor {time}"
+    }
+  },
+  "iconChooser": {
+    "changeIcon": "Symbol wählen",
+    "title": "Wähle ein Symbol",
+    "commonIcons": "Beliebte Symbole",
+    "allIcons": "Weniger beliebte Symbole"
+  },
+  "widgets": {
+    "settings": "Widget-Einstellungen",
+    "lastUpdated": "Letztes Update: {time}",
+    "never": "Nie",
+    "weather": {
+      "title": "Wetter",
+      "configError": "Dieses Widget ist nicht richtig konfiguriert."
+    },
+    "tasks": {
+      "title": "Aufgaben",
+      "unnamedTask": "Unbenannte Aufgabe",
+      "done": "Alles geschafft für heute! :)",
+      "tasksPage": "Zu den Aufgaben",
+      "notificationSentTo": "{name} wurde höflich erinnert."
+    },
+    "doNotDisturb": {
+      "title": "Nicht stören",
+      "updateUserStatusError": "Fehler beim Wechseln des Benutzerstatus."
+    },
+    "home": {
+      "title": "Zuhause",
+      "msg": "\"Ich bin zuhause!\""
+    },
+    "finances": {
+      "title": "Finanzen",
+      "unnamedExpense": "Unbenannte Ausgabe",
+      "empty": "Geh mal einkaufen!",
+      "financesPage": "Zu den Finanzen"
+    },
+    "clock": {
+      "title": "Uhr"
+    }
+  },
+  "resetPassword": {
+    "title": "Passwort zurücksetzen",
+    "chooseNewPassword": "Bitte vergib ein neues Passwort.",
+    "expireNotice": "Hinweis: Tokens zum Zurücksetzen des Passworts laufen nach einer Stunde ab. Danach wirst du einen neuen Link anfordern müssen.",
+    "backToLogin": "Zurück zum Login",
+    "changePasswordButton": "Passwort ändern",
+    "noToken": "Kein gültiges Token.",
+    "provideNewPassword": "Bitte gib ein gültiges Passwort an.",
+    "updated": "Password aktualisiert. Bitte melde dich nun an.",
+    "updateFailed": "Aktualisierung fehlgeschlagen."
   }
 }

@@ -1,51 +1,53 @@
 <template>
   <v-card flat tile>
     <v-card-text>
-      <div class="display-1 mb-2">Dashboard</div>
+      <div class="display-1 mb-2">{{ $t("settings.dashboard.title") }}</div>
       <!-- CLOCK WIDGET -->
       <div id="clock" class="title pt-2">
         {{ $t("settings.dashboard.clock.title") }}
       </div>
       <p>
-        {{ $t("settings.dashboard.clock.exp") }}
+        {{ $t("settings.dashboard.clock.description") }}
       </p>
       <v-switch
         v-model="clockWidgetEnabled"
-        :label="$t('settings.dashboard.clock.lblToggle')"
+        :label="$t('settings.dashboard.clock.enableWidget')"
       ></v-switch>
-      <p>
-        <b>{{ $t("settings.dashboard.clock.note") }}</b
-        >{{ $t("settings.dashboard.clock.noteText") }}
-        <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }">{{
-          $t("settings.dashboard.clock.noteLink")
-        }}</router-link
-        >.
-      </p>
+      <i18n tag="p" path="settings.dashboard.clock.localeNoteText">
+        <template #note>
+          <b>{{ $t("settings.dashboard.clock.note") }}</b>
+        </template>
+        <template #localeSettings>
+          <router-link :to="{ name: 'GeneralSettings', hash: '#locale' }">{{
+            $t("settings.dashboard.clock.localeSettings")
+          }}</router-link>
+        </template>
+      </i18n>
       <!-- WEATHER WIDGET -->
       <div id="weather" class="title pt-2">
         {{ $t("settings.dashboard.weather.title") }}
       </div>
-      <p>
-        {{ $t("settings.dashboard.weather.exp") }}
-        <a href="https://openweathermap.org/" target="_blank"
-          >Open Weather Map</a
-        >
-        API.
-      </p>
+      <i18n tag="p" path="settings.dashboard.weather.description">
+        <template #link>
+          <a href="https://openweathermap.org/" target="_blank"
+            >Open Weather Map</a
+          >
+        </template>
+      </i18n>
       <v-switch
         v-model="weatherWidgetEnabled"
-        :label="$t('settings.dashboard.weather.lblToggle')"
+        :label="$t('settings.dashboard.weather.enableWidget')"
       ></v-switch>
       <div class="subtitle-1 pt-2">
-        {{ $t("settings.dashboard.weather.title2") }}
+        {{ $t("settings.dashboard.weather.apiSettingsTitle") }}
       </div>
-      <p>
-        {{ $t("settings.dashboard.weather.exp2") }}
-        <a href="https://openweathermap.org/" target="_blank"
-          >Open Weather Map</a
-        >
-        {{ $t("settings.dashboard.weather.exp3") }}
-      </p>
+      <i18n tag="p" path="settings.dashboard.weather.apiSignUp">
+        <template #link>
+          <a href="https://openweathermap.org/" target="_blank"
+            >Open Weather Map</a
+          >
+        </template>
+      </i18n>
       <v-form v-model="weatherAPIValid" @submit.prevent="weatherAPICheck">
         <v-row class="pl-2 pr-2">
           <v-col cols="12" md="6" lg="8">
@@ -54,7 +56,7 @@
               :rules="rules.weatherAPIKey"
               :counter="32"
               maxlength="32"
-              :label="$t('settings.dashboard.weather.key')"
+              :label="$t('settings.dashboard.weather.apiKey')"
               required
               outlined
             ></v-text-field>
@@ -63,7 +65,7 @@
             <v-text-field
               v-model="weatherZip"
               :rules="rules.weatherZip"
-              :label="$t('settings.dashboard.weather.zip')"
+              :label="$t('settings.dashboard.weather.zipCode')"
               required
               outlined
             ></v-text-field>
@@ -72,7 +74,7 @@
             <v-text-field
               v-model="weatherCountryCode"
               :rules="rules.weatherCountryCode"
-              :label="$t('settings.dashboard.weather.country')"
+              :label="$t('settings.dashboard.weather.countryCode')"
               required
               outlined
             ></v-text-field>
@@ -89,7 +91,7 @@
           >
           <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
             <div class="overline">
-              {{ $t("settings.dashboard.weather.open") }}
+              {{ $t("settings.dashboard.weather.openWeatherApi") }}
             </div>
             {{ weatherAPIStatus }}
           </div>
@@ -97,55 +99,64 @@
       </v-form>
       <v-radio-group
         v-model="temperatureUnit"
-        :label="$t('settings.dashboard.weather.unit')"
+        :label="$t('settings.dashboard.weather.temperatureUnit')"
       >
-        <v-radio label="°C (Celsius)" value="c"></v-radio>
-        <v-radio label="°F (Fahrenheit)" value="f"></v-radio>
-        <v-radio label="K (Kelvin)" value="k"></v-radio>
+        <v-radio
+          :label="`°C (${$t('general.units.celsius')})`"
+          value="c"
+        ></v-radio>
+        <v-radio
+          :label="`°F (${$t('general.units.fahrenheit')})`"
+          value="f"
+        ></v-radio>
+        <v-radio
+          :label="`K (${$t('general.units.kelvin')})`"
+          value="k"
+        ></v-radio>
       </v-radio-group>
       <!-- TASKS WIDGET -->
       <div id="tasks" class="title pt-2">
         {{ $t("settings.dashboard.tasks.title") }}
       </div>
       <p>
-        {{ $t("settings.dashboard.tasks.exp") }}
+        {{ $t("settings.dashboard.tasks.description") }}
       </p>
       <v-switch
         v-model="tasksWidgetEnabled"
-        :label="$t('settings.dashboard.tasks.lblToggle')"
+        :label="$t('settings.dashboard.tasks.enableWidget')"
       ></v-switch>
       <!-- FINANCES WIDGET -->
       <div id="finances" class="title pt-2">
         {{ $t("settings.dashboard.finances.title") }}
       </div>
       <p>
-        {{ $t("settings.dashboard.finances.exp") }}
+        {{ $t("settings.dashboard.finances.description") }}
       </p>
       <v-switch
         v-model="financesWidgetEnabled"
-        :label="$t('settings.dashboard.finances.lblToggle')"
+        :label="$t('settings.dashboard.finances.enableWidget')"
       ></v-switch>
       <!-- STATUS WIDGET -->
       <div id="status" class="title pt-2">
         {{ $t("settings.dashboard.disturb.title") }}
       </div>
       <p>
-        {{ $t("settings.dashboard.disturb.exp") }}
+        {{ $t("settings.dashboard.disturb.description") }}
       </p>
       <v-switch
         v-model="statusWidgetEnabled"
-        :label="$t('settings.dashboard.disturb.lblToggle')"
+        :label="$t('settings.dashboard.disturb.enableWidget')"
       ></v-switch>
       <!-- HOME WIDGET -->
       <div id="home" class="title pt-2">
         {{ $t("settings.dashboard.home.title") }}
       </div>
       <p>
-        {{ $t("settings.dashboard.home.exp") }}
+        {{ $t("settings.dashboard.home.description") }}
       </p>
       <v-switch
         v-model="homeWidgetEnabled"
-        :label="$t('settings.dashboard.home.lblToggle')"
+        :label="$t('settings.dashboard.home.enableWidget')"
       ></v-switch>
     </v-card-text>
   </v-card>
@@ -157,7 +168,7 @@ export default {
   name: "DashboardSettings",
   data: () => ({
     weatherAPIValid: true,
-    weatherAPIStatus: "Click 'Check' to make an API test call.",
+    weatherAPIStatus: "",
     weatherAPILoading: false,
     weatherAPISuccess: 0,
     rules: {
@@ -291,6 +302,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.weatherAPIStatus = this.$t("settings.dashboard.weather.clickCheck");
+  },
   methods: {
     async weatherAPICheck() {
       if (this.weatherAPIValid) {
@@ -309,26 +323,41 @@ export default {
           );
           this.weatherAPISuccess = 2;
           if (data.cod == 200) {
-            this.weatherAPIStatus = `Successful (city name: ${data.name})`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.success",
+              { city: data.name }
+            );
             this.weatherAPISuccess = 1;
           } else if (data.cod == 400) {
-            this.weatherAPIStatus = `Bad request data: ${data.message}`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.badRequest",
+              { message: data.message }
+            );
           } else if (data.cod == 401) {
-            this.weatherAPIStatus = `Invalid API key.`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.invalidKey"
+            );
           } else if (data.cod == 404) {
-            this.weatherAPIStatus = `City or country not found.`;
+            this.weatherAPIStatus = this.$t(
+              "settings.dashboard.weather.apiStates.cityNotFound"
+            );
           } else {
             this.weatherAPIStatus = `Error ${data.cod}: ${data.message}`;
           }
         } catch (err) {
           this.weatherAPIStatus =
             "Request failed: " +
-            (err && err.message ? err.message : "Unknown error");
+            (err && err.message
+              ? err.message
+              : this.$t("general.errors.unknown"));
           this.weatherAPISuccess = 2;
         }
         this.weatherAPILoading = false;
       } else {
-        this.$store.dispatch("showSnackbar", "Invalid API data.");
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("settings.dashboard.weather.apiStates.invalidAPIData")
+        );
       }
     }
   }

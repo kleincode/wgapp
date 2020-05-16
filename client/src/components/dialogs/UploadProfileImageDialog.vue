@@ -14,19 +14,22 @@
     </template>
     <v-card>
       <v-container>
-        <h2 class="mb-7">{{ $t("profile.upload.title") }}</h2>
+        <h2 class="mb-7">{{ $t("profile.uploadProfilePicture.title") }}</h2>
         <v-file-input
           v-model="imageFile"
           type="file"
           accept="image/png, image/jpeg, image/bmp"
-          :placeholder="$t('profile.upload.place')"
+          :placeholder="$t('profile.uploadProfilePicture.uploadhere')"
           prepend-icon="mdi-camera"
-          label="Profile Picture"
+          :label="$t('profile.uploadProfilePicture.profilePicture')"
         ></v-file-input>
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="triggerUpload()">{{ $t("commands.upload") }}</v-btn>
+        <v-btn text @click="dialog = false">{{ $t("commands.cancel") }}</v-btn>
+        <v-btn text color="primary" @click="triggerUpload()">{{
+          $t("commands.upload")
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -55,7 +58,7 @@ export default {
       if (!this.imageFile) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("profile.upload.hintImage")
+          this.$t("profile.uploadProfilePicture.noImageSpecified")
         );
         return;
       }
@@ -73,7 +76,7 @@ export default {
         error: err => {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("profile.upload.hintCompress")
+            this.$t("profile.uploadProfilePicture.imageCompressionError")
           );
           console.log(err.message);
           this.loading = false;
@@ -96,17 +99,23 @@ export default {
           }
         );
         if (data.success) {
-          this.$store.dispatch("showSnackbar", this.$t("profile.upload.uplad"));
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.uploadProfilePicture.uploaded")
+          );
           setTimeout(() => this.$store.dispatch("fetchProfileImg"), 200);
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            data.message || this.$t("profile.upload.upErr")
+            data.message || this.$t("profile.uploadProfilePicture.uploadError")
           );
         }
         this.loading = false;
       } catch (err) {
-        this.$store.dispatch("showSnackbar", this.$t("profile.upload.upErr"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("profile.uploadProfilePicture.uploadError")
+        );
         console.error(err);
         this.loading = false;
       }

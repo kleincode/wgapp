@@ -6,8 +6,8 @@
       :opacity="0.8"
       absolute
     >
-      <h1 class="display-2">{{ $t("settings.introTitle") }}</h1>
-      {{ $t("settings.introText") }}
+      <h1 class="display-2">{{ $t("settings.introLocked") }}</h1>
+      {{ $t("settings.introLockedDescription") }}
     </v-overlay>
     <v-row justify="center">
       <v-col xl="9" lg="10" md="12">
@@ -40,25 +40,27 @@
 export default {
   name: "Settings",
   data: () => ({
-    overlay: true,
-    tabs: [
-      {
-        name: "General",
-        link: "general"
-      },
-      {
-        name: "Dashboard",
-        link: "dashboard"
-      },
-      {
-        name: "Integrations",
-        link: "integrations"
-      }
-    ]
+    overlay: true
   }),
   computed: {
     getState() {
       return this.$store.state.userSettings.introductionState;
+    },
+    tabs() {
+      return [
+        {
+          name: this.$t("settings.general.title"),
+          link: "general"
+        },
+        {
+          name: this.$t("settings.dashboard.title"),
+          link: "dashboard"
+        },
+        {
+          name: this.$t("settings.integrations.title"),
+          link: "integrations"
+        }
+      ];
     }
   }
 };

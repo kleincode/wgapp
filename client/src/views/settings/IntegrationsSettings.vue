@@ -7,11 +7,13 @@
         {{ $t("settings.integrations.calendar.title") }}
       </div>
       <p>
-        {{ $t("settings.integrations.calendar.exp") }}
+        {{ $t("settings.integrations.calendar.description") }}
       </p>
       <v-switch
         v-model="calendarEnabled"
-        :label="$t('settings.integrations.calendar.lbl')"
+        :label="
+          $t('settings.integrations.calendar.enableGoogleCalendarIntegration')
+        "
       ></v-switch>
       <div
         :style="{
@@ -23,18 +25,18 @@
           color="primary"
           :disabled="!calendarEnabled"
           @click="calendarSignIn"
-          >{{ $t("commands.signing") }}</v-btn
+          >{{ $t("commands.signIn") }}</v-btn
         >
         <v-btn
           v-if="signInState == 1"
           color="red"
           :disabled="!calendarEnabled"
           @click="calendarSignOut"
-          >{{ $t("commands.signout") }}</v-btn
+          >{{ $t("commands.signOut") }}</v-btn
         >
         <div :class="$vuetify.breakpoint.mdAndUp ? 'pl-4' : 'pt-4'">
           <div class="overline">
-            {{ $t("settings.integrations.calendar.status") }}:
+            {{ $t("settings.integrations.calendar.state") }}
           </div>
           {{ signInDescription }}
         </div>
@@ -109,7 +111,7 @@
       </confirm-dialog>
       <!-- PHILIPS HUE -->
       <div class="title pt-6">{{ $t("settings.integrations.hue.title") }}</div>
-      {{ $t("settings.integrations.hue.exp") }}
+      {{ $t("settings.integrations.hue.description") }}
     </v-card-text>
   </v-card>
 </template>
@@ -133,7 +135,7 @@ export default {
     ConfirmDialog
   },
   data: () => ({
-    signInDescription: "Connecting...",
+    signInDescription: "",
     signInState: 0,
     loadingCalendar: false,
     loadingResyncCalendar: false,
@@ -189,13 +191,19 @@ export default {
     },
     updateSignInDescription() {
       if (signedIn)
-        this.signInDescription =
-          "Signed in (" +
-          (user && user.getBasicProfile
-            ? user.getBasicProfile().getEmail()
-            : "Unknown email") +
-          ")";
-      else this.signInDescription = "Not signed in";
+        this.signInDescription = this.$t(
+          "settings.integrations.calendar.signedIn",
+          {
+            email:
+              user && user.getBasicProfile
+                ? user.getBasicProfile().getEmail()
+                : "settings.integrations.calendar.unknownEmail"
+          }
+        );
+      else
+        this.signInDescription = this.$t(
+          "settings.integrations.calendar.notSignedIn"
+        );
     },
     async updateGmailDB() {
       try {
@@ -240,7 +248,9 @@ export default {
     },
     onSignOut() {
       this.signInState = 2;
-      this.signInDescription = "Not signed in";
+      this.signInDescription = this.$t(
+        "settings.integrations.calendar.notSignedIn"
+      );
     },
     calendarSignOut() {
       handleSignoutClick(this.onSignOut);
@@ -280,7 +290,9 @@ export default {
     },
     loadGapi() {
       this.signInState = 0;
-      this.signInDescription = "Loading Google API...";
+      this.signInDescription = this.$t(
+        "settings.integrations.calendar.loadingGapi"
+      );
       const gapiscript = document.createElement("script");
       gapiscript.src = "https://apis.google.com/js/api.js?onload=onGapiload";
       window.onGapiload = () => handleClientLoad(this.onSignIn, this.onSignOut);

@@ -1,6 +1,6 @@
 <template>
   <Widget
-    :title="$t('widgets.disturb.title')"
+    :title="$t('widgets.doNotDisturb.title')"
     :loading="loading"
     with-footer
     :context-items="contextItems"
@@ -103,7 +103,7 @@ export default {
       } else {
         this.$store.dispatch(
           "showSnackbar",
-          data.message || this.$t("widgets.disturb.connect")
+          data.message || this.$t("general.errors.connect")
         );
       }
     },
@@ -124,13 +124,16 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("widgets.disturb.connect")
+            this.$t("general.errors.connect")
           );
           this.userStatus = !this.userStatus;
         }
       } catch (err) {
         console.error(err);
-        this.$store.dispatch("showSnackbar", this.$t("widgets.disturb.err"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("widgets.doNotDisturb.updateUserStatusError")
+        );
         this.userStatus = !this.userStatus;
       }
       this.loading = false;

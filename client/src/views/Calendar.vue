@@ -32,7 +32,9 @@
           item-text="summary"
           small-chips
           :label="
-            gapiSignedIn ? $t('calendar.lblSel') : $t('calendar.lblNotSigned')
+            gapiSignedIn
+              ? $t('calendar.selectCalendars')
+              : $t('calendar.notSignedIn')
           "
           multiple
           outlined
@@ -62,10 +64,10 @@
 
         <!-- Warning if feature disabled -->
         <v-alert v-if="_initialized && !calendarEnabled" type="warning">
-          <i18n path="calendar.warning" tag="span">
+          <i18n path="calendar.notActivated" tag="span">
             <template #settings>
               <router-link :to="{ name: 'Settings' }">{{
-                $t("calendar.warnSettings")
+                $t("calendar.settingsLinkText")
               }}</router-link>
             </template>
           </i18n>
@@ -73,10 +75,10 @@
 
         <!-- Warning if not connected to gapi -->
         <v-alert v-if="_initialized && gapiNotSignedIn" type="warning">
-          <i18n path="calendar.warning2" tag="span">
+          <i18n path="calendar.notConnected" tag="span">
             <template #settings>
               <router-link :to="{ name: 'Settings' }">{{
-                $t("calendar.warnSettings")
+                $t("calendar.settingsLinkText")
               }}</router-link>
             </template>
           </i18n>
@@ -97,7 +99,7 @@
                   @click="setToday"
                 >
                   <v-icon v-if="$vuetify.breakpoint.smAndDown">today</v-icon>
-                  {{ $vuetify.breakpoint.smAndDown ? "" : "Today" }}
+                  {{ $vuetify.breakpoint.smAndDown ? "" : $t("general.today") }}
                 </v-btn>
 
                 <!-- Calendar navigation and title -->
@@ -190,7 +192,8 @@
                   <v-card-text>
                     <span
                       v-text="
-                        selectedEvent.description || $t('calendar.nodesc')
+                        selectedEvent.description ||
+                          $t('calendar.noDescription')
                       "
                     ></span>
                   </v-card-text>
@@ -325,10 +328,10 @@ export default {
   },
   created() {
     if (this.calendarEnabled && !gapiLoaded) this.loadGapi();
-    this.viewToLabel["month"] = this.$t("calendar.time[2]");
-    this.viewToLabel["week"] = this.$t("calendar.time[1]");
-    this.viewToLabel["day"] = this.$t("calendar.time[0]");
-    this.viewToLabel["4day"] = this.$t("calendar.time[2]");
+    this.viewToLabel["month"] = this.$t("calendar.timeViews.onemonth");
+    this.viewToLabel["week"] = this.$t("calendar.timeViews.oneweek");
+    this.viewToLabel["day"] = this.$t("calendar.timeViews.oneday");
+    this.viewToLabel["4day"] = this.$t("calendar.timeViews.fourdays");
   },
   async mounted() {
     this.loading = true;

@@ -8,8 +8,8 @@
         <v-card-title>
           <span class="headline">{{
             editMode
-              ? $t("finances.editMon.titleEdit")
-              : $t("finances.editMon.titleNew")
+              ? $t("finances.editMonthlyCharges.editMonthlyCharge")
+              : $t("finances.editMonthlyCharges.newMonthlyCharge")
           }}</span>
         </v-card-title>
 
@@ -52,17 +52,25 @@
                 <v-switch
                   v-model="value.all"
                   class="mt-n4"
-                  :label="$t('finances.payedbyall')"
+                  :label="$t('finances.payedByAll')"
                 ></v-switch>
                 <v-select
                   v-model="value.uid"
                   outlined
                   :items="getHouseholdUsersAsItemList"
                   item-value="value"
-                  :label="$t('finances.payedby')"
+                  :label="$t('finances.payedBy')"
                   :disabled="value.all"
                   :rules="
-                    !value.all ? [v => !!v || $t('finances.editMon.msg')] : []
+                    !value.all
+                      ? [
+                          v =>
+                            !!v ||
+                            $t(
+                              'finances.editMonthlyCharges.specifyPayingMember'
+                            )
+                        ]
+                      : []
                   "
                 >
                 </v-select>
@@ -113,20 +121,23 @@ export default {
   computed: {
     nameRules() {
       return [
-        v => !!v || this.$t("finances.editMon.rules.name"),
+        v => !!v || this.$t("finances.editMonthlyCharges.rules.provideName"),
         v =>
-          (!!v && v.length <= 160) || this.$t("finances.editMon.rules.length")
+          (!!v && v.length <= 160) ||
+          this.$t("finances.editMonthlyCharges.rules.nameTooLong")
       ];
     },
     amountRules() {
       return [
-        v => !!v || this.$t("finances.editMon.rules.amount"),
+        v => !!v || this.$t("finances.editMonthlyCharges.rules.provideAmount"),
         v => {
           let num = parseFloat(v);
-          if (isNaN(num)) return this.$t("finances.editMon.rules.validAm");
-          else if (num < 0) return this.$t("finances.editMon.rules.negative");
+          if (isNaN(num))
+            return this.$t("finances.editMonthlyCharges.rules.amountInvalid");
+          else if (num < 0)
+            return this.$t("finances.editMonthlyCharges.rules.negativeAmount");
           else if (Math.abs(num) < 0.01)
-            return this.$t("finances.editMon.rules.nonzero");
+            return this.$t("finances.editMonthlyCharges.rules.amountIsZero");
           else return true;
         }
       ];
@@ -174,15 +185,18 @@ export default {
           this.$store.dispatch(
             "showSnackbar",
             this.editMode
-              ? this.$t("finances.editMon.updated")
-              : this.$t("finances.editMon.added")
+              ? this.$t("finances.editMonthlyCharges.updated")
+              : this.$t("finances.editMonthlyCharges.added")
           );
           this.$emit("committed");
           this.reset();
         } else this.$store.dispatch("showSnackbar", data.message);
       } catch (err) {
         this.loading = false;
-        this.$store.dispatch("showSnackbar", this.$t("general.comErr"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("general.errors.communication")
+        );
         console.error(err);
       }
     },

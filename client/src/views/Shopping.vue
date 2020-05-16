@@ -7,7 +7,7 @@
       <v-col cols="12" md="5" lg="4" offset-lg="1" xl="3" offset-xl="2">
         <v-card style="height: 100%" :elevation="6">
           <v-card-title>
-            {{ $t("shopping.hLists") }}
+            {{ $t("shopping.lists") }}
             <v-spacer></v-spacer>
             <edit-shopping-list-dialog
               ref="editDialog"
@@ -213,7 +213,7 @@ export default {
     selectedListName() {
       return this.selectedList
         ? this.selectedList.name
-        : this.$t("shopping.noselect");
+        : this.$t("shopping.noListSelected");
     },
     selectedListIcon() {
       return this.selectedList ? this.selectedList.icon : "";
@@ -251,7 +251,10 @@ export default {
       if (navigator.onLine) this.updateRemoteFunction();
       window.addEventListener("online", this.updateRemoteFunction);
     } catch (err) {
-      this.$store.dispatch("showSnackbar", this.$t("shopping.syncErr") + err);
+      this.$store.dispatch(
+        "showSnackbar",
+        this.$t("shopping.syncError", { message: err })
+      );
     }
   },
 

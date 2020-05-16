@@ -10,7 +10,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
       data: [
         [
           {
-            value: i18n.t("finances.compPay"),
+            value: i18n.t("finances.compensationPayments"),
             type: "string"
           }
         ],
@@ -31,14 +31,14 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
         [],
         [
           {
-            value: i18n.t("finances.exp"),
+            value: i18n.t("finances.expenses"),
             type: "string"
           }
         ],
         [
           {},
           {
-            value: i18n.t("finances.billman.tot"),
+            value: i18n.t("finances.billManager.total"),
             type: "string"
           },
           {
@@ -49,7 +49,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
         [
           { value: "", type: "string" },
           {
-            value: i18n.t("finances.billman.pp"),
+            value: i18n.t("finances.billManager.perPerson"),
             type: "string"
           },
           {
@@ -64,7 +64,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
     config.sheet.data.push([
       { value: "", type: "string" },
       {
-        value: i18n.t("finances.billman.monTot"),
+        value: i18n.t("finances.billManager.monthlyTotal"),
         type: "string"
       },
       {
@@ -76,7 +76,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
   config.sheet.data.push([]);
   config.sheet.data.push([
     {
-      value: i18n.t("finances.memberExp"),
+      value: i18n.t("finances.memberExpenses"),
       type: "string"
     }
   ]);
@@ -97,7 +97,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
   if (jsonData.memberDebts != undefined) {
     config.sheet.data.push([
       {
-        value: i18n.t("finances.export.debts"),
+        value: i18n.t("finances.export.memberDebts"),
         type: "string"
       }
     ]);
@@ -123,7 +123,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
 
   config.sheet.data.push([
     {
-      value: i18n.t("finances.export.res"),
+      value: i18n.t("finances.export.results"),
       type: "string"
     }
   ]);
@@ -133,15 +133,15 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
       type: "string"
     },
     {
-      value: i18n.t("finances.billman.pay"),
+      value: i18n.t("finances.billManager.paying"),
       type: "string"
     },
     {
-      value: i18n.t("finances.billman.rec"),
+      value: i18n.t("finances.billManager.receives"),
       type: "string"
     },
     {
-      value: i18n.t("finances.billman.am"),
+      value: i18n.t("finances.billManager.amount"),
       type: "string"
     }
   ]);

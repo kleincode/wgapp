@@ -55,7 +55,7 @@
                     v-model="selectedMember"
                     :items="getHouseholdUsersAsItemList"
                     item-value="value"
-                    :label="$t('tasks.editTask.assigned')"
+                    :label="$t('tasks.editTask.assignedTo')"
                     outlined
                     :disabled="iterating && mode != 'Single'"
                   ></v-select>
@@ -73,7 +73,7 @@
             </v-col>
           </v-row>
           <div v-show="mode != 'On-Demand'" class="title">
-            {{ $t("tasks.editTask.titleTime") }}
+            {{ $t("tasks.editTask.timeAndDate") }}
           </div>
           <v-row>
             <v-col cols="12" lg="4" md="6">
@@ -89,7 +89,7 @@
                   <v-text-field
                     v-show="mode != 'On-Demand'"
                     v-model="date"
-                    :label="$t('tasks.editTask.lblStart')"
+                    :label="$t('tasks.editTask.chooseStartDay')"
                     prepend-icon="event"
                     readonly
                     outlined
@@ -118,7 +118,7 @@
                   <v-text-field
                     v-show="mode != 'On-Demand'"
                     v-model="time"
-                    :label="$t('tasks.editTask.lblTime')"
+                    :label="$t('tasks.editTask.chooseTaskTime')"
                     prepend-icon="access_time"
                     readonly
                     outlined
@@ -138,7 +138,7 @@
               <v-switch
                 v-show="mode != 'On-Demand'"
                 v-model="reminder"
-                :label="$t('tasks.editTask.lblReminder')"
+                :label="$t('tasks.editTask.toggleReminder')"
               ></v-switch>
             </v-col>
             <v-col cols="12" lg="4" md="6">
@@ -148,7 +148,7 @@
                 :items="days"
                 item-value="val"
                 chips
-                :label="$t('tasks.editTask.lblRepeatOn')"
+                :label="$t('tasks.editTask.repeatOn')"
                 multiple
                 outlined
               ></v-select>
@@ -158,7 +158,7 @@
                 v-show="mode == 'Repeating'"
                 v-model="repetitionEvery"
                 type="number"
-                :label="$t('tasks.editTask.lblRepeatEvery')"
+                :label="$t('tasks.editTask.repeatEvery')"
                 required
                 outlined
               ></v-text-field>
@@ -168,7 +168,7 @@
                 v-show="mode == 'Repeating'"
                 v-model="repetitionUnit"
                 :items="repetitionUnits"
-                :label="$t('tasks.editTask.lblRepeatUnit')"
+                :label="$t('tasks.editTask.repeatUnit')"
                 outlined
               ></v-select>
             </v-col>
@@ -190,7 +190,7 @@
             </template>
             <v-card>
               <v-card-title class="headline" primary-title>
-                {{ $t("tasks.editTask.deleteDialog") }}
+                {{ $t("tasks.editTask.confirmDelete") }}
               </v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -257,8 +257,8 @@ export default {
     modes() {
       return [
         { text: this.$t("tasks.modes.single"), value: "Single" },
-        { text: this.$t("tasks.modes.rep"), value: "Repeating" },
-        { text: this.$t("tasks.modes.ondem"), value: "On-Demand" }
+        { text: this.$t("tasks.modes.repeating"), value: "Repeating" },
+        { text: this.$t("tasks.modes.ondemand"), value: "On-Demand" }
       ];
     },
     repetitionUnits() {
@@ -423,7 +423,7 @@ export default {
         return;
       }
       if ((!repetitionEvery || repetitionEvery == 0) && mode == 1) {
-        this.snackText = this.$t("tasks.editTask.messages.intervall");
+        this.snackText = this.$t("tasks.editTask.messages.interval");
         this.snackbar = true;
         return;
       }

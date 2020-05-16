@@ -11,14 +11,14 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   let debts = jsonData.debts;
   var myWindow = window.open(
     "",
-    "Jeff Organizer - " + i18n.t("finances.compPay"),
+    "Jeff Organizer - " + i18n.t("finances.compensationPayments"),
     "toolbar=yes,scrollbars=yes,resizable=yes,width=700,height=900"
   );
   myWindow.document.write(
     '<html><head><link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"><title>WGApp - ' +
-      i18n.t("finances.compPay") +
+      i18n.t("finances.compensationPayments") +
       "</title></head><body><h1>" +
-      i18n.t("finances.compPay") +
+      i18n.t("finances.compensationPayments") +
       "</h1><h3>" +
       lastBill +
       i18n.t("finances.export.until") +
@@ -29,9 +29,9 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
     "<style>body { font-family: 'Roboto', sans-serif; } table, th, td { border: 1px solid black; border-collapse: collapse;} table { border-spacing: 5px; } th, td {padding: 5px;}</style>";
   myWindow.document.write(
     "<h2>" +
-      i18n.t("finances.exp") +
+      i18n.t("finances.expenses") +
       "</h2> <ul><li><b>" +
-      i18n.t("finances.billman.monTot") +
+      i18n.t("finances.billManager.monthlyTotal") +
       ": " +
       getCurrency(total, currency, locale) +
       " </b></li>"
@@ -39,7 +39,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   if (includeMonthlyCharges) {
     myWindow.document.write(
       "<li>" +
-        i18n.t("finances.billman.monTot") +
+        i18n.t("finances.billManager.monthlyTotal") +
         ": " +
         getCurrency(monthlyTotal, currency, locale) +
         "</li>"
@@ -47,12 +47,14 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   }
   myWindow.document.write(
     "<li> " +
-      i18n.t("finances.billman.pp") +
+      i18n.t("finances.billManager.perPerson") +
       ": " +
       getCurrency(mean, currency, locale) +
       " </li></ul>"
   );
-  myWindow.document.write("<h2>" + i18n.t("finances.memberExp") + "</h2><ul>");
+  myWindow.document.write(
+    "<h2>" + i18n.t("finances.memberExpenses") + "</h2><ul>"
+  );
   memberTotals.forEach(member => {
     myWindow.document.write(
       "<li>" +
@@ -66,7 +68,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
 
   if (memberDebts != undefined) {
     myWindow.document.write(
-      "<h2>" + i18n.t("finances.export.debts") + "</h2><ul>"
+      "<h2>" + i18n.t("finances.export.memberDebts") + "</h2><ul>"
     );
     memberDebts.forEach(member => {
       myWindow.document.write(
@@ -82,13 +84,13 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
 
   myWindow.document.write(
     "<h2>" +
-      i18n.t("finances.export.res") +
+      i18n.t("finances.export.results") +
       '</h2><table style="width:100%"><tr><th>' +
-      i18n.t("finances.billman.pay") +
+      i18n.t("finances.billManager.paying") +
       "</th><th>" +
-      i18n.t("finances.billman.rec") +
+      i18n.t("finances.billManager.receives") +
       "</th><th>" +
-      i18n.t("finances.billman.am") +
+      i18n.t("finances.billManager.amount") +
       "</th></tr>"
   );
   debts.forEach(debt => {

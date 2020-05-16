@@ -5,7 +5,7 @@
       <v-col cols="12" md="6" lg="4" xl="3">
         <v-card style="height: 100%;" :elevation="6" :loading="loading">
           <v-card-title>
-            {{ $t("household.title") }}
+            {{ $t("household.members") }}
             <v-spacer></v-spacer>
             <invite-link-dialog></invite-link-dialog>
           </v-card-title>
@@ -41,7 +41,7 @@
           </v-list>
           <v-card-actions>
             <v-btn text color="red" @click="leaveDialogOpen = true">
-              {{ $t("household.leave") }}
+              {{ $t("household.leaveHousehold") }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -85,12 +85,12 @@
           <v-container v-else class="text-right">
             <v-text-field
               v-model="eName"
-              :label="$t('household.create.lblName')"
+              :label="$t('household.create.householdName')"
             ></v-text-field>
             <v-select
               v-model="eType"
               :items="householdTypes"
-              :label="$t('household.create.lblType')"
+              :label="$t('household.create.householdType')"
             ></v-select>
             <v-btn color="success" class="mr-2" @click="saveEdit">{{
               $t("commands.save")
@@ -104,8 +104,8 @@
     </v-row>
     <confirm-dialog
       v-model="leaveDialogOpen"
-      :title="$t('household.leave') + '?'"
-      :negative-option="$t('household.lea')"
+      :title="$t('household.leaveHousehold') + '?'"
+      :negative-option="$t('household.leave')"
       :positive-option="$t('household.stay')"
       :max-width="500"
       @positive="leaveCancel"
@@ -122,7 +122,7 @@
         </v-card-text>
       </v-card>
       <p>
-        <b>{{ $t("household.confirmExp") }}</b>
+        <b>{{ $t("household.confirmLeave2") }}</b>
       </p>
     </confirm-dialog>
   </v-container>
@@ -204,13 +204,13 @@ export default {
       } else if (data.exists === false) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("household.errors.assigned")
+          this.$t("household.errors.userNotAssignedToHousehold")
         );
         this.$router.push({ name: "Create Household" });
       } else {
         this.$store.dispatch(
           "showSnackbar",
-          data.message || this.$t("household.errors.connect")
+          data.message || this.$t("general.errors.connect")
         );
       }
       this.loading = false;
@@ -222,23 +222,20 @@ export default {
           type: this.eType
         });
         if (data.success) {
-          this.$store.dispatch(
-            "showSnackbar",
-            this.$t("household.successUpdate")
-          );
+          this.$store.dispatch("showSnackbar", this.$t("household.update"));
           this.householdName = this.eName;
           this.householdType = this.eType;
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("household.errors.update")
+            this.$t("household.errors.updateFailed")
           );
           console.log(data);
         }
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("household.errors.updateErr")
+          this.$t("household.errors.updateError")
         );
         console.error(err);
       }
@@ -260,10 +257,7 @@ export default {
             data.message || this.$t("household.errors.unkown")
           );
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          this.$t("household.errors.connect")
-        );
+        this.$store.dispatch("showSnackbar", this.$t("general.errors.connect"));
       }
     }
   }
