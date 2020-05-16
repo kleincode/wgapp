@@ -101,7 +101,7 @@ async function listColors() {
  * Returns all events in the requested range
  */
 async function listUpcomingEvents(minDate, maxDate, calIDs, allCalendars) {
-  let colors = await listColors();
+  await listColors();
   if (calIDs.length == 0) {
     return null;
   }
@@ -116,8 +116,12 @@ async function listUpcomingEvents(minDate, maxDate, calIDs, allCalendars) {
       orderBy: "startTime"
     });
     let tempItems = response2.result.items;
+    let calendarID = calIDs[i];
+    let color =
+      allCalendars[allCalendars.findIndex(i => i.id == calendarID)]
+        .backgroundColor;
     tempItems.forEach(item => {
-      item.color = colors[allCalendars[i].colorId].background;
+      item.color = color;
     });
     items = items.concat(tempItems);
   }

@@ -12,12 +12,23 @@
             <v-divider></v-divider>
           </v-col>
           <v-col cols="12">
-            <v-text-field
-              v-model="desc"
-              prepend-icon="info"
-              label="Add Description"
-            ></v-text-field>
             <v-row>
+              <v-col cols="12">
+                <v-select
+                  v-model="selCalendar"
+                  :items="calendars"
+                  item-text="summary"
+                  prepend-icon="event"
+                  label="Select calendar"
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="desc"
+                  prepend-icon="info"
+                  label="Add Description"
+                ></v-text-field>
+              </v-col>
               <v-col cols="12" md="6">
                 <v-menu
                   ref="startDateMenu"
@@ -80,6 +91,7 @@
                   <v-time-picker
                     v-if="startTimeMenu"
                     v-model="startTime"
+                    :format="timeFormat"
                     full-width
                     @click:minute="$refs.startTimeMenu.save(startTime)"
                   ></v-time-picker>
@@ -123,6 +135,36 @@
                   </v-date-picker>
                 </v-menu>
               </v-col>
+              <v-col cols="12" md="6">
+                <v-menu
+                  ref="endTimeMenu"
+                  v-model="endTimeMenu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  :return-value.sync="endTime"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="endTime"
+                      label="Choose end time"
+                      prepend-icon="access_time"
+                      readonly
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-time-picker
+                    v-if="endTimeMenu"
+                    v-model="endTime"
+                    :format="timeFormat"
+                    full-width
+                    @click:minute="$refs.endTimeMenu.save(endTime)"
+                  ></v-time-picker>
+                </v-menu>
+              </v-col>
             </v-row>
           </v-col>
         </v-row>
@@ -155,9 +197,14 @@ export default {
     add: {
       type: Boolean,
       default: true
+    },
+    calendars: {
+      type: Array,
+      default: () => []
     }
   },
   data: () => ({
+    selCalendar: null,
     name: "",
     desc: "",
     startDateMenu: false,
@@ -165,7 +212,9 @@ export default {
     startTimeMenu: false,
     startTime: "",
     endDateMenu: false,
-    endDate: ""
+    endDate: "",
+    endTimeMenu: false,
+    endTime: ""
   }),
   computed: {
     startDateFormated() {
@@ -187,16 +236,32 @@ export default {
     finalLocale() {
       return this.locale || navigator.language;
     },
+    timeFormat() {
+      if (this.finalLocale.includes("en")) {
+        return "ampm";
+      } else {
+        return "24hr";
+      }
+    },
     ...mapState("userSettings", ["locale"])
   },
   watch: {
     show(val) {
-      if (val && this.add) {
-        let today = new Date();
-        this.startDate = today.toISOString().substr(0, 10);
-        this.endDate = this.startDate;
-        //this.startTime = dateToLocalTime(today);
-        //this.endTime = new Date().toISOString().substr(0, 10);
+      if (val) {
+        if (this.add) {
+          let today = new Date();
+          this.startDate = today.toISOString().substr(0, 10);
+          this.endDate = today.toISOString().substr(0, 10);
+          this.startTime = today
+            .toLocaleTimeString(this.locale || undefined)
+            .substr(0, 5);
+          today.setHours(today.getHours() + 1);
+          this.endTime = today
+            .toLocaleTimeString(this.locale || undefined)
+            .substr(0, 5);
+        }
+        //init standard calendar
+        this.selCalendar = this.calendars.filter(c => c.primary)[0];
       }
     }
   },

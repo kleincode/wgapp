@@ -27,7 +27,9 @@
         <v-select
           v-show="!gapiNotSignedIn"
           v-model="calendarsSelected"
-          :items="allCalendarsStrings"
+          :items="allCalendars"
+          return-object
+          item-text="summary"
           small-chips
           :label="
             gapiSignedIn ? $t('calendar.lblSel') : $t('calendar.lblNotSigned')
@@ -41,9 +43,10 @@
           <template v-slot:selection="{ item, index }">
             <v-chip
               v-if="index < ($vuetify.breakpoint.smAndDown ? 1 : 3)"
+              :color="item.backgroundColor"
               small
             >
-              <span>{{ item }}</span>
+              <span>{{ item.summary }}</span>
             </v-chip>
             <span
               v-if="index === ($vuetify.breakpoint.smAndDown ? 1 : 3)"
@@ -193,7 +196,10 @@
         </v-row>
       </v-col>
     </v-row>
-    <EditEventDialog :show="editEventDialog"></EditEventDialog>
+    <EditEventDialog
+      :show="editEventDialog"
+      :calendars="allCalendars"
+    ></EditEventDialog>
   </v-container>
 </template>
 <script>
@@ -236,7 +242,7 @@ export default {
     selectedOpen: false,
     eventData: [],
     events: [],
-    allCalendarsStrings: [],
+    allCalendars: [],
     calendars: [],
     gapiSignedIn: false,
     gapiNotSignedIn: false,
@@ -317,6 +323,7 @@ export default {
       await this.updateG();
       this.$refs.calendar.checkChange();
     }
+    this.loading = false;
   },
   methods: {
     initLocale(locale) {
@@ -355,7 +362,6 @@ export default {
       this.gapiSignedIn = true;
       this.gapiNotSignedIn = false;
       let calendars = await listCalendars();
-      this.allCalendarsStrings = calendars.map(cal => cal.summary);
       this.allCalendars = calendars;
       this.updateRange({
         start: this.start,
@@ -384,7 +390,7 @@ export default {
       this.loading = true;
       let calIds = [];
       this.calendarsSelected.forEach(cal => {
-        let index = this.allCalendarsStrings.indexOf(cal);
+        let index = this.allCalendars.findIndex(i => i.id === cal.id);
         if (index == -1) {
           //not in list anymore
           console.log("deleted", cal);
