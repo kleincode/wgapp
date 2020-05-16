@@ -1,192 +1,201 @@
 <template>
-  <v-dialog v-model="show" width="600">
+  <v-dialog v-model="show" width="600" persistent @click:outside="closeDialog">
     <v-card>
-      <v-card-text>
-        <v-row>
-          <v-col cols="12">
+      <v-form ref="form" v-model="valid" lazy-validation>
+        <v-toolbar :color="selCalendar.backgroundColor" prominent>
+          <v-toolbar-title>
             <v-text-field
               v-model="name"
+              :dark="textColor"
               label="Add Title"
-              class="largeTextfield"
+              class="largeTextfield mt-3 mb-3 ml-1"
+              :rules="titleRules"
+              required
             ></v-text-field>
-            <v-divider></v-divider>
-          </v-col>
-          <v-col cols="12">
-            <v-row>
-              <v-col cols="12">
-                <v-select
-                  v-model="selCalendar"
-                  :items="calendars"
-                  item-text="summary"
-                  prepend-icon="event"
-                  label="Select calendar"
-                ></v-select>
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="desc"
-                  prepend-icon="info"
-                  label="Add Description"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-menu
-                  ref="startDateMenu"
-                  v-model="startDateMenu"
-                  :close-on-content-click="false"
-                  :return-value.sync="startDate"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="startDateFormated"
-                      label="Choose start date"
-                      prepend-icon="event"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="startDate"
-                    no-title
-                    scrollable
-                    :locale="finalLocale"
+          </v-toolbar-title>
+        </v-toolbar>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12">
+              <v-row>
+                <v-col cols="12">
+                  <v-select
+                    v-model="selCalendar"
+                    :items="calendars"
+                    return-object
+                    item-text="summary"
+                    prepend-icon="event"
+                    label="Select calendar"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="desc"
+                    prepend-icon="info"
+                    label="Add Description"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-menu
+                    ref="startDateMenu"
+                    v-model="startDateMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="startDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
                   >
-                    <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="menu = false"
-                      >Cancel</v-btn
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="startDateFormated"
+                        label="Choose start date"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="startDate"
+                      no-title
+                      scrollable
+                      :locale="finalLocale"
                     >
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.startDateMenu.save(startDate)"
-                      >OK</v-btn
-                    >
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-menu
-                  ref="startTimeMenu"
-                  v-model="startTimeMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  :return-value.sync="startTime"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="menu = false"
+                        >Cancel</v-btn
+                      >
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="$refs.startDateMenu.save(startDate)"
+                        >OK</v-btn
+                      >
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-menu
+                    ref="startTimeMenu"
+                    v-model="startTimeMenu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    :return-value.sync="startTime"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="startTime"
+                        label="Choose start time"
+                        prepend-icon="access_time"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-time-picker
+                      v-if="startTimeMenu"
                       v-model="startTime"
-                      label="Choose start time"
-                      prepend-icon="access_time"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker
-                    v-if="startTimeMenu"
-                    v-model="startTime"
-                    :format="timeFormat"
-                    full-width
-                    @click:minute="$refs.startTimeMenu.save(startTime)"
-                  ></v-time-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-menu
-                  ref="endDateMenu"
-                  v-model="endDateMenu"
-                  :close-on-content-click="false"
-                  :return-value.sync="endDate"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="endDateFormated"
-                      label="Choose end date"
-                      prepend-icon="event"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="endDate"
-                    no-title
-                    scrollable
-                    :locale="finalLocale"
+                      :format="timeFormat"
+                      full-width
+                      @click:minute="$refs.startTimeMenu.save(startTime)"
+                    ></v-time-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-menu
+                    ref="endDateMenu"
+                    v-model="endDateMenu"
+                    :close-on-content-click="false"
+                    :return-value.sync="endDate"
+                    transition="scale-transition"
+                    offset-y
+                    min-width="290px"
                   >
-                    <v-spacer></v-spacer>
-                    <v-btn text color="primary" @click="menu = false"
-                      >Cancel</v-btn
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="endDateFormated"
+                        label="Choose end date"
+                        prepend-icon="event"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="endDate"
+                      no-title
+                      scrollable
+                      :locale="finalLocale"
                     >
-                    <v-btn
-                      text
-                      color="primary"
-                      @click="$refs.endDateMenu.save(endDate)"
-                      >OK</v-btn
-                    >
-                  </v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-menu
-                  ref="endTimeMenu"
-                  v-model="endTimeMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  :return-value.sync="endTime"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
+                      <v-spacer></v-spacer>
+                      <v-btn text color="primary" @click="menu = false"
+                        >Cancel</v-btn
+                      >
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="$refs.endDateMenu.save(endDate)"
+                        >OK</v-btn
+                      >
+                    </v-date-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-menu
+                    ref="endTimeMenu"
+                    v-model="endTimeMenu"
+                    :close-on-content-click="false"
+                    :nudge-right="40"
+                    :return-value.sync="endTime"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-text-field
+                        v-model="endTime"
+                        label="Choose end time"
+                        prepend-icon="access_time"
+                        readonly
+                        v-on="on"
+                      ></v-text-field>
+                    </template>
+                    <v-time-picker
+                      v-if="endTimeMenu"
                       v-model="endTime"
-                      label="Choose end time"
-                      prepend-icon="access_time"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker
-                    v-if="endTimeMenu"
-                    v-model="endTime"
-                    :format="timeFormat"
-                    full-width
-                    @click:minute="$refs.endTimeMenu.save(endTime)"
-                  ></v-time-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-card-text>
+                      :format="timeFormat"
+                      full-width
+                      @click:minute="$refs.endTimeMenu.save(endTime)"
+                    ></v-time-picker>
+                  </v-menu>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-card-text>
 
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="dialog = false">
-          save
-        </v-btn>
-        <v-btn text @click="dialog = false">
-          cancel
-        </v-btn>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text @click="close">
+            cancel
+          </v-btn>
+          <v-btn color="primary" text @click="closeDialog">
+            save
+          </v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import { getForegroundColor } from "@/assets/colorHelper.js";
+
 export default {
   name: "EditEventDialog",
   props: {
@@ -205,6 +214,7 @@ export default {
   },
   data: () => ({
     selCalendar: null,
+    valid: false,
     name: "",
     desc: "",
     startDateMenu: false,
@@ -214,7 +224,12 @@ export default {
     endDateMenu: false,
     endDate: "",
     endTimeMenu: false,
-    endTime: ""
+    endTime: "",
+
+    titleRules: [
+      v => !!v || "A title is required",
+      v => v.length <= 60 || "Title must be less than 60 characters"
+    ]
   }),
   computed: {
     startDateFormated() {
@@ -243,6 +258,9 @@ export default {
         return "24hr";
       }
     },
+    textColor() {
+      return getForegroundColor(this.selCalendar.backgroundColor) == "white";
+    },
     ...mapState("userSettings", ["locale"])
   },
   watch: {
@@ -266,7 +284,14 @@ export default {
     }
   },
   methods: {
-    parseDate() {}
+    closeDialog() {
+      this.$emit("close");
+    },
+    save() {
+      this.$refs.form.validate();
+      //TODO: send
+      this.closeDialog();
+    }
   }
 };
 </script>

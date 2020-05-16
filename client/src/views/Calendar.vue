@@ -159,6 +159,7 @@
                 color="primary"
                 :events="events"
                 :event-color="getEventColor"
+                :event-text-color="getEventTextColor"
                 :now="today"
                 :type="calendarView"
                 :weekdays="[1, 2, 3, 4, 5, 6, 0]"
@@ -199,6 +200,7 @@
     <EditEventDialog
       :show="editEventDialog"
       :calendars="allCalendars"
+      @close="editEventDialog = false"
     ></EditEventDialog>
   </v-container>
 </template>
@@ -213,6 +215,7 @@ import {
 } from "@/assets/googleCalendar.js";
 
 import EditEventDialog from "@/components/dialogs/EditEventDialog.vue";
+import { getForegroundColor } from "@/assets/colorHelper.js";
 
 export default {
   name: "Calendar",
@@ -466,6 +469,9 @@ export default {
     getEventColor(event) {
       return event.color;
     },
+    getEventTextColor(event) {
+      return getForegroundColor(event.color);
+    },
     setToday() {
       this.focus = this.today;
     },
@@ -478,7 +484,6 @@ export default {
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event;
-        console.log(event);
         this.selectedElement = nativeEvent.target;
         setTimeout(() => (this.selectedOpen = true), 10);
       };
