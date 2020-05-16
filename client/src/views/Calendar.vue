@@ -12,13 +12,24 @@
             @click="updateG"
             ><v-icon>refresh</v-icon></v-btn
           >
+          <v-btn
+            icon
+            color="primary"
+            :disabled="!gapiSignedIn"
+            style="float: right;"
+            class="mt-3"
+            @click="editEventDialog = true"
+            ><v-icon>add</v-icon></v-btn
+          >
         </div>
 
         <!-- Select calendars -->
         <v-select
           v-show="!gapiNotSignedIn"
           v-model="calendarsSelected"
-          :items="allCalendarsStrings"
+          :items="allCalendars"
+          return-object
+          item-text="summary"
           small-chips
           :label="
             gapiSignedIn
@@ -34,9 +45,10 @@
           <template v-slot:selection="{ item, index }">
             <v-chip
               v-if="index < ($vuetify.breakpoint.smAndDown ? 1 : 3)"
+              :color="item.backgroundColor"
               small
             >
-              <span>{{ item }}</span>
+              <span>{{ item.summary }}</span>
             </v-chip>
             <span
               v-if="index === ($vuetify.breakpoint.smAndDown ? 1 : 3)"
@@ -73,7 +85,7 @@
         </v-alert>
 
         <v-row>
-          <v-col>
+          <v-col cols="12">
             <!-- Calendar toolbar sheet -->
             <v-sheet :elevation="6">
               <v-toolbar flat>
@@ -145,10 +157,13 @@
                 v-show="gapiSignedIn"
                 ref="calendar"
                 v-model="focus"
+                style="min-height: 60vh"
                 color="primary"
                 :events="events"
                 :event-color="getEventColor"
+                :event-text-color="getEventTextColor"
                 :now="today"
+                :locale="finaleLocale"
                 :type="calendarView"
                 :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                 @click:event="showEvent"
@@ -168,6 +183,11 @@
                     <v-toolbar-title
                       v-text="selectedEvent.name"
                     ></v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="editEvent"><v-icon>edit</v-icon></v-btn>
+                    <v-btn icon @click="deleteEvent"
+                      ><v-icon>delete</v-icon></v-btn
+                    >
                   </v-toolbar>
                   <v-card-text>
                     <span
@@ -184,6 +204,15 @@
         </v-row>
       </v-col>
     </v-row>
+    <EditEventDialog
+      :show="editEventDialog"
+      :calendars="allCalendars"
+      :event="selectedEvent"
+      :add="addMode"
+      @close="closeEventDialog"
+      @closeSuccessfull="successfullyCloseEventDialog"
+      @closeSuccessfullEdit="successfullyCloseEventDialogEdit"
+    ></EditEventDialog>
   </v-container>
 </template>
 <script>
@@ -192,12 +221,19 @@ import {
   handleClientLoad,
   listUpcomingEvents,
   listCalendars,
+  deleteEvent,
   signedIn,
   gapiLoaded
 } from "@/assets/googleCalendar.js";
 
+import EditEventDialog from "@/components/dialogs/EditEventDialog.vue";
+import { getForegroundColor } from "@/assets/colorHelper.js";
+
 export default {
   name: "Calendar",
+  components: {
+    EditEventDialog
+  },
   data: () => ({
     focus: "",
     viewToLabel: {
@@ -221,11 +257,13 @@ export default {
     selectedOpen: false,
     eventData: [],
     events: [],
-    allCalendarsStrings: [],
+    allCalendars: [],
     calendars: [],
     gapiSignedIn: false,
     gapiNotSignedIn: false,
-    loading: false
+    loading: false,
+    editEventDialog: false,
+    addMode: true
   }),
   computed: {
     title() {
@@ -275,6 +313,9 @@ export default {
         return this.$store.state.userSettings.calendarView;
       }
     },
+    finaleLocale() {
+      return this.locale || navigator.language;
+    },
     ...mapState("userSettings", ["calendarEnabled", "locale", "_initialized"])
   },
   watch: {
@@ -301,6 +342,7 @@ export default {
       await this.updateG();
       this.$refs.calendar.checkChange();
     }
+    this.loading = false;
   },
   methods: {
     initLocale(locale) {
@@ -339,13 +381,13 @@ export default {
       this.gapiSignedIn = true;
       this.gapiNotSignedIn = false;
       let calendars = await listCalendars();
-      this.allCalendarsStrings = calendars.map(cal => cal.summary);
       this.allCalendars = calendars;
       this.updateRange({
         start: this.start,
         end: this.end,
         forceRefetch: true
       });
+      this.loading = false;
     },
     // Called to fetch all events in that range
     async updateRange({ start, end, forceRefetch }) {
@@ -366,12 +408,9 @@ export default {
         return;
       // Out of fetched range --> refetch
       this.loading = true;
-      console.log(this.allCalendars);
-      console.log(this.allCalendarsStrings);
-      console.log(this.calendarsSelected);
       let calIds = [];
       this.calendarsSelected.forEach(cal => {
-        let index = this.allCalendarsStrings.indexOf(cal);
+        let index = this.allCalendars.findIndex(i => i.id === cal.id);
         if (index == -1) {
           //not in list anymore
           console.log("deleted", cal);
@@ -429,6 +468,8 @@ export default {
           end = new Date(endStr);
         }
         this.events.push({
+          id: env.id,
+          calendarId: env.calendarId,
           name: env.summary,
           start: this.formatDate(start, !allDay),
           end: this.formatDate(end, !allDay),
@@ -447,6 +488,9 @@ export default {
     getEventColor(event) {
       return event.color;
     },
+    getEventTextColor(event) {
+      return getForegroundColor(event.color);
+    },
     setToday() {
       this.focus = this.today;
     },
@@ -456,10 +500,42 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
+    editEvent() {
+      this.addMode = false;
+      this.editEventDialog = true;
+    },
+    async deleteEvent() {
+      try {
+        await deleteEvent(this.selectedEvent.calendarId, this.selectedEvent.id);
+        this.selectedOpen = false;
+        this.events.splice(this.events.indexOf(this.selectedEvent), 1);
+        this.$nextTick(() => (this.selectedEvent = {}));
+        this.updateG();
+        this.$store.dispatch("showSnackbar", "Successfully deleted event");
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", "Error deleting the event");
+        console.error(err);
+      }
+    },
+    closeEventDialog() {
+      this.editEventDialog = false;
+      this.addMode = true;
+    },
+    successfullyCloseEventDialog() {
+      this.updateG();
+      this.selectedEvent = {};
+      this.selectedElement = null;
+      this.closeEventDialog();
+    },
+    successfullyCloseEventDialogEdit(changes) {
+      this.updateG();
+      this.selectedEvent.name = changes.name;
+      this.selectedEvent.desc = changes.desc;
+      this.closeEventDialog();
+    },
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event;
-        console.log(event);
         this.selectedElement = nativeEvent.target;
         setTimeout(() => (this.selectedOpen = true), 10);
       };
