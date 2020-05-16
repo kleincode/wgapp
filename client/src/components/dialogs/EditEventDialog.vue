@@ -286,8 +286,9 @@ export default {
   watch: {
     show(val) {
       if (val) {
-        //catch when wholeday event
         if (this.add) {
+          this.title = "";
+          this.desc = "";
           let today = new Date();
           this.startDate = today.toISOString().substr(0, 10);
           this.endDate = today.toISOString().substr(0, 10);
@@ -301,6 +302,15 @@ export default {
           //init standard calendar
           this.selCalendar = this.calendars.filter(c => c.primary)[0];
         } else {
+          if (this.event.start.length <= 10) {
+            //catch when wholeday event
+            this.closeDialog();
+            this.$store.dispatch(
+              "showSnackbar",
+              "Whole day events are currently not supported"
+            );
+            return;
+          }
           this.title = this.event.name;
           this.id = this.event.id;
           this.description = this.event.description;
@@ -325,7 +335,7 @@ export default {
       this.$emit("close");
     },
     async save() {
-      this.$refs.form.validate();
+      await this.$refs.form.validate();
       if (this.valid && this.end > this.start) {
         try {
           let start = this.start;
@@ -348,6 +358,7 @@ export default {
               "showSnackbar",
               "Successfully added new event"
             );
+            this.$emit("closeSuccessfull");
           } else {
             //edit
             await updateEvent(this.selCalendar.id, this.id, event);
@@ -355,8 +366,11 @@ export default {
               "showSnackbar",
               "Successfully edited the event"
             );
+            this.$emit("closeSuccessfullEdit", {
+              name: this.title,
+              desc: this.desc
+            });
           }
-          this.$emit("closeSuccessfull");
         } catch (err) {
           console.error(err);
           this.$store.dispatch("showSnackbar", "Error adding event");

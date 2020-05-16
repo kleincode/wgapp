@@ -161,7 +161,7 @@
                 :event-color="getEventColor"
                 :event-text-color="getEventTextColor"
                 :now="today"
-                :locale="finalLocale"
+                :locale="finaleLocale"
                 :type="calendarView"
                 :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                 @click:event="showEvent"
@@ -183,6 +183,9 @@
                     ></v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click="editEvent"><v-icon>edit</v-icon></v-btn>
+                    <v-btn icon @click="deleteEvent"
+                      ><v-icon>delete</v-icon></v-btn
+                    >
                   </v-toolbar>
                   <v-card-text>
                     <span
@@ -205,6 +208,7 @@
       :add="addMode"
       @close="closeEventDialog"
       @closeSuccessfull="successfullyCloseEventDialog"
+      @closeSuccessfullEdit="successfullyCloseEventDialogEdit"
     ></EditEventDialog>
   </v-container>
 </template>
@@ -214,6 +218,7 @@ import {
   handleClientLoad,
   listUpcomingEvents,
   listCalendars,
+  deleteEvent,
   signedIn,
   gapiLoaded
 } from "@/assets/googleCalendar.js";
@@ -305,7 +310,7 @@ export default {
         return this.$store.state.userSettings.calendarView;
       }
     },
-    finalLocale() {
+    finaleLocale() {
       return this.locale || navigator.language;
     },
     ...mapState("userSettings", ["calendarEnabled", "locale", "_initialized"])
@@ -379,6 +384,7 @@ export default {
         end: this.end,
         forceRefetch: true
       });
+      this.loading = false;
     },
     // Called to fetch all events in that range
     async updateRange({ start, end, forceRefetch }) {
@@ -495,12 +501,33 @@ export default {
       this.addMode = false;
       this.editEventDialog = true;
     },
+    async deleteEvent() {
+      try {
+        await deleteEvent(this.selectedEvent.calendarId, this.selectedEvent.id);
+        this.selectedOpen = false;
+        this.events.splice(this.events.indexOf(this.selectedEvent), 1);
+        this.$nextTick(() => (this.selectedEvent = {}));
+        this.updateG();
+        this.$store.dispatch("showSnackbar", "Successfully deleted event");
+      } catch (err) {
+        this.$store.dispatch("showSnackbar", "Error deleting the event");
+        console.error(err);
+      }
+    },
     closeEventDialog() {
       this.editEventDialog = false;
       this.addMode = true;
     },
     successfullyCloseEventDialog() {
       this.updateG();
+      this.selectedEvent = {};
+      this.selectedElement = null;
+      this.closeEventDialog();
+    },
+    successfullyCloseEventDialogEdit(changes) {
+      this.updateG();
+      this.selectedEvent.name = changes.name;
+      this.selectedEvent.desc = changes.desc;
       this.closeEventDialog();
     },
     showEvent({ nativeEvent, event }) {

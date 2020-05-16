@@ -231,6 +231,13 @@ async function updateEvent(calId, eventId, event) {
   });
 }
 
+async function deleteEvent(calId, eventId) {
+  await gapi.client.calendar.events.delete({
+    calendarId: calId,
+    eventId: eventId
+  });
+}
+
 function rfc3339(d) {
   function pad(n) {
     return n < 10 ? "0" + n : n;
@@ -272,6 +279,7 @@ export {
   syncSharing,
   deleteHomeCalendar,
   addNewEvent,
+  deleteEvent,
   rfc3339,
   updateEvent,
   signedIn,
