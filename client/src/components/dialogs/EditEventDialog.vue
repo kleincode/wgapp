@@ -3,16 +3,14 @@
     <v-card>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-toolbar :color="selCalendar.backgroundColor" prominent>
-          <v-toolbar-title>
-            <v-text-field
-              v-model="title"
-              :dark="textColor"
-              label="Add Title"
-              class="largeTextfield mt-3 mb-3 ml-1"
-              :rules="titleRules"
-              required
-            ></v-text-field>
-          </v-toolbar-title>
+          <v-text-field
+            v-model="title"
+            :dark="textColor"
+            label="Add Title"
+            class="largeTextfield mt-3 mt-9 mb-3 ml-1"
+            :rules="titleRules"
+            required
+          ></v-text-field>
         </v-toolbar>
         <v-card-text>
           <v-row>
@@ -22,6 +20,7 @@
                   <v-select
                     v-model="selCalendar"
                     :items="calendars"
+                    :disabled="!add"
                     return-object
                     item-text="summary"
                     prepend-icon="event"
@@ -58,6 +57,7 @@
                       v-model="startDate"
                       no-title
                       scrollable
+                      :first-day-of-week="1"
                       :locale="finalLocale"
                     >
                       <v-spacer></v-spacer>
@@ -126,6 +126,7 @@
                       v-model="endDate"
                       no-title
                       scrollable
+                      :first-day-of-week="1"
                       :locale="finalLocale"
                     >
                       <v-spacer></v-spacer>
@@ -198,7 +199,7 @@
 <script>
 import { mapState } from "vuex";
 import { getForegroundColor } from "@/assets/colorHelper.js";
-import { addNewEvent, rfc3339 } from "@/assets/googleCalendar.js";
+import { addNewEvent, updateEvent, rfc3339 } from "@/assets/googleCalendar.js";
 
 export default {
   name: "EditEventDialog",
@@ -211,12 +212,17 @@ export default {
       type: Boolean,
       default: true
     },
+    event: {
+      type: Object,
+      default: () => {}
+    },
     calendars: {
       type: Array,
       default: () => []
     }
   },
   data: () => ({
+    id: null,
     selCalendar: null,
     valid: false,
     title: "",
@@ -280,6 +286,7 @@ export default {
   watch: {
     show(val) {
       if (val) {
+        //catch when wholeday event
         if (this.add) {
           let today = new Date();
           this.startDate = today.toISOString().substr(0, 10);
@@ -291,9 +298,25 @@ export default {
           this.endTime = today
             .toLocaleTimeString(this.locale || undefined)
             .substr(0, 5);
+          //init standard calendar
+          this.selCalendar = this.calendars.filter(c => c.primary)[0];
+        } else {
+          this.title = this.event.name;
+          this.id = this.event.id;
+          this.description = this.event.description;
+          this.startDate = new Date(this.event.start.toString());
+          this.endDate = new Date(this.event.end.toString());
+          this.startTime =
+            this.event.start.substr(11, 2) +
+            ":" +
+            this.event.start.substr(14, 2);
+          this.endTime =
+            this.event.end.substr(11, 2) + ":" + this.event.end.substr(14, 2);
+
+          this.selCalendar = this.calendars.filter(
+            c => this.event.calendarId == c.id
+          )[0];
         }
-        //init standard calendar
-        this.selCalendar = this.calendars.filter(c => c.primary)[0];
       }
     }
   },
@@ -318,12 +341,26 @@ export default {
               dateTime: rfc3339(end)
             }
           };
-          await addNewEvent(this.selCalendar.id, event);
+          if (this.add) {
+            //add
+            await addNewEvent(this.selCalendar.id, event);
+            this.$store.dispatch(
+              "showSnackbar",
+              "Successfully added new event"
+            );
+          } else {
+            //edit
+            await updateEvent(this.selCalendar.id, this.id, event);
+            this.$store.dispatch(
+              "showSnackbar",
+              "Successfully edited the event"
+            );
+          }
           this.$emit("closeSuccessfull");
-          this.$store.dispatch("showSnackbar", "Successfully added new event");
         } catch (err) {
           console.error(err);
           this.$store.dispatch("showSnackbar", "Error adding event");
+          this.closeDialog();
         }
         this.loading = false;
       }

@@ -122,6 +122,7 @@ async function listUpcomingEvents(minDate, maxDate, calIDs, allCalendars) {
         .backgroundColor;
     tempItems.forEach(item => {
       item.color = color;
+      item.calendarId = calIDs[i];
     });
     items = items.concat(tempItems);
   }
@@ -222,6 +223,14 @@ async function addNewEvent(calId, event) {
   });
 }
 
+async function updateEvent(calId, eventId, event) {
+  await gapi.client.calendar.events.update({
+    calendarId: calId,
+    eventId: eventId,
+    resource: event
+  });
+}
+
 function rfc3339(d) {
   function pad(n) {
     return n < 10 ? "0" + n : n;
@@ -264,6 +273,7 @@ export {
   deleteHomeCalendar,
   addNewEvent,
   rfc3339,
+  updateEvent,
   signedIn,
   gapiLoaded,
   user

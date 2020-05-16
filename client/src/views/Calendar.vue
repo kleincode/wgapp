@@ -182,7 +182,7 @@
                       v-text="selectedEvent.name"
                     ></v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <v-btn icon><v-icon>edit</v-icon></v-btn>
+                    <v-btn icon @click="editEvent"><v-icon>edit</v-icon></v-btn>
                   </v-toolbar>
                   <v-card-text>
                     <span
@@ -201,11 +201,10 @@
     <EditEventDialog
       :show="editEventDialog"
       :calendars="allCalendars"
-      @close="editEventDialog = false"
-      @closeSuccessfull="
-        updateG();
-        editEventDialog = false;
-      "
+      :event="selectedEvent"
+      :add="addMode"
+      @close="closeEventDialog"
+      @closeSuccessfull="successfullyCloseEventDialog"
     ></EditEventDialog>
   </v-container>
 </template>
@@ -255,7 +254,8 @@ export default {
     gapiSignedIn: false,
     gapiNotSignedIn: false,
     loading: false,
-    editEventDialog: false
+    editEventDialog: false,
+    addMode: true
   }),
   computed: {
     title() {
@@ -459,6 +459,8 @@ export default {
           end = new Date(endStr);
         }
         this.events.push({
+          id: env.id,
+          calendarId: env.calendarId,
           name: env.summary,
           start: this.formatDate(start, !allDay),
           end: this.formatDate(end, !allDay),
@@ -488,6 +490,18 @@ export default {
     },
     next() {
       this.$refs.calendar.next();
+    },
+    editEvent() {
+      this.addMode = false;
+      this.editEventDialog = true;
+    },
+    closeEventDialog() {
+      this.editEventDialog = false;
+      this.addMode = true;
+    },
+    successfullyCloseEventDialog() {
+      this.updateG();
+      this.closeEventDialog();
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
