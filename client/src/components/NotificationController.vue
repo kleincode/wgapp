@@ -2,24 +2,25 @@
   <div>
     <v-switch
       v-model="notificationsEnabled"
-      label="Enable push notifications"
+      :label="$t('settings.general.notifications.enable')"
       :loading="loading"
       :disabled="loading || notPermDenied"
       @change="onSwitchToggle"
     ></v-switch>
     <!-- Warning if no service worker is registered -->
     <v-alert v-if="_initialized && !isServiceWorkerRegistered" type="warning">
-      {{ $t("settings.general.notifications.controller[0]") }}<br />(No service
-      worker found)
+      {{ $t("settings.general.notifications.controller.notSupported")
+      }}<br />(No service worker found)
     </v-alert>
     <!-- Warning if push registration failed -->
     <v-alert v-if="notRegFailed && !notPermDenied" type="error">
-      {{ $t("settings.general.notifications.controller[1]") }}<br />
+      {{ $t("settings.general.notifications.controller.registrationFailed")
+      }}<br />
       ({{ notRegMessage }})
     </v-alert>
     <!-- Warning if push permission denied -->
     <v-alert v-if="notPermDenied" type="warning">
-      {{ $t("settings.general.notifications.controller[2]") }}
+      {{ $t("settings.general.notifications.controller.permissionDenied") }}
     </v-alert>
   </div>
 </template>

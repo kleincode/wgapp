@@ -14,14 +14,14 @@
       >
     </template>
     <template v-else>
-      <p>{{ $t("widgets.weather.config") }}</p>
+      <p>{{ $t("widgets.weather.configError") }}</p>
       <v-btn text to="/settings/dashboard">{{
         $t("navigation.settings")
       }}</v-btn>
     </template>
     <template #footer>
       {{ condition }} | {{ cityName }}
-      {{ lastUpdate ? formatTimeHM(lastUpdate) : $t("widgets.weather.never") }}
+      {{ lastUpdate ? formatTimeHM(lastUpdate) : "" }}
     </template>
   </Widget>
 </template>
@@ -80,9 +80,11 @@ export default {
           action: "refresh",
           text: this.$t("commands.refresh"),
           icon: "refresh",
-          subtext:
-            "Updated " +
-            (this.lastUpdate ? this.formatTimeHM(this.lastUpdate) : "never")
+          subtext: this.$t("widgets.lastUpdated", {
+            time: this.lastUpdate
+              ? this.formatTimeHM(this.lastUpdate)
+              : this.$t("widgets.never")
+          })
         },
         {
           action: "settings",

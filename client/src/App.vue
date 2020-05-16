@@ -157,7 +157,7 @@ export default {
       let state = this.$store.state.userSettings.introductionState;
       let contents = [
         {
-          name: this.$i18n.t("navigation.dashboard"),
+          name: this.$t("navigation.dashboard"),
           icon: "dashboard",
           path: "/dashboard"
         }
@@ -165,13 +165,13 @@ export default {
       if (this.userInHousehold) {
         if (this.$store.state.userSettings.calendarEnabled && state <= 0)
           contents.push({
-            name: this.$i18n.t("navigation.calendar"),
+            name: this.$t("navigation.calendar"),
             icon: "event",
             path: "/calendar"
           });
         if (state >= 3 || state <= 0) {
           contents.push({
-            name: this.$i18n.t("navigation.shopping"),
+            name: this.$t("navigation.shopping"),
             icon: "shopping_cart",
             path: "/shopping",
             show: true
@@ -179,7 +179,7 @@ export default {
         }
         if (state >= 5 || state <= 0) {
           contents.push({
-            name: this.$i18n.t("navigation.finances"),
+            name: this.$t("navigation.finances"),
             icon: "money",
             path: "/finances",
             show: true
@@ -187,7 +187,7 @@ export default {
         }
         if (state >= 7 || state <= 0) {
           contents.push({
-            name: this.$i18n.t("navigation.tasks"),
+            name: this.$t("navigation.tasks"),
             icon: "list",
             path: "/tasks",
             show: true
@@ -195,7 +195,7 @@ export default {
         }
         if (state >= 9 || state <= 0) {
           contents.push({
-            name: this.$i18n.t("navigation.household"),
+            name: this.$t("navigation.household"),
             icon: "people",
             path: "/household",
             show: true
@@ -203,7 +203,7 @@ export default {
         }
         if (state >= 11 || state <= 0) {
           contents.push({
-            name: this.$i18n.t("navigation.settings"),
+            name: this.$t("navigation.settings"),
             icon: "settings",
             path: "/settings",
             show: true

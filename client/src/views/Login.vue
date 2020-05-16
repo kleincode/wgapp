@@ -8,25 +8,63 @@
               <v-toolbar-title>{{ $t("login.welcome") }}</v-toolbar-title>
               <template v-slot:extension>
                 <v-tabs v-model="registerMode" centered color="white" optional>
-                  <v-tab>{{ $t("login.login") }}</v-tab>
-                  <v-tab>{{ $t("login.register") }}</v-tab>
+                  <v-tab :disabled="registerMode == 3">{{
+                    $t("login.login")
+                  }}</v-tab>
+                  <v-tab :disabled="registerMode == 3">{{
+                    $t("login.register")
+                  }}</v-tab>
                 </v-tabs>
               </template>
             </v-toolbar>
             <v-form ref="form" @submit.prevent="submitForm">
               <v-card-text>
                 <v-expand-transition>
+                  <div v-if="registerMode == 3">
+                    <v-row>
+                      <v-col cols="auto">
+                        <v-fade-transition>
+                          <v-progress-circular
+                            v-if="verifyState == 0"
+                            :size="50"
+                            color="primary"
+                            indeterminate
+                          ></v-progress-circular>
+                          <v-avatar v-if="verifyState == 1" color="success">
+                            <v-icon dark>verified_user</v-icon>
+                          </v-avatar>
+                          <v-avatar v-if="verifyState == 2" color="error">
+                            <v-icon dark>error</v-icon>
+                          </v-avatar>
+                        </v-fade-transition>
+                      </v-col>
+                      <v-col align-self="center">
+                        <span v-if="verifyState == 0" class="headline">
+                          {{ $t("login.verifying") }}
+                        </span>
+                        <p v-if="verifyState == 1">
+                          {{ $t("login.verified") }}
+                        </p>
+                        <p v-if="verifyState == 2">
+                          {{ $t("login.errors.verify") }}
+                        </p>
+                      </v-col>
+                    </v-row>
+                  </div>
+                </v-expand-transition>
+                <v-expand-transition>
                   <p v-if="registerMode == 2" class="my-0">
-                    {{ $t("login.msg") }}
+                    {{ $t("login.forgotPasswordMessage") }}
                     <br />
                     <br />
                   </p>
                 </v-expand-transition>
                 <v-text-field
+                  v-if="registerMode < 3"
                   v-model="email"
-                  :label="$t('login.mail')"
+                  :label="$t('login.email')"
                   prepend-icon="person"
-                  type="text"
+                  type="email"
                   outlined
                   :rules="validating ? emailRules : []"
                 />
@@ -34,7 +72,7 @@
                   <v-text-field
                     v-if="registerMode == 1"
                     v-model="firstname"
-                    :label="$t('login.first')"
+                    :label="$t('login.firstname')"
                     prepend-icon="text_format"
                     type="text"
                     outlined
@@ -47,7 +85,7 @@
                   <v-text-field
                     v-if="registerMode == 1"
                     v-model="lastname"
-                    :label="$t('login.last')"
+                    :label="$t('login.lastname')"
                     prepend-icon="text_format"
                     type="text"
                     outlined
@@ -58,7 +96,7 @@
                 </v-expand-transition>
                 <v-expand-transition>
                   <v-text-field
-                    v-if="registerMode != 2"
+                    v-if="registerMode < 2"
                     v-model="password"
                     :label="$t('login.password')"
                     prepend-icon="lock"
@@ -75,7 +113,7 @@
                   <v-text-field
                     v-if="registerMode == 1"
                     v-model="repeatPassword"
-                    :label="$t('login.rep')"
+                    :label="$t('login.repeatPassword')"
                     prepend-icon="replay"
                     type="password"
                     :rules="
@@ -92,10 +130,23 @@
                   text
                   @click="registerMode = 2"
                 >
-                  {{ $t("login.forgot") }}
+                  {{ $t("login.forgotPassword") }}
+                </v-btn>
+                <v-btn
+                  v-if="registerMode == 3 && verifyState == 1"
+                  color="secondary"
+                  text
+                  @click="registerMode = 0"
+                >
+                  {{ $t("login.login") }}
                 </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" type="submit" :loading="loading">
+                <v-btn
+                  v-if="registerMode < 3"
+                  color="primary"
+                  type="submit"
+                  :loading="loading"
+                >
                   <v-icon left>arrow_forward</v-icon>
                   {{
                     [$t("login.login"), $t("login.register"), "Send e-mail"][
@@ -103,6 +154,12 @@
                     ]
                   }}
                 </v-btn>
+                <v-btn
+                  v-if="registerMode == 3 && verifyState == 2"
+                  color="primary"
+                  :loading="loading"
+                  v-text="$t('login.resendEmail')"
+                ></v-btn>
               </v-card-actions>
             </v-form>
           </v-card>
@@ -132,7 +189,8 @@ export default {
     showSnackbar: false,
     snackbarMessage: "Loading...",
     formValid: null,
-    validating: false
+    validating: false,
+    verifyState: 0
   }),
   computed: {
     standardFieldRules() {
@@ -140,19 +198,34 @@ export default {
     },
     emailRules() {
       return [
-        v => !!v || this.$t("login.messages.mail1"),
-        v => /.+@.+\..+/.test(v) || this.$t("login.messages.mail2")
+        v => !!v || this.$t("login.messages.mailRequired"),
+        v => /.+@.+\..+/.test(v) || this.$t("login.messages.mailInvalid")
       ];
     },
     passwordRules() {
       return [
-        v => !!v || this.$t("login.messages.password1"),
-        v => (v && v.length >= 8) || this.$t("login.messages.password2")
+        v => !!v || this.$t("login.messages.passwordRequired"),
+        v => (v && v.length >= 8) || this.$t("login.messages.passwordTooShort")
       ];
     }
   },
   created() {
     this.snackbarMessage = this.$t("commands.loading") + "...";
+  },
+  async mounted() {
+    if (this.$route.query.verify) {
+      this.registerMode = 3;
+      try {
+        const { data } = await this.$http.post("/_/verifyemail", {
+          token: this.$route.query.verify
+        });
+        if (data.success) this.verifyState = 1;
+        else throw data.message;
+      } catch (err) {
+        this.verifyState = 2;
+        if (err) this.$store.dispatch("showSnackbar", err);
+      }
+    }
   },
   methods: {
     alertSnackbar(msg) {
@@ -186,10 +259,10 @@ export default {
     async register() {
       await this.validate();
       if (!this.formValid) {
-        this.alertSnackbar(this.$t("login.messages.input"));
+        this.alertSnackbar(this.$t("login.messages.checkInput"));
         return;
       } else if (this.password !== this.repeatPassword) {
-        this.alertSnackbar(this.$t("login.messages.match"));
+        this.alertSnackbar(this.$t("login.messages.passwordsDoNotMatch"));
         this.password = "";
         this.repeatPassword = "";
         return;
@@ -216,7 +289,7 @@ export default {
     async login() {
       await this.validate();
       if (!this.formValid) {
-        this.alertSnackbar(this.$t("login.messages.input"));
+        this.alertSnackbar(this.$t("login.messages.checkInput"));
         return;
       }
       this.loading = true;
@@ -242,7 +315,7 @@ export default {
     async passRecovery() {
       await this.validate();
       if (!this.formValid) {
-        this.alertSnackbar(this.$t("login.messages.match"));
+        this.alertSnackbar(this.$t("login.messages.passwordsDoNotMatch"));
         return;
       }
       this.loading = true;
@@ -252,7 +325,7 @@ export default {
         });
         this.alertSnackbar(data.message);
       } catch (err) {
-        this.alertSnackbar(this.$t("login.errors.com"));
+        this.alertSnackbar(this.$t("general.errors.communication"));
         console.warn(err);
       }
       this.loading = false;

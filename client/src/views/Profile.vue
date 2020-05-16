@@ -41,11 +41,11 @@
                       </h1>
                       <template v-if="userNickName">
                         <div class="overline mt-6">
-                          {{ $t("profile.nick") }}
+                          {{ $t("profile.nickname") }}
                         </div>
                         <h1 class="headline">{{ userNickName }}</h1>
                       </template>
-                      <div class="overline mt-6">{{ $t("profile.mail") }}</div>
+                      <div class="overline mt-6">{{ $t("profile.email") }}</div>
                       <h1 class="headline">{{ userEmail }}</h1>
                       <div class="overline mt-6">
                         {{ $t("profile.password") }}
@@ -53,9 +53,9 @@
                       <h1 class="headline">************</h1>
                     </v-col>
                     <v-col cols="12" md="4" class="text-right">
-                      <v-btn color="primary" @click="editMode = true"
-                        >edit</v-btn
-                      >
+                      <v-btn color="primary" @click="editMode = true">{{
+                        $t("commands.edit")
+                      }}</v-btn>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -68,12 +68,11 @@
           <v-col cols="12">
             <v-card :elevation="6">
               <v-card-title>
-                Unforgivable curses
+                {{ $t("profile.criticalActions.title") }}
               </v-card-title>
               <v-card-text>
                 <p>
-                  Don't worry though, as you're most likely not a wizard you
-                  will not be sent to Azkaban.
+                  {{ $t("profile.criticalActions.description") }}
                 </p>
                 <div
                   class="d-md-flex"
@@ -85,14 +84,25 @@
                   <confirm-dialog
                     v-model="deleteLocalDataDialogShown"
                     :max-width="500"
-                    positive-option="Do it!"
-                    negative-option="Cancel"
+                    :positive-option="
+                      $t(
+                        'profile.criticalActions.deleteLocalData.positiveOption'
+                      )
+                    "
+                    :negative-option="
+                      $t(
+                        'profile.criticalActions.deleteLocalData.negativeOption'
+                      )
+                    "
                     invert-colors
                     :title="
-                      'Delete local data' +
-                        (databaseSize
-                          ? ' (' + Math.floor(databaseSize / 1024) + ' KB)'
-                          : '')
+                      $t(
+                        'profile.criticalActions.deleteLocalData.confirmTitle' +
+                          (databaseSize ? '' : 'SizeUnknown'),
+                        {
+                          kilobytes: Math.round(databaseSize / 1024)
+                        }
+                      )
                     "
                     :loading="dialogLoading"
                     @negative="deleteLocalDataDialogShown = false"
@@ -100,76 +110,101 @@
                   >
                     <template #activator="{ on }">
                       <v-btn text color="red" v-on="on">
-                        Delete local data{{
-                          databaseSize
-                            ? " (" + Math.floor(databaseSize / 1024) + " KB)"
-                            : ""
+                        {{
+                          $t(
+                            "profile.criticalActions.deleteLocalData.button" +
+                              (databaseSize ? "" : "SizeUnknown"),
+                            {
+                              kilobytes: Math.round(databaseSize / 1024)
+                            }
+                          )
                         }}
                       </v-btn>
                     </template>
-                    Deleting stored local data forces Jeff to refetch all your
-                    household data remotely. Pages will load slower and actions
-                    will take longer to perform until the cache is repopulated.
-                    Note that this will not clear cached application assets.
-                    Continue?
+                    {{
+                      $t(
+                        "profile.criticalActions.deleteLocalData.confirmMessage"
+                      )
+                    }}
                   </confirm-dialog>
                   <!-- Logout -->
                   <confirm-dialog
                     v-model="logoutDialogShown"
                     :max-width="500"
-                    positive-option="Logout"
-                    negative-option="Cancel"
+                    :positive-option="
+                      $t('profile.criticalActions.logout.positiveOption')
+                    "
+                    :negative-option="
+                      $t('profile.criticalActions.logout.negativeOption')
+                    "
                     invert-colors
-                    title="Logout and clear local data?"
+                    :title="$t('profile.criticalActions.logout.confirmTitle')"
                     :loading="dialogLoading"
                     @negative="logoutDialogShown = false"
                     @positive="logout"
                   >
                     <template #activator="{ on }">
                       <v-btn text color="red" v-on="on">
-                        Logout
+                        {{ $t("profile.criticalActions.logout.button") }}
                       </v-btn>
                     </template>
-                    Logging out causes all authorization data saved on your
-                    machine to expire and all local household data to be
-                    deleted. Except for changing accounts, logging out is
-                    usually not necessary. Continue?
+                    {{ $t("profile.criticalActions.logout.confirmMessage") }}
                   </confirm-dialog>
                   <!-- Delete account -->
                   <confirm-dialog
                     v-model="deleteAccountDialogShown"
                     :max-width="500"
-                    positive-option="Delete account"
-                    negative-option="Cancel"
+                    :positive-option="
+                      $t('profile.criticalActions.deleteAccount.positiveOption')
+                    "
+                    :negative-option="
+                      $t('profile.criticalActions.deleteAccount.negativeOption')
+                    "
                     invert-colors
-                    title="Permanently delete your account?"
+                    :title="
+                      $t('profile.criticalActions.deleteAccount.confirmTitle')
+                    "
                     :loading="dialogLoading"
                     @negative="deleteAccountDialogShown = false"
                     @positive="deleteAccount"
                   >
                     <template #activator="{ on }">
                       <v-btn text color="red" v-on="on">
-                        Delete account
+                        {{ $t("profile.criticalActions.deleteAccount.button") }}
                       </v-btn>
                     </template>
                     <p>
-                      All your personal data (i.e. name, email, password, and
-                      nickname) will be permanently deleted from our server and
-                      from this device. Your household will remember you by the
-                      beautiful name of "Unknown User" and all your expenses and
-                      former tasks will remind them of you in a melancholic yet
-                      heartwarming way. You are to be logged out of this
-                      application and it will be as if all this never happened.
-                      Still - never will you be forgotten, Unknown User.
+                      {{
+                        $t(
+                          "profile.criticalActions.deleteAccount.confirmMessage1"
+                        )
+                      }}
                     </p>
-                    <p>
-                      But seriously: <b>This action cannot be undone.</b> So, to
-                      end with the inspiring words of one of the great minds of
-                      our time:
-                    </p>
+                    <i18n
+                      path="profile.criticalActions.deleteAccount.confirmMessage2"
+                      tag="p"
+                    >
+                      <template #bold>
+                        <b>
+                          {{
+                            $t(
+                              "profile.criticalActions.deleteAccount.confirmMessage2Bold"
+                            )
+                          }}
+                        </b>
+                      </template>
+                    </i18n>
                     <blockquote class="blockquote">
-                      Ooh, think twice.<br />
-                      - Phil Collins
+                      {{
+                        $t(
+                          "profile.criticalActions.deleteAccount.confirmQuote"
+                        )
+                      }}<br />
+                      {{
+                        $t(
+                          "profile.criticalActions.deleteAccount.confirmQuoteAuthor"
+                        )
+                      }}
                     </blockquote>
                   </confirm-dialog>
                 </div>
@@ -201,10 +236,10 @@
                   </v-list-item>
                 </v-list>
                 <div v-else class="text-center text--secondary mt-8 mb-8">
-                  {{ $t("profile.noexpenses") }}
+                  {{ $t("profile.noExpenses") }}
                 </div>
               </v-card-text>
-              <v-card-title>{{ $t("profile.monexpenses") }}</v-card-title>
+              <v-card-title>{{ $t("profile.monthlyExpenses") }}</v-card-title>
               <v-card-text>
                 <v-list v-if="getFilteredMonthlyCharges.length > 0">
                   <v-list-item
@@ -229,7 +264,7 @@
                   </v-list-item>
                 </v-list>
                 <div v-else class="text-center text--secondary mt-8 mb-8">
-                  {{ $t("profile.nomonexpenses") }}
+                  {{ $t("profile.noMonthlyExpenses") }}
                 </div>
               </v-card-text>
             </v-card>
@@ -334,13 +369,16 @@ export default {
         if (data.success) {
           this.expenses = data.data;
         } else {
-          this.$store.dispatch("showSnackbar", this.$t("profile.errors.users"));
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.errors.fetchUserExpensesFailed")
+          );
           console.warn(data);
         }
       } catch (err) {
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("profile.errors.usersErr")
+          this.$t("profile.errors.fetchUserExpensesError")
         );
         console.error(err);
       }
@@ -368,11 +406,17 @@ export default {
             });
           });
         } else {
-          this.$store.dispatch("showSnackbar", this.$t("profile.errors.mon"));
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("profile.errors.fetchMonthlyExpensesFailed")
+          );
           console.warn("Error during fetching monthly data", data);
         }
       } catch (err) {
-        this.$store.dispatch("showSnackbar", this.$t("profile.errors.monErr"));
+        this.$store.dispatch(
+          "showSnackbar",
+          this.$t("profile.errors.fetchMonthlyExpensesError")
+        );
         console.error("Error during fetching monthly data");
       }
     },
@@ -417,7 +461,10 @@ export default {
       await db.delete();
       this.dialogLoading = false;
       this.deleteLocalDataDialogShown = false;
-      this.$store.dispatch("showSnackbar", "All local data deleted.");
+      this.$store.dispatch(
+        "showSnackbar",
+        this.$t("profile.criticalActions.deleteLocalData.deleted")
+      );
       this.estimateLocalStorage();
     },
     async logout() {
@@ -443,14 +490,11 @@ export default {
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            data.message || "Deleting account failed."
+            data.message || this.$t("general.errors.communication")
           );
         }
       } catch (err) {
-        this.$store.dispatch(
-          "showSnackbar",
-          "Could not establish contact to server."
-        );
+        this.$store.dispatch("showSnackbar", this.$t("general.errors.connect"));
         console.warn(err);
       }
     }

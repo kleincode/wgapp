@@ -3,7 +3,7 @@
     <v-card-title>
       <v-row>
         <v-col cols="9" md="10" lg="10">
-          <h2 class="title">{{ $t("tasks.upcom.title") }}</h2>
+          <h2 class="title">{{ $t("tasks.upcoming.title") }}</h2>
         </v-col>
         <v-col class="text-right" cols="3" md="2" lg="2">
           <v-btn fab class="mx-2 primary" :to="{ name: 'AddTask' }">
@@ -14,7 +14,7 @@
     </v-card-title>
     <v-card-text>
       <!--TIMED TASKS -->
-      <div class="title">{{ $t("tasks.upcom.timed") }}</div>
+      <div class="title">{{ $t("tasks.upcoming.timed") }}</div>
       <v-list v-if="timedTasks.length > 0">
         <v-list-item
           v-for="(task, i) in timedTasks"
@@ -33,8 +33,8 @@
               </template>
               <span>{{
                 task.mode == 1
-                  ? $t("tasks.upcom.repDesc")
-                  : $t("tasks.upcom.oneDesc")
+                  ? $t("tasks.upcoming.repeatingTaskDescription")
+                  : $t("tasks.upcoming.singleTaskDescription")
               }}</span>
             </v-tooltip>
           </v-list-item-avatar>
@@ -43,7 +43,7 @@
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
               <div class="overline pl-2 pt-1">
-                - {{ task.day }}, {{ task.time }}
+                - {{ formatDateRelative(task.nextDueDay) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -89,11 +89,11 @@
         <v-icon style="font-size: 10em" class="text--disabled"
           >golf_course</v-icon
         >
-        <br />{{ $t("tasks.upcom.emptyRep") }}
+        <br />{{ $t("tasks.upcoming.repeatingTasksEmpty") }}
       </div>
 
       <!--ON DEMAND TASKS -->
-      <div class="title">{{ $t("tasks.upcom.ondem") }}</div>
+      <div class="title">{{ $t("tasks.upcoming.onDemand") }}</div>
       <v-list v-if="onDemandTasks.length > 0">
         <v-list-item
           v-for="(task, i) in onDemandTasks"
@@ -108,7 +108,8 @@
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
               <div class="overline pl-2 pt-1">
-                - {{ $t("tasks.upcom.last") }}: {{ formatLastExecution(task) }}
+                - {{ $t("tasks.upcoming.last") }}:
+                {{ formatDateRelative(task.lastExecution) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -154,7 +155,7 @@
         <v-icon style="font-size: 10em" class="text--disabled"
           >access_alarm</v-icon
         >
-        <br />{{ $t("tasks.upcom.emptyOnDem") }}
+        <br />{{ $t("tasks.upcoming.onDemandTasksEmpty") }}
       </div>
     </v-card-text>
   </v-card>
@@ -162,7 +163,6 @@
 <script>
 import { mapGetters } from "vuex";
 import icons from "@/assets/icons.js";
-import { formatDateString } from "@/assets/tasksHelper.js";
 export default {
   name: "UpcomingTasksCard",
   props: {
@@ -184,16 +184,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["getUserName", "getUserInitials"])
+    ...mapGetters(["getUserName", "getUserInitials"]),
+    ...mapGetters("userSettings", ["formatDateRelative"])
   },
   methods: {
-    formatLastExecution(task) {
-      if (task.lastExecution.toString() == this.$t("tasks.upcom.invalid")) {
-        return "none";
-      } else {
-        return formatDateString(task.lastExecution);
-      }
-    },
     getIcons() {
       return icons;
     }

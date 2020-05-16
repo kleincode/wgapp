@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-btn text color="primary" v-on="on">
         <v-icon left>group_add</v-icon>
-        {{ $t("household.invite.btn") }}
+        {{ $t("household.invite.inviteButton") }}
       </v-btn>
     </template>
     <v-card>
@@ -11,7 +11,7 @@
         $t("household.invite.title")
       }}</v-card-title>
       <v-card-text>
-        <p>{{ $t("household.invite.desc") }}:</p>
+        <p>{{ $t("household.invite.inviteMessage") }}</p>
         <v-text-field
           ref="addLink"
           v-model="householdLink"

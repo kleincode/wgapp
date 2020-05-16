@@ -34,12 +34,12 @@
                 class="task-entry"
                 :color="task.missed ? 'red' : false"
               >
-                {{ task.name || $t("widgets.tasks.unnamed") }}
+                {{ task.name || $t("widgets.tasks.unnamedTask") }}
                 <div
                   class="overline pl-2 pt-1"
                   :class="task.missed ? 'red--text' : false"
                 >
-                  - {{ task.time || $t("widgets.tasks.today") }}
+                  - {{ task.time || $t("general.today") }}
                 </div>
               </v-list-item-title>
               <v-list-item-subtitle>
@@ -100,13 +100,15 @@ export default {
           action: "refresh",
           text: this.$t("commands.refresh"),
           icon: "refresh",
-          subtext:
-            "Updated " +
-            (this.lastUpdate ? this.formatTimeHM(this.lastUpdate) : "never")
+          subtext: this.$t("widgets.lastUpdated", {
+            time: this.lastUpdate
+              ? this.formatTimeHM(this.lastUpdate)
+              : this.$t("widgets.never")
+          })
         },
         {
           action: "tasks",
-          text: this.$t("widgets.tasks.page"),
+          text: this.$t("widgets.tasks.tasksPage"),
           icon: "list"
         },
         {
@@ -146,7 +148,9 @@ export default {
         await this.$store.dispatch("tasks/triggerReminder", task);
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("widgets.tasks.not") + this.getUserName(task.assigned)
+          this.$t("widgets.tasks.notificationSentTo", {
+            name: this.getUserName(task.assigned)
+          })
         );
       } catch (err) {
         this.$store.dispatch("showSnackbar", err);

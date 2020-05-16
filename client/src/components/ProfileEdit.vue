@@ -38,25 +38,25 @@
       <v-col cols="12" md="6" lg="8" class="pa-3">
         <v-text-field
           v-model="firstName"
-          :label="$t('login.first')"
+          :label="$t('login.firstname')"
           outlined
         ></v-text-field>
         <v-text-field
           v-model="lastName"
-          :label="$t('login.last')"
+          :label="$t('login.lastname')"
           outlined
         ></v-text-field>
         <v-text-field
           v-model="nickname"
-          :label="$t('profile.nick')"
+          :label="$t('profile.nickname')"
           outlined
-          :hint="$t('profile.edit.nickHint')"
+          :hint="$t('profile.edit.nicknameHint')"
         ></v-text-field>
         <v-text-field
           v-model="email"
           outlined
           :rules="emailRules"
-          :label="$t('login.mail')"
+          :label="$t('login.email')"
           required
         ></v-text-field>
         <v-text-field
@@ -66,7 +66,7 @@
           :rules="[passwordRules.min]"
           :type="showPassword ? 'text' : 'password'"
           name="input-10-2"
-          :label="$t('profile.edit.old')"
+          :label="$t('profile.edit.currentPassword')"
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-text-field
@@ -76,7 +76,7 @@
           :rules="[passwordRules.required, passwordRules.min]"
           :type="showPassword1 ? 'text' : 'password'"
           name="input-10-2"
-          :label="$t('profile.edit.new')"
+          :label="$t('profile.edit.newPassword')"
           autocomplete="new-password"
           @click:append="showPassword1 = !showPassword1"
         ></v-text-field>
@@ -87,7 +87,7 @@
           :rules="[passwordRules.required, passwordRules.min]"
           :type="showPassword2 ? 'text' : 'password'"
           name="input-10-2"
-          :label="$t('profile.edit.rep')"
+          :label="$t('profile.edit.repeatNewPassword')"
           autocomplete="new-password"
           @click:append="showPassword2 = !showPassword2"
         ></v-text-field>
@@ -135,8 +135,8 @@ export default {
   computed: {
     emailRules() {
       return [
-        v => !!v || this.$t("profile.edit.mail"),
-        v => /.+@.+\..+/.test(v) || this.$t("profile.edit.mailValid")
+        v => !!v || this.$t("profile.edit.emailRequired"),
+        v => /.+@.+\..+/.test(v) || this.$t("profile.edit.emailInvalid")
       ];
     },
     ...mapState([
@@ -199,7 +199,7 @@ export default {
           if (this.password1 != this.password2) {
             this.$store.dispatch(
               "showSnackbar",
-              this.$t("profile.edit.msgsrepFail")
+              this.$t("profile.edit.errors.passwordsDoNotMatch")
             );
             return;
           } else {
@@ -228,13 +228,13 @@ export default {
           ]);
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("profile.edit.msgs.success")
+            this.$t("profile.edit.messages.profileUpdated")
           );
         } else {
           console.log(data);
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("profile.edit.errors.update")
+            this.$t("profile.edit.errors.profileUpdateFailed")
           );
         }
       } catch (err) {
@@ -242,7 +242,7 @@ export default {
         console.error(err);
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("profile.edit.errors.updateErr")
+          this.$t("profile.edit.errors.profileUpdateError")
         );
       }
     },
@@ -252,20 +252,20 @@ export default {
         if (data.success) {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("profile.edit.msgs.delSuccess")
+            this.$t("profile.edit.messages.profilePictureDeleted")
           );
           this.$store.commit("set_profile_picture", null);
         } else {
           this.$store.dispatch(
             "showSnackbar",
-            this.$t("profile.edit.errors.del")
+            this.$t("profile.edit.errors.deleteProfilePictureFailed")
           );
         }
       } catch (err) {
         console.error(err);
         this.$store.dispatch(
           "showSnackbar",
-          this.$t("profile.edit.errors.delErr")
+          this.$t("profile.edit.errors.deleteProfilePictureError")
         );
       }
     },

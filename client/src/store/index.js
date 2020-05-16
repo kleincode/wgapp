@@ -168,7 +168,7 @@ let store = new Vuex.Store({
     },
     getUserName: state => uid => {
       let user = state.householdUsers[uid];
-      if (!user) return i18n.t("store.unkown");
+      if (!user) return i18n.t("store.unknownUser");
       let userName = "";
       if (user.nickname) userName = user.nickname;
       else {
@@ -176,16 +176,16 @@ let store = new Vuex.Store({
         if (user.firstname && user.lastname) userName += " ";
         if (user.lastname) userName += user.lastname;
       }
-      return userName || i18n.t("store.nameless");
+      return userName || i18n.t("store.namelessUser");
     },
     getFullUserName: state => uid => {
       let user = state.householdUsers[uid];
-      if (!user) return i18n.t("store.unkown");
+      if (!user) return i18n.t("store.unknownUser");
       let userName = "";
       if (user.firstname) userName += user.firstname;
       if (user.firstname && user.lastname) userName += " ";
       if (user.lastname) userName += user.lastname;
-      return userName || i18n.t("store.nameless");
+      return userName || i18n.t("store.namelessUser");
     },
     getUserInitials: state => uid => {
       let user = state.householdUsers[uid];
@@ -203,14 +203,14 @@ let store = new Vuex.Store({
     getHouseholdUsersAsItemList: state => {
       let users = [];
       Object.entries(state.householdUsers).forEach(([key, user]) => {
-        if (!user) return i18n.t("store.unkown");
+        if (!user) return i18n.t("store.unknownUser");
         let userName = "";
         if (user.firstname) userName += user.firstname;
         if (user.firstname && user.lastname) userName += " ";
         if (user.lastname) userName += user.lastname;
         users.push({
           value: parseInt(key),
-          text: userName || i18n.t("store.nameless")
+          text: userName || i18n.t("store.namelessUser")
         });
       });
       return users;

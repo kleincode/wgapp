@@ -48,7 +48,10 @@
               </v-chip>
             </div>
             <div v-else>
-              originally: {{ getUserName(task.assigned) }} <br />
+              {{
+                $t("tasks.taskCheckedFor", { name: getUserName(task.assigned) })
+              }}
+              <br />
               <v-chip>
                 <v-avatar
                   :color="!userImages[task.assigned] ? 'primary' : ''"
