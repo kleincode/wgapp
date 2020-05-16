@@ -12,6 +12,15 @@
             @click="updateG"
             ><v-icon>refresh</v-icon></v-btn
           >
+          <v-btn
+            icon
+            color="primary"
+            :disabled="!gapiSignedIn"
+            style="float: right;"
+            class="mt-3"
+            @click="editEventDialog = true"
+            ><v-icon>add</v-icon></v-btn
+          >
         </div>
 
         <!-- Select calendars -->
@@ -143,6 +152,7 @@
                 v-show="gapiSignedIn"
                 ref="calendar"
                 v-model="focus"
+                style="min-height: 60vh"
                 color="primary"
                 :events="events"
                 :event-color="getEventColor"
@@ -166,6 +176,8 @@
                     <v-toolbar-title
                       v-text="selectedEvent.name"
                     ></v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon><v-icon>edit</v-icon></v-btn>
                   </v-toolbar>
                   <v-card-text>
                     <span
@@ -181,6 +193,7 @@
         </v-row>
       </v-col>
     </v-row>
+    <EditEventDialog :show="editEventDialog"></EditEventDialog>
   </v-container>
 </template>
 <script>
@@ -193,8 +206,13 @@ import {
   gapiLoaded
 } from "@/assets/googleCalendar.js";
 
+import EditEventDialog from "@/components/dialogs/EditEventDialog.vue";
+
 export default {
   name: "Calendar",
+  components: {
+    EditEventDialog
+  },
   data: () => ({
     focus: "",
     viewToLabel: {
@@ -222,7 +240,8 @@ export default {
     calendars: [],
     gapiSignedIn: false,
     gapiNotSignedIn: false,
-    loading: false
+    loading: false,
+    editEventDialog: false
   }),
   computed: {
     title() {
