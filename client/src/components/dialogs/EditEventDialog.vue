@@ -5,7 +5,7 @@
         <v-toolbar :color="selCalendar.backgroundColor" prominent>
           <v-toolbar-title>
             <v-text-field
-              v-model="name"
+              v-model="title"
               :dark="textColor"
               label="Add Title"
               class="largeTextfield mt-3 mb-3 ml-1"
@@ -172,6 +172,9 @@
                   </v-menu>
                 </v-col>
               </v-row>
+              <v-alert v-if="end <= start" dense type="error">
+                The end time must be after the start time.
+              </v-alert>
             </v-col>
           </v-row>
         </v-card-text>
@@ -180,10 +183,10 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="close">
+          <v-btn text @click="closeDialog">
             cancel
           </v-btn>
-          <v-btn color="primary" text @click="closeDialog">
+          <v-btn color="primary" text :disabled="end <= start" @click="save">
             save
           </v-btn>
         </v-card-actions>
@@ -195,6 +198,7 @@
 <script>
 import { mapState } from "vuex";
 import { getForegroundColor } from "@/assets/colorHelper.js";
+import { addNewEvent, rfc3339 } from "@/assets/googleCalendar.js";
 
 export default {
   name: "EditEventDialog",
@@ -215,7 +219,7 @@ export default {
   data: () => ({
     selCalendar: null,
     valid: false,
-    name: "",
+    title: "",
     desc: "",
     startDateMenu: false,
     startDate: "",
@@ -258,6 +262,16 @@ export default {
         return "24hr";
       }
     },
+    start() {
+      let start = new Date(this.startDate);
+      start.setHours(this.startTime.substr(0, 2), this.startTime.substr(3, 2));
+      return start;
+    },
+    end() {
+      let end = new Date(this.endDate);
+      end.setHours(this.endTime.substr(0, 2), this.endTime.substr(3, 2));
+      return end;
+    },
     textColor() {
       return getForegroundColor(this.selCalendar.backgroundColor) == "white";
     },
@@ -287,10 +301,32 @@ export default {
     closeDialog() {
       this.$emit("close");
     },
-    save() {
+    async save() {
       this.$refs.form.validate();
-      //TODO: send
-      this.closeDialog();
+      if (this.valid && this.end > this.start) {
+        try {
+          let start = this.start;
+          let end = this.end;
+          this.loading = true;
+          let event = {
+            summary: this.title,
+            description: this.description || "",
+            start: {
+              dateTime: rfc3339(start)
+            },
+            end: {
+              dateTime: rfc3339(end)
+            }
+          };
+          await addNewEvent(this.selCalendar.id, event);
+          this.$emit("closeSuccessfull");
+          this.$store.dispatch("showSnackbar", "Successfully added new event");
+        } catch (err) {
+          console.error(err);
+          this.$store.dispatch("showSnackbar", "Error adding event");
+        }
+        this.loading = false;
+      }
     }
   }
 };

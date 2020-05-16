@@ -161,6 +161,7 @@
                 :event-color="getEventColor"
                 :event-text-color="getEventTextColor"
                 :now="today"
+                :locale="finalLocale"
                 :type="calendarView"
                 :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                 @click:event="showEvent"
@@ -201,6 +202,10 @@
       :show="editEventDialog"
       :calendars="allCalendars"
       @close="editEventDialog = false"
+      @closeSuccessfull="
+        updateG();
+        editEventDialog = false;
+      "
     ></EditEventDialog>
   </v-container>
 </template>
@@ -299,6 +304,9 @@ export default {
       get() {
         return this.$store.state.userSettings.calendarView;
       }
+    },
+    finalLocale() {
+      return this.locale || navigator.language;
     },
     ...mapState("userSettings", ["calendarEnabled", "locale", "_initialized"])
   },

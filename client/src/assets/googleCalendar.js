@@ -215,6 +215,44 @@ async function deleteHomeCalendar(calendarId) {
   await Promise.all(promises);
 }
 
+async function addNewEvent(calId, event) {
+  await gapi.client.calendar.events.insert({
+    calendarId: calId,
+    resource: event
+  });
+}
+
+function rfc3339(d) {
+  function pad(n) {
+    return n < 10 ? "0" + n : n;
+  }
+
+  function timezoneOffset(offset) {
+    var sign;
+    if (offset === 0) {
+      return "Z";
+    }
+    sign = offset > 0 ? "-" : "+";
+    offset = Math.abs(offset);
+    return sign + pad(Math.floor(offset / 60)) + ":" + pad(offset % 60);
+  }
+
+  return (
+    d.getFullYear() +
+    "-" +
+    pad(d.getMonth() + 1) +
+    "-" +
+    pad(d.getDate()) +
+    "T" +
+    pad(d.getHours()) +
+    ":" +
+    pad(d.getMinutes()) +
+    ":" +
+    pad(d.getSeconds()) +
+    timezoneOffset(d.getTimezoneOffset())
+  );
+}
+
 export {
   listUpcomingEvents,
   handleAuthClick,
@@ -224,6 +262,8 @@ export {
   createHomeCalendar,
   syncSharing,
   deleteHomeCalendar,
+  addNewEvent,
+  rfc3339,
   signedIn,
   gapiLoaded,
   user
