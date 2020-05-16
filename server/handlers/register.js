@@ -40,7 +40,7 @@ module.exports = ({ db }) => ({
 
         if(userResults[0].c > 0) {
           await ta.rollback();
-          fail("This email address is already registered.");
+          fail("This email address is already registered.", 1);
         } else try {
           //Actual register process begins here
           const hash = await BCrypt.hash(password, AUTH_SALT_ROUNDS);
@@ -77,18 +77,18 @@ module.exports = ({ db }) => ({
             }
           } catch(err) {
             await ta.rollback();
-            error("The registration process failed.", err);
+            error("The registration process failed.", 1, err);
           }
         } catch(err) {
           await ta.rollback();
-          error("Error during encryption process.", err);
+          error("Error during encryption process.", 1, err);
         }
       } catch(err) {
         await ta.rollback();
-        error("Error while fetching users from database.", err);
+        error("Error while fetching users from database.", 1, err);
       }
     } else {
-      fail("The given email address is invalid.");
+      fail("The given email address is invalid.", 1);
     }
   }
 });

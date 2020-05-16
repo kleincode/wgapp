@@ -17,15 +17,15 @@ module.exports = ({ db }) => ({
             [uid, requestHid]
           );
           if (affectedRows == 0) {
-            fail("Couldn't find user for delete.");
+            fail("Couldn't find user for delete.", 1);
           } else {
             success("Successfully delete account.");
           }
         } catch (err) {
-          error("Error while deleting account in database.", err);
+          error("Error while deleting account in database.", 1, err);
         }
       } catch (err) {
-        error("Error while fetching hid from database.", err);
+        error("Error while fetching hid from database.", 0, err);
       }
     }
   });

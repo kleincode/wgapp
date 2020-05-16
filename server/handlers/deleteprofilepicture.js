@@ -17,7 +17,7 @@ module.exports = ({ db }) => ({
           [false, uid, hid]
         );
         if(affectedRows == 0) {
-          fail("You do not have permission to perform this operation.");
+          fail("You do not have permission to perform this operation.", 1);
         } else if(changedRows == 0) {
           success("No changes made.");
         } else {
@@ -25,10 +25,10 @@ module.exports = ({ db }) => ({
           success("Receipt deleted.");
         }
       } catch (err) {
-        error("Error while deleting receipt in database.", err);
+        error("Error while deleting receipt in database.", 4, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

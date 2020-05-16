@@ -20,10 +20,10 @@ module.exports = ({ db }) => ({
           success({message: "Member totals since last bill received.", mainResult, lastBill: results[0].lastBill, monthlyResult});
         }
       } catch(err) {
-        error("Error while fetching finances from database", err);
+        error("Error while fetching new bill from database", 4, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.", 0);
     }
   }
 });

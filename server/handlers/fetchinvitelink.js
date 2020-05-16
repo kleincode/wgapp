@@ -16,10 +16,10 @@ module.exports = ({ db }) => ({
           sec: results[0].passphrase
         });
       } catch (err) {
-        error("Error while fetching household data.", err);
+        error("Error while fetching invite link.", 5, err);
       }
     } else {
-      fail("Please join a household to use this feature.");
+      fail("Please join a household to use this feature.",0);
     }
   }
 });

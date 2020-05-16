@@ -23,11 +23,11 @@ module.exports = ({ db }) => ({
         );
         success("Task updated successfully.");
       } catch (err) {
-        error("Error while deleting task in database.", err);
+        error("Error while deleting task in database.", 3, err);
       }
 
     } catch (err) {
-      error("Error while fetching specified user from database.", err);
+      error("Error while fetching specified user from database.", 0, err);
     }
   }
 });

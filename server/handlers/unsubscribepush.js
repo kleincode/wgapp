@@ -28,12 +28,12 @@ module.exports = ({ db }) => ({
         [{ uid }, { endpoint }, { p256dh }, { auth }]
       );
       if(affectedRows < 1) {
-        fail("Invalid subscription credentials.");
+        fail("Invalid subscription credentials.", 0);
       } else {
         success("Unsubscribed.");
       }
     } catch(err) {
-      error("Error while removing entry from database.", err);
+      error("Error while removing push subsribtion from database.", 0, err);
     }
   }
 });

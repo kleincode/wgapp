@@ -4,8 +4,7 @@ const Helpers = require("./Helpers");
 
 module.exports = {
   registerJobs(db) {
-    //Helpers.sendNotificationToUser(db, 7, "It works!!!");
-    console.log("Registering push jobs");
+    Helpers.pushLog({db}, 2, 0, "Server", "Registering push jobs");
 
     let tasksPushJob = Schedule.scheduleJob("* * * * *", async () => {
       try {
@@ -19,7 +18,7 @@ module.exports = {
           }
         });
       } catch (err) {
-        console.error("Error during push job setup", err);
+        Helpers.pushLog({db}, 0, 0, "Server", "Error during push jobs", err);
       }
     });
   }

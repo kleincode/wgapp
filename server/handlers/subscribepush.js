@@ -25,7 +25,7 @@ module.exports = ({ db }) => ({
     try {
       const { results } = await db.query("SELECT firstname, lastname FROM users WHERE ?", { id: uid });
       if(results.length == 0) {
-        error("Error: User not found.");
+        error("Error: User not found.", 1);
       } else {
         const { endpoint, p256dh, auth } = body;
         const subscription = {
@@ -45,15 +45,15 @@ module.exports = ({ db }) => ({
             );
             success("Push notifications setup.");
           } catch(err) {
-            fail("Failed.");
+            error("Error adding pushclient in db.", 0);
           }
         } catch(err) {
-          if(err.statusCode == 410) fail("Subscription expired.");
-          else error("Error while sending test notification.", err);
+          if(err.statusCode == 410) fail("Subscription expired.", 0);
+          else error("Error while sending test notification.", 0, err);
         }
       }
     } catch(err) {
-      error("Error while fetching user data from database.", err);
+      error("Error while fetching user data from database.", 1, err);
     }
   }
 });

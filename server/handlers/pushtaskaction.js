@@ -50,17 +50,17 @@ module.exports = ({ db }) => ({
         try {
         const { results } = await db.query("SELECT id FROM tasklog WHERE hid = ? AND taskid = ? ORDER BY time DESC", [hid, body.id]);
         if (results.length == 0) {
-          fail({message: "Unexpected state. Can't undo task bc it is not in db."});
+          error({message: "Unexpected state. Can't undo task bc it is not in db."}, 3);
         } else {
           await db.query('DELETE FROM tasklog WHERE id = ? AND hid = ?', [results[0].id, hid]);
           success({ message: "Task log removed"});
         }
         } catch (err) {
-          error("Error while deleting task in tasklog.", err);
+          error("Error while deleting task in tasklog.", 3, err);
         }
       }
     } catch (err) {
-      error("Error while inserting new task in tasklog.", err);
+      error("Error while inserting new task in tasklog.", 3, err);
     }
   }
 });

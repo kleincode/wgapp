@@ -37,7 +37,7 @@
                     >
                       <v-list-item-content>
                         <v-list-item-title>
-                          {{ getUserName(member.id) }}
+                          {{ getFullUserName(member.id) }}
                         </v-list-item-title>
                         <v-list-item-subtitle>
                           {{
@@ -123,8 +123,8 @@
                     </thead>
                     <tbody>
                       <tr v-for="(debt, i) in debts" :key="i">
-                        <td>{{ getUserName(debt.paying) }}</td>
-                        <td>{{ getUserName(debt.receiving) }}</td>
+                        <td>{{ getFullUserName(debt.paying) }}</td>
+                        <td>{{ getFullUserName(debt.receiving) }}</td>
                         <td>{{ getCurrency(debt.amount) }}</td>
                       </tr>
                     </tbody>
@@ -253,7 +253,7 @@ export default {
     billhistory: []
   }),
   computed: {
-    ...mapGetters(["getUserName", "getUserInitials"]),
+    ...mapGetters(["getFullUserName", "getUserInitials"]),
     ...mapGetters("userSettings", ["formatDateRelative"]),
     memberTotals() {
       let totals = JSON.parse(JSON.stringify(this.singleMemberTotals));
@@ -323,7 +323,7 @@ export default {
                 id: member.id,
                 total: 0
               });
-              this.memberMap[member] = 0;
+              this.memberMap[member.id] = 0;
             }
           });
           data.monthlyResult.forEach(entry => {
@@ -449,19 +449,19 @@ export default {
       data.memberDebts = [];
       this.memberTotals.forEach(member => {
         data.memberTotals.push({
-          name: this.getUserName(member.id),
+          name: member.id,
           total: Math.round(100 * member.total) / 100
         });
         data.memberDebts.push({
-          name: this.getUserName(member.id),
+          name: member.id,
           total: Math.round(100 * this.memberDebt(member.total)) / 100
         });
       });
       data.debts = [];
       this.debts.forEach(debt => {
         data.debts.push({
-          paying: this.getUserName(debt.paying),
-          receiving: this.getUserName(debt.receiving),
+          paying: debt.paying,
+          receiving: debt.receiving,
           amount: debt.amount
         });
       });
@@ -562,12 +562,10 @@ export default {
       let i = 0;
       let j = sortedPeople.length - 1;
       let debt;
-
       while (i < j) {
         debt = Math.min(-sortedValuesPaid[i], sortedValuesPaid[j]);
         sortedValuesPaid[i] += debt;
         sortedValuesPaid[j] -= debt;
-
         debts.push({
           paying: sortedPeople[i],
           receiving: sortedPeople[j],

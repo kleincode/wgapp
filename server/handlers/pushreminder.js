@@ -17,7 +17,7 @@ module.exports = ({ db }) => ({
         Helpers.sendNotificationToUser(db, results[0].assignedMember, "Your roommates reminded you of " + results[0].name + ". Please don't forget it. If they're just trolling you I'm very sorry. If not: Shame on you!");
         success("Push reminder successfull.");
       } catch (err) {
-        error("Error while fetching assigned member from database.", err);
+        error("Error while fetching assigned member from database.", 0, err);
       }
   }
 

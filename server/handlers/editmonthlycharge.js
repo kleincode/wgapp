@@ -35,14 +35,14 @@ module.exports = ({ db }) => ({
       );
 
       if (affectedRows < 1) {
-        fail("You don't have permission to change this entry.");
+        fail("You don't have permission to change this entry.", 4);
       } else if (changedRows < 1) {
         success("No changes made.");
       } else {
         success("Entry edited.");
       }
     } catch (err) {
-      error("Error while deleting from database.", err);
+      error("Error while deleting monthly charge from database.", 4, err);
     }
   }
 });

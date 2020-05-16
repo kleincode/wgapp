@@ -22,15 +22,15 @@ module.exports = ({ db }) => ({
             [body.id, requestHid]
           );
           if (affectedRows == 0) {
-            fail("You do not have permission to perform this operation.");
+            fail("You do not have permissions to perform this operation.", 4);
           } else {
             success("Monthly charge deleted successfully.");
           }
         } catch (err) {
-          error("Error while deleting monthly charge in database.", err);
+          error("Error while deleting monthly charge in database.", 4, err);
         }
       } catch (err) {
-        error("Error while fetching hid from database.", err);
+        error("Error while fetching hid from database.", 0, err);
       }
     }
   });

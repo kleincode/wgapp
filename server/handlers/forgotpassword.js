@@ -28,7 +28,7 @@ module.exports = ({ db }) => ({
             cpwtoken = uuidv4();
             await db.query("INSERT INTO usertokens (`uid`, `type`, `token`) VALUES (?, ?, ?)", [ uid, "resetpassword", cpwtoken]);
           } catch(err) {
-            error("Error while creating unique token.", err);
+            error("Error while creating unique token.", 1, err);
             return;
           }
           // Create and send payload to e-mail address
@@ -42,13 +42,13 @@ module.exports = ({ db }) => ({
             });
             success("A password reset link was mailed to you.");
           } catch(err) {
-            error("Sending e-mail failed.", err);
+            error("Sending e-mail failed.", 1, err);
           }
         } else {
-          fail("Unknown e-mail address.");
+          fail("Unknown e-mail address.", 1);
         }
       } catch(err) {
-        error("Error while fetching e-mail from database.", err);
+        error("Error while fetching e-mail from database.", 1, err);
       }
     }
   });
