@@ -21,12 +21,15 @@
           accept="image/png, image/jpeg, image/bmp"
           :placeholder="$t('profile.uploadProfilePicture.uploadhere')"
           prepend-icon="mdi-camera"
-          label="Profile Picture"
+          :label="$t('profile.uploadProfilePicture.profilePicture')"
         ></v-file-input>
       </v-container>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="triggerUpload()">{{ $t("commands.upload") }}</v-btn>
+        <v-btn text @click="dialog = false">{{ $t("commands.cancel") }}</v-btn>
+        <v-btn text color="primary" @click="triggerUpload()">{{
+          $t("commands.upload")
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

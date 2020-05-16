@@ -48,7 +48,7 @@
         ></v-text-field>
         <v-text-field
           v-model="nickname"
-          :label="$t('profile.nick')"
+          :label="$t('profile.nickname')"
           outlined
           :hint="$t('profile.edit.nicknameHint')"
         ></v-text-field>

@@ -7,7 +7,7 @@
       <v-spacer></v-spacer>
       <v-select
         v-model="choosenTimeSpan"
-        :items="timespanes"
+        :items="timespans"
         item-value="value"
         :label="$t('finances.chooseTimeSpan')"
         @change="updateTable()"

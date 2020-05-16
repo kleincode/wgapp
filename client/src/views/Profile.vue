@@ -53,9 +53,9 @@
                       <h1 class="headline">************</h1>
                     </v-col>
                     <v-col cols="12" md="4" class="text-right">
-                      <v-btn color="primary" @click="editMode = true"
-                        >edit</v-btn
-                      >
+                      <v-btn color="primary" @click="editMode = true">{{
+                        $t("commands.edit")
+                      }}</v-btn>
                     </v-col>
                   </v-row>
                 </v-col>

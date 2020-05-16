@@ -44,7 +44,8 @@
     "remove": "Remove",
     "activate": "Activate",
     "deactivate": "Deactivate",
-    "upload": "Upload"
+    "upload": "Upload",
+    "edit": "Edit"
   },
   "app": {
     "profile": "My profile",
@@ -309,7 +310,7 @@
       "logout": {
         "button": "Logout",
         "confirmTitle": "Logout and clear local data?",
-        "confirmMessage": "Logging out causes all authorization data saved on your machine to expire and all local household data to be deleted. Except for changing accounts, logging out is usually not necessary. Continue?",
+        "confirmMessage": "Logging out causes all authentication data saved on your machine to expire and all local household data to be deleted. Except for changing accounts, logging out is usually not necessary. Continue?",
         "positiveOption": "Logout",
         "negativeOption": "Cancel"
       },
@@ -348,6 +349,7 @@
     "uploadProfilePicture": {
       "title": "Upload Profile Picture",
       "uploadhere": "Upload your profile picture",
+      "profilePicture": "Profile picture",
       "noImageSpecified": "Please specify an image",
       "imageCompressionError": "Error while compressing the image.",
       "uploaded": "Profile picture uploaded",
@@ -425,7 +427,7 @@
     },
     "billManager": {
       "title": "Bill Manager",
-      "confirmFinish": "Are you sure you want to finish these payments? You can't undo this action.",
+      "confirmFinishPayments": "Are you sure you want to finish these payments? You can't undo this action.",
       "noExpensesAvailable": "No new expenses available",
       "newBill": "New Bill",
       "monthlyTotal": "Monthly total",
