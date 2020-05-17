@@ -5,6 +5,7 @@ import { loadLocaleMessagesAsync } from "@/i18n.js";
 // Specify all values to sync with persistent store and their default values
 const syncEntries = {
   introductionState: 1,
+  updateMessageIndex: -1,
   darkMode: false,
   lang: "en",
   calendarEnabled: false,
@@ -30,6 +31,7 @@ const vuexModule = {
     // These values are set for the short period of time before the persistent settings are fetched
     _initialized: false,
     introductionState: -1,
+    updateMessageIndex: 1,
     darkMode: false,
     lang: "en",
     calendarEnabled: false,

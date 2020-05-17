@@ -131,6 +131,7 @@
           this.$store.state.userSettings.introductionState > 0 && isAuthorized
         "
       ></Introduction>
+      <UpdateMessage v-if="isAuthorized"></UpdateMessage>
     </div>
   </v-app>
 </template>
@@ -140,11 +141,13 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import Introduction from "@/components/dialogs/introduction/Introduction.vue";
+import UpdateMessage from "@/components/dialogs/UpdateMessageDialog.vue";
 
 export default {
   name: "App",
   components: {
-    Introduction
+    Introduction,
+    UpdateMessage
   },
   data: () => ({
     menuVisible: null,
