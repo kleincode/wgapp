@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
+import { userSettings } from "./store/LocalAppStore";
 import store from "./store";
 
 // Displays an "update available" notification. When clicked by the user, the service worker is told to reload (thereby installing the update).
@@ -9,6 +10,7 @@ const notifyUserAboutUpdate = worker => {
     worker.postMessage({ action: "skipWaiting" });
     setTimeout(() => store.commit("update_available", null), 100);
   });
+  userSettings.put({ key: "updatedApp", value: true });
 };
 
 if (process.env.NODE_ENV === "production") {

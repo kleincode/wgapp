@@ -5,7 +5,7 @@ import { loadLocaleMessagesAsync } from "@/i18n.js";
 // Specify all values to sync with persistent store and their default values
 const syncEntries = {
   introductionState: 1,
-  updateMessageIndex: 0,
+  updateMessageIndex: -1,
   darkMode: false,
   lang: "en",
   calendarEnabled: false,
