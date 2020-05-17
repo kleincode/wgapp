@@ -272,7 +272,16 @@
         "signedIn": "Angemeldet ({email})",
         "unknownEmail": "Unbekannte E-Mail",
         "notSignedIn": "Nicht angemeldet",
-        "loadingGapi": "Lade Google API..."
+        "loadingGapi": "Lade Google API...",
+        "autoHomeCalendarStatus": "Status automatischer WG-Kalender",
+        "activated": "Aktiviert",
+        "noCalendar": "Kein Kalender",
+        "autoExplanation": "Du kannst einen Google-Kalender erstellen, der automatisch für alle Mitglieder dieses Haushalts, die die Google-Integration aktiviert haben, freigegeben wird. Wenn neue Personen in deinen Haushalt eintreten oder ihre Integration aktivieren, musst du einfach die Einladungen neu synchronisieren.",
+        "createHomeCalendar": "Erstelle WG-Kalender",
+        "sorryTakeAWhile": "Es tut uns leid, das könnte ein bisschen dauern. Google ist bei sowas irgendwie langsam...",
+        "deleteHomeCalendar": "Lösche WG-Kalender",
+        "resyncInvitations": "Synchronisiere Freigaben",
+        "confirmDelete": "Willst du den WG-Kalender wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden."
       },
       "hue": {
         "title": "Philips Hue",
@@ -555,6 +564,22 @@
       "onemonth": "Monat",
       "fourdays": "4 Tage"
     },
+    "edit": {
+      "AddTitle": "Name",
+      "SelectCalendar": "Kalender auswählen",
+      "AddDescription": "Beschreibung",
+      "ChooseStartDate": "Wähle einen Starttermin",
+      "ChooseStartTime": "Wähle eine Startzeit",
+      "ChooseEndDate": "Wähle einen Endtermin",
+      "ChooseEndTime": "Choose end time",
+      "timeError": "Der Termin muss beginnen bevor er aufhören kann. Außer du spielst schwer mit Gravitation.", 
+      "titleRequired": "Gib einen Namen ein",
+      "titleLength": "Der Name muss kürzer als 60 Zeichen sein",
+      "msgWholeDayEvent": "Ganztägige Termine werden aktuell nicht unterstützt",
+      "msgAdded": "Erfolgreich neuen Termin hinzugefügt.",
+      "msgEdited": "Erfolgreich Termin bearbeitet.",
+      "msgError": "Fehler beim bearbeiten."
+    },
     "noDescription": "Keine Beschreibung"
   },
   "household": {
@@ -675,5 +700,20 @@
     "provideNewPassword": "Bitte gib ein gültiges Passwort an.",
     "updated": "Password aktualisiert. Bitte melde dich nun an.",
     "updateFailed": "Aktualisierung fehlgeschlagen."
+  },
+  "about": {
+    "title": "Über uns",
+    "appInformation": "App Informationen",
+    "version": "Version",
+    "lastUpdated": "zuletzt aktualisiert",
+    "developedIn": "entwickelt in Leipzig, Deutschland",
+    "visitHomepage": "Besuche unsere {homepage} für mehr Informationen über uns, die App und unsere zukünftigen Pläne.",
+    "homepage": "Homepage",
+    "contactUs": "Kontaktiere uns unter",
+    "writtenBy": "Entwickelt von",
+    "specialThanks": "Besonderen Dank an",
+    "andHelpPages": "und die wundervollen Hilfeseiten",
+    "graphicDesign": "und das tolle Grafikdesign",
+    "shoppingList": "und die Einkaufslisten<br> - mögest du nie wieder etwas vergessen"
   }
 }

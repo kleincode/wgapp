@@ -319,7 +319,7 @@ export default {
       if (this.time && this.time != "") {
         let timeAsDate = new Date();
         timeAsDate.setHours(this.time.substr(0, 2));
-        timeAsDate.set(this.time.substr(3, 2));
+        timeAsDate.setMinutes(this.time.substr(3, 2));
         return this.formatTimeHMWithoutS(timeAsDate);
       }
       return "";
@@ -340,6 +340,11 @@ export default {
     this.editMode = !!this.$route.params.id;
     if (this.editMode) {
       this.fetch_settings(this.id);
+    } else {
+      let now = new Date();
+      this.time = now.getHours() + ":" + now.getMinutes();
+      this.selectedMember = this.getHouseholdUsersAsItemList[0].value;
+      this.repetitionUnit = "Weeks";
     }
   },
   methods: {
@@ -415,6 +420,7 @@ export default {
     async postChanges() {
       let id = this.id;
       let name = this.name;
+      let repetitionEvery = parseInt(this.repetitionEvery);
       let icon = this.icon;
       let mode = this.getIDFromMode(this.mode);
       let iteratingMode;
@@ -427,7 +433,6 @@ export default {
       let repetitionDays = this.chosenDays.map(
         day => day[0].toLowerCase() + day.substr(1, day.length)
       );
-      let repetitionEvery = parseInt(this.repetitionEvery);
       let repetitionUnit;
       if (this.repetitionUnits.indexOf(this.repetitionUnit)) {
         repetitionUnit = true;
@@ -435,17 +440,7 @@ export default {
         repetitionUnit = false;
       }
 
-      let startDate = new Date(this.date);
-      startDate.setHours(this.time.substr(0, 2));
-      startDate.setMinutes(this.time.substr(3, 2));
-
-      let reminder;
-      if (this.reminder) {
-        reminder = true;
-      } else {
-        reminder = false;
-      }
-      if (name.length == 0) {
+      if (name == "") {
         this.snackText = this.$t("tasks.editTask.messages.name");
         this.snackbar = true;
         return;
@@ -459,6 +454,17 @@ export default {
         this.snackText = this.$t("tasks.editTask.messages.weekday");
         this.snackbar = true;
         return;
+      }
+
+      let startDate = new Date(this.date);
+      startDate.setHours(this.time.substr(0, 2));
+      startDate.setMinutes(this.time.substr(3, 2));
+
+      let reminder;
+      if (this.reminder) {
+        reminder = true;
+      } else {
+        reminder = false;
       }
       let due;
       switch (mode) {

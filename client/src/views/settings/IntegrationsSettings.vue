@@ -42,28 +42,25 @@
         </div>
       </div>
       <div class="subtitle-1 mt-8 mb-2">
-        Automatic home calendar status
+        {{ $t("settings.integrations.calendar.autoHomeCalendarStatus") }}
         <v-chip v-if="loadingCalendarStatus" small text>Loading...</v-chip>
         <v-chip
           v-if="!(calendarId === undefined) && calendarId != ''"
           color="success"
           small
           text
-          >Activated</v-chip
+          >{{ $t("settings.integrations.calendar.activated") }}</v-chip
         >
         <v-chip
           v-if="!(calendarId === undefined) && calendarId == ''"
           color="warning"
           small
           text
-          >No Calendar</v-chip
+          >{{ $t("settings.integrations.calendar.noCalendar") }}</v-chip
         >
       </div>
       <p>
-        You can create a Google Calendar which will automatically be shared with
-        all members of this household who activated the Google Integration. If
-        new people join your household or activate their integration you need to
-        resync the invitations.
+        {{ $t("settings.integrations.calendar.autoExplanation") }}
       </p>
       <v-btn
         v-if="
@@ -73,14 +70,13 @@
         :disabled="loadingCalendar"
         :loading="loadingCalendar"
         @click="createHomeCalendar"
-        >Create Home Calendar</v-btn
+        >{{ $t("settings.integrations.calendar.createHomeCalendar") }}</v-btn
       >
       <div
         v-if="loadingCalendar || loadingResyncCalendar"
         class="text--secondary overline mt-2"
       >
-        We're sorry, this might take a while. Google is kinda slow with this
-        stuff...
+        {{ $t("settings.integrations.calendar.sorryTakeAWhile") }}
       </div>
       <v-btn
         v-if="
@@ -88,7 +84,7 @@
         "
         :disabled="loadingCalendar"
         @click="deleteDialogVisible = true"
-        >Delete Home Calendar</v-btn
+        >{{ $t("settings.integrations.calendar.deleteHomeCalendar") }}</v-btn
       >
       <v-btn
         v-if="
@@ -98,7 +94,7 @@
         text
         :loading="loadingResyncCalendar"
         @click="resyncCalendar"
-        >Resync invitations</v-btn
+        >{{ $t("settings.integrations.calendar.resyncInvitations") }}</v-btn
       >
       <confirm-dialog
         v-model="deleteDialogVisible"
@@ -107,7 +103,7 @@
         :loading="loadingDeleteCalendar"
         @positive="deleteHomeCalendar"
         @negative="deleteDialogVisible = false"
-        >Do you really want to delete the home calendar? This can't be undone.
+        >{{ $t("settings.integrations.calendar.confirmDelete") }}
       </confirm-dialog>
       <!-- PHILIPS HUE -->
       <div class="title pt-6">{{ $t("settings.integrations.hue.title") }}</div>

@@ -272,7 +272,16 @@
         "signedIn": "Signed in ({email})",
         "unknownEmail": "Unknown email",
         "notSignedIn": "Not signed in",
-        "loadingGapi": "Loading Google API..."
+        "loadingGapi": "Loading Google API...",
+        "autoHomeCalendarStatus": "Automatic home calendar status",
+        "activated": "Activated",
+        "noCalendar": "No calendar",
+        "autoExplanation": "You can create a Google Calendar which will automatically be shared with all members of this household who activated the Google Integration. If new people join your household or activate their integration you need to resync the invitations.",
+        "createHomeCalendar": "Create Home Calendar",
+        "sorryTakeAWhile": "We're sorry, this might take a while. Google is kinda slow with this stuff...",
+        "deleteHomeCalendar": "Delete Home Calendar",
+        "resyncInvitations": "Resync invitations",
+        "confirmDelete": "Do you really want to delete the home calendar? This can't be undone."
       },
       "hue": {
         "title": "Philips Hue",
@@ -554,6 +563,22 @@
       "onemonth": "Month",
       "fourdays": "4 days"
     },
+    "edit": {
+      "AddTitle": "Add title",
+      "SelectCalendar": "Select calendar",
+      "AddDescription": "Add description",
+      "ChooseStartDate": "Choose start date",
+      "ChooseStartTime": "Choose start time",
+      "ChooseEndDate": "Choose end date",
+      "ChooseEndTime": "Choose end time",
+      "timeError": "The end time must be after the start time. Unless you mess up gravitation..", 
+      "titleRequired": "A title is required",
+      "titleLength": "Title must be less than 60 characters",
+      "msgWholeDayEvent": "Whole day events are currently not supported",
+      "msgAdded": "Successfully added new event",
+      "msgEdited": "Successfully edit the event",
+      "msgError": "Error editing event"
+    },
     "noDescription": "No description"
   },
   "household": {
@@ -675,5 +700,20 @@
     "provideNewPassword": "Please provide a valid password.",
     "updated": "Password updated. Please login.",
     "updateFailed": "Update failed."
+  },
+  "about": {
+    "title": "About",
+    "appInformation": "App Information",
+    "version": "Version",
+    "lastUpdated": "last updated",
+    "developedIn": "developed in Leipzig, Germany",
+    "visitHomepage": "Visit our {homepage} for more information about us and future developments.",
+    "homepage": "homepage",
+    "contactUs": "Contact us at",
+    "writtenBy": "Written by",
+    "specialThanks": "Special thanks for the support from",
+    "andHelpPages": "and our wonderful help pages",
+    "graphicDesign": "and our beautiful graphic design",
+    "shoppingList": "and the shopping lists<br> - may you never forget anything"
   }
 }

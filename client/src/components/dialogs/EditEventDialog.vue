@@ -6,7 +6,7 @@
           <v-text-field
             v-model="title"
             :dark="textColor"
-            label="Add Title"
+            :label="$t('calendar.edit.AddTitle')"
             class="largeTextfield mt-3 mt-9 mb-3 ml-1"
             :rules="titleRules"
             required
@@ -24,14 +24,14 @@
                     return-object
                     item-text="summary"
                     prepend-icon="event"
-                    label="Select calendar"
+                    :label="$t('calendar.edit.SelectCalendar')"
                   ></v-select>
                 </v-col>
                 <v-col cols="12">
                   <v-text-field
                     v-model="desc"
                     prepend-icon="info"
-                    label="Add Description"
+                    :label="$t('calendar.edit.AddDescription')"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6">
@@ -47,7 +47,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="startDateFormated"
-                        label="Choose start date"
+                        :label="$t('calendar.edit.ChooseStartDate')"
                         prepend-icon="event"
                         readonly
                         v-on="on"
@@ -61,14 +61,14 @@
                       :locale="finalLocale"
                     >
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="menu = false"
-                        >Cancel</v-btn
-                      >
+                      <v-btn text color="primary" @click="menu = false">{{
+                        $t("commands.cancel")
+                      }}</v-btn>
                       <v-btn
                         text
                         color="primary"
                         @click="$refs.startDateMenu.save(startDate)"
-                        >OK</v-btn
+                        >{{ $t("commands.ok") }}</v-btn
                       >
                     </v-date-picker>
                   </v-menu>
@@ -88,7 +88,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="startTimeFormatted"
-                        label="Choose start time"
+                        :label="$t('calendar.edit.ChooseStartTime')"
                         prepend-icon="access_time"
                         readonly
                         v-on="on"
@@ -116,7 +116,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="endDateFormated"
-                        label="Choose end date"
+                        :label="$t('calendar.edit.ChooseEndDate')"
                         prepend-icon="event"
                         readonly
                         v-on="on"
@@ -130,14 +130,14 @@
                       :locale="finalLocale"
                     >
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="menu = false"
-                        >Cancel</v-btn
-                      >
+                      <v-btn text color="primary" @click="menu = false">{{
+                        $t("commands.cancel")
+                      }}</v-btn>
                       <v-btn
                         text
                         color="primary"
                         @click="$refs.endDateMenu.save(endDate)"
-                        >OK</v-btn
+                        >{{ $t("commands.ok") }}</v-btn
                       >
                     </v-date-picker>
                   </v-menu>
@@ -157,7 +157,7 @@
                     <template v-slot:activator="{ on }">
                       <v-text-field
                         v-model="endTimeFormatted"
-                        label="Choose end time"
+                        :label="$t('calendar.edit.ChooseEndTime')"
                         prepend-icon="access_time"
                         readonly
                         v-on="on"
@@ -174,7 +174,7 @@
                 </v-col>
               </v-row>
               <v-alert v-if="end <= start" dense type="error">
-                The end time must be after the start time.
+                {{ $t("calendar.edit.timeError") }}
               </v-alert>
             </v-col>
           </v-row>
@@ -185,10 +185,10 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="closeDialog">
-            cancel
+            {{ $t("commands.cancel") }}
           </v-btn>
           <v-btn color="primary" text :disabled="end <= start" @click="save">
-            save
+            {{ $t("commands.save") }}
           </v-btn>
         </v-card-actions>
       </v-form>
@@ -234,14 +234,15 @@ export default {
     endDateMenu: false,
     endDate: "",
     endTimeMenu: false,
-    endTime: "",
-
-    titleRules: [
-      v => !!v || "A title is required",
-      v => v.length <= 60 || "Title must be less than 60 characters"
-    ]
+    endTime: ""
   }),
   computed: {
+    titleRules() {
+      return [
+        v => !!v || this.$t("calendar.edit.titleRequired"),
+        v => v.length <= 60 || this.$t("calendar.edit.titleLength")
+      ];
+    },
     startDateFormated() {
       if (this.startDate != "") {
         return new Date(this.startDate).toLocaleDateString(
@@ -326,7 +327,7 @@ export default {
             this.closeDialog();
             this.$store.dispatch(
               "showSnackbar",
-              "Whole day events are currently not supported"
+              this.$t("calendar.edit.msgWholeDayEvent")
             );
             return;
           }
@@ -375,7 +376,7 @@ export default {
             await addNewEvent(this.selCalendar.id, event);
             this.$store.dispatch(
               "showSnackbar",
-              "Successfully added new event"
+              this.$t("calendar.edit.msgAdded")
             );
             this.$emit("closeSuccessfull");
           } else {
@@ -383,7 +384,7 @@ export default {
             await updateEvent(this.selCalendar.id, this.id, event);
             this.$store.dispatch(
               "showSnackbar",
-              "Successfully edited the event"
+              this.$t("calendar.edit.msgEdited")
             );
             this.$emit("closeSuccessfullEdit", {
               name: this.title,
@@ -392,7 +393,10 @@ export default {
           }
         } catch (err) {
           console.error(err);
-          this.$store.dispatch("showSnackbar", "Error adding event");
+          this.$store.dispatch(
+            "showSnackbar",
+            this.$t("calendar.edit.msgError")
+          );
           this.closeDialog();
         }
         this.loading = false;
