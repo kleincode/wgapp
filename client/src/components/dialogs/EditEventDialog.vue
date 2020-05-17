@@ -87,7 +87,7 @@
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="startTime"
+                        v-model="startTimeFormatted"
                         label="Choose start time"
                         prepend-icon="access_time"
                         readonly
@@ -156,7 +156,7 @@
                   >
                     <template v-slot:activator="{ on }">
                       <v-text-field
-                        v-model="endTime"
+                        v-model="endTimeFormatted"
                         label="Choose end time"
                         prepend-icon="access_time"
                         readonly
@@ -197,7 +197,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { getForegroundColor } from "@/assets/colorHelper.js";
 import { addNewEvent, updateEvent, rfc3339 } from "@/assets/googleCalendar.js";
 
@@ -258,6 +258,24 @@ export default {
       }
       return "";
     },
+    startTimeFormatted() {
+      if (this.startTime && this.startTime != "") {
+        let timeAsDate = new Date();
+        timeAsDate.setHours(this.startTime.substr(0, 2));
+        timeAsDate.setMinutes(this.startTime.substr(3, 2));
+        return this.formatTimeHMWithoutS(timeAsDate);
+      }
+      return "";
+    },
+    endTimeFormatted() {
+      if (this.endTime && this.endTime != "") {
+        let timeAsDate = new Date();
+        timeAsDate.setHours(this.endTime.substr(0, 2));
+        timeAsDate.setMinutes(this.endTime.substr(3, 2));
+        return this.formatTimeHMWithoutS(timeAsDate);
+      }
+      return "";
+    },
     finalLocale() {
       return this.locale || navigator.language;
     },
@@ -281,7 +299,8 @@ export default {
     textColor() {
       return getForegroundColor(this.selCalendar.backgroundColor) == "white";
     },
-    ...mapState("userSettings", ["locale"])
+    ...mapState("userSettings", ["locale"]),
+    ...mapGetters("userSettings", ["formatTimeHMWithoutS"])
   },
   watch: {
     show(val) {

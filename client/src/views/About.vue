@@ -72,7 +72,7 @@ export default {
   data: () => ({
     help: [
       {
-        name: "Max ...",
+        name: "Erik ...",
         work: "and our wonderful help pages"
       },
       {

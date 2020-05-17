@@ -88,7 +88,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     v-show="mode != 'On-Demand'"
-                    v-model="date"
+                    v-model="dateFormated"
                     :label="$t('tasks.editTask.chooseStartDay')"
                     prepend-icon="event"
                     readonly
@@ -98,6 +98,7 @@
                 </template>
                 <v-date-picker
                   v-model="date"
+                  :locale="finaleLocale"
                   @input="startDateMenu = false"
                 ></v-date-picker>
               </v-menu>
@@ -117,7 +118,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     v-show="mode != 'On-Demand'"
-                    v-model="time"
+                    v-model="timeFormatted"
                     :label="$t('tasks.editTask.chooseTaskTime')"
                     prepend-icon="access_time"
                     readonly
@@ -128,7 +129,7 @@
                 <v-time-picker
                   v-if="startTimeMenu"
                   v-model="time"
-                  format="24hr"
+                  :format="timeFormat"
                   full-width
                   @click:minute="$refs.menu.save(time)"
                 ></v-time-picker>
@@ -178,13 +179,13 @@
           <v-btn large color="primary" @click="postChanges()">{{
             $t("commands.save")
           }}</v-btn>
-          <v-btn large :to="{ name: 'Tasks' }">{{
+          <v-btn large :to="{ name: 'Tasks' }" text>{{
             $t("commands.cancel")
           }}</v-btn
           ><v-divider class="mx-4" inset vertical></v-divider>
           <v-dialog v-model="deleteDialog" width="500">
             <template v-slot:activator="{ on }">
-              <v-btn large outlined color="error darken-2" v-on="on">{{
+              <v-btn large outlined color="error darken-2" text v-on="on">{{
                 $t("commands.delete")
               }}</v-btn>
             </template>
@@ -217,7 +218,7 @@
 <script>
 import IconChooser from "@/components/IconChooser.vue";
 import icons from "@/assets/icons.js";
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 import {
   computeNextDueDay,
@@ -305,6 +306,33 @@ export default {
         }
       ];
     },
+    dateFormated() {
+      if (this.date != "") {
+        return new Date(this.date).toLocaleDateString(this.locale || undefined);
+      }
+      return "";
+    },
+    finaleLocale() {
+      return this.locale || navigator.language;
+    },
+    timeFormatted() {
+      if (this.time && this.time != "") {
+        let timeAsDate = new Date();
+        timeAsDate.setHours(this.time.substr(0, 2));
+        timeAsDate.set(this.time.substr(3, 2));
+        return this.formatTimeHMWithoutS(timeAsDate);
+      }
+      return "";
+    },
+    timeFormat() {
+      if (this.finaleLocale.includes("en")) {
+        return "ampm";
+      } else {
+        return "24hr";
+      }
+    },
+    ...mapGetters("userSettings", ["formatTimeHMWithoutS"]),
+    ...mapState("userSettings", ["locale"]),
     ...mapGetters(["getHouseholdUsersAsItemList"])
   },
   mounted() {

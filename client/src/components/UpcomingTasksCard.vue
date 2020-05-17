@@ -42,8 +42,11 @@
           <v-list-item-content>
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
-              <div class="overline pl-2 pt-1">
+              <div v-if="!task.missed" class="overline pl-2 pt-1">
                 - {{ formatDateRelative(task.nextDueDay) }}
+              </div>
+              <div v-else class="overline pl-2 pt-1">
+                - {{ formatDateRelative(task.lastDueDay) }}
               </div>
             </v-list-item-title>
             <v-list-item-subtitle>

@@ -54,7 +54,7 @@
               <br />
               <v-chip>
                 <v-avatar
-                  :color="!userImages[task.assigned] ? 'primary' : ''"
+                  :color="!userImages[task.working] ? 'primary' : ''"
                   left
                 >
                   <v-img

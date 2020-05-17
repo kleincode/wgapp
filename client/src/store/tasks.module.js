@@ -247,6 +247,9 @@ const vuexModule = {
     // (state, getters, rootState, rootGetters)
     getTodaysTasks(state, getters) {
       return getters.timedTasks.filter(task => {
+        if (task.missed) {
+          return true;
+        }
         if (task.mode == 0) {
           return isToday(task.dueDay, new Date());
         } else {
