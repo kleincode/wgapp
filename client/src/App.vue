@@ -48,7 +48,7 @@
                 >{{ userFirstName }} {{ userLastName }}</v-list-item-title
               >
               <v-list-item-subtitle>{{ userEmail }}</v-list-item-subtitle>
-              <v-list-item-subtitle v-if="userInHousehold">
+              <v-list-item-subtitle>
                 <v-icon small>account_circle</v-icon>&nbsp;
                 <router-link class="white--text" :to="{ name: 'Profile' }">
                   {{ $t("app.profile") }}

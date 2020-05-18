@@ -59,7 +59,8 @@ let store = new Vuex.Store({
       state.snackbarShow = visible;
     },
     update_household_users(state, users) {
-      state.userInHousehold = !!users && !!Object.keys(users).length;
+      state.userInHousehold =
+        state.offline || (!!users && !!Object.keys(users).length); //temporary. Goal: Save householdState of user in offline db
       state.householdUsers = users;
     },
     update_available(state, callback) {

@@ -30,7 +30,11 @@
                 three-line
                 :value="member.id"
               >
-                <v-list-item-avatar size="48" color="primary" left>
+                <v-list-item-avatar
+                  size="48"
+                  :color="userImages[member.id] ? '' : 'primary'"
+                  left
+                >
                   <v-img
                     v-show="userImages[member.id]"
                     :src="userImages[member.id]"
