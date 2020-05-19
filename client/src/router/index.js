@@ -162,7 +162,11 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.name != "Login" && !store.getters.isAuthorized)
     next({ name: "Login", params: { redirect: to } });
-  else next();
+  else if (!store.getters.userInHousehold && 
+    !(to.name == "Dashboard" || to.name == "Settings" || to.name == "Profile" 
+    || to.name == "Join Household" || to.name == "Create Household")) {
+      next({ name: "Dashboard", params: { redirect: to } });
+  } else next();
 });
 
 export default router;
