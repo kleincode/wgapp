@@ -677,6 +677,13 @@
       "tasksPage": "Tasks page",
       "notificationSentTo": "Notification sent to {name}."
     },
+    "calendar": {
+      "title": "Upcoming events",
+      "noEvents": "No events",
+      "configError": "This widget is not configured correctly.",
+      "today": "Today",
+      "tomorrow": "Tomorrow"
+    },
     "doNotDisturb": {
       "title": "Do Not Disturb",
       "updateUserStatusError": "Error toggling user status."

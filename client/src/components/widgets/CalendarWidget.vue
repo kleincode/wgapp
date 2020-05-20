@@ -1,47 +1,56 @@
 <template>
   <Widget
-    title="Upcoming events"
+    :title="$t('widgets.calendar.title')"
     :loading="loading"
+    :error="error"
     :context-items="contextItems"
     @context-action="contextAction"
   >
-    <v-carousel
-      v-if="upcomingEvents.length > 0"
-      cycle
-      hide-delimiter-background
-      :show-arrows="false"
-      height="105"
-      delimiter-icon="fiber_manual_record"
-      class="bottom-carousel"
-      :interval="9000"
-      :dark="$vuetify.theme.dark"
-      :light="!$vuetify.theme.dark"
-    >
-      <v-carousel-item v-for="(event, i) in upcomingEvents" :key="i">
-        <v-row align="center" justify="center">
-          <v-col cols="2">
-            <v-icon x-large :color="event.color">event</v-icon>
-          </v-col>
-          <v-col cols="8">
-            <div class="headline">{{ event.summary }}</div>
-            <div class="overline">
-              {{ formattedTime(event) }}
-            </div>
-          </v-col>
-        </v-row>
-      </v-carousel-item>
-    </v-carousel>
-    <div v-else>
-      <v-row
-        class="headline text--disabled mt-3"
-        height="120"
-        justify="center"
-        align="center"
+    <template v-if="!error">
+      <v-carousel
+        v-if="upcomingEvents.length > 0"
+        cycle
+        hide-delimiter-background
+        :show-arrows="false"
+        height="105"
+        delimiter-icon="fiber_manual_record"
+        class="bottom-carousel"
+        :interval="9000"
+        :dark="$vuetify.theme.dark"
+        :light="!$vuetify.theme.dark"
       >
-        <v-icon class="mr-1">event</v-icon>
-        No events
-      </v-row>
-    </div>
+        <v-carousel-item v-for="(event, i) in upcomingEvents" :key="i">
+          <v-row align="center" justify="center">
+            <v-col cols="2">
+              <v-icon x-large :color="event.color">event</v-icon>
+            </v-col>
+            <v-col cols="8">
+              <div class="headline">{{ event.summary }}</div>
+              <div class="overline">
+                {{ formattedTime(event) }}
+              </div>
+            </v-col>
+          </v-row>
+        </v-carousel-item>
+      </v-carousel>
+      <div v-else>
+        <v-row
+          class="headline text--disabled mt-3"
+          height="120"
+          justify="center"
+          align="center"
+        >
+          <v-icon class="mr-1">event</v-icon>
+          {{ $t("widgets.calendar.noEvents") }}
+        </v-row>
+      </div>
+    </template>
+    <template v-else>
+      <p>{{ $t("widgets.calendar.configError") }}</p>
+      <v-btn text to="/settings/dashboard">{{
+        $t("navigation.settings")
+      }}</v-btn>
+    </template>
   </Widget>
 </template>
 
@@ -67,6 +76,11 @@ export default {
     upcomingEvents: []
   }),
   computed: {
+    error() {
+      return (
+        this._initialized && (!this.calendarEnabled || this.gapiNotSignedIn)
+      );
+    },
     contextItems() {
       return [
         {
@@ -176,17 +190,17 @@ export default {
         //all day event
         let start = new Date(event.start.date);
         if (isToday(start, new Date())) {
-          return "Today";
+          return this.$t("widgets.calendar.today");
         } else {
-          return "Tomorrow";
+          return this.$t("widgets.calendar.tomorrow");
         }
       } else {
         let start = new Date(event.start.dateTime);
         let day = "";
         if (isToday(start, new Date())) {
-          day = "Today";
+          day = this.$t("widgets.calendar.today");
         } else {
-          day = "Tomorrow";
+          day = this.$t("widgets.calendar.tomorrow");
         }
 
         let time = this.formatTimeHMWithoutS(start);

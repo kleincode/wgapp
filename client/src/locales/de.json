@@ -685,6 +685,13 @@
       "title": "Zuhause",
       "msg": "\"Ich bin zuhause!\""
     },
+    "calendar": {
+      "title": "Anstehende Termine",
+      "noEvents": "Keine Termine",
+      "configError": "Dieses Widget ist nicht richtig konfiguriert.",
+      "today": "Heute",
+      "tomorrow": "Morgen"
+    },
     "finances": {
       "title": "Finanzen",
       "unnamedExpense": "Unbenannte Ausgabe",
