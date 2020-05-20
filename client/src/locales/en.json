@@ -246,6 +246,11 @@
         "description": "This widget makes sure things are getting done in your home. No one ever dared to question its authority.",
         "enableWidget": "Enable tasks widget"
       },
+      "calendar": {
+        "title": "Calendar Widget",
+        "description": "You will never forget an event anymore. This widget will display you upcoming events.",
+        "enableWidget": "Enable calendar widget"
+      },
       "finances": {
         "title": "Finances Widget",
         "description": "Never lose track of your household expenses so not a single penny will go missing.",
@@ -671,6 +676,13 @@
       "done": "You're done for today!",
       "tasksPage": "Tasks page",
       "notificationSentTo": "Notification sent to {name}."
+    },
+    "calendar": {
+      "title": "Upcoming events",
+      "noEvents": "No events",
+      "configError": "This widget is not configured correctly.",
+      "today": "Today",
+      "tomorrow": "Tomorrow"
     },
     "doNotDisturb": {
       "title": "Do Not Disturb",
