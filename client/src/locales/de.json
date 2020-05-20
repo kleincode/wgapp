@@ -251,6 +251,11 @@
         "description": "Sei immer auf dem neuesten Stand deiner Finanzen, damit dir kein einziger Cent durch die Lappen geht. Die Steuern macht es dir nicht.",
         "enableWidget": "Aktiviere Finanzen-Widget"
       },
+      "calendar": {
+        "title": "Kalender",
+        "description": "Du wirst nie wieder einen Termin vergessen. Dieses Widget wird dir alle Termine der nächsten 24h anzeigen.",
+        "enableWidget": "Aktiviere Kalender-Widget"
+      },
       "disturb": {
         "title": "Nicht stören",
         "description": "Gehen dir deine Zimmergenossen auf die Nerven? Steht eine wichtige Prüfung an? Oder ist heute einfach wieder einer dieser Tage, wo jeder Augenkontakt schon zu viel Kontakt ist? Dann verlass' dich auf die Dienste dieses Widgets.",

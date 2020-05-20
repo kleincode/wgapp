@@ -114,6 +114,17 @@
           value="k"
         ></v-radio>
       </v-radio-group>
+      <!-- CALENDAR WIDGET -->
+      <div id="calendar" class="title pt-2">
+        {{ $t("settings.dashboard.calendar.title") }}
+      </div>
+      <p>
+        {{ $t("settings.dashboard.calendar.description") }}
+      </p>
+      <v-switch
+        v-model="calendarWidgetEnabled"
+        :label="$t('settings.dashboard.calendar.enableWidget')"
+      ></v-switch>
       <!-- TASKS WIDGET -->
       <div id="tasks" class="title pt-2">
         {{ $t("settings.dashboard.tasks.title") }}
@@ -233,6 +244,17 @@ export default {
       },
       get() {
         return this.$store.state.userSettings.financesWidgetEnabled;
+      }
+    },
+    calendarWidgetEnabled: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "calendarWidgetEnabled",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.calendarWidgetEnabled;
       }
     },
     statusWidgetEnabled: {
