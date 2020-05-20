@@ -163,7 +163,7 @@ router.beforeEach((to, from, next) => {
   if (to.name != "Login" && !store.getters.isAuthorized)
     next({ name: "Login", params: { redirect: to } });
   else if (
-    !store.getters.userInHousehold &&
+    !store.state.userInHousehold &&
     !(
       to.name == "Dashboard" ||
       to.name == "Settings" ||
