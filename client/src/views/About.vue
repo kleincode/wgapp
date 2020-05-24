@@ -59,10 +59,8 @@
                   <v-img src="@/assets/jeff-without.svg"></v-img>
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title v-html="person.name"></v-list-item-title>
-                  <v-list-item-subtitle
-                    v-html="person.work"
-                  ></v-list-item-subtitle>
+                  <v-list-item-title>{{ person.name }}</v-list-item-title>
+                  <v-list-item-subtitle>{{ person.work }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>

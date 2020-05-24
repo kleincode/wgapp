@@ -1,3 +1,4 @@
+import Vue from "vue";
 import { userSettings } from "./LocalAppStore";
 import i18n from "@/i18n";
 import { loadLocaleMessagesAsync } from "@/i18n.js";
@@ -58,7 +59,7 @@ const vuexModule = {
       state._initialized = value;
     },
     set_key(state, { key, value }) {
-      state[key] = value;
+      Vue.set(state, key, value);
       userSettings.put({ key, value });
     }
   },

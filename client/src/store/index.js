@@ -18,7 +18,7 @@ let store = new Vuex.Store({
     userFirstName: localStorage.getItem("user_firstname"),
     userLastName: localStorage.getItem("user_lastname"),
     userNickName: localStorage.getItem("user_nickname"),
-    userInHousehold: false,
+    userInHousehold: true,
     snackbarShow: false,
     snackbarMessage: "",
     householdUsers: {},

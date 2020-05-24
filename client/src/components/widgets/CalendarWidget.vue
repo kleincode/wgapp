@@ -8,7 +8,7 @@
   >
     <template v-if="!error">
       <v-carousel
-        v-if="upcomingEvents.length > 0"
+        v-if="upcomingEvents && upcomingEvents.length > 0"
         cycle
         hide-delimiter-background
         :show-arrows="false"
@@ -25,7 +25,7 @@
               <v-icon x-large :color="event.color">event</v-icon>
             </v-col>
             <v-col cols="8">
-              <div class="headline">{{ event.summary }}</div>
+              <div class="headline headline-break">{{ event.summary }}</div>
               <div class="overline">
                 {{ formattedTime(event) }}
               </div>
@@ -151,14 +151,17 @@ export default {
       let calendars = await listCalendars();
       let calIds = [];
 
-      this.calendarsSelected.forEach(cal => {
-        let index = calendars.findIndex(i => i.id === cal.id);
-        if (index == -1) {
+      this.calendarsSelected.forEach(calid => {
+        let cal = calendars.find(el => el.id == calid);
+        if (cal) {
+          calIds.push(calid);
+        } else {
           //not in list anymore
           console.log("deleted", cal);
-          this.calendarsSelected.splice(this.calendarsSelected.indexOf(cal), 1);
-        } else {
-          calIds.push(calendars[index].id);
+          this.calendarsSelected.splice(
+            this.calendarsSelected.indexOf(calid),
+            1
+          );
         }
       });
 
@@ -210,3 +213,11 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.headline-break {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+</style>

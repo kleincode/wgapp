@@ -295,11 +295,13 @@ export default {
       set(val) {
         this.$store.commit("userSettings/set_key", {
           key: "calendarsSelected",
-          value: val
+          value: val.map(el => el.id)
         });
       },
       get() {
-        return this.$store.state.userSettings.calendarsSelected;
+        const selectedIds = this.$store.state.userSettings.calendarsSelected;
+        console.log("selected cal ids", selectedIds);
+        return this.allCalendars.filter(el => selectedIds.includes(el.id));
       }
     },
     calendarView: {
@@ -310,6 +312,10 @@ export default {
         });
       },
       get() {
+        console.log(
+          "selected cal view",
+          this.$store.state.userSettings.calendarView
+        );
         return this.$store.state.userSettings.calendarView;
       }
     },
@@ -342,6 +348,7 @@ export default {
       await this.updateG();
       this.$refs.calendar.checkChange();
     }
+    await this.$store.dispatch("userSettings/sync");
     this.loading = false;
   },
   methods: {
