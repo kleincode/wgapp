@@ -18,9 +18,34 @@ const routes = [
   },
   {
     path: "/finances",
-    name: "Finances",
     component: () =>
-      import(/* webpackChunkName: "finances" */ "../views/Finances.vue")
+      import(/* webpackChunkName: "finances" */ "../views/Finances.vue"),
+    children: [
+      {
+        path: "",
+        component: () =>
+          import(
+            /* webpackChunkName: "finances" */ "../views/finances/FinancesOverview.vue"
+          ),
+        name: "FinancesOverview"
+      },
+      {
+        path: "expenses",
+        component: () =>
+          import(
+            /* webpackChunkName: "finances" */ "../views/finances/ExpensesTable.vue"
+          ),
+        name: "ExpensesTable"
+      },
+      {
+        path: "monthlycharges",
+        component: () =>
+          import(
+            /* webpackChunkName: "finances" */ "../views/finances/MonthlyCharges.vue"
+          ),
+        name: "MonthlyCharges"
+      }
+    ]
   },
   {
     path: "/finances/billmanager",

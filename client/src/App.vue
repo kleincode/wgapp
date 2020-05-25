@@ -6,7 +6,7 @@
           <v-img src="@/assets/jeff-without.svg" class="mb-3"></v-img>
         </v-col>
         <v-col cols="12" class="text-center">
-          <h1 class="display-1 black--text mb-6">Jeff - Organizer</h1>
+          <h1 class="display-1 black--text mb-6">Roomie</h1>
           <v-progress-circular
             indeterminate
             :size="70"
@@ -15,7 +15,7 @@
             class="mb-4"
           ></v-progress-circular>
           <br />
-          <span class="black--text overline">loading</span>
+          <span class="black--text overline">Moving furniture...</span>
         </v-col>
       </v-row>
     </v-overlay>
@@ -100,20 +100,19 @@
           aria-label="Menu"
           @click="menuVisible = !menuVisible"
         ></v-app-bar-nav-icon>
-        <v-toolbar-title>Jeff</v-toolbar-title>
+        <v-toolbar-title>Roomie</v-toolbar-title>
       </v-app-bar>
 
       <v-content>
-        <v-container fluid>
-          <transition name="fade-transition" mode="out-in">
-            <router-view></router-view>
-          </transition>
-        </v-container>
+        <transition name="fade-transition" mode="out-in">
+          <router-view></router-view>
+        </transition>
       </v-content>
 
       <v-footer app inset class="text-center">
         <div style="width: 100%;">{{ $t("app.footer") }}</div>
       </v-footer>
+
       <v-snackbar v-model="snackbarShow" :timeout="4000">
         <span>{{ snackbarMessage }}</span>
         <v-btn text small color="red" @click="snackbarShow = false">{{
