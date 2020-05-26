@@ -75,6 +75,11 @@
     "checked": "Checked",
     "reminderMessage": "You've reminded {user} of {task}",
     "taskCheckedFor": "for: {name}",
+    "tabs": {
+      "overview": "Overview",
+      "list": "Task list",
+      "log": "Log"
+    },
     "errors": {
       "fetchTask": "Could not fetch tasks. Please try again later.",
       "checkTask": "Could not check task. Please try again later.",

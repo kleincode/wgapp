@@ -1,6 +1,26 @@
 <template>
   <v-container>
     <router-view :user-images="userImages" :loading="loading"></router-view>
+    <v-bottom-navigation
+      :style="{ left: $vuetify.application.left + 'px' }"
+      grow
+      fixed
+      color="primary"
+      class="elevation-24"
+    >
+      <v-btn :to="{ name: 'TasksOverview' }" exact>
+        <span>{{ $t("tasks.tabs.overview") }}</span>
+        <v-icon>bar_chart</v-icon>
+      </v-btn>
+      <v-btn :to="{ name: 'ViewTasks' }" exact>
+        <span>{{ $t("tasks.tabs.list") }}</span>
+        <v-icon>list</v-icon>
+      </v-btn>
+      <v-btn :to="{ name: 'TasksLog' }" exact>
+        <span>{{ $t("tasks.tabs.log") }}</span>
+        <v-icon>history</v-icon>
+      </v-btn>
+    </v-bottom-navigation>
   </v-container>
 </template>
 <script>
