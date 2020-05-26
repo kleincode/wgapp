@@ -1,229 +1,282 @@
 <template>
-  <v-container>
-    <confirm-dialog
-      v-model="finishPaymentDialog"
-      @positive="finishPayments"
-      @negative="finishPaymentDialog = false"
-      >{{ $t("finances.billManager.confirmFinishPayments") }}</confirm-dialog
-    >
-    <div style="display:flex">
-      <h1 class="display-1">{{ $t("finances.billManager.title") }}</h1>
-      <v-spacer></v-spacer>
-      <div class="caption mr-2 mt-1">{{ $t("finances.lastBill") }}:</div>
-      {{ formatDateRelative(lastBill) }}
-    </div>
-
-    <v-row>
-      <v-col cols="12" lg="8">
-        <v-card :loading="loading" style="height: 100%" :elevation="6">
-          <v-card-title class="headline">{{
-            $t("finances.billManager.newBill")
-          }}</v-card-title>
-          <v-card-text>
-            <p v-if="empty" class="text-center headline pt-12 pb-12">
-              {{ $t("finances.billManager.noExpensesAvailable") }}
-            </p>
-            <v-row v-if="!empty">
-              <v-col cols="12" md="4">
-                <v-list three-line avatar>
-                  <v-subheader>{{ $t("general.members") }}</v-subheader>
-                  <template v-for="(member, index) in memberTotals">
-                    <v-divider :key="index"></v-divider>
-                    <v-list-item
-                      :key="'finmem-' + member.id + index"
-                      three-line
-                      :value="member.id"
-                      class="text-center"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title>
-                          {{ getFullUserName(member.id) }}
-                        </v-list-item-title>
-                        <v-list-item-subtitle>
-                          {{
-                            getCurrency(
-                              (memberDebt(member.total) / 100).toFixed(2)
-                            )
-                          }}
-                        </v-list-item-subtitle>
-                        <v-progress-linear
-                          :value="memberProgress(member.total)"
-                          color="transparent"
-                          style="max-width: 50%"
-                          :background-color="
-                            negativeMember(member.total) ? 'red' : 'transparent'
-                          "
-                        ></v-progress-linear>
-                        <v-progress-linear
-                          :value="memberProgress(member.total)"
-                          :color="
-                            negativeMember(member.total)
-                              ? 'transparent'
-                              : 'primary'
-                          "
-                          style="max-width: 50%"
-                        ></v-progress-linear>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-                  <v-divider></v-divider>
-                </v-list>
-              </v-col>
-              <v-col cols="12" md="8">
-                <v-row>
-                  <v-col
-                    v-if="includeMonthlyCharges"
-                    cols="12"
-                    md="4"
-                    class="text-center"
-                  >
-                    <div class="overline">
-                      {{ $t("finances.billManager.monthlyTotal") }}
-                    </div>
-                    <div class="display-1">{{ getCurrency(monthlyTotal) }}</div>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    :md="includeMonthlyCharges ? '4' : '6'"
-                    class="text-center primary--text"
-                  >
-                    <div class="overline">
-                      {{ $t("finances.billManager.total") }}
-                    </div>
-                    <div class="display-1">{{ getCurrency(total) }}</div>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    :md="includeMonthlyCharges ? '4' : '6'"
-                    class="text-center"
-                  >
-                    <div class="overline">
-                      {{ $t("finances.billManager.perPerson") }}
-                    </div>
-                    <div class="display-1">{{ getCurrency(mean) }}</div>
-                  </v-col>
-                </v-row>
-                <h2 class="headline mt-4 mb-2">
-                  {{ $t("finances.compensationPayments") }}:
-                </h2>
-                <v-simple-table :loading="loading">
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
+  >
+    <template v-slot:activator="{ on }">
+      <v-btn color="primary" block v-on="on">{{
+        $t("finances.openBillManager")
+      }}</v-btn>
+    </template>
+    <v-card>
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="dialog = false">
+          <v-icon>close</v-icon>
+        </v-btn>
+        <v-toolbar-title>{{
+          $t("finances.billManager.title")
+        }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-items style="max-width: 50%;">
+          <span
+            class="ma-auto"
+            style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+            >{{ $t("finances.lastBill") }}:
+            {{ formatDateRelative(lastBill) }}</span
+          >
+        </v-toolbar-items>
+      </v-toolbar>
+      <confirm-dialog
+        v-model="finishPaymentDialog"
+        @positive="finishPayments"
+        @negative="finishPaymentDialog = false"
+        >{{ $t("finances.billManager.confirmFinishPayments") }}</confirm-dialog
+      >
+      <v-container style="padding-bottom: 100px;">
+        <v-row>
+          <v-col
+            cols="12"
+            lg="4"
+            xl="3"
+            :order="$vuetify.breakpoint.smAndDown ? 3 : 1"
+          >
+            <v-card style="height: 100%" :loading="loadingHistory">
+              <v-card-title
+                ><h1 class="headline">
+                  {{ $t("finances.billManager.billHistory") }}
+                </h1></v-card-title
+              >
+              <v-card-text>
+                <v-simple-table>
                   <template v-slot:default>
                     <thead>
                       <tr>
                         <th class="text-left">
-                          {{ $t("finances.billManager.paying") }}
+                          {{ $t("finances.billManager.from") }}
                         </th>
                         <th class="text-left">
-                          {{ $t("finances.billManager.receives") }}
+                          {{ $t("finances.billManager.to") }}
                         </th>
                         <th class="text-left">
-                          {{ $t("finances.billManager.amount") }}
+                          {{ $t("finances.billManager.export") }}
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(debt, i) in debts" :key="i">
-                        <td>{{ getFullUserName(debt.paying) }}</td>
-                        <td>{{ getFullUserName(debt.receiving) }}</td>
-                        <td>{{ getCurrency(debt.amount) }}</td>
+                      <tr v-for="bill in billhistory" :key="bill.id">
+                        <td>
+                          {{
+                            new Date(bill.min).toLocaleDateString(
+                              $store.state.userSettings.locale || undefined
+                            )
+                          }}
+                        </td>
+                        <td>
+                          {{
+                            new Date(bill.max).toLocaleDateString(
+                              $store.state.userSettings.locale || undefined
+                            )
+                          }}
+                        </td>
+                        <td>
+                          <v-btn
+                            icon
+                            @click="
+                              exportHTMLBill(bill.min, bill.max, bill.data)
+                            "
+                            ><v-icon>language</v-icon></v-btn
+                          >
+                          <v-btn
+                            icon
+                            @click="
+                              exportXLSXBill(bill.min, bill.max, bill.data)
+                            "
+                            ><v-icon>table_chart</v-icon></v-btn
+                          >
+                        </td>
                       </tr>
                     </tbody>
                   </template>
                 </v-simple-table>
-              </v-col>
-            </v-row>
-          </v-card-text>
-
-          <v-divider></v-divider>
-
-          <v-card-actions>
-            <v-switch
-              v-model="includeMonthlyCharges"
-              class="pl-2"
-              :label="$t('finances.billManager.includeMonthlyCharges')"
-              @change="splitTotals"
-            ></v-switch>
-            <v-spacer></v-spacer>
-            <v-btn icon @click="exportCurrentBillHTML"
-              ><v-icon>language</v-icon></v-btn
-            >
-            <v-btn icon @click="exportCurrentBillXLSX"
-              ><v-icon>table_chart</v-icon></v-btn
-            >
-            <v-btn text @click="back">
-              {{ $t("commands.back") }}
-            </v-btn>
-            <v-btn
-              color="primary"
-              text
-              :disabled="empty"
-              @click="finishPaymentDialog = true"
-            >
-              {{ $t("finances.billManager.savePayments") }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-      <v-col cols="12" lg="4">
-        <v-card style="height: 100%" :loading="loadingHistory" :elevation="6">
-          <v-card-title
-            ><h1 class="headline">
-              {{ $t("finances.billManager.billHistory") }}
-            </h1></v-card-title
+              </v-card-text>
+            </v-card>
+          </v-col>
+          <v-col cols="1" class="text-center d-none d-lg-block" :order="2">
+            <v-divider vertical></v-divider>
+          </v-col>
+          <v-col
+            cols="12"
+            lg="7"
+            xl="8"
+            :order="$vuetify.breakpoint.smAndDown ? 1 : 3"
           >
-          <v-card-text>
-            <v-simple-table>
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left">
-                      {{ $t("finances.billManager.from") }}
-                    </th>
-                    <th class="text-left">
-                      {{ $t("finances.billManager.to") }}
-                    </th>
-                    <th class="text-left">
-                      {{ $t("finances.billManager.export") }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="bill in billhistory" :key="bill.id">
-                    <td>
-                      {{
-                        new Date(bill.min).toLocaleDateString(
-                          $store.state.userSettings.locale || undefined
-                        )
-                      }}
-                    </td>
-                    <td>
-                      {{
-                        new Date(bill.max).toLocaleDateString(
-                          $store.state.userSettings.locale || undefined
-                        )
-                      }}
-                    </td>
-                    <td>
-                      <v-btn
-                        icon
-                        @click="exportHTMLBill(bill.min, bill.max, bill.data)"
-                        ><v-icon>language</v-icon></v-btn
+            <v-card :loading="loading" style="height: 100%">
+              <v-card-title class="headline">{{
+                $t("finances.billManager.newBill")
+              }}</v-card-title>
+              <v-card-text>
+                <p v-if="empty" class="text-center headline pt-12 pb-12">
+                  {{ $t("finances.billManager.noExpensesAvailable") }}
+                </p>
+                <v-row v-if="!empty">
+                  <v-col cols="12" md="4">
+                    <v-card :elevation="6" color="accent">
+                      <v-list three-line avatar color="info" dark>
+                        <v-subheader>{{ $t("general.members") }}</v-subheader>
+                        <template v-for="(member, index) in memberTotals">
+                          <v-divider :key="index"></v-divider>
+                          <v-list-item
+                            :key="'finmem-' + member.id + index"
+                            three-line
+                            :value="member.id"
+                            class="text-center"
+                          >
+                            <v-list-item-content>
+                              <v-list-item-title>
+                                {{ getFullUserName(member.id) }}
+                              </v-list-item-title>
+                              <v-list-item-subtitle>
+                                {{
+                                  getCurrency(
+                                    (memberDebt(member.total) / 100).toFixed(2)
+                                  )
+                                }}
+                              </v-list-item-subtitle>
+                              <v-progress-linear
+                                :value="memberProgress(member.total)"
+                                color="transparent"
+                                style="max-width: 50%"
+                                :background-color="
+                                  negativeMember(member.total)
+                                    ? 'red'
+                                    : 'transparent'
+                                "
+                              ></v-progress-linear>
+                              <v-progress-linear
+                                :value="memberProgress(member.total)"
+                                :color="
+                                  negativeMember(member.total)
+                                    ? 'transparent'
+                                    : 'primary'
+                                "
+                                style="max-width: 50%"
+                              ></v-progress-linear>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </template>
+                        <v-divider></v-divider>
+                      </v-list>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" md="8">
+                    <v-row>
+                      <v-col
+                        v-if="includeMonthlyCharges"
+                        cols="12"
+                        md="4"
+                        class="text-center"
                       >
-                      <v-btn
-                        icon
-                        @click="exportXLSXBill(bill.min, bill.max, bill.data)"
-                        ><v-icon>table_chart</v-icon></v-btn
+                        <div class="overline">
+                          {{ $t("finances.billManager.monthlyTotal") }}
+                        </div>
+                        <div class="display-1">
+                          {{ getCurrency(monthlyTotal) }}
+                        </div>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        :md="includeMonthlyCharges ? '4' : '6'"
+                        class="text-center primary--text"
                       >
-                    </td>
-                  </tr>
-                </tbody>
-              </template>
-            </v-simple-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+                        <div class="overline">
+                          {{ $t("finances.billManager.total") }}
+                        </div>
+                        <div class="display-1">{{ getCurrency(total) }}</div>
+                      </v-col>
+                      <v-col
+                        cols="12"
+                        :md="includeMonthlyCharges ? '4' : '6'"
+                        class="text-center"
+                      >
+                        <div class="overline">
+                          {{ $t("finances.billManager.perPerson") }}
+                        </div>
+                        <div class="display-1">{{ getCurrency(mean) }}</div>
+                      </v-col>
+                    </v-row>
+                    <h2 class="headline mt-4 mb-2 info--text" color="info">
+                      <v-icon left large>payment</v-icon>
+                      {{ $t("finances.compensationPayments") }}:
+                    </h2>
+                    <v-simple-table :loading="loading">
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-left">
+                              {{ $t("finances.billManager.paying") }}
+                            </th>
+                            <th class="text-left">
+                              {{ $t("finances.billManager.receives") }}
+                            </th>
+                            <th class="text-left">
+                              {{ $t("finances.billManager.amount") }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="(debt, i) in debts" :key="i">
+                            <td>{{ getFullUserName(debt.paying) }}</td>
+                            <td>{{ getFullUserName(debt.receiving) }}</td>
+                            <td>{{ getCurrency(debt.amount) }}</td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-col>
+                </v-row>
+              </v-card-text>
+
+              <v-divider></v-divider>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
+      <div
+        class="white elevation-6"
+        style="position: fixed; left: 0; bottom: 0; right: 0;"
+      >
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-switch
+            v-model="includeMonthlyCharges"
+            class="pl-2"
+            :label="$t('finances.billManager.includeMonthlyCharges')"
+            @change="splitTotals"
+          ></v-switch>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="exportCurrentBillHTML"
+            ><v-icon>language</v-icon></v-btn
+          >
+          <v-btn icon @click="exportCurrentBillXLSX"
+            ><v-icon>table_chart</v-icon></v-btn
+          >
+          <v-btn text @click="dialog = false">
+            {{ $t("commands.back") }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            :disabled="empty"
+            @click="finishPaymentDialog = true"
+          >
+            {{ $t("finances.billManager.savePayments") }}
+          </v-btn>
+        </v-card-actions>
+      </div>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
 import { mapGetters } from "vuex";
@@ -250,7 +303,8 @@ export default {
     loadingHistory: false,
     finishPaymentDialog: false,
     includeMonthlyCharges: false,
-    billhistory: []
+    billhistory: [],
+    dialog: false
   }),
   computed: {
     ...mapGetters(["getFullUserName", "getUserInitials"]),
@@ -282,13 +336,16 @@ export default {
       return sum;
     }
   },
-  mounted() {
-    this.fetchNewBill();
-    this.fetchBillhistory();
+  watch: {
+    dialog(val) {
+      if (val) {
+        this.fetchNewBill();
+        this.fetchBillhistory();
+      }
+    }
   },
   methods: {
     async fetchNewBill() {
-      this.dialog = true;
       this.loading = true;
       try {
         const { data } = await this.$http.get("/_/fetchnewbill");
@@ -341,10 +398,8 @@ export default {
             "showSnackbar",
             this.$t("finances.billManager.errors.fetchBillDataFailed")
           );
-          this.dialog = false;
         }
       } catch (err) {
-        this.dialog = false;
         this.$store.dispatch(
           "showSnackbar",
           this.$t("finances.billManager.errors.fetchBillDataError")
@@ -488,7 +543,7 @@ export default {
       }
       this.loadingHistory = false;
       this.finishPaymentDialog = false;
-      this.back();
+      this.dialog = false;
     },
 
     async fetchBillhistory() {
@@ -594,9 +649,6 @@ export default {
           currency: this.$store.state.userSettings.currency
         }
       ).format(val);
-    },
-    back() {
-      this.$router.back();
     }
   }
 };

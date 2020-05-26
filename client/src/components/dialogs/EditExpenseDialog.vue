@@ -1,9 +1,9 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn color="primary" dark text class="mb-2" v-on="on"
-        >New expense</v-btn
-      >
+      <v-btn color="primary" dark text class="mb-2" v-on="on">{{
+        $t("finances.newExpense")
+      }}</v-btn>
     </template>
     <v-form ref="form" v-model="formValid" @submit.prevent="save">
       <v-card :loading="loading">

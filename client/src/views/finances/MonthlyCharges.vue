@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-card
-      style="height: 100%"
+      style="height: 100%; max-width: 800px; margin: 0 auto;"
       :loading="loadingMonthlyCharges"
-      :elevation="6"
+      :elevation="$vuetify.breakpoint.smAndDown ? 0 : 6"
     >
       <v-card-title>
         {{ $t("finances.monthlyCharges") }}

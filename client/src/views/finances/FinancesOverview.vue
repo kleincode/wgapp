@@ -18,39 +18,6 @@
             @change="updateTable()"
           ></v-select>
           <v-spacer></v-spacer>
-          <v-dialog v-model="editBudgetDialog" max-width="600px">
-            <template v-slot:activator="{ on }">
-              <v-btn icon color="primary" v-on="on"
-                ><v-icon>edit</v-icon></v-btn
-              >
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">{{
-                  $t("finances.editMonthlyBudget")
-                }}</span>
-              </v-card-title>
-              <v-card-text>
-                <v-text-field
-                  v-model="tempTotalMonthlyBudget"
-                  :label="$t('finances.amount')"
-                  outlined
-                  type="number"
-                  step=".01"
-                  append-icon="euro"
-                ></v-text-field>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn text @click="editBudgetDialog = false">{{
-                    $t("commands.cancel")
-                  }}</v-btn>
-                  <v-btn text color="primary" @click="updateFinancesTarget">
-                    {{ $t("commands.ok") }}
-                  </v-btn>
-                </v-card-actions>
-              </v-card-text>
-            </v-card>
-          </v-dialog>
         </v-card-title>
         <v-container>
           <v-row justify="center">
@@ -69,11 +36,49 @@
             ></v-col>
             <v-col cols="12" md="4">
               <div class="text-center">
-                <div class="overline">
+                <div class="overline pr-6">
                   {{ $t("finances.currentTargetTotal") }}
                 </div>
                 <div class="display-1">
                   {{ getCurrency(relativeTotal) }}
+                  <!-- Edit budget dialog -->
+                  <v-dialog v-model="editBudgetDialog" max-width="600px">
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon color="primary" class="mb-2" v-on="on"
+                        ><v-icon>edit</v-icon></v-btn
+                      >
+                    </template>
+                    <v-card>
+                      <v-card-title>
+                        <span class="headline">{{
+                          $t("finances.editMonthlyBudget")
+                        }}</span>
+                      </v-card-title>
+                      <v-card-text>
+                        <v-text-field
+                          v-model="tempTotalMonthlyBudget"
+                          :label="$t('finances.amount')"
+                          outlined
+                          type="number"
+                          step=".01"
+                          append-icon="euro"
+                        ></v-text-field>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn text @click="editBudgetDialog = false">{{
+                            $t("commands.cancel")
+                          }}</v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="updateFinancesTarget"
+                          >
+                            {{ $t("commands.ok") }}
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card-text>
+                    </v-card>
+                  </v-dialog>
                 </div>
               </div>
             </v-col>
@@ -194,10 +199,8 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" block :to="{ name: 'BillManager' }">{{
-            $t("finances.openBillManager")
-          }}</v-btn></v-card-actions
-        >
+          <BillManager />
+        </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
@@ -207,11 +210,13 @@ import { mapGetters } from "vuex";
 import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 
 import ExpenseChart from "@/components/charts/ExpenseChart.vue";
+import BillManager from "@/components/BillManager.vue";
 
 export default {
   name: "FinancesOverview",
   components: {
-    ExpenseChart
+    ExpenseChart,
+    BillManager
   },
   data: () => ({
     userImages: {},

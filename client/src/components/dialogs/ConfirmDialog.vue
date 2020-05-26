@@ -21,13 +21,13 @@
           :color="!invertColors ? 'red darken-1' : 'green darken-1'"
           text
           @click="onNegativeOption"
-          >{{ negativeOption }}</v-btn
+          >{{ negativeOption || $t("general.no") }}</v-btn
         >
         <v-btn
           :color="invertColors ? 'red darken-1' : 'green darken-1'"
           text
           @click="onPositiveOption"
-          >{{ positiveOption }}</v-btn
+          >{{ positiveOption || $t("general.yes") }}</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -47,11 +47,11 @@ export default {
     },
     positiveOption: {
       type: String,
-      default: "Yes"
+      default: null
     },
     negativeOption: {
       type: String,
-      default: "No"
+      default: null
     },
     loading: {
       type: Boolean,
