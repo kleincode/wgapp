@@ -6,19 +6,22 @@
       :class="cardColor"
       :elevation="6"
       style="height: 100%"
-      :style="'color: ' + textColor"
+      :dark="!$vuetify.theme.isDark"
     >
       <v-row align="stretch" style="height: 100%">
         <v-col cols="12" class="overline pt-0 pl-0 pr-0 pb-1">
           {{ taskMode }}
         </v-col>
         <v-col cols="12" sm="4" md="5" class="pa-3">
-          <v-icon :style="'font-size:' + iconsize" :color="textColor" x-large>{{
+          <v-icon :style="'font-size:' + iconsize" x-large>{{
             getIcon(task.icon)
           }}</v-icon>
         </v-col>
         <v-col cols="12" sm="8" md="7" class="text-left pa-0">
-          <div class="font-regular pt-4 mb-0" :class="fontsize">
+          <div
+            class="font-regular pt-4 mb-0 font-weight-light"
+            :class="fontsize"
+          >
             <p
               class="mb-0"
               style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
@@ -29,11 +32,11 @@
           <div class="body-2 mb-2">{{ task.time }}</div>
         </v-col>
         <v-col cols="12" class="pa-0">
-          <v-btn :color="textColor" icon @click="$emit('checktask', task)">
+          <v-btn icon @click="$emit('checktask', task)">
             <v-icon v-if="task.checked">check_box</v-icon>
             <v-icon v-else>check_box_outline_blank</v-icon>
           </v-btn>
-          <v-btn :color="textColor" icon @click="triggerReminder(task)">
+          <v-btn icon @click="$emit('triggerreminder', task)">
             <v-icon>notifications_active</v-icon>
           </v-btn>
         </v-col>
@@ -90,9 +93,6 @@ export default {
       default: () => {}
     }
   },
-  data: () => ({
-    textColor: "#111111"
-  }),
   computed: {
     iconsize() {
       switch (this.$vuetify.breakpoint.name) {
@@ -108,20 +108,16 @@ export default {
     },
     fontsize() {
       switch (this.$vuetify.breakpoint.name) {
-        case "xl":
-          return "display-1";
-        case "lg":
-          return "display-1";
-        case "md":
+        case "xs":
           return "headline";
         default:
-          return "title";
+          return "display-1";
       }
     },
     cardColor() {
       if (this.task.missed) return "red";
       if (this.task.checked) return "success";
-      return "accent";
+      return "secondary";
     },
     taskMode() {
       switch (this.task.mode) {

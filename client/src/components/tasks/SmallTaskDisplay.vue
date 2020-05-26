@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 80%; width:100%">
+  <div style="height: 70%; width:100%">
     <v-card
       v-if="!!task"
       class="small-main-task text-center"
@@ -7,8 +7,9 @@
       :elevation="6"
       style="height: 100%"
       :style="'color: ' + textColor"
+      :dark="!$vuetify.theme.isDark"
     >
-      <v-row style="height: 100%">
+      <v-row align="stretch" style="height: 100%">
         <v-col cols="12" class="overline pt-0 pl-0 pr-0 pb-1">
           {{ taskMode }}
         </v-col>
@@ -39,7 +40,11 @@
               <v-icon v-if="task.checked">check_box</v-icon>
               <v-icon v-else>check_box_outline_blank</v-icon>
             </v-btn>
-            <v-btn :color="textColor" icon @click="triggerReminder(task)">
+            <v-btn
+              :color="textColor"
+              icon
+              @click="$emit('triggerreminder', task)"
+            >
               <v-icon>notifications_active</v-icon>
             </v-btn>
           </div>
@@ -115,6 +120,7 @@ export default {
 .small-main-task {
   padding: 1em;
   margin: 1em;
+  margin-bottom: 2.5em;
   display: block;
   margin-left: auto;
   margin-right: auto;

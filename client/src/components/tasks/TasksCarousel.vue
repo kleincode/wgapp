@@ -18,12 +18,14 @@
                 :task="task"
                 :user-images="userImages"
                 @checktask="$emit('checktask', task)"
+                @triggerreminder="$emit('triggerreminder', task)"
               ></LargeTaskDisplay>
               <SmallTaskDisplay
                 v-else
                 :task="task"
                 :user-images="userImages"
                 @checktask="$emit('checktask', task)"
+                @triggerreminder="$emit('triggerreminder', task)"
               ></SmallTaskDisplay>
             </v-col>
           </v-row>
