@@ -15,6 +15,8 @@
     "connecting": "Verbinde...",
     "wait": "Warte kurz...",
     "today": "Heute",
+    "yes": "Ja",
+    "no": "Nein",
     "errors": {
       "communication": "Der Server hört nicht auf mich. Lass es uns später noch einmal versuchen.",
       "connect": "Ich kann den Server nicht erreichen.",
@@ -402,6 +404,7 @@
   },
   "finances": {
     "title": "Finanzen",
+    "newExpense": "Neuer Eintrag",
     "chooseTimeSpan": "Wähle Zeitraum",
     "memberExpenses": "Einzelausgaben",
     "expenses": "Ausgabentabelle",
@@ -411,7 +414,7 @@
     "overview": "Ausgabenübersicht",
     "editMonthlyBudget": "Monatliches Budget bearbeiten",
     "name": "Name",
-    "amount": "betrag",
+    "amount": "Betrag",
     "payedByAll": "Bezahlt von allen",
     "currentlyUsed": "Bisher ausgegeben",
     "currentTargetTotal": "Budget",
@@ -421,6 +424,11 @@
     "openBillManager": "Abrechnungen verwalten",
     "memberTrendExpenses": "Ausgabenverlauf",
     "confirmDeleteItem": "Möchtest du \"{item}\" wirklich löschen?",
+    "tabs": {
+      "overview": "Übersicht",
+      "expenses": "Ausgaben",
+      "monthlyCharges": "Monatliche Kosten"
+    },
     "empty": {
       "members": "Lege eine neue Ausgabe an und du wirst hier eingetragen.",
       "expenses": "Keine Ausgaben",
