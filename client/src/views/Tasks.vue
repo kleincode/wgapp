@@ -3,66 +3,25 @@
     <h1 class="display-2">{{ $t("tasks.title") }}</h1>
     <v-row>
       <v-col cols="12">
-        <v-card
-          :elevation="6"
-          class="text-center"
-          :loading="loading"
-          style="height: 100%"
-        >
-          <h2 class="title pt-8">{{ $t("tasks.todaystasks") }}</h2>
-          <div class="container">
-            <v-row justify="center">
-              <v-col cols="12" md="12">
-                <center>
-                  <div v-if="getTodaysTasks.length > 0">
-                    <v-carousel
-                      v-if="showCarousel"
-                      cycle
-                      height="auto"
-                      hide-delimiter-background
-                      show-arrows-on-hover
-                      :show-arrows="todaysTaskChunks.length > 1"
-                    >
-                      <v-carousel-item
-                        v-for="(chunk, i) in todaysTaskChunks"
-                        :key="i"
-                      >
-                        <v-row justify="center">
-                          <v-col
-                            v-for="(task, j) in chunk"
-                            :key="j"
-                            cols="12"
-                            md="5"
-                          >
-                            <LargeTaskDisplay
-                              :task="task"
-                              :user-images="userImages"
-                              @checktask="checkTask"
-                            ></LargeTaskDisplay>
-                          </v-col>
-                        </v-row>
-                      </v-carousel-item>
-                    </v-carousel>
-                    <v-list v-else>
-                      <v-list-item v-for="(task, j) in getTodaysTasks" :key="j">
-                        <LargeTaskDisplay
-                          :task="task"
-                          :user-images="userImages"
-                          @checktask="checkTask"
-                        ></LargeTaskDisplay>
-                      </v-list-item>
-                    </v-list>
-                  </div>
-                  <v-row v-else>
-                    <v-col cols="12" md="6">
-                      <LargeTaskDisplay class="text-center"></LargeTaskDisplay>
-                    </v-col>
-                  </v-row>
-                </center>
-              </v-col>
-            </v-row>
-          </div>
-        </v-card>
+        <div class="container">
+          <v-row justify="center">
+            <v-col cols="12" md="12">
+              <TasksCarousel
+                :tasks="getTodaysTasks"
+                :user-images="userImages"
+                @checktask="checkTask"
+              ></TasksCarousel>
+            </v-col>
+            <v-col cols="12" md="12">
+              <TasksCarousel
+                :tasks="onDemandTasks"
+                :user-images="userImages"
+                small
+                @checktask="checkTask"
+              ></TasksCarousel>
+            </v-col>
+          </v-row>
+        </div>
       </v-col>
       <v-col cols="12" md="6" lg="8">
         <UpcomingTasksCard
@@ -104,7 +63,7 @@ import { fetchProfileImg } from "@/assets/profileimagesHelper.js";
 import RepeatingTasksCard from "@/components/RepeatingTasksCard.vue";
 import UpcomingTasksCard from "@/components/UpcomingTasksCard.vue";
 import TasksLogCard from "@/components/TasksLogCard.vue";
-import LargeTaskDisplay from "@/components/LargeTaskDisplay.vue";
+import TasksCarousel from "@/components/tasks/TasksCarousel.vue";
 
 export default {
   name: "Tasks",
@@ -112,7 +71,7 @@ export default {
     RepeatingTasksCard,
     UpcomingTasksCard,
     TasksLogCard,
-    LargeTaskDisplay
+    TasksCarousel
   },
   data: () => ({
     userImages: {},
@@ -121,16 +80,6 @@ export default {
     checkedTask: null
   }),
   computed: {
-    todaysTaskChunks() {
-      var chunk = require("chunk");
-      return chunk(this.getTodaysTasks, 2);
-    },
-    showCarousel() {
-      return !(
-        this.$vuetify.breakpoint.name == "xs" ||
-        this.$vuetify.breakpoint.name == "sm"
-      );
-    },
     ...mapState("tasks", ["loggedTasks", "tasks"]),
     ...mapGetters("tasks", [
       "getTodaysTasks",

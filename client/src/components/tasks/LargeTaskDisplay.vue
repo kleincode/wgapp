@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 80%; width:100%">
+  <div style="height: auto; width:100%">
     <v-card
       v-if="!!task"
       class="main-task text-center"
@@ -9,24 +9,33 @@
       :style="'color: ' + textColor"
     >
       <v-row align="stretch" style="height: 100%">
-        <v-col cols="12" md="6">
-          <v-icon style="font-size: 10em" :color="textColor" x-large>{{
+        <v-col cols="12" class="overline pt-0 pl-0 pr-0 pb-1">
+          {{ taskMode }}
+        </v-col>
+        <v-col cols="12" sm="4" md="5" class="pa-3">
+          <v-icon :style="'font-size:' + iconsize" :color="textColor" x-large>{{
             getIcon(task.icon)
           }}</v-icon>
         </v-col>
-        <v-col cols="12" md="6">
-          <div class="font-regular pt-4 display-1">
-            {{ task.name }}
-            <br />
-            <v-btn :color="textColor" icon @click="$emit('checktask', task)">
-              <v-icon v-if="task.checked">check_box</v-icon>
-              <v-icon v-else>check_box_outline_blank</v-icon>
-            </v-btn>
-            <v-btn :color="textColor" icon @click="triggerReminder(task)">
-              <v-icon>notifications_active</v-icon>
-            </v-btn>
+        <v-col cols="12" sm="8" md="7" class="text-left pa-0">
+          <div class="font-regular pt-4 mb-0" :class="fontsize">
+            <p
+              class="mb-0"
+              style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+            >
+              {{ task.name }}
+            </p>
           </div>
-          <div class="body-2 pt-2 mb-2">{{ task.time }}</div>
+          <div class="body-2 mb-2">{{ task.time }}</div>
+        </v-col>
+        <v-col cols="12" class="pa-0">
+          <v-btn :color="textColor" icon @click="$emit('checktask', task)">
+            <v-icon v-if="task.checked">check_box</v-icon>
+            <v-icon v-else>check_box_outline_blank</v-icon>
+          </v-btn>
+          <v-btn :color="textColor" icon @click="triggerReminder(task)">
+            <v-icon>notifications_active</v-icon>
+          </v-btn>
         </v-col>
         <v-col cols="12">
           <v-chip>
@@ -82,13 +91,47 @@ export default {
     }
   },
   data: () => ({
-    textColor: "black"
+    textColor: "#111111"
   }),
   computed: {
+    iconsize() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xl":
+          return "8em";
+        case "lg":
+          return "6em";
+        case "md":
+          return "5em";
+        default:
+          return "5em";
+      }
+    },
+    fontsize() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xl":
+          return "display-1";
+        case "lg":
+          return "display-1";
+        case "md":
+          return "headline";
+        default:
+          return "title";
+      }
+    },
     cardColor() {
       if (this.task.missed) return "red";
       if (this.task.checked) return "success";
       return "accent";
+    },
+    taskMode() {
+      switch (this.task.mode) {
+        case 0:
+          return this.$t("tasks.modes.single");
+        case 1:
+          return this.$t("tasks.modes.repeating");
+        default:
+          return this.$t("tasks.modes.ondemand");
+      }
     },
     ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapGetters("userSettings", ["formatDateRelative"])
@@ -102,8 +145,8 @@ export default {
 <style>
 .main-task {
   padding: 2em;
-  margin: 2em;
-  margin-bottom: 4em;
+  margin: 0.5em;
+  margin-bottom: 2.5em;
   display: block;
   margin-left: auto;
   margin-right: auto;

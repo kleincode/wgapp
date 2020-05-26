@@ -42,12 +42,7 @@
           <v-list-item-content>
             <v-list-item-title class="pb-2 task-entry">
               {{ task.name }}
-              <div v-if="!task.missed" class="overline pl-2 pt-1">
-                - {{ formatDateRelative(task.nextDueDay) }}
-              </div>
-              <div v-else class="overline pl-2 pt-1">
-                - {{ formatDateRelative(task.lastDueDay) }}
-              </div>
+              <div class="overline pl-2 pt-1">- {{ getTimeDisplay(task) }}</div>
             </v-list-item-title>
             <v-list-item-subtitle>
               <v-chip>
@@ -191,6 +186,19 @@ export default {
     ...mapGetters("userSettings", ["formatDateRelative"])
   },
   methods: {
+    getTimeDisplay(task) {
+      if (!task.missed) {
+        return this.formatDateRelative(task.nextDueDay);
+      } else {
+        if (task.mode == 1) {
+          //repeating display last due day
+          return this.formatDateRelative(task.lastDueDay);
+        } else {
+          //single: display the one and only time
+          return this.formatDateRelative(task.dueDay);
+        }
+      }
+    },
     getIcons() {
       return icons;
     }
