@@ -2,19 +2,37 @@
   <v-card
     style="max-width: 800px; margin: 0 auto"
     class="pa-4"
+    :class="$vuetify.breakpoint.mdAndUp ? 'mt-8' : ''"
     :elevation="$vuetify.breakpoint.smAndDown ? 0 : 6"
   >
-    <v-btn
-      color="primary"
-      style="margin-top: 3.5em; margin-right: 1em"
-      fab
-      absolute
-      top
-      right
-      @click="editDialog = true"
-    >
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>
+    <v-fab-transition>
+      <v-btn
+        v-if="$vuetify.breakpoint.mdAndUp && showFab"
+        color="accent"
+        style="margin-right: 1em"
+        fab
+        absolute
+        top
+        right
+        @click="editDialog = true"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-fab-transition>
+    <v-fab-transition>
+      <v-btn
+        v-if="$vuetify.breakpoint.smAndDown && showFab"
+        color="accent"
+        style="margin-right: 1em; margin-bottom: 4em"
+        fab
+        fixed
+        bottom
+        right
+        @click="editDialog = true"
+      >
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
+    </v-fab-transition>
     <!--SINGLE TASKS -->
     <div class="title">{{ $t("tasks.view.singleTasks") }}</div>
     <TaskList
@@ -77,10 +95,15 @@ export default {
 
   data: () => ({
     editDialog: false,
-    editTask: null
+    editTask: null,
+    showFab: false
   }),
   computed: {
     ...mapGetters("tasks", ["repeatingTasks", "onDemandTasks", "singleTasks"])
+  },
+  mounted() {
+    this.showFab = false;
+    setTimeout(() => (this.showFab = true), 200);
   },
   methods: {
     edit(task) {

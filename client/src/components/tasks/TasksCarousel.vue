@@ -8,6 +8,7 @@
         hide-delimiter-background
         show-arrows-on-hover
         :show-arrows="taskChunks.length > 1"
+        :hide-delimiters="taskChunks.length <= 1"
         class="pb-4"
       >
         <v-carousel-item v-for="(chunk, i) in taskChunks" :key="i">
