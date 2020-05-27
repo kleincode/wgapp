@@ -1,22 +1,37 @@
 <template>
-  <v-container fluid>
-    <div style="display: flex">
-      <v-btn exact icon color="primary" class="mt-2 mr-2" @click="back">
-        <v-icon>keyboard_arrow_left</v-icon>
-      </v-btn>
-      <div v-if="editMode" class="display-2 pb-6">
-        {{ $t("tasks.editTask.titleEdit") }} - "{{ name }}"
-      </div>
-      <div v-if="!editMode" class="display-2 pb-6">
-        {{ $t("tasks.editTask.titleAdd") }} - "{{ name }}"
-      </div>
-    </div>
-    <v-card outlined :loading="loading">
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="$emit('close')">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-toolbar-title v-if="editMode">{{
+          $t("tasks.editTask.titleEdit")
+        }}</v-toolbar-title>
+        <v-toolbar-title v-else>{{
+          $t("tasks.editTask.titleAdd")
+        }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-toolbar-items>
+          <v-btn dark text @click="postChanges">Save</v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
       <div class="container">
+        <v-progress-linear
+          v-if="loading"
+          indeterminate
+          class="mb-4"
+        ></v-progress-linear>
         <v-card-text>
           <v-select
             v-model="mode"
             :items="modes"
+            :disabled="loading"
             item-value="value"
             :label="$t('tasks.editTask.taskMode')"
             outlined
@@ -25,6 +40,7 @@
             <v-col cols="12" md="8" lg="8">
               <v-text-field
                 v-model="name"
+                :disabled="loading"
                 :counter="128"
                 :label="$t('tasks.editTask.name')"
                 required
@@ -35,7 +51,7 @@
                 <v-col cols="12" md="6">
                   <v-radio-group
                     v-model="iterating"
-                    :disabled="mode == 'Single'"
+                    :disabled="mode == 'Single' || loading"
                   >
                     <v-radio
                       :key="0"
@@ -57,7 +73,7 @@
                     item-value="value"
                     :label="$t('tasks.editTask.assignedTo')"
                     outlined
-                    :disabled="iterating && mode != 'Single'"
+                    :disabled="(iterating && mode != 'Single') || loading"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -67,6 +83,7 @@
               <br />
               <IconChooser
                 v-model="selectedIcon"
+                :disabled="loading"
                 @ok="newIconSelected"
                 @cancel="noNewIconSelected"
               ></IconChooser>
@@ -89,6 +106,7 @@
                   <v-text-field
                     v-show="mode != 'On-Demand'"
                     v-model="dateFormated"
+                    :disabled="loading"
                     :label="$t('tasks.editTask.chooseStartDay')"
                     prepend-icon="event"
                     readonly
@@ -119,6 +137,7 @@
                   <v-text-field
                     v-show="mode != 'On-Demand'"
                     v-model="timeFormatted"
+                    :disabled="loading"
                     :label="$t('tasks.editTask.chooseTaskTime')"
                     prepend-icon="access_time"
                     readonly
@@ -129,6 +148,7 @@
                 <v-time-picker
                   v-if="startTimeMenu"
                   v-model="time"
+                  :disabled="loading"
                   :format="timeFormat"
                   full-width
                   @click:minute="$refs.menu.save(time)"
@@ -139,6 +159,7 @@
               <v-switch
                 v-show="mode != 'On-Demand'"
                 v-model="reminder"
+                :disabled="loading"
                 :label="$t('tasks.editTask.toggleReminder')"
               ></v-switch>
             </v-col>
@@ -146,6 +167,7 @@
               <v-select
                 v-show="mode == 'Repeating'"
                 v-model="chosenDays"
+                :disabled="loading"
                 :items="days"
                 item-value="val"
                 chips
@@ -158,6 +180,7 @@
               <v-text-field
                 v-show="mode == 'Repeating'"
                 v-model="repetitionEvery"
+                :disabled="loading"
                 type="number"
                 :label="$t('tasks.editTask.repeatEvery')"
                 required
@@ -168,6 +191,7 @@
               <v-select
                 v-show="mode == 'Repeating'"
                 v-model="repetitionUnit"
+                :disabled="loading"
                 :items="repetitionUnits"
                 :label="$t('tasks.editTask.repeatUnit')"
                 outlined
@@ -176,16 +200,9 @@
           </v-row>
         </v-card-text>
         <v-card-actions style="text-align: right; display: block">
-          <v-btn large color="primary" @click="postChanges()">{{
-            $t("commands.save")
-          }}</v-btn>
-          <v-btn large :to="{ name: 'TasksOverview' }" text>{{
-            $t("commands.cancel")
-          }}</v-btn
-          ><v-divider class="mx-4" inset vertical></v-divider>
-          <v-dialog v-model="deleteDialog" width="500">
+          <v-dialog v-model="deleteDialog" width="600">
             <template v-slot:activator="{ on }">
-              <v-btn large outlined color="error darken-2" text v-on="on">{{
+              <v-btn large color="error darken-2" text v-on="on">{{
                 $t("commands.delete")
               }}</v-btn>
             </template>
@@ -206,14 +223,14 @@
           </v-dialog>
         </v-card-actions>
       </div>
+      <v-snackbar v-model="snackbar">
+        {{ snackText }}
+        <v-btn color="primary" text @click="snackbar = false">{{
+          $t("commands.close")
+        }}</v-btn>
+      </v-snackbar>
     </v-card>
-    <v-snackbar v-model="snackbar">
-      {{ snackText }}
-      <v-btn color="primary" text @click="snackbar = false">{{
-        $t("commands.close")
-      }}</v-btn>
-    </v-snackbar>
-  </v-container>
+  </v-dialog>
 </template>
 <script>
 import IconChooser from "@/components/IconChooser.vue";
@@ -231,13 +248,22 @@ export default {
   components: {
     IconChooser
   },
+  props: {
+    dialog: {
+      type: Boolean,
+      default: () => false
+    },
+    editTask: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data: () => ({
-    editMode: false,
     id: -1,
     mode: "Single",
     name: "",
     iterating: true,
-    icon: 0,
+    icon: 10,
     selectedIcon: 0,
     selectedMember: 0,
     date: new Date().toISOString().substr(0, 10),
@@ -255,6 +281,9 @@ export default {
     loading: false
   }),
   computed: {
+    editMode() {
+      return !!this.editTask;
+    },
     modes() {
       return [
         { text: this.$t("tasks.modes.single"), value: "Single" },
@@ -335,16 +364,19 @@ export default {
     ...mapState("userSettings", ["locale"]),
     ...mapGetters(["getHouseholdUsersAsItemList"])
   },
-  mounted() {
-    this.id = this.$route.params.id;
-    this.editMode = !!this.$route.params.id;
-    if (this.editMode) {
-      this.fetch_settings(this.id);
-    } else {
-      let now = new Date();
-      this.time = now.getHours() + ":" + now.getMinutes();
-      this.selectedMember = this.getHouseholdUsersAsItemList[0].value;
-      this.repetitionUnit = "Weeks";
+  watch: {
+    dialog: function(val) {
+      if (val) {
+        if (this.editMode) {
+          this.fetch_settings(this.editTask.id);
+        } else {
+          let now = new Date();
+          this.time = now.getHours() + ":" + now.getMinutes();
+          console.log(this.getHouseholdUsersAsItemList[0]);
+          this.selectedMember = this.getHouseholdUsersAsItemList[0].value;
+          this.repetitionUnit = "Weeks";
+        }
+      }
     }
   },
   methods: {
@@ -545,7 +577,7 @@ export default {
         );
         console.log(err);
       }
-      this.$router.push({ name: "Tasks" });
+      this.$emit("closeUpdate");
     },
     getIcon(id) {
       return icons[id];

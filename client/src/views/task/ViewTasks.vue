@@ -11,6 +11,7 @@
       :user-images="userImages"
       empty-icon="work_outline"
       :empty-text="$t('tasks.view.singleTasksEmpty')"
+      @edit="edit"
     ></TaskList>
 
     <!--TIMED TASKS -->
@@ -20,6 +21,7 @@
       :user-images="userImages"
       empty-icon="golf_course"
       :empty-text="$t('tasks.view.repeatingTasksEmpty')"
+      @edit="edit"
     ></TaskList>
 
     <!--ON DEMAND TASKS -->
@@ -30,17 +32,26 @@
       empty-icon="access_alarm"
       :empty-text="$t('tasks.view.onDemandTasksEmpty')"
       color="accent"
+      @edit="edit"
     ></TaskList>
+    <EditTask
+      :dialog="editDialog"
+      :edit-task="editTask"
+      @close="editDialog = false"
+      @closeUpdate="closeAndUpdate"
+    ></EditTask>
   </v-card>
 </template>
 <script>
 import { mapGetters } from "vuex";
 import TaskList from "@/components/tasks/TaskList.vue";
+import EditTask from "@/components/tasks/EditTask.vue";
 
 export default {
   name: "ViewTasks",
   components: {
-    TaskList
+    TaskList,
+    EditTask
   },
   props: {
     loading: {
@@ -52,8 +63,24 @@ export default {
       default: () => {}
     }
   },
+
+  data: () => ({
+    editDialog: false,
+    editTask: {}
+  }),
   computed: {
     ...mapGetters("tasks", ["repeatingTasks", "onDemandTasks", "singleTasks"])
+  },
+  methods: {
+    edit(task) {
+      this.editTask = task;
+      this.editDialog = true;
+    },
+    closeAndUpdate() {
+      this.$emit("update");
+      this.editDialog = false;
+      this.editTask = {};
+    }
   }
 };
 </script>

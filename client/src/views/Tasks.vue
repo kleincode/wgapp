@@ -10,6 +10,7 @@
       :loading="loading"
       @checkTask="checkTask"
       @triggerreminder="triggerReminder"
+      @update="fetchTasks"
     ></router-view>
     <v-bottom-navigation
       :style="{ left: $vuetify.application.left + 'px' }"
