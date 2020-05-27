@@ -2,7 +2,10 @@
   <v-container>
     <router-view></router-view>
     <v-bottom-navigation
-      :style="{ left: $vuetify.application.left + 'px' }"
+      :style="{
+        left: $vuetify.application.left + 'px',
+        paddingRight: $vuetify.application.left + 'px'
+      }"
       grow
       fixed
       color="primary"

@@ -247,26 +247,29 @@
         class="white elevation-6"
         style="position: fixed; left: 0; bottom: 0; right: 0;"
       >
-        <v-divider></v-divider>
-        <v-card-actions>
+        <v-divider class="secondary"></v-divider>
+        <v-card-actions class="secondary">
           <v-switch
             v-model="includeMonthlyCharges"
             class="pl-2"
             :label="$t('finances.billManager.includeMonthlyCharges')"
+            dark
             @change="splitTotals"
           ></v-switch>
           <v-spacer></v-spacer>
-          <v-btn icon @click="exportCurrentBillHTML"
+          <v-btn icon dark @click="exportCurrentBillHTML"
             ><v-icon>language</v-icon></v-btn
           >
-          <v-btn icon @click="exportCurrentBillXLSX"
+          <v-btn icon dark @click="exportCurrentBillXLSX"
             ><v-icon>table_chart</v-icon></v-btn
           >
-          <v-btn text @click="dialog = false">
+          <v-btn text dark @click="dialog = false">
             {{ $t("commands.back") }}
           </v-btn>
           <v-btn
-            color="primary"
+            dark
+            color="success"
+            class="mr-2"
             text
             :disabled="empty"
             @click="finishPaymentDialog = true"

@@ -6,7 +6,7 @@ import VueRouter from "vue-router";
 import localVue from "./setup";
 
 // Components
-import BillManager from "@/views/finances/BillManager.vue";
+import BillManager from "@/components/BillManager.vue";
 
 // Utilities
 import { shallowMount } from "@vue/test-utils";

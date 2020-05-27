@@ -17,7 +17,7 @@ export default new Vuetify({
       light: {
         primary: colors.blue.darken4,
         secondary: colors.blueGrey.darken4,
-        accent: colors.amber.base,
+        accent: "#F9AA33",
         error: colors.red.base,
         warning: colors.orange.base,
         info: colors.teal.base,
@@ -26,7 +26,7 @@ export default new Vuetify({
       dark: {
         primary: colors.blue.darken4,
         secondary: colors.blueGrey.darken4,
-        accent: colors.yellow.darken4,
+        accent: "#F9AA33",
         error: colors.red.base,
         warning: colors.orange.base,
         info: colors.teal.base,
