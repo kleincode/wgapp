@@ -70,6 +70,8 @@
     "title": "Tasks",
     "todaystasks": "Today's tasks",
     "duetoday": "DUE TODAY",
+    "noTasks": "No tasks today",
+    "noOnDemand": "No on demand tasks",
     "chill": "Just chillin'",
     "nothing": "Nothing to do",
     "checked": "Checked",
@@ -125,12 +127,11 @@
         "delete": "Deleted task."
       }
     },
-    "upcoming": {
-      "title": "Upcoming tasks",
-      "timed": "Timed tasks",
+    "view": {
+      "singleTasks": "Single tasks",
+      "repeatingTasks": "Repeating tasks",
       "onDemand": "On-Demand Tasks",
-      "repeatingTaskDescription": "This is a repeating task",
-      "singleTaskDescription": "This is a one-time task",
+      "singleTasksEmpty": "No tasks over here",
       "repeatingTasksEmpty": "Congratulations, you've got nothing to do!",
       "last": "last",
       "onDemandTasksEmpty": "Are you sure there's really nothing you should do?",

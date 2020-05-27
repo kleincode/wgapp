@@ -179,7 +179,7 @@
           <v-btn large color="primary" @click="postChanges()">{{
             $t("commands.save")
           }}</v-btn>
-          <v-btn large :to="{ name: 'Tasks' }" text>{{
+          <v-btn large :to="{ name: 'TasksOverview' }" text>{{
             $t("commands.cancel")
           }}</v-btn
           ><v-divider class="mx-4" inset vertical></v-divider>

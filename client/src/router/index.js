@@ -56,20 +56,20 @@ const routes = [
         name: "TasksLog",
         component: () =>
           import(/* webpackChunkName: "taskslog" */ "../views/task/TaskLog.vue")
+      },
+      {
+        path: "edit/:id",
+        name: "EditTask",
+        component: () =>
+          import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+      },
+      {
+        path: "/add",
+        name: "AddTask",
+        component: () =>
+          import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
       }
     ]
-  },
-  {
-    path: "/tasks/edit/:id",
-    name: "EditTask",
-    component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
-  },
-  {
-    path: "/tasks/add",
-    name: "AddTask",
-    component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
   },
   {
     path: "/about",

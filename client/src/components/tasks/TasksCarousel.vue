@@ -37,22 +37,29 @@
             v-if="!small"
             :task="task"
             :user-images="userImages"
-            :small="small"
             @checktask="$emit('checktask', task)"
           ></LargeTaskDisplay>
           <SmallTaskDisplay
             v-else
             :task="task"
             :user-images="userImages"
-            :small="small"
             @checktask="$emit('checktask', task)"
           ></SmallTaskDisplay>
         </v-list-item>
       </v-list>
     </div>
     <v-row v-else>
-      <v-col cols="12" md="6">
-        <LargeTaskDisplay class="text-center"></LargeTaskDisplay>
+      <v-col cols="12">
+        <div v-if="!small" class="text--disabled">
+          <p class="display-3">{{ emptyText }}</p>
+          <v-icon style="font-size: 5em" class="mb-3">{{ emptyIcon }}</v-icon>
+          <p>{{ emptySubText }}</p>
+        </div>
+        <div v-else class="text--disabled">
+          <p class="display-1">{{ emptyText }}</p>
+          <v-icon style="font-size: 4em" class="mb-2">{{ emptyIcon }}</v-icon>
+          <p>{{ emptySubText }}</p>
+        </div>
       </v-col>
     </v-row>
   </center>
@@ -79,6 +86,18 @@ export default {
     small: {
       type: Boolean,
       default: () => false
+    },
+    emptyText: {
+      type: String,
+      default: () => "Nothing to do"
+    },
+    emptySubText: {
+      type: String,
+      default: () => "Nothing to do"
+    },
+    emptyIcon: {
+      type: String,
+      default: () => "bathtub"
     }
   },
   computed: {

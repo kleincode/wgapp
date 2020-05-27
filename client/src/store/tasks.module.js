@@ -260,6 +260,9 @@ const vuexModule = {
     repeatingTasks(state) {
       return state.tasks.filter(task => task.mode == 1);
     },
+    singleTasks(state) {
+      return state.tasks.filter(task => task.mode == 0);
+    },
     timedTasks(state) {
       let curDate = new Date();
       return state.tasks.filter(

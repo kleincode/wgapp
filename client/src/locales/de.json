@@ -72,6 +72,8 @@
     "duetoday": "Bis heute",
     "chill": "Chillen",
     "nothing": "Nichts zu tun",
+    "noTasks": "Keine Aufgaben heute",
+    "noOnDemand": "Keine 'Bei Bedarf'-Aufgaben",
     "checked": "Abgehakt",
     "reminderMessage": "Du hast {user} an '{task}' erinnert.",
     "taskCheckedFor": "für: {name}",
@@ -125,12 +127,11 @@
         "delete": "Aufgabe gelöscht."
       }
     },
-    "upcoming": {
-      "title": "Anstehend",
-      "timed": "Geplante Aufgaben",
+    "view": {
+      "singleTasks": "Einzelne Aufgaben",
+      "repeatingTasks": "Wiederholende Aufgaben",
       "onDemand": "Bei Bedarf",
-      "repeatingTaskDescription": "Wiederholte Aufgabe",
-      "singleTaskDescription": "Einzelaufgabe",
+      "singleTasksEmpty": "Hier gibt's keine Aufgaben",
       "repeatingTasksEmpty": "Glückwunsch, absolut nix los hier.",
       "last": "Letzte Ausführung",
       "onDemandTasksEmpty": "Vielleicht solltest du anfangen Dinge zu tun.",
