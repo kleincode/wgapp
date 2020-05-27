@@ -4,6 +4,17 @@
     class="pa-4"
     :elevation="$vuetify.breakpoint.smAndDown ? 0 : 6"
   >
+    <v-btn
+      color="primary"
+      style="margin-top: 3.5em; margin-right: 1em"
+      fab
+      absolute
+      top
+      right
+      @click="editDialog = true"
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
     <!--SINGLE TASKS -->
     <div class="title">{{ $t("tasks.view.singleTasks") }}</div>
     <TaskList
@@ -37,7 +48,7 @@
     <EditTask
       :dialog="editDialog"
       :edit-task="editTask"
-      @close="editDialog = false"
+      @close="close"
       @closeUpdate="closeAndUpdate"
     ></EditTask>
   </v-card>
@@ -66,7 +77,7 @@ export default {
 
   data: () => ({
     editDialog: false,
-    editTask: {}
+    editTask: null
   }),
   computed: {
     ...mapGetters("tasks", ["repeatingTasks", "onDemandTasks", "singleTasks"])
@@ -76,10 +87,14 @@ export default {
       this.editTask = task;
       this.editDialog = true;
     },
+    close() {
+      this.editDialog = false;
+      this.editTask = null;
+    },
     closeAndUpdate() {
       this.$emit("update");
       this.editDialog = false;
-      this.editTask = {};
+      this.editTask = null;
     }
   }
 };

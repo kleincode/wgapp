@@ -13,7 +13,10 @@
       @update="fetchTasks"
     ></router-view>
     <v-bottom-navigation
-      :style="{ left: $vuetify.application.left + 'px' }"
+      :style="{
+        left: $vuetify.application.left + 'px',
+        paddingRight: $vuetify.application.left + 'px'
+      }"
       grow
       fixed
       color="primary"
@@ -21,7 +24,7 @@
     >
       <v-btn :to="{ name: 'TasksOverview' }" exact>
         <span>{{ $t("tasks.tabs.overview") }}</span>
-        <v-icon>bar_chart</v-icon>
+        <v-icon>event</v-icon>
       </v-btn>
       <v-btn :to="{ name: 'ViewTasks' }" exact>
         <span>{{ $t("tasks.tabs.list") }}</span>
