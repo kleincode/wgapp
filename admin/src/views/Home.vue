@@ -77,6 +77,7 @@ export default {
   },
   data: () => ({
     logs: [],
+    errorCount: 0,
     level: 2,
     users: 0,
     households: 0
@@ -94,9 +95,6 @@ export default {
     reviewedErrors() {
       return this.logs.filter(log => log.level == 0 && !!log.reviewed);
     },
-    errorCount() {
-      return this.logs.filter(log => log.level == 0).length;
-    },
     error() {
       return this.errorCount > 10;
     }
@@ -110,6 +108,7 @@ export default {
         let { data } = await this.$http.get("/_/fetchlog");
         if (data.success) {
           this.logs = data.data;
+          this.errorCount = data.logCount[0].c;
           this.users = data.users[0].c;
           this.households = data.households[0].c;
         } else {
