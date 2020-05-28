@@ -7,7 +7,7 @@
       @click:outside="cancel"
     >
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" text v-on="on">{{
+        <v-btn color="primary" text :disabled="disabled" v-on="on">{{
           $t("iconChooser.changeIcon")
         }}</v-btn>
       </template>
@@ -97,6 +97,10 @@ export default {
     value: {
       type: Number,
       default: 0
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => {

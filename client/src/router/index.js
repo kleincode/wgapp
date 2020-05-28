@@ -49,21 +49,32 @@ const routes = [
   },
   {
     path: "/tasks",
-    name: "Tasks",
     component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/Tasks.vue")
-  },
-  {
-    path: "/tasks/edit/:id",
-    name: "EditTask",
-    component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
-  },
-  {
-    path: "/tasks/add",
-    name: "AddTask",
-    component: () =>
-      import(/* webpackChunkName: "tasks" */ "../views/task/EditTask.vue")
+      import(/* webpackChunkName: "tasks" */ "../views/Tasks.vue"),
+    children: [
+      {
+        path: "",
+        name: "TasksOverview",
+        component: () =>
+          import(
+            /* webpackChunkName: "overviewtasks" */ "../views/task/TasksOverview.vue"
+          )
+      },
+      {
+        path: "view",
+        name: "ViewTasks",
+        component: () =>
+          import(
+            /* webpackChunkName: "viewtasks" */ "../views/task/ViewTasks.vue"
+          )
+      },
+      {
+        path: "log",
+        name: "TasksLog",
+        component: () =>
+          import(/* webpackChunkName: "taskslog" */ "../views/task/TaskLog.vue")
+      }
+    ]
   },
   {
     path: "/about",

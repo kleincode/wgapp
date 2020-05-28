@@ -1,30 +1,44 @@
 <template>
-  <v-container fluid>
-    <div style="display: flex">
-      <v-btn exact icon color="primary" class="mt-2 mr-2" @click="back">
-        <v-icon>keyboard_arrow_left</v-icon>
-      </v-btn>
-      <div v-if="editMode" class="display-2 pb-6">
-        {{ $t("tasks.editTask.titleEdit") }} - "{{ name }}"
-      </div>
-      <div v-if="!editMode" class="display-2 pb-6">
-        {{ $t("tasks.editTask.titleAdd") }} - "{{ name }}"
-      </div>
-    </div>
-    <v-card outlined :loading="loading">
-      <div class="container">
+  <v-dialog
+    v-model="dialog"
+    fullscreen
+    hide-overlay
+    transition="dialog-bottom-transition"
+  >
+    <v-card>
+      <v-toolbar dark color="primary">
+        <v-btn icon dark @click="$emit('close')">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <v-toolbar-title v-if="editMode">{{
+          $t("tasks.editTask.titleEdit")
+        }}</v-toolbar-title>
+        <v-toolbar-title v-else>{{
+          $t("tasks.editTask.titleAdd")
+        }}</v-toolbar-title>
+      </v-toolbar>
+      <v-card class="container mt-6" style="max-width: 1200px; margin: 0 auto">
+        <v-progress-linear
+          v-if="loading"
+          indeterminate
+          class="mb-4"
+        ></v-progress-linear>
+        <v-tabs
+          v-model="mode"
+          background-color="transparent"
+          color="basil"
+          grow
+        >
+          <v-tab v-for="(item, i) in modes" :key="i" :value="i">
+            {{ item.text }}
+          </v-tab>
+        </v-tabs>
         <v-card-text>
-          <v-select
-            v-model="mode"
-            :items="modes"
-            item-value="value"
-            :label="$t('tasks.editTask.taskMode')"
-            outlined
-          ></v-select>
           <v-row>
             <v-col cols="12" md="8" lg="8">
               <v-text-field
                 v-model="name"
+                :disabled="loading"
                 :counter="128"
                 :label="$t('tasks.editTask.name')"
                 required
@@ -35,12 +49,12 @@
                 <v-col cols="12" md="6">
                   <v-radio-group
                     v-model="iterating"
-                    :disabled="mode == 'Single'"
+                    :disabled="mode == 0 || loading"
                   >
                     <v-radio
                       :key="0"
                       :label="'Single'"
-                      :disabled="mode == 'On-Demand'"
+                      :disabled="mode == 2"
                       :value="false"
                     ></v-radio>
                     <v-radio
@@ -57,7 +71,7 @@
                     item-value="value"
                     :label="$t('tasks.editTask.assignedTo')"
                     outlined
-                    :disabled="iterating && mode != 'Single'"
+                    :disabled="(iterating && mode != 0) || loading"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -67,12 +81,13 @@
               <br />
               <IconChooser
                 v-model="selectedIcon"
+                :disabled="loading"
                 @ok="newIconSelected"
                 @cancel="noNewIconSelected"
               ></IconChooser>
             </v-col>
           </v-row>
-          <div v-show="mode != 'On-Demand'" class="title">
+          <div v-show="mode != 2" class="title">
             {{ $t("tasks.editTask.timeAndDate") }}
           </div>
           <v-row>
@@ -86,15 +101,18 @@
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-show="mode != 'On-Demand'"
-                    v-model="dateFormated"
-                    :label="$t('tasks.editTask.chooseStartDay')"
-                    prepend-icon="event"
-                    readonly
-                    outlined
-                    v-on="on"
-                  ></v-text-field>
+                  <v-expand-transition>
+                    <v-text-field
+                      v-show="mode != 2"
+                      v-model="dateFormated"
+                      :disabled="loading"
+                      :label="$t('tasks.editTask.chooseStartDay')"
+                      prepend-icon="event"
+                      readonly
+                      outlined
+                      v-on="on"
+                    ></v-text-field>
+                  </v-expand-transition>
                 </template>
                 <v-date-picker
                   v-model="date"
@@ -116,19 +134,23 @@
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-show="mode != 'On-Demand'"
-                    v-model="timeFormatted"
-                    :label="$t('tasks.editTask.chooseTaskTime')"
-                    prepend-icon="access_time"
-                    readonly
-                    outlined
-                    v-on="on"
-                  ></v-text-field>
+                  <v-expand-transition>
+                    <v-text-field
+                      v-show="mode != 2"
+                      v-model="timeFormatted"
+                      :disabled="loading"
+                      :label="$t('tasks.editTask.chooseTaskTime')"
+                      prepend-icon="access_time"
+                      readonly
+                      outlined
+                      v-on="on"
+                    ></v-text-field>
+                  </v-expand-transition>
                 </template>
                 <v-time-picker
                   v-if="startTimeMenu"
                   v-model="time"
+                  :disabled="loading"
                   :format="timeFormat"
                   full-width
                   @click:minute="$refs.menu.save(time)"
@@ -137,83 +159,96 @@
             </v-col>
             <v-col cols="12" lg="4" md="6">
               <v-switch
-                v-show="mode != 'On-Demand'"
+                v-show="mode != 2"
                 v-model="reminder"
+                :disabled="loading"
                 :label="$t('tasks.editTask.toggleReminder')"
               ></v-switch>
             </v-col>
             <v-col cols="12" lg="4" md="6">
-              <v-select
-                v-show="mode == 'Repeating'"
-                v-model="chosenDays"
-                :items="days"
-                item-value="val"
-                chips
-                :label="$t('tasks.editTask.repeatOn')"
-                multiple
-                outlined
-              ></v-select>
+              <v-expand-transition>
+                <v-select
+                  v-show="mode == 1"
+                  v-model="chosenDays"
+                  :disabled="loading"
+                  :items="days"
+                  item-value="val"
+                  chips
+                  :label="$t('tasks.editTask.repeatOn')"
+                  multiple
+                  outlined
+                ></v-select>
+              </v-expand-transition>
             </v-col>
             <v-col cols="12" lg="4" md="6">
-              <v-text-field
-                v-show="mode == 'Repeating'"
-                v-model="repetitionEvery"
-                type="number"
-                :label="$t('tasks.editTask.repeatEvery')"
-                required
-                outlined
-              ></v-text-field>
+              <v-expand-transition>
+                <v-text-field
+                  v-show="mode == 1"
+                  v-model="repetitionEvery"
+                  :disabled="loading"
+                  type="number"
+                  :label="$t('tasks.editTask.repeatEvery')"
+                  required
+                  outlined
+                ></v-text-field>
+              </v-expand-transition>
             </v-col>
             <v-col cols="12" lg="4" md="6">
-              <v-select
-                v-show="mode == 'Repeating'"
-                v-model="repetitionUnit"
-                :items="repetitionUnits"
-                :label="$t('tasks.editTask.repeatUnit')"
-                outlined
-              ></v-select>
+              <v-expand-transition>
+                <v-select
+                  v-show="mode == 1"
+                  v-model="repetitionUnit"
+                  :disabled="loading"
+                  :items="repetitionUnits"
+                  :label="$t('tasks.editTask.repeatUnit')"
+                  outlined
+                ></v-select>
+              </v-expand-transition>
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions style="text-align: right; display: block">
-          <v-btn large color="primary" @click="postChanges()">{{
-            $t("commands.save")
-          }}</v-btn>
-          <v-btn large :to="{ name: 'Tasks' }" text>{{
-            $t("commands.cancel")
-          }}</v-btn
-          ><v-divider class="mx-4" inset vertical></v-divider>
-          <v-dialog v-model="deleteDialog" width="500">
-            <template v-slot:activator="{ on }">
-              <v-btn large outlined color="error darken-2" text v-on="on">{{
-                $t("commands.delete")
-              }}</v-btn>
-            </template>
-            <v-card>
-              <v-card-title class="headline" primary-title>
-                {{ $t("tasks.editTask.confirmDelete") }}
-              </v-card-title>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="error" text @click="deleteTask">
-                  {{ $t("commands.delete") }}
-                </v-btn>
-                <v-btn text @click="deleteDialog = false">
-                  {{ $t("commands.cancel") }}
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-card-actions>
-      </div>
+        <div
+          class="white elevation-6"
+          style="position: fixed; left: 0; bottom: 0; right: 0;"
+        >
+          <v-divider class="secondary"></v-divider>
+          <v-card-actions class="secondary" style="height: 82px">
+            <v-spacer></v-spacer>
+            <v-dialog v-model="deleteDialog" width="600">
+              <template v-slot:activator="{ on }">
+                <v-btn large text color="error" v-on="on">{{
+                  $t("commands.delete")
+                }}</v-btn>
+              </template>
+              <v-card>
+                <v-card-title class="headline" primary-title>
+                  {{ $t("tasks.editTask.confirmDelete") }}
+                </v-card-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn text @click="deleteDialog = false">
+                    {{ $t("commands.cancel") }}
+                  </v-btn>
+                  <v-btn color="error" text @click="deleteTask">
+                    {{ $t("commands.delete") }}
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <v-btn text color="success" class="mr-4" @click="postChanges">
+              {{ $t("commands.save") }}
+            </v-btn>
+          </v-card-actions>
+        </div>
+      </v-card>
+      <v-snackbar v-model="snackbar">
+        {{ snackText }}
+        <v-btn color="primary" text @click="snackbar = false">{{
+          $t("commands.close")
+        }}</v-btn>
+      </v-snackbar>
     </v-card>
-    <v-snackbar v-model="snackbar">
-      {{ snackText }}
-      <v-btn color="primary" text @click="snackbar = false">{{
-        $t("commands.close")
-      }}</v-btn>
-    </v-snackbar>
-  </v-container>
+  </v-dialog>
 </template>
 <script>
 import IconChooser from "@/components/IconChooser.vue";
@@ -231,13 +266,22 @@ export default {
   components: {
     IconChooser
   },
+  props: {
+    dialog: {
+      type: Boolean,
+      default: () => false
+    },
+    editTask: {
+      type: Object,
+      default: () => null
+    }
+  },
   data: () => ({
-    editMode: false,
     id: -1,
     mode: "Single",
     name: "",
     iterating: true,
-    icon: 0,
+    icon: 10,
     selectedIcon: 0,
     selectedMember: 0,
     date: new Date().toISOString().substr(0, 10),
@@ -255,10 +299,16 @@ export default {
     loading: false
   }),
   computed: {
+    editMode() {
+      return !!this.editTask;
+    },
     modes() {
       return [
         { text: this.$t("tasks.modes.single"), value: "Single" },
-        { text: this.$t("tasks.modes.repeating"), value: "Repeating" },
+        {
+          text: this.$t("tasks.modes.repeating"),
+          value: "Repeating"
+        },
         { text: this.$t("tasks.modes.ondemand"), value: "On-Demand" }
       ];
     },
@@ -335,16 +385,24 @@ export default {
     ...mapState("userSettings", ["locale"]),
     ...mapGetters(["getHouseholdUsersAsItemList"])
   },
-  mounted() {
-    this.id = this.$route.params.id;
-    this.editMode = !!this.$route.params.id;
-    if (this.editMode) {
-      this.fetch_settings(this.id);
-    } else {
-      let now = new Date();
-      this.time = now.getHours() + ":" + now.getMinutes();
-      this.selectedMember = this.getHouseholdUsersAsItemList[0].value;
-      this.repetitionUnit = "Weeks";
+  watch: {
+    dialog: function(val) {
+      if (val) {
+        if (this.editMode) {
+          this.fetch_settings(this.editTask.id);
+        } else {
+          this.name = "";
+          this.chosenDays = [];
+          this.icon = 10;
+          this.iterating = true;
+          this.mode = 0;
+          this.repetitionEvery = 1;
+          this.repetitionUnit = "Weeks";
+          let now = new Date();
+          this.time = now.getHours() + ":" + now.getMinutes();
+          this.selectedMember = this.getHouseholdUsersAsItemList[0].value;
+        }
+      }
     }
   },
   methods: {
@@ -363,7 +421,7 @@ export default {
           }
           let task = data.data[0];
           this.id = task.id;
-          this.mode = this.getMode(task.mode);
+          this.mode = task.mode;
           this.name = task.name;
           this.iterating = Boolean(parseInt(task.iteratingMode));
           this.selectedMember = task.assignedMember;
@@ -395,34 +453,12 @@ export default {
       this.loading = false;
     },
 
-    getMode(mode) {
-      switch (mode) {
-        case 0:
-          return "Single";
-        case 1:
-          return "Repeating";
-        case 2:
-          return "On-Demand";
-      }
-    },
-
-    getIDFromMode(mode) {
-      switch (mode) {
-        case "Single":
-          return 0;
-        case "Repeating":
-          return 1;
-        case "On-Demand":
-          return 2;
-      }
-    },
-
     async postChanges() {
       let id = this.id;
       let name = this.name;
       let repetitionEvery = parseInt(this.repetitionEvery);
       let icon = this.icon;
-      let mode = this.getIDFromMode(this.mode);
+      let mode = this.mode;
       let iteratingMode;
       if (mode == 2) {
         iteratingMode = true;
@@ -545,7 +581,7 @@ export default {
         );
         console.log(err);
       }
-      this.$router.push({ name: "Tasks" });
+      this.$emit("closeUpdate");
     },
     getIcon(id) {
       return icons[id];
