@@ -1,23 +1,25 @@
 <template>
-  <div style="height: auto; width:100%">
+  <div style=" width: 100%;">
     <v-card
       v-if="!!task"
-      class="main-task text-center"
-      :class="cardColor"
+      class="mt-2 mb-2"
+      :class="$vuetify.theme.isDark ? 'secondary' : 'white'"
       :elevation="6"
-      style="height: 100%"
+      style="height: 100%;"
+      :style="'color: ' + textColor"
       :dark="!$vuetify.theme.isDark"
     >
-      <v-row align="stretch" style="height: 100%">
+      <v-row align="center" class="ma-0 pt-2">
         <v-col cols="12" class="overline pt-0 pl-0 pr-0 pb-1">
           {{ taskMode }}
         </v-col>
-        <v-col cols="12" sm="4" md="5" class="pa-3">
-          <v-icon :style="'font-size:' + iconsize" x-large>{{
+        <v-col cols="12" md="4" class="pa-3">
+          <v-icon :style="'font-size:' + iconsize" :color="textColor" x-large>{{
             getIcon(task.icon)
           }}</v-icon>
         </v-col>
-        <v-col cols="12" sm="8" md="7" class="text-left pa-0">
+
+        <v-col cols="12" md="8" class="text-left pl-3 pr-3">
           <div
             class="font-regular pt-4 mb-0 font-weight-light"
             :class="fontsize"
@@ -30,17 +32,6 @@
             </p>
           </div>
           <div class="body-2 mb-2">{{ task.time }}</div>
-        </v-col>
-        <v-col cols="12" class="pa-0">
-          <v-btn icon @click="$emit('checktask', task)">
-            <v-icon v-if="task.checked">check_box</v-icon>
-            <v-icon v-else>check_box_outline_blank</v-icon>
-          </v-btn>
-          <v-btn icon @click="$emit('triggerreminder', task)">
-            <v-icon>notifications_active</v-icon>
-          </v-btn>
-        </v-col>
-        <v-col cols="12">
           <v-chip>
             <v-avatar :color="!userImages[task.assigned] ? 'primary' : ''" left>
               <v-img
@@ -53,6 +44,30 @@
             </v-avatar>
             {{ getUserName(task.assigned) }}
           </v-chip>
+          <v-btn
+            icon
+            :color="textColor"
+            @click="$emit('triggerreminder', task)"
+          >
+            <v-icon>notifications_active</v-icon>
+          </v-btn>
+        </v-col>
+        <v-col cols="12" class="pa-0 ma-0 mt-4">
+          <v-sheet :color="cardColor" style="border-radius: 0px; height:60px">
+            <v-row style="height: 100%" justify="center" align="center">
+              <v-col cols="12" class="pa-0">
+                <v-btn
+                  :color="textColor"
+                  text
+                  @click="$emit('checktask', task)"
+                >
+                  <v-icon v-if="task.checked">check_box</v-icon>
+                  <v-icon v-else>check_box_outline_blank</v-icon>
+                  <span class="pl-1">Erledigt!</span>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-sheet>
         </v-col>
       </v-row>
     </v-card>
@@ -94,6 +109,10 @@ export default {
     }
   },
   computed: {
+    textColor() {
+      if (this.$vuetify.theme.isDark) return "#FFFFFF";
+      return "#111111";
+    },
     iconsize() {
       switch (this.$vuetify.breakpoint.name) {
         case "xl":
@@ -137,14 +156,3 @@ export default {
   }
 };
 </script>
-
-<style>
-.main-task {
-  padding: 2em;
-  margin: 0.5em;
-  margin-bottom: 2.5em;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-</style>
