@@ -79,6 +79,7 @@
     "checked": "Checked",
     "reminderMessage": "You've reminded {user} of {task}",
     "taskCheckedFor": "for: {name}",
+    "done": "Done!",
     "tabs": {
       "overview": "Overview",
       "list": "Task list",

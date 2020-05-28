@@ -79,6 +79,7 @@
     "checked": "Abgehakt",
     "reminderMessage": "Du hast {user} an '{task}' erinnert.",
     "taskCheckedFor": "für: {name}",
+    "done": "Erledigt!",
     "tabs": {
       "overview": "Übersicht",
       "list": "Aufgabenliste",

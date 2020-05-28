@@ -63,7 +63,7 @@
                 >
                   <v-icon v-if="task.checked">check_box</v-icon>
                   <v-icon v-else>check_box_outline_blank</v-icon>
-                  <span class="pl-1">Erledigt!</span>
+                  <span class="pl-1">{{ $t("tasks.done") }}</span>
                 </v-btn>
               </v-col>
             </v-row>
