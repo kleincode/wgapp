@@ -6,6 +6,8 @@ const JWT = require("jsonwebtoken");
 const JWT_SECRET = process.env.FORGOT_PASS_SECRET || "jIiTU_#=i9:S`Deh";
 const mailtext = require("../mails/verifyemail");
 const transporter = require("../components/Mailer");
+const MAIL_DISPLAY_NAME = process.env.MAIL_DISPLAY_NAME || "display_name_missing";
+const MAIL_USER = process.env.MAIL_USER || "email_missing";
 
 module.exports = ({ db }) => ({
   type: "POST",
@@ -60,8 +62,8 @@ module.exports = ({ db }) => ({
               const token = JWT.sign({ email, cpwtoken }, JWT_SECRET, { expiresIn: "3d" });
               try {
                 await transporter.sendMail({
-                  from: '"Jeff" <jeff@kleinco.de>', // sender address
-                  to: "f.kleinst10810@gmail.com" || email, // list of receivers
+                  from: `"${MAIL_DISPLAY_NAME}" <${MAIL_USER}>`, // sender address
+                  to: email, // list of receivers
                   subject: "Verify your email", // Subject line
                   html: mailtext({ firstname, lastname, email, token })
                 });
