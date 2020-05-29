@@ -96,10 +96,13 @@
                 {{ $t("shopping.completed") }}: {{ completedTasks }}
               </strong>
               <v-spacer></v-spacer>
-              <v-progress-circular
-                :value="progress"
-                class="mr-2"
-              ></v-progress-circular>
+              <v-expand-transition>
+                <v-progress-circular
+                  v-if="progress > 0"
+                  :value="progress"
+                  class="mr-2"
+                ></v-progress-circular>
+              </v-expand-transition>
             </v-row>
             <v-list v-if="items.length > 0" dense>
               <transition-group name="shopping-items" tag="ul">

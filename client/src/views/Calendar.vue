@@ -300,7 +300,6 @@ export default {
       },
       get() {
         const selectedIds = this.$store.state.userSettings.calendarsSelected;
-        console.log("selected cal ids", selectedIds);
         return this.allCalendars.filter(el => selectedIds.includes(el.id));
       }
     },

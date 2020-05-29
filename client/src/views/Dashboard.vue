@@ -2,6 +2,7 @@
   <v-container>
     <v-overlay
       v-if="!userInHousehold"
+      style="min-height: 100vh"
       :value="overlay"
       :opacity="0.8"
       absolute
@@ -22,7 +23,7 @@
         </v-col>
       </v-row>
     </v-overlay>
-    <h1 class="display-2 mb-6" style="max-width: 80%">
+    <h1 v-if="userInHousehold" class="display-2 mb-6" style="max-width: 80%">
       {{ message }}
     </h1>
     <v-row v-if="userInHousehold" align="stretch">

@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar v-model="show" :timeout="0" color="primary">
+  <v-snackbar v-model="show" style="bottom: 5em" :timeout="0" color="accent">
     <div>
       <v-icon color="white">info</v-icon>
       <v-btn v-if="last" text @click="introductionState = 15"

@@ -193,11 +193,15 @@ router.beforeEach((to, from, next) => {
   else if (
     !store.state.userInHousehold &&
     !(
-      to.name == "Dashboard" ||
-      to.name == "Settings" ||
-      to.name == "Profile" ||
-      to.name == "Join Household" ||
-      to.name == "Create Household"
+      //Pages that are allowed without a household:
+      (
+        to.name == "Dashboard" ||
+        to.name == "Settings" ||
+        to.name == "About" ||
+        to.name == "Profile" ||
+        to.name == "Join Household" ||
+        to.name == "Create Household"
+      )
     )
   ) {
     next({ name: "Dashboard", params: { redirect: to } });

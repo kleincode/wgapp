@@ -179,7 +179,7 @@
   },
   "settings": {
     "title": "Settings",
-    "introLocked": "We're not yet here!",
+    "introLocked": "We're not here yet!",
     "introLockedDescription": "Move on with your tutorial or click 'End tutorial' at the bottom.",
     "general": {
       "title": "General",
@@ -715,6 +715,9 @@
     "clock": {
       "title": "Clock"
     }
+  },
+  "introduction": {
+    "toolbar": "Introduction"
   },
   "resetPassword": {
     "title": "Reset password",

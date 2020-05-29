@@ -19,7 +19,7 @@
             </ul>
             <i18n path="about.visitHomepage" tag="p" class="title mt-7">
               <template #homepage>
-                <a>{{ $t("homepage") }}</a>
+                <a>{{ $t("about.homepage") }}</a>
               </template>
             </i18n>
             <p class="headline mt-7">

@@ -727,6 +727,9 @@
     "updated": "Password aktualisiert. Bitte melde dich nun an.",
     "updateFailed": "Aktualisierung fehlgeschlagen."
   },
+  "introduction": {
+    "toolbar": "Einführung"
+  },
   "about": {
     "title": "Über uns",
     "appInformation": "App Informationen",

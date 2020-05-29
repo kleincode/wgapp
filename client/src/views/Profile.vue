@@ -212,7 +212,7 @@
             </v-card>
           </v-col>
           <!-- Latest expenses -->
-          <v-col cols="12" md="6">
+          <v-col v-if="userInHousehold" cols="12" md="6">
             <v-card :elevation="6">
               <v-card-title>{{ $t("profile.expenses") }}</v-card-title>
               <v-card-text>
@@ -270,7 +270,7 @@
             </v-card>
           </v-col>
           <!-- Tasks log -->
-          <v-col cols="12" md="6">
+          <v-col v-if="userInHousehold" cols="12" md="6">
             <TasksLogCard
               :user-images="userImages"
               :tasks="getTasks"
@@ -330,30 +330,33 @@ export default {
       "userLastName",
       "userNickName",
       "userInitials",
-      "profilePictureData"
+      "profilePictureData",
+      "userInHousehold"
     ]),
     ...mapGetters(["hasProfilePicture"]),
     ...mapGetters("userSettings", ["formatDateRelative"])
   },
   mounted() {
-    this.loading = true;
-    const prom1 = this.$store.dispatch("fetchProfileImg");
-    const prom2 = this.$store.dispatch("tasks/fetchTasks");
-    const prom3 = this.fetchExpenses();
-    const prom4 = this.fetchMonthlyData();
-    Promise.all([prom1, prom2, prom3, prom4]).then(() => {
-      this.loggedTasks.forEach(async task => {
-        if (!this.userImages[task.assigned]) {
-          this.$set(
-            this.userImages,
-            task.assigned,
-            await fetchProfileImg(task.assigned)
-          );
-        }
+    if (this.userInHousehold) {
+      this.loading = true;
+      const prom1 = this.$store.dispatch("fetchProfileImg");
+      const prom2 = this.$store.dispatch("tasks/fetchTasks");
+      const prom3 = this.fetchExpenses();
+      const prom4 = this.fetchMonthlyData();
+      Promise.all([prom1, prom2, prom3, prom4]).then(() => {
+        this.loggedTasks.forEach(async task => {
+          if (!this.userImages[task.assigned]) {
+            this.$set(
+              this.userImages,
+              task.assigned,
+              await fetchProfileImg(task.assigned)
+            );
+          }
+        });
+        this.loading = false;
       });
-      this.loading = false;
-    });
-    this.estimateLocalStorage();
+      this.estimateLocalStorage();
+    }
   },
   methods: {
     async fetchExpenses() {
