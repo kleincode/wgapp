@@ -30,11 +30,11 @@
                 raised
                 class="mt-4"
                 @click="triggerNextState"
-                >explore</v-btn
+                >{{ $t("introduction.explore") }}</v-btn
               >
-              <v-btn v-else raised class="mt-4" @click="finishIntroduction"
-                >finish</v-btn
-              >
+              <v-btn v-else raised class="mt-4" @click="finishIntroduction">{{
+                $t("introduction.finish")
+              }}</v-btn>
             </v-col>
           </v-row>
         </v-sheet>

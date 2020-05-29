@@ -9,38 +9,20 @@
       :next-icon="slide == 3 ? '' : 'keyboard_arrow_right'"
     >
       <v-carousel-item v-for="(slide, i) in slides" :key="i">
-        <v-sheet :color="slide.color" height="100%">
+        <v-sheet :color="slide" height="100%">
           <v-row
             class="ml-4 mr-4"
             :class="isDeviceSmall ? '' : 'fill-height'"
             :align="isDeviceSmall ? 'start' : 'center'"
             justify="center"
           >
-            <v-col cols="4" md="4" lg="3" :class="slide.last ? '' : 'mb-8'">
+            <v-col cols="4" md="4" lg="3" class="mb-8">
               <v-img src="@/assets/jeff-without.svg" class=""></v-img>
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">
-                {{ slide.text }}
+                {{ getIntroText(i) }}
               </h1>
-              <div class="subtitle-1 mt-4">{{ slide.subtext }}</div>
-              <v-row v-if="slide.last" align="center">
-                <v-col cols="12" md="6">
-                  <v-btn color="secondary" block @click="join">
-                    join household
-                  </v-btn>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-btn color="secondary" block @click="create">
-                    create household
-                  </v-btn>
-                </v-col>
-                <v-col cols="12" class="text-center">
-                  <v-btn color="secondary" text @click="close">
-                    close introduction
-                  </v-btn>
-                </v-col>
-              </v-row>
             </v-col>
           </v-row>
         </v-sheet>
@@ -58,26 +40,25 @@
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">
-                But first, let's create a household for you.
+                {{ $t("introduction.createHousehold.text") }}
               </h1>
               <div class="subtitle-1 mt-4">
-                If someone already created your household please join this
-                household.
+                {{ $t("introduction.createHousehold.subtext") }}
               </div>
               <v-row align="center">
                 <v-col cols="12" md="6">
                   <v-btn color="secondary" block @click="join">
-                    join household
+                    {{ $t("dashboard.joinHousehold") }}
                   </v-btn>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-btn color="secondary" block @click="create">
-                    create household
+                    {{ $t("dashboard.createHousehold") }}
                   </v-btn>
                 </v-col>
                 <v-col cols="12" class="text-center">
                   <v-btn color="secondary" text @click="close">
-                    close introduction
+                    {{ $t("dashboard.closeIntroduction") }}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -98,18 +79,20 @@
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">
-                Since you're already in a household...
+                {{ $t("introduction.alreadyInHousehold") }}
               </h1>
-              <div class="subtitle-1 mt-4">Let's get started!</div>
+              <div class="subtitle-1 mt-4">
+                {{ $t("introduction.letsGetStarted") }}
+              </div>
               <v-row align="center">
                 <v-col cols="12">
                   <v-btn color="secondary" block @click="start">
-                    Start Tour
+                    {{ $t("introduction.startTour") }}
                   </v-btn>
                 </v-col>
                 <v-col cols="12" class="text-center">
                   <v-btn color="secondary" text @click="close">
-                    close introduction
+                    {{ $t("introduction.closeIntroduction") }}
                   </v-btn>
                 </v-col>
               </v-row>
@@ -129,20 +112,7 @@ export default {
   data: () => ({
     slide: 0,
     dialog: true,
-    slides: [
-      {
-        text: "Hello I'm Jeff. Nice to meet you!",
-        color: "primary"
-      },
-      {
-        text: "I will be your new personal home assistant.",
-        color: "warning"
-      },
-      {
-        text: "I'm gonna show you my most important features.",
-        color: "pink darken-2"
-      }
-    ]
+    slides: ["primary", "warning", "pink darken-2"]
   }),
   computed: {
     introductionState: {
@@ -173,6 +143,9 @@ export default {
     ...mapState(["userInHousehold"])
   },
   methods: {
+    getIntroText(i) {
+      return this.$t("introduction.firstDialog[" + i + "]");
+    },
     join() {
       this.introductionState = 2;
       this.$router.push({ path: "/household/join" });
@@ -185,7 +158,6 @@ export default {
     },
     start() {
       this.introductionState = 3;
-      this.$router.push({ path: "/dashboard" });
       this.dialog = false;
     },
     close() {
