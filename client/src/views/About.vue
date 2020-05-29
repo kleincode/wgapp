@@ -19,11 +19,12 @@
             </ul>
             <i18n path="about.visitHomepage" tag="p" class="title mt-7">
               <template #homepage>
-                <a>{{ $t("homepage") }}</a>
+                <a href="https://kleinco.de">{{ $t("about.homepage") }}</a>
               </template>
             </i18n>
             <p class="headline mt-7">
-              {{ $t("about.contactUs") }} <a>contact@roomie.com</a>
+              {{ $t("about.contactUs") }}
+              <a href="mailto:roomie@kleinco.de">roomie@kleinco.de</a>
             </p>
           </v-card-text>
         </v-card>

@@ -6,9 +6,12 @@
     "finances": "Finanzen",
     "tasks": "Aufgaben",
     "household": "Haushalt verwalten",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "about": "Über Roomie",
+    "profile": "Profil"
   },
   "general": {
+    "appName": "Roomie",
     "member": "Mitbewohner",
     "members": "Mitbewohner",
     "household": "Haushalt",

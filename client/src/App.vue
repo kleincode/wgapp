@@ -87,9 +87,9 @@
               </v-icon>
               Offline
             </v-chip>
-            <v-btn color="white" class="" text :to="{ name: 'About' }" block
-              >About</v-btn
-            >
+            <v-btn color="white" class="" text :to="{ name: 'About' }" block>{{
+              $t("navigation.about")
+            }}</v-btn>
           </div>
         </template>
       </v-navigation-drawer>
@@ -100,7 +100,9 @@
           aria-label="Menu"
           @click="menuVisible = !menuVisible"
         ></v-app-bar-nav-icon>
-        <v-toolbar-title>Roomie</v-toolbar-title>
+        <v-toolbar-title>{{
+          $t($route.matched[0].meta.title)
+        }}</v-toolbar-title>
       </v-app-bar>
 
       <v-content>

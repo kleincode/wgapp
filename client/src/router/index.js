@@ -13,11 +13,13 @@ const routes = [
   {
     path: "/dashboard",
     name: "Dashboard",
+    meta: { title: "general.appName" },
     component: () =>
       import(/* webpackChunkName: "dashboard" */ "../views/Dashboard.vue")
   },
   {
     path: "/finances",
+    meta: { title: "navigation.finances" },
     component: () =>
       import(/* webpackChunkName: "finances" */ "../views/Finances.vue"),
     children: [
@@ -49,6 +51,7 @@ const routes = [
   },
   {
     path: "/tasks",
+    meta: { title: "navigation.tasks" },
     component: () =>
       import(/* webpackChunkName: "tasks" */ "../views/Tasks.vue"),
     children: [
@@ -78,12 +81,14 @@ const routes = [
   },
   {
     path: "/about",
+    meta: { title: "general.appName" },
     name: "About",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue")
   },
   {
     path: "/settings",
+    meta: { title: "navigation.settings" },
     name: "Settings",
     component: () =>
       import(/* webpackChunkName: "settings" */ "../views/Settings.vue"),
@@ -118,11 +123,13 @@ const routes = [
   {
     path: "/login",
     name: "Login",
+    meta: { title: "general.appName" },
     component: Login
   },
   {
     path: "/resetpassword/:token?",
     name: "Reset password",
+    meta: { title: "general.appName" },
     props: true,
     component: () =>
       import(
@@ -132,12 +139,14 @@ const routes = [
   {
     path: "/profile",
     name: "Profile",
+    meta: { title: "navigation.profile" },
     component: () =>
       import(/* webpackChunkName: "household" */ "../views/Profile.vue")
   },
   {
     path: "/household",
     name: "Manage Household",
+    meta: { title: "navigation.household" },
     component: () =>
       import(
         /* webpackChunkName: "household" */ "../views/household/ManageHousehold.vue"
@@ -146,6 +155,7 @@ const routes = [
   {
     path: "/household/join",
     name: "Join Household",
+    meta: { title: "general.appName" },
     component: () =>
       import(
         /* webpackChunkName: "joinhousehold" */ "../views/household/JoinHousehold.vue"
@@ -154,6 +164,7 @@ const routes = [
   {
     path: "/household/create",
     name: "Create Household",
+    meta: { title: "general.appName" },
     component: () =>
       import(
         /* webpackChunkName: "createhousehold" */ "../views/household/CreateHousehold.vue"
@@ -162,12 +173,14 @@ const routes = [
   {
     path: "/calendar",
     name: "Calendar",
+    meta: { title: "navigation.calendar" },
     component: () =>
       import(/* webpackChunkName: "calendar" */ "../views/Calendar.vue")
   },
   {
     path: "/shopping",
     name: "Shopping",
+    meta: { title: "navigation.shopping" },
     component: () =>
       import(/* webpackChunkName: "shoppinglist" */ "../views/Shopping.vue")
   }
