@@ -21,6 +21,7 @@
     </v-overlay>
     <div v-if="!loading">
       <v-navigation-drawer
+        v-if="isAuthorized"
         v-model="menuVisible"
         app
         clipped
@@ -96,13 +97,20 @@
 
       <v-app-bar app color="primary" class="white--text" clipped-left>
         <v-app-bar-nav-icon
+          v-if="isAuthorized"
           color="white"
           aria-label="Menu"
           @click="menuVisible = !menuVisible"
         ></v-app-bar-nav-icon>
-        <v-toolbar-title>{{
-          $t($route.matched[0].meta.title)
-        }}</v-toolbar-title>
+        <v-toolbar-title
+          >{{ $t($route.matched[0].meta.title)
+          }}<v-chip
+            v-if="$store.state.userSettings.introductionState > 0"
+            class="ml-2"
+            color="accent"
+            >{{ $t("introduction.toolbar") }}</v-chip
+          ></v-toolbar-title
+        >
       </v-app-bar>
 
       <v-content>
@@ -250,7 +258,9 @@ export default {
     if (this._initialized) {
       this.loadLang();
     }
-    await this.$store.dispatch("fetchProfileImg");
+    if (this.isAuthorized) {
+      await this.$store.dispatch("fetchProfileImg");
+    }
   },
   methods: {
     toggleMenu() {

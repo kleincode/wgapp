@@ -719,6 +719,59 @@
       "title": "Uhr"
     }
   },
+  "introduction": {
+    "toolbar": "Einführung",
+    "closeIntroduction": "Einführung schließen",
+    "createHousehold": {
+      "text": "Lass uns erstmal deinen Haushalt erstellen.",
+      "subtext": "Wenn schon jemand einen Haushalt erstellt hat umso besser. Trete ihm einfach bei."
+    },
+    "alreadyInHousehold": "Da du schon in einem Haushalt bist...",
+    "startTour": "Einführung starten",
+    "firstDialog": [
+      "Hallo ich bin Roomie. Freut mich dich kennenzulernernen!",
+      "Ich werde dein neuer persönlicher Assistent.",
+      "Lass mich dir meine wichtigsten Funktionen zeigen."
+    ],
+    "letsGetStarted": "Auf geht's!",
+    "dashboard": {
+      "text": "Das ist das Dashboard.",
+      "subtext": "Hier kriegst du einen Überblick über alle Funktionen, die wir unterstützen. Du kannst alles später in den Einstellungen konfigurieren."
+    },
+    "clickShopping": "Klick auf 'Einkaufsliste'",
+    "shopping": {
+      "text": "Hier kannst du Einkaufslisten erstellen",
+      "subtext": "Du kannst mehrere Listen erstellen und die Einträge bearbeiten - sogar offline! Sobald du wieder online bist werde ich die Liste synchronisieren. Mit der Zeit werde ich versuchen deine Gegenstände zu lernen, damit ich dir noch bessere Vorschläge machen kann."
+    },
+    "clickFinances": "Klick auf 'Financen'",
+    "finances": {
+      "text": "Jetzt sind wir in meinem Finanzsystem",
+      "subtext": "Hier kannst du Ausgaben und monatliche Kosten eintragen. Den Rest werde ich übernehmen und alles auswerten."
+    },
+    "clickTasks": "Klick auf 'Aufgaben'",
+    "tasks": {
+      "text": "Das ist meine Aufgabenverwaltung",
+      "subtext": "Du kannst alle Aufgaben deines Haushalts hier verwalten. Ich unterstütze einmalige Aufgaben, sich wiederholende Aufgaben oder welche, die nur bei Bedarf gemacht werden müssen. Wenn du Benachrichtigungen aktivierst kann ich dich sogar an alles erinnern!"
+    },
+    "clickManageHousehold": "Klicke auf 'Haushalt verwalten'",
+    "manageHousehold": {
+      "text": "Haushalt verwalten",
+      "subtext": "Lade neue Haushaltsmitglieder ein und konfiguriere deinen Haushalt von hier."
+    },
+    "clickSettings": "Click 'Einstellungen'",
+    "settings": {
+      "text": "Das sind meine Einstellungen.",
+      "subtext": "Zunächst kannst du hier ein paar allgemeine Dinge einrichten wie Sprache oder Benachrichtigungen. Dein Dashboard stellst du im entsprechenden Tab ein. Alle aktuell unterstützten Integrationen werden im letzten Tab verwaltet."
+    },
+    "end": {
+      "text": "Sehr schön! Jetzt lass ich dich allein.",
+      "subtext": "Wenn du noch Fragen hast meld dich einfach unter "
+    },
+    "explore": "Entdecken",
+    "finish": "Abschließen",
+    "finishTutorial": "Einführung abschließen",
+    "endTutorial": "Einführung beenden"
+  },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
     "chooseNewPassword": "Bitte vergib ein neues Passwort.",

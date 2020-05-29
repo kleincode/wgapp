@@ -8,7 +8,7 @@ const syncEntries = {
   introductionState: 1,
   updateMessageIndex: -1,
   darkMode: false,
-  lang: "en",
+  lang: navigator.language.startsWith("de") ? "de" : "en",
   calendarEnabled: false,
   weatherWidgetEnabled: true,
   clockWidgetEnabled: true,

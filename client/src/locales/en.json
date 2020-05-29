@@ -182,7 +182,7 @@
   },
   "settings": {
     "title": "Settings",
-    "introLocked": "We're not yet here!",
+    "introLocked": "We're not here yet!",
     "introLockedDescription": "Move on with your tutorial or click 'End tutorial' at the bottom.",
     "general": {
       "title": "General",
@@ -718,6 +718,59 @@
     "clock": {
       "title": "Clock"
     }
+  },
+  "introduction": {
+    "toolbar": "Introduction",
+    "closeIntroduction": "close introduction",
+    "createHousehold": {
+      "text": "But first, let's create a household for you.",
+      "subtext": "If someone already created your household please join this household."
+    },
+    "alreadyInHousehold": "Since you're already in a household...",
+    "startTour": "Start Tour",
+    "firstDialog": [
+      "Hello I'm Jeff. Nice to meet you!",
+      "I will be your new personal home assistant.",
+      "I'm gonna show you my most important features."
+    ],
+    "letsGetStarted": "Let's get started!",
+    "dashboard": {
+      "text": "That's the dashboard.",
+      "subtext": "Here you have an overview about all the features we support. You can configure everything in the Settings later on."
+    },
+    "clickShopping": "Click 'Shopping'",
+    "shopping": {
+      "text": "You can write your shopping lists right here.",
+      "subtext": "You can add multiple lists and edit the items even offline. I will sync everything once your device is online. Over time I will try to learn your usual shopping items and will autocomplete your items while you type."
+    },
+    "clickFinances": "Click 'Finances'",
+    "finances": {
+      "text": "Now we are in my finance system.",
+      "subtext": "You can add expenses and monthly charges here. I will evaluate everything else for you."
+    },
+    "clickTasks": "Click 'Tasks'",
+    "tasks": {
+      "text": "That's my task page.",
+      "subtext": "You can manage all tasks from here. I support single tasks, on-demand tasks and repeating tasks. If you activate push notifications I can even remind you of your tasks."
+    },
+    "clickManageHousehold": "Click 'Manage Household'",
+    "manageHousehold": {
+      "text": "Household manager",
+      "subtext": "Invite new members and configure your household from here."
+    },
+    "clickSettings": "Click 'Settings'",
+    "settings": {
+      "text": "These are our settings.", 
+      "subtext": "You can configure some general settings like language and notifications here. You can also setup your dashboard in the corresponding tab. All supported integrations can configured in the last tab."
+    },
+    "end": {
+      "text": "Thanks for having me!",
+      "subtext": "If you have any questions check out our help or get in touch at "
+    },
+    "explore": "explore",
+    "finish": "finish",
+    "finishTutorial": "Finish tutorial",
+    "endTutorial": "End tutorial"
   },
   "resetPassword": {
     "title": "Reset password",

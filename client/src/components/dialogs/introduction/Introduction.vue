@@ -6,59 +6,68 @@
     <!--Dashboard-->
     <FeaturesDialog
       v-if="introductionState == 3"
-      text="That's the dashboard."
-      subtext="Here you have an overview about all the features we support. You can configure everything in the Settings later on."
+      :text="$t('introduction.dashboard.text')"
+      :subtext="$t('introduction.dashboard.subtext')"
       color="primary"
       :next-state="4"
     ></FeaturesDialog>
-    <FeatureSnack :show-state="4" text="Click 'Shopping'"></FeatureSnack>
+    <FeatureSnack
+      :show-state="4"
+      :text="$t('introduction.clickShopping')"
+    ></FeatureSnack>
     <!--Shopping-->
     <FeaturesDialog
       v-if="introductionState == 5"
-      text="You can write your shopping lists right here."
-      subtext="You can add multiple lists and edit the items even offline. I will sync everything once your device is online. 
-      Over time I will try to learn your usual shopping items and will autocomplete your items while you type."
+      :text="$t('introduction.shopping.text')"
+      :subtext="$t('introduction.shopping.subtext')"
       color="warning"
       :next-state="6"
     ></FeaturesDialog>
-    <FeatureSnack :show-state="6" text="Click 'Finances'"></FeatureSnack>
+    <FeatureSnack
+      :show-state="6"
+      :text="$t('introduction.clickFinances')"
+    ></FeatureSnack>
     <!--Finances-->
     <FeaturesDialog
       v-if="introductionState == 7"
-      text="Now we are in my finance system."
-      subtext="You can add expenses and monthly charges here. I will evaluate everything else for you."
+      :text="$t('introduction.finances.text')"
+      :subtext="$t('introduction.finances.subtext')"
       color="pink darken-2"
       :next-state="8"
     ></FeaturesDialog>
-    <FeatureSnack :show-state="8" text="Click 'Tasks'"></FeatureSnack>
+    <FeatureSnack
+      :show-state="8"
+      :text="$t('introduction.clickTasks')"
+    ></FeatureSnack>
     <!--Tasks-->
     <FeaturesDialog
       v-if="introductionState == 9"
-      text="That's my task page."
-      subtext="You can manage all tasks from here. I support single tasks, on-demand tasks and repeating tasks. If you activate push notifications I can even remind you of your tasks."
+      :text="$t('introduction.tasks.text')"
+      :subtext="$t('introduction.tasks.subtext')"
       color="purple darken-2"
       :next-state="10"
     ></FeaturesDialog>
     <FeatureSnack
       :show-state="10"
-      text="Click 'Manage Household'"
+      :text="$t('introduction.clickManageHousehold')"
     ></FeatureSnack>
     <!--Household Manager-->
     <FeaturesDialog
       v-if="introductionState == 11"
-      text="Household manager"
-      subtext="Invite new members and configure your household from here."
+      :text="$t('introduction.manageHousehold.text')"
+      :subtext="$t('introduction.manageHousehold.subtext')"
       color="red lighten-1"
       :next-state="12"
     ></FeaturesDialog>
-    <FeatureSnack :show-state="12" text="Click 'Settings'"></FeatureSnack>
+    <FeatureSnack
+      :show-state="12"
+      :text="$t('introduction.clickSettings')"
+    ></FeatureSnack>
     <!--Settings-->
     <FeaturesDialog
       v-if="introductionState == 13"
-      text="These are our settings."
-      subtext="You can configure some general settings like language and notifications here. 
-      You can also setup your dashboard in the corresponding tab. All supported integrations can configured 
-      in the last tab."
+      :text="$t('introduction.settings.text')"
+      :subtext="$t('introduction.settings.subtext')"
       color="warning"
       :next-state="14"
     ></FeaturesDialog>
@@ -66,8 +75,8 @@
     <!--Finish-->
     <FeaturesDialog
       v-if="introductionState == 15"
-      text="Thanks for having me!"
-      subtext="If you have any questions check out our help or get in touch at "
+      :text="$t('introduction.end.text')"
+      :subtext="$t('introduction.end.subtext')"
       color="primary"
       :next-state="0"
       finish
