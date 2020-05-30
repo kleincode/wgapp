@@ -41,12 +41,16 @@
                 ></v-list-item-content>
 
                 <v-list-item-action style="display: block" class="">
-                  <v-btn icon dense @click="$refs.editDialog.startEdit(list)">
+                  <v-btn
+                    icon
+                    dense
+                    @click.stop="$refs.editDialog.startEdit(list)"
+                  >
                     <v-icon dense>
                       {{ shoppingIcons[0] }}
                     </v-icon>
                   </v-btn>
-                  <v-btn icon @click="deleteList(list)">
+                  <v-btn icon @click.stop="deleteList(list)">
                     <v-icon dense>
                       {{ shoppingIcons[2] }}
                     </v-icon>
