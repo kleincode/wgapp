@@ -181,6 +181,19 @@
         </v-card>
       </v-col>
     </v-row>
+    <ConfirmDialog
+      v-model="confirmDeleteListDialogShown"
+      invert-colors
+      :title="
+        $t('shopping.confirmDeleteListTitle', {
+          name: listToBeDeleted && listToBeDeleted.name
+        })
+      "
+      @positive="confirmDeleteList"
+      @negative="confirmDeleteListDialogShown = false"
+    >
+      {{ $t("shopping.confirmDeleteListText") }}
+    </ConfirmDialog>
   </v-container>
 </template>
 
@@ -188,6 +201,7 @@
 import { mapState } from "vuex";
 import FinishShoppingDialog from "@/components/dialogs/FinishShoppingDialog.vue";
 import EditShoppingListDialog from "@/components/dialogs/EditShoppingListDialog.vue";
+import ConfirmDialog from "@/components/dialogs/ConfirmDialog.vue";
 import icons from "@/assets/icons.js";
 import en_autoItems from "@/assets/en_shoppingitems.js";
 import de_autoItems from "@/assets/de_shoppingitems.js";
@@ -196,7 +210,8 @@ export default {
   name: "ShoppingList",
   components: {
     FinishShoppingDialog,
-    EditShoppingListDialog
+    EditShoppingListDialog,
+    ConfirmDialog
   },
   data: () => ({
     editList: {
@@ -208,7 +223,9 @@ export default {
     selectedItem: 0,
     loading: false,
     activeItemIndex: -1,
-    updateRemoteFunction: null
+    updateRemoteFunction: null,
+    confirmDeleteListDialogShown: false,
+    listToBeDeleted: null
   }),
 
   computed: {
@@ -303,8 +320,19 @@ export default {
     },
 
     async deleteList(list) {
-      list.deleted = true;
-      if (await this.$store.dispatch("shopping/deleteList", list.id)) {
+      this.listToBeDeleted = list;
+      this.confirmDeleteListDialogShown = true;
+    },
+    async confirmDeleteList() {
+      this.confirmDeleteListDialogShown = false;
+      this.listToBeDeleted.deleted = true;
+      if (
+        await this.$store.dispatch(
+          "shopping/deleteList",
+          this.listToBeDeleted.id
+        )
+      ) {
+        this.listToBeDeleted = null;
         this.updateRemoteFunction();
       }
     },

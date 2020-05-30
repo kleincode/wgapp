@@ -163,6 +163,8 @@
     "completed": "Erledigt",
     "noListSelected": "Keine Liste ausgewählt",
     "syncError": "Synchronisierung fehlgeschlagen: {message}",
+    "confirmDeleteListTitle": "\"{name}\" löschen?",
+    "confirmDeleteListText": "Bist du sicher, dass du diese Einkaufsliste löschen willst?",
     "expense": {
       "transfer": "Zu Finanzen übertragen",
       "add": "Ausgabe hinzufügen",

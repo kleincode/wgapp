@@ -163,6 +163,8 @@
     "completed": "Completed",
     "noListSelected": "No list selected",
     "syncError": "Sync failed: {message}",
+    "confirmDeleteListTitle": "Delete '{name}'?",
+    "confirmDeleteListText": "Are you sure you want to delete this list?",
     "expense": {
       "transfer": "Transfer to finances",
       "add": "Add expense",
