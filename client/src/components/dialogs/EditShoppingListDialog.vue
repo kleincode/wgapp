@@ -50,7 +50,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red" text @click="reset">{{
+          <v-btn color="red" text @click="dialogShown = false">{{
             $t("commands.cancel")
           }}</v-btn>
           <v-btn color="green" text type="submit" :disabled="!formValid">{{
@@ -97,6 +97,11 @@ export default {
       ];
     }
   },
+  watch: {
+    dialogShown(val) {
+      if (!val) this.reset();
+    }
+  },
   methods: {
     getIcon(index) {
       return icons[index];
@@ -126,7 +131,7 @@ export default {
       try {
         if (this.editMode) await this.commitEditList(this.value);
         else await this.commitNewList(this.value);
-        this.reset();
+        this.dialogShown = false;
         this.$emit("committed");
       } catch (err) {
         this.$store.dispatch(
@@ -138,7 +143,6 @@ export default {
       this.loading = false;
     },
     reset() {
-      this.dialogShown = false;
       setTimeout(() => {
         this.updateValue({
           name: "",
