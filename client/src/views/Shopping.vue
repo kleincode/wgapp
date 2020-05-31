@@ -79,8 +79,11 @@
       </v-col>
       <!-- Items col -->
       <v-col cols="12" md="7" lg="6" xl="5">
-        <v-card style="height: 100%" :elevation="6" :loading="loadingItems">
-          <v-card-title>
+        <v-card
+          style="height: 100%"
+          :elevation="$vuetify.breakpoint.mdAndUp ? 6 : 0"
+        >
+          <v-card-title v-if="$vuetify.breakpoint.mdAndUp">
             <v-icon class="mr-2">
               {{ getIcon(selectedListIcon) }}
             </v-icon>
@@ -115,9 +118,28 @@
               </v-expand-transition>
             </v-row>
             <v-list v-if="items.length > 0" dense>
-              <transition-group name="shopping-items" tag="ul">
-                <v-list-item v-for="(item, i) in displayedItems" :key="item.id">
-                  <v-list-item-content style="display: contents">
+              <transition-group name="shopping-items" tag="ul" class="pl-0">
+                <v-list-item
+                  v-for="(item, i) in displayedItems"
+                  :key="item.id || 'sep'"
+                >
+                  <v-list-item-content
+                    v-if="item.insertNewMarker"
+                    style="display: contents;"
+                    @click="pushItem"
+                  >
+                    <v-icon
+                      left
+                      style="flex: none !important; margin: 7px 7px 7px 0;"
+                      >add</v-icon
+                    >
+                    <span
+                      class="body-2 grey--text"
+                      style="font-size: 16px !important; padding: 12px;"
+                      >{{ $t("shopping.newItem") }}</span
+                    >
+                  </v-list-item-content>
+                  <v-list-item-content v-else style="display: contents;">
                     <v-checkbox
                       v-model="item.checked"
                       class="mt-0"
@@ -292,8 +314,7 @@ export default {
     updateRemoteFunction: null,
     confirmDeleteListDialogShown: false,
     listToBeDeleted: null,
-    mobileSheetOpen: false,
-    loadingItems: false
+    mobileSheetOpen: false
   }),
 
   computed: {
@@ -329,9 +350,19 @@ export default {
       }
     },
     displayedItems() {
-      return this.items
+      let displayedItems = this.items
         .filter(el => !el.deleted)
         .sort((a, b) => a.checked - b.checked);
+      //Insert "add element" entry to list behind last unchecked entry
+      let insertNewIndex = displayedItems.findIndex(el => el.checked);
+      displayedItems.splice(
+        insertNewIndex < 0 ? displayedItems.length : insertNewIndex,
+        0,
+        {
+          insertNewMarker: true
+        }
+      );
+      return displayedItems;
     }
   },
 
@@ -418,7 +449,6 @@ export default {
     },
 
     async fetchShoppingItems() {
-      this.loadingItems = true;
       if (!this.$vuetify.breakpoint.mdAndUp && !this.selectedListId)
         this.selectedListId = this.lists[0].id;
       await this.$store.dispatch(
@@ -426,8 +456,7 @@ export default {
         this.selectedListId || false
       );
       this.mobileSheetOpen = false;
-      console.log("fetching", this.selectedListId || false);
-      this.loadingItems = false;
+      //console.log("fetching", this.selectedListId || false);
     },
 
     updateRemote() {
@@ -465,7 +494,14 @@ export default {
 </script>
 <style lang="scss">
 .shopping-items-move {
-  transition: transform 0.6s;
+  transition: transform 0.4s ease-out;
+}
+.shopping-items-leave-active {
+  transition: all 0.2s ease-in;
+}
+.shopping-items-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
 }
 .shopping-combo {
   & * {
