@@ -156,6 +156,7 @@
   "shopping": {
     "title": "Einkäufe",
     "lists": "Einkaufslisten",
+    "chooseShoppingList": "Einkaufsliste wählen",
     "sync": "Einkaufslisten synchronisieren",
     "emptyList": "Beginne, indem du eine Liste anlegst. Einkaufen macht Spaß!!!",
     "emptyShopping": "Frohen Konsum!",
@@ -166,6 +167,7 @@
     "syncError": "Synchronisierung fehlgeschlagen: {message}",
     "confirmDeleteListTitle": "\"{name}\" löschen?",
     "confirmDeleteListText": "Bist du sicher, dass du diese Einkaufsliste löschen willst?",
+    "emptyItem": "(leer)",
     "expense": {
       "transfer": "Zu Finanzen übertragen",
       "add": "Ausgabe hinzufügen",

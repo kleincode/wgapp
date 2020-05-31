@@ -156,6 +156,7 @@
   "shopping": {
     "title": "Shopping",
     "lists": "Lists",
+    "chooseShoppingList": "Choose shopping list",
     "sync": "Synchronize shopping lists",
     "emptyList": "Go make a list, shopping is fun!",
     "emptyShopping": "Happy shopping!",
@@ -166,6 +167,7 @@
     "syncError": "Sync failed: {message}",
     "confirmDeleteListTitle": "Delete '{name}'?",
     "confirmDeleteListText": "Are you sure you want to delete this list?",
+    "emptyItem": "Empty item",
     "expense": {
       "transfer": "Transfer to finances",
       "add": "Add expense",

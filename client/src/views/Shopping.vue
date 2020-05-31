@@ -1,10 +1,16 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12" lg="10" offset-lg="1" xl="8" offset-xl="2">
-        <h1 class="display-2 pb-6">{{ $t("shopping.title") }}</h1>
-      </v-col>
-      <v-col cols="12" md="5" lg="4" offset-lg="1" xl="3" offset-xl="2">
+    <v-row class="pb-12">
+      <!-- Lists col (desktop only) -->
+      <v-col
+        v-if="$vuetify.breakpoint.mdAndUp"
+        cols="12"
+        md="5"
+        lg="4"
+        offset-lg="1"
+        xl="3"
+        offset-xl="2"
+      >
         <v-card style="height: 100%" :elevation="6">
           <v-card-title>
             {{ $t("shopping.lists") }}
@@ -73,7 +79,7 @@
       </v-col>
       <!-- Items col -->
       <v-col cols="12" md="7" lg="6" xl="5">
-        <v-card style="height: 100%" :elevation="6">
+        <v-card style="height: 100%" :elevation="6" :loading="loadingItems">
           <v-card-title>
             <v-icon class="mr-2">
               {{ getIcon(selectedListIcon) }}
@@ -139,6 +145,7 @@
                       :menu-props="{
                         maxHeight: 150
                       }"
+                      :placeholder="$t('shopping.emptyItem')"
                       @keydown.enter="selectNextItem(i)"
                       @focus="focusItem(i)"
                       @blur="updateItem(item, i)"
@@ -194,6 +201,65 @@
     >
       {{ $t("shopping.confirmDeleteListText") }}
     </ConfirmDialog>
+    <v-footer v-if="!$vuetify.breakpoint.mdAndUp" fixed padless>
+      <v-toolbar :elevation="6">
+        <v-bottom-sheet v-model="mobileSheetOpen">
+          <template v-slot:activator="{ on }">
+            <v-app-bar-nav-icon color="primary" v-on="on"></v-app-bar-nav-icon>
+          </template>
+          <v-list v-if="lists.length > 0" style="position: relative;">
+            <edit-shopping-list-dialog
+              ref="editDialog"
+              v-model="editList"
+              @committed="updateRemoteFunction()"
+            >
+              <template #activator="{ on }">
+                <v-btn absolute fab top right color="accent" v-on="on">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </template>
+            </edit-shopping-list-dialog>
+            <v-subheader>{{ $t("shopping.chooseShoppingList") }}</v-subheader>
+            <v-list-item-group
+              v-model="selectedListId"
+              color="primary"
+              mandatory
+              @change="fetchShoppingItems"
+            >
+              <v-list-item
+                v-for="list in lists"
+                :key="list.id"
+                :value="list.id"
+              >
+                <v-list-item-icon>
+                  <v-icon>{{ getIcon(list.icon) }}</v-icon> </v-list-item-icon
+                ><v-list-item-content
+                  ><v-list-item-title v-text="list.name"></v-list-item-title
+                ></v-list-item-content>
+
+                <v-list-item-action style="display: block" class="">
+                  <v-btn
+                    icon
+                    dense
+                    @click.stop="$refs.editDialog.startEdit(list)"
+                  >
+                    <v-icon dense>
+                      {{ shoppingIcons[0] }}
+                    </v-icon>
+                  </v-btn>
+                  <v-btn icon @click.stop="deleteList(list)">
+                    <v-icon dense>
+                      {{ shoppingIcons[2] }}
+                    </v-icon>
+                  </v-btn>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-bottom-sheet>
+        <v-toolbar-title>{{ selectedListName }}</v-toolbar-title>
+      </v-toolbar>
+    </v-footer>
   </v-container>
 </template>
 
@@ -225,7 +291,9 @@ export default {
     activeItemIndex: -1,
     updateRemoteFunction: null,
     confirmDeleteListDialogShown: false,
-    listToBeDeleted: null
+    listToBeDeleted: null,
+    mobileSheetOpen: false,
+    loadingItems: false
   }),
 
   computed: {
@@ -303,11 +371,13 @@ export default {
       if (item.deleted) return;
       this.$refs.combo[index].blur();
       this.activeItemIndex = -1;
-      // wait for next tick because combobox doesn't update its text value right away (vuetify bug)
-      this.$nextTick(async () => {
-        if (await this.$store.dispatch("shopping/editItem", item)) {
-          this.updateRemoteFunction();
-        }
+      // wait some time because combobox doesn't update its text value right away (vuetify bug)
+      this.$nextTick(() => {
+        setTimeout(async () => {
+          if (await this.$store.dispatch("shopping/editItem", item)) {
+            this.updateRemoteFunction();
+          }
+        }, 100);
       });
     },
 
@@ -348,11 +418,16 @@ export default {
     },
 
     async fetchShoppingItems() {
+      this.loadingItems = true;
+      if (!this.$vuetify.breakpoint.mdAndUp && !this.selectedListId)
+        this.selectedListId = this.lists[0].id;
       await this.$store.dispatch(
         "shopping/loadList",
         this.selectedListId || false
       );
+      this.mobileSheetOpen = false;
       console.log("fetching", this.selectedListId || false);
+      this.loadingItems = false;
     },
 
     updateRemote() {

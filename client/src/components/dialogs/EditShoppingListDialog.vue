@@ -1,14 +1,16 @@
 <template>
   <v-dialog v-model="dialogShown" max-width="720px">
     <template v-slot:activator="{ on }">
-      <v-btn
-        color="success"
-        icon
-        :aria-label="$t('shopping.list.create')"
-        v-on="on"
-      >
-        <v-icon>add</v-icon>
-      </v-btn>
+      <slot name="activator" :on="on">
+        <v-btn
+          color="success"
+          icon
+          :aria-label="$t('shopping.list.create')"
+          v-on="on"
+        >
+          <v-icon>add</v-icon>
+        </v-btn>
+      </slot>
     </template>
     <v-form ref="form" v-model="formValid" @submit.prevent="save">
       <v-card :loading="loading">

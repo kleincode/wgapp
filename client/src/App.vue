@@ -116,7 +116,12 @@
         </transition>
       </v-content>
 
-      <v-footer app inset class="text-center">
+      <v-footer
+        v-if="$vuetify.breakpoint.mdAndUp"
+        app
+        inset
+        class="text-center"
+      >
         <div style="width: 100%;">{{ $t("app.footer") }}</div>
       </v-footer>
 
