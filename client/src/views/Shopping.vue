@@ -78,7 +78,13 @@
         </v-card>
       </v-col>
       <!-- Items col -->
-      <v-col cols="12" md="7" lg="6" xl="5">
+      <v-col
+        cols="12"
+        md="7"
+        lg="6"
+        xl="5"
+        :class="{ 'pt-0': $vuetify.breakpoint.smAndDown }"
+      >
         <v-card
           style="height: 100%"
           :elevation="$vuetify.breakpoint.mdAndUp ? 6 : 0"
@@ -101,12 +107,12 @@
 
           <v-card-text>
             <v-row class="my-1 mr-4" align="center">
-              <strong class="mx-4 info--text text--darken-2">
-                {{ $t("shopping.remaining") }}: {{ remainingTasks }}
-              </strong>
-              <v-divider vertical></v-divider>
               <strong class="mx-4 success--text text--darken-2">
                 {{ $t("shopping.completed") }}: {{ completedTasks }}
+              </strong>
+              <v-divider vertical></v-divider>
+              <strong class="mx-4 info--text text--darken-2">
+                {{ $t("shopping.remaining") }}: {{ remainingTasks }}
               </strong>
               <v-spacer></v-spacer>
               <v-expand-transition>
@@ -123,22 +129,27 @@
                   v-for="(item, i) in displayedItems"
                   :key="item.id || 'sep'"
                 >
-                  <v-list-item-content
+                  <div
                     v-if="item.insertNewMarker"
-                    style="display: contents;"
-                    @click="pushItem"
+                    class="mb-3 pb-3"
+                    style="border-bottom: 1px solid rgba(100,100,100,.4); width: 100%;"
                   >
-                    <v-icon
-                      left
-                      style="flex: none !important; margin: 7px 7px 7px 0;"
-                      >add</v-icon
+                    <v-list-item-content
+                      style="display: contents;"
+                      @click="pushItem"
                     >
-                    <span
-                      class="body-2 grey--text"
-                      style="font-size: 16px !important; padding: 12px;"
-                      >{{ $t("shopping.newItem") }}</span
-                    >
-                  </v-list-item-content>
+                      <v-icon
+                        left
+                        style="flex: none !important; margin: 7px 7px 7px 0;"
+                        >add</v-icon
+                      >
+                      <span
+                        class="body-2 grey--text"
+                        style="font-size: 16px !important; padding: 12px;"
+                        >{{ $t("shopping.newItem") }}</span
+                      > </v-list-item-content
+                    ><br />
+                  </div>
                   <v-list-item-content v-else style="display: contents;">
                     <v-checkbox
                       v-model="item.checked"
