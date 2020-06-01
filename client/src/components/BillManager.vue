@@ -21,6 +21,7 @@
         <v-spacer></v-spacer>
         <v-toolbar-items style="max-width: 50%;">
           <span
+            v-if="$vuetify.breakpoint.mdAndUp"
             class="ma-auto"
             style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
             >{{ $t("finances.lastBill") }}:
@@ -117,6 +118,21 @@
                 $t("finances.billManager.newBill")
               }}</v-card-title>
               <v-card-text>
+                <span
+                  v-if="$vuetify.breakpoint.smAndDown"
+                  class="ma-auto"
+                  style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;"
+                  >{{ $t("finances.lastBill") }}:
+                  {{ formatDateRelative(lastBill) }}</span
+                >
+                <v-switch
+                  v-if="$vuetify.breakpoint.smAndDown"
+                  v-model="includeMonthlyCharges"
+                  class="pl-2"
+                  :label="$t('finances.billManager.includeMonthlyCharges')"
+                  dark
+                  @change="splitTotals"
+                ></v-switch>
                 <p v-if="empty" class="text-center headline pt-12 pb-12">
                   {{ $t("finances.billManager.noExpensesAvailable") }}
                 </p>
@@ -250,19 +266,21 @@
         <v-divider class="secondary"></v-divider>
         <v-card-actions class="secondary">
           <v-switch
+            v-if="$vuetify.breakpoint.mdAndUp"
             v-model="includeMonthlyCharges"
             class="pl-2"
             :label="$t('finances.billManager.includeMonthlyCharges')"
             dark
             @change="splitTotals"
           ></v-switch>
-          <v-spacer></v-spacer>
+          <v-spacer v-if="$vuetify.breakpoint.mdAndUp"></v-spacer>
           <v-btn icon dark @click="exportCurrentBillHTML"
             ><v-icon>language</v-icon></v-btn
           >
           <v-btn icon dark @click="exportCurrentBillXLSX"
             ><v-icon>table_chart</v-icon></v-btn
           >
+          <v-spacer v-if="$vuetify.breakpoint.smAndDown"></v-spacer>
           <v-btn text dark @click="dialog = false">
             {{ $t("commands.back") }}
           </v-btn>
@@ -274,7 +292,7 @@
             :disabled="empty"
             @click="finishPaymentDialog = true"
           >
-            {{ $t("finances.billManager.savePayments") }}
+            {{ $t("commands.save") }}
           </v-btn>
         </v-card-actions>
       </div>

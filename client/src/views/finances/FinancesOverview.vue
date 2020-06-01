@@ -70,7 +70,7 @@
                           }}</v-btn>
                           <v-btn
                             text
-                            color="primary"
+                            color="success"
                             @click="updateFinancesTarget"
                           >
                             {{ $t("commands.ok") }}

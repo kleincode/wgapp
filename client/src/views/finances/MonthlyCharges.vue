@@ -2,8 +2,12 @@
   <div>
     <v-card
       style="height: 100%; max-width: 800px; margin: 0 auto;"
+      :style="
+        $vuetify.breakpoint.smAndDown ? 'background-color: transparent' : ''
+      "
+      class="pa-0"
       :loading="loadingMonthlyCharges"
-      :elevation="$vuetify.breakpoint.smAndDown ? 0 : 6"
+      :elevation="$vuetify.breakpoint.smAndDown ? 0 : 8"
     >
       <v-card-title>
         {{ $t("finances.monthlyCharges") }}
@@ -22,7 +26,10 @@
       </v-card-title>
       <v-card-text>
         {{ $t("finances.monthlyChargesExplanation") }}
-        <v-list v-if="monthlyCharges.length > 0">
+        <v-list
+          v-if="monthlyCharges.length > 0"
+          style="background-color: transparent"
+        >
           <v-list-item v-for="(charge, i) in monthlyCharges" :key="i">
             <v-list-item-icon>
               <v-icon>{{ getIcon(charge.icon) }}</v-icon>

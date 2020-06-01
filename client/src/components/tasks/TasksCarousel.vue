@@ -33,7 +33,7 @@
         </v-carousel-item>
       </v-carousel>
       <v-list v-else style="background-color: transparent">
-        <v-list-item v-for="(task, j) in tasks" :key="j">
+        <v-list-item v-for="(task, j) in tasks" :key="j" class="pa-0">
           <LargeTaskDisplay
             v-if="!small"
             :task="task"

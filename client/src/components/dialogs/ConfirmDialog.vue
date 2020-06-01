@@ -9,7 +9,9 @@
       <slot name="activator" :on="on"></slot>
     </template>
     <v-card :loading="loading">
-      <v-card-title class="headline">{{ title }}</v-card-title>
+      <v-card-title class="headline">{{
+        title || $t("commands.confirm")
+      }}</v-card-title>
 
       <v-card-text>
         <slot></slot>
@@ -43,7 +45,7 @@ export default {
     },
     title: {
       type: String,
-      default: "Confirm"
+      default: null
     },
     positiveOption: {
       type: String,

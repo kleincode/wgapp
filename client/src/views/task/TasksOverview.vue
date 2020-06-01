@@ -4,7 +4,7 @@
       <v-col cols="12">
         <div class="container">
           <v-row justify="center">
-            <v-col cols="12" md="12">
+            <v-col cols="12" md="12" class="pa-0">
               <TasksCarousel
                 :tasks="getTodaysTasks"
                 :user-images="userImages"
@@ -15,7 +15,7 @@
                 @triggerreminder="remind"
               ></TasksCarousel>
             </v-col>
-            <v-col cols="12" md="12">
+            <v-col cols="12" md="12" class="pt-2 pa-0">
               <v-divider class="mb-7"></v-divider>
               <TasksCarousel
                 :tasks="onDemandTasks"
