@@ -1,5 +1,9 @@
 <template>
-  <v-dialog v-model="dialogShown" max-width="720px">
+  <v-dialog
+    v-model="dialogShown"
+    max-width="720px"
+    :fullscreen="$vuetify.breakpoint.smAndDown"
+  >
     <template v-slot:activator="{ on }">
       <slot name="activator" :on="on">
         <v-btn
@@ -12,15 +16,24 @@
         </v-btn>
       </slot>
     </template>
-    <v-form ref="form" v-model="formValid" @submit.prevent="save">
-      <v-card :loading="loading">
+    <v-form
+      ref="form"
+      v-model="formValid"
+      style="height: 100%;"
+      @submit.prevent="save"
+    >
+      <v-card
+        :loading="loading"
+        style="height: 100%;"
+        class="d-flex flex-column"
+      >
         <v-card-title>
           <span class="headline">{{
             editMode ? $t("shopping.list.edit") : $t("shopping.list.new")
           }}</span>
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="flex-grow-1">
           <v-container>
             <v-row>
               <v-col cols="12" sm="6" style="text-align: center">
