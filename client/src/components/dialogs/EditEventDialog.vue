@@ -1,13 +1,28 @@
 <template>
-  <v-dialog v-model="show" width="600" persistent @click:outside="closeDialog">
+  <v-dialog
+    v-model="show"
+    width="600"
+    persistent
+    :fullscreen="$vuetify.breakpoint.smAndDown"
+    @click:outside="closeDialog"
+  >
     <v-card>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-toolbar :color="selCalendar.backgroundColor" prominent>
+          <v-btn
+            v-if="$vuetify.breakpoint.smAndDown"
+            icon
+            dark
+            class="mt-7"
+            @click="closeDialog"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
           <v-text-field
             v-model="title"
             :dark="textColor"
             :label="$t('calendar.edit.AddTitle')"
-            class="largeTextfield mt-3 mt-9 mb-3 ml-1"
+            class="largeTextfield mt-9 mb-3 ml-1"
             :rules="titleRules"
             required
           ></v-text-field>
@@ -179,18 +194,33 @@
             </v-col>
           </v-row>
         </v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text @click="closeDialog">
-            {{ $t("commands.cancel") }}
-          </v-btn>
-          <v-btn color="primary" text :disabled="end <= start" @click="save">
-            {{ $t("commands.save") }}
-          </v-btn>
-        </v-card-actions>
+        <div
+          :class="$vuetify.breakpoint.smAndDown ? 'white elevation-6' : ''"
+          :style="
+            $vuetify.breakpoint.smAndDown
+              ? 'position: fixed; left: 0; bottom: 0; right: 0;'
+              : ''
+          "
+        >
+          <v-divider
+            :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+          ></v-divider>
+          <v-card-actions
+            :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+          >
+            <v-spacer></v-spacer>
+            <v-btn
+              text
+              :dark="$vuetify.breakpoint.smAndDown"
+              @click="closeDialog"
+            >
+              {{ $t("commands.cancel") }}
+            </v-btn>
+            <v-btn color="success" text :disabled="end <= start" @click="save">
+              {{ $t("commands.save") }}
+            </v-btn>
+          </v-card-actions>
+        </div>
       </v-form>
     </v-card>
   </v-dialog>

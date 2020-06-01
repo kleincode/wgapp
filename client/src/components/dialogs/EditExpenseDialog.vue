@@ -1,13 +1,31 @@
 <template>
-  <v-dialog v-model="dialogShown" max-width="720px">
+  <v-dialog
+    v-model="dialogShown"
+    max-width="720px"
+    :fullscreen="$vuetify.breakpoint.smAndDown"
+  >
     <template v-slot:activator="{ on }">
       <v-btn color="primary" dark text class="mb-2" v-on="on">{{
         $t("finances.newExpense")
       }}</v-btn>
     </template>
-    <v-form ref="form" v-model="formValid" @submit.prevent="save">
-      <v-card :loading="loading">
+    <v-form
+      ref="form"
+      v-model="formValid"
+      style="height: 100%"
+      @submit.prevent="save"
+    >
+      <v-card :loading="loading" style="height: 100%">
         <v-card-title>
+          <v-btn
+            v-if="$vuetify.breakpoint.smAndDown"
+            icon
+            dark
+            class="mt-0 mr-1"
+            @click="reset"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
           <span class="headline">{{
             editMode ? $t("finances.expense.edit") : $t("finances.expense.new")
           }}</span>
@@ -45,21 +63,35 @@
           </v-container>
         </v-card-text>
 
-        <v-card-actions>
-          <v-checkbox
-            v-if="!editMode"
-            v-model="addReceipt"
-            :label="$t('finances.expense.addReceipt')"
-            class="ma-0"
-          ></v-checkbox>
-          <v-spacer></v-spacer>
-          <v-btn color="red" text @click="reset">{{
-            $t("commands.cancel")
-          }}</v-btn>
-          <v-btn color="green" text type="submit" :disabled="!formValid">{{
-            $t("commands.save")
-          }}</v-btn>
-        </v-card-actions>
+        <div
+          :class="$vuetify.breakpoint.smAndDown ? 'white elevation-6' : ''"
+          :style="
+            $vuetify.breakpoint.smAndDown
+              ? 'position: fixed; left: 0; bottom: 0; right: 0;'
+              : ''
+          "
+        >
+          <v-divider
+            :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+          ></v-divider>
+          <v-card-actions
+            :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+          >
+            <v-checkbox
+              v-if="!editMode"
+              v-model="addReceipt"
+              :label="$t('finances.expense.addReceipt')"
+              class="ma-0"
+            ></v-checkbox>
+            <v-spacer></v-spacer>
+            <v-btn color="error" text @click="reset">{{
+              $t("commands.cancel")
+            }}</v-btn>
+            <v-btn color="success" text type="submit" :disabled="!formValid">{{
+              $t("commands.save")
+            }}</v-btn>
+          </v-card-actions>
+        </div>
       </v-card>
     </v-form>
   </v-dialog>

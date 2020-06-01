@@ -51,7 +51,8 @@
     "activate": "Activate",
     "deactivate": "Deactivate",
     "upload": "Upload",
-    "edit": "Edit"
+    "edit": "Edit",
+    "confirm": "Confirm"
   },
   "app": {
     "profile": "My profile",
@@ -771,6 +772,27 @@
     "finish": "finish",
     "finishTutorial": "Finish tutorial",
     "endTutorial": "End tutorial"
+  },
+  "joinHousehold": {
+    "title": "Join household",
+    "credentials": "Household credentials",
+    "partialAutofill": "Partial auto fill",
+    "autoFill": "Auto fill",
+    "enterHouseholdCredentials": "Please insert valid household credentials or use a share link to fill them in automatically.",
+    "householdId": "Household ID",
+    "securityCode": "Security Code",
+    "moveOutConfirm": "Are you sure you want to move out of this household?",
+    "created": "Created",
+    "moveInConfirm": "Are you sure you want to move into this household?",
+    "andInsteadMoveInto": "and instead move into this one?",
+    "moveIn": "Move in",
+    "congratulations": "Congratulations, you are now part of {name}. Continue to check out your dashboard.",
+    "goToDashboard": "Go to dashboard",
+    "householdIdReq": "Household ID required",
+    "invalidFormat": "Invalid format",
+    "securityCodeRequired": "Security code is required",
+    "pleaseCheckInput": "Please check your input.",
+    "connectionError": "Error connecting to server. Please try again later."
   },
   "resetPassword": {
     "title": "Reset password",

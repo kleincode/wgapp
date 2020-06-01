@@ -32,7 +32,7 @@
           </v-row>
         </v-carousel-item>
       </v-carousel>
-      <v-list v-else>
+      <v-list v-else style="background-color: transparent">
         <v-list-item v-for="(task, j) in tasks" :key="j">
           <LargeTaskDisplay
             v-if="!small"

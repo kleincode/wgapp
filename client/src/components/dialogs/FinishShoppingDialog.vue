@@ -1,5 +1,9 @@
 <template>
-  <v-dialog v-model="dialogShown" max-width="400px">
+  <v-dialog
+    v-model="dialogShown"
+    max-width="400px"
+    :fullscreen="$vuetify.breakpoint.smAndDown"
+  >
     <template v-slot:activator="{ on }">
       <v-btn
         :disabled="remainingTasks > 0 || completedTasks == 0"
@@ -10,8 +14,17 @@
         >{{ $t("shopping.expense.transfer") }}</v-btn
       >
     </template>
-    <v-card :loading="loading">
+    <v-card :loading="loading" style="height: 100%">
       <v-card-title>
+        <v-btn
+          v-if="$vuetify.breakpoint.smAndDown"
+          icon
+          dark
+          class="mt-0 mr-1"
+          @click="close"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         <span class="headline">
           {{ $t("shopping.expense.add") }}
         </span>
@@ -32,13 +45,27 @@
         </v-container>
       </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn text @click="close">{{ $t("commands.close") }}</v-btn>
-        <v-btn color="primary" text :disabled="amount == 0" @click="save">{{
-          $t("commands.save")
-        }}</v-btn>
-      </v-card-actions>
+      <div
+        :class="$vuetify.breakpoint.smAndDown ? 'white elevation-6' : ''"
+        :style="
+          $vuetify.breakpoint.smAndDown
+            ? 'position: fixed; left: 0; bottom: 0; right: 0;'
+            : ''
+        "
+      >
+        <v-divider
+          :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+        ></v-divider>
+        <v-card-actions
+          :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+        >
+          <v-spacer></v-spacer>
+          <v-btn text @click="close">{{ $t("commands.close") }}</v-btn>
+          <v-btn color="success" text :disabled="amount == 0" @click="save">{{
+            $t("commands.save")
+          }}</v-btn>
+        </v-card-actions>
+      </div>
     </v-card>
   </v-dialog>
 </template>

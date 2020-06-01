@@ -1,7 +1,21 @@
 <template>
-  <v-dialog v-model="dialogShown" max-width="800" scrollable>
-    <v-card :loading="loading">
+  <v-dialog
+    v-model="dialogShown"
+    max-width="800"
+    scrollable
+    :fullscreen="$vuetify.breakpoint.smAndDown"
+  >
+    <v-card :loading="loading" style="height: 100%">
       <v-card-title class="headline" primary-title>
+        <v-btn
+          v-if="$vuetify.breakpoint.smAndDown"
+          icon
+          dark
+          class="mt-0 mr-1"
+          @click="dialogShown = false"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         {{ $t("finances.receipt.title") }} - {{ expense.description }} -
         {{ getCurrency(expense.amount / 100) }}
       </v-card-title>
@@ -46,21 +60,35 @@
         </v-row>
       </v-card-text>
 
-      <v-card-actions>
-        <v-btn
-          v-if="receiptExists"
-          text
-          class="ml-3 mt-3"
-          color="red"
-          @click="deleteReceipt"
+      <div
+        :class="$vuetify.breakpoint.smAndDown ? 'white elevation-6' : ''"
+        :style="
+          $vuetify.breakpoint.smAndDown
+            ? 'position: fixed; left: 0; bottom: 0; right: 0;'
+            : ''
+        "
+      >
+        <v-divider
+          :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
+        ></v-divider>
+        <v-card-actions
+          :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
         >
-          {{ $t("finances.receipt.deleteReceipt") }}
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn text @click="dialogShown = false">
-          {{ $t("commands.close") }}
-        </v-btn>
-      </v-card-actions>
+          <v-btn
+            v-if="receiptExists"
+            text
+            class="ml-3 mt-3"
+            color="red"
+            @click="deleteReceipt"
+          >
+            {{ $t("finances.receipt.deleteReceipt") }}
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn text @click="dialogShown = false">
+            {{ $t("commands.close") }}
+          </v-btn>
+        </v-card-actions>
+      </div>
     </v-card>
   </v-dialog>
 </template>

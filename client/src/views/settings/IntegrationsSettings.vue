@@ -98,8 +98,8 @@
       >
       <confirm-dialog
         v-model="deleteDialogVisible"
-        positive-option="Continue"
-        negative-option="Cancel"
+        :positive-option="$t('commands.continue')"
+        :negative-option="$t('commands.cancel')"
         :loading="loadingDeleteCalendar"
         @positive="deleteHomeCalendar"
         @negative="deleteDialogVisible = false"

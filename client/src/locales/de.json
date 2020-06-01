@@ -51,7 +51,8 @@
     "activate": "Aktivieren",
     "deactivate": "Deaktivieren",
     "upload": "Hochladen",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "confirm": "Bestätigen"
   },
   "app": {
     "profile": "Mein Profil",
@@ -454,7 +455,7 @@
       "actions": "Aktionen"
     },
     "timespans": {
-      "currentMonth": "Dieser Monat",
+      "currentMonth": "Aktueller Monat",
       "currentAndLastTwoMonths": "Dieser und letzte zwei Monate",
       "currentYear": "Dieses Jahr"
     },
@@ -771,6 +772,27 @@
     "finish": "Abschließen",
     "finishTutorial": "Einführung abschließen",
     "endTutorial": "Einführung beenden"
+  },
+  "joinHousehold": {
+    "title": "Haushalt beitreten",
+    "credentials": "Haushaltsanmeldedaten",
+    "partialAutofill": "Teilweiser Autofill",
+    "autoFill": "Autofill",
+    "enterHouseholdCredentials": "Bitte gibt gültige Haushaltsanmeldedaten ein oder nutze einen geteilten Link, um sie automatisch ausfüllen zu lassen.",
+    "householdId": "Haushalts ID",
+    "securityCode": "Sicherheits Code",
+    "moveOutConfirm": "Bist du dir sicher, dass du aus diesem Haushalt ausziehen möchtest?",
+    "created": "Erstellt",
+    "moveInConfirm": "Bist du dir sicher, dass du in diesen Haushalt einziehen möchtest?",
+    "andInsteadMoveInto": "und anstelle in diesen einziehen möchtest?",
+    "moveIn": "Einziehen",
+    "congratulations": "Herzlichen Glückwünsch! Du wohnst nun in {name}. Fahre fort, um zum Dashboard zu gelangen.",
+    "goToDashboard": "Zum Dashboard",
+    "householdIdReq": "Haushalts ID benötigt",
+    "invalidFormat": "Ungültiges Format",
+    "securityCodeRequired": "Sicherheitscode benötigt",
+    "pleaseCheckInput": "Bitte Eingabe kontrollieren.",
+    "connectionError": "Fehler bei der Verbindung zum Server. Probiere es später nochmal!"
   },
   "resetPassword": {
     "title": "Passwort zurücksetzen",
