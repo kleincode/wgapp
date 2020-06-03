@@ -164,6 +164,7 @@ export default {
             data.message || this.$t("finances.receipt.uploadError")
           );
         }
+        this.$emit("update");
         this.loading = false;
       } catch (err) {
         this.$store.dispatch(
@@ -191,6 +192,7 @@ export default {
             "showSnackbar",
             data.message || this.$t("finances.receipt.deleteFailed")
           );
+        this.$emit("update");
         this.loading = false;
         setTimeout(() => this.fetchReceipt(), 200);
       } catch (err) {

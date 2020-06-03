@@ -104,12 +104,9 @@
         ></v-app-bar-nav-icon>
         <v-toolbar-title
           >{{ $t($route.matched[0].meta.title)
-          }}<v-chip
-            v-if="$store.state.userSettings.introductionState > 0"
-            class="ml-2"
-            color="accent"
-            >{{ $t("introduction.toolbar") }}</v-chip
-          ></v-toolbar-title
+          }}<v-chip v-if="introductionMode" class="ml-2" color="accent">{{
+            $t("introduction.toolbar")
+          }}</v-chip></v-toolbar-title
         >
       </v-app-bar>
 
@@ -135,11 +132,7 @@
           $t("commands.refresh")
         }}</v-btn>
       </v-snackbar>
-      <Introduction
-        v-if="
-          this.$store.state.userSettings.introductionState > 0 && isAuthorized
-        "
-      ></Introduction>
+      <Introduction v-if="introductionMode"></Introduction>
       <UpdateMessage v-if="isAuthorized"></UpdateMessage>
     </div>
   </v-app>
@@ -163,6 +156,12 @@ export default {
     loading: true
   }),
   computed: {
+    introductionMode() {
+      return (
+        this.$store.state.userSettings.introductionState > 0 &&
+        this.isAuthorized
+      );
+    },
     snackbarShow: {
       get() {
         return this.$store.state.snackbarShow;

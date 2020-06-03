@@ -56,11 +56,7 @@
           <v-sheet :color="cardColor" style="border-radius: 0px; height:60px">
             <v-row style="height: 100%" justify="center" align="center">
               <v-col cols="12" class="pa-0">
-                <v-btn
-                  :color="textColor"
-                  text
-                  @click="$emit('checktask', task)"
-                >
+                <v-btn color="white" text @click="$emit('checktask', task)">
                   <v-icon v-if="task.checked">check_box</v-icon>
                   <v-icon v-else>check_box_outline_blank</v-icon>
                   <span class="pl-1">{{ $t("tasks.done") }}</span>

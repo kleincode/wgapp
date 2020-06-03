@@ -23,7 +23,8 @@
           <v-row justify="center">
             <v-col
               cols="12"
-              md="4"
+              md="6"
+              lg="4"
               :class="usedTotal > relativeTotal ? 'red--text' : ''"
             >
               <div class="text-center">
@@ -31,10 +32,13 @@
                 <div class="display-1">{{ getCurrency(usedTotal) }}</div>
               </div>
             </v-col>
-            <v-col cols="1" class="text-center d-none d-md-block"
+            <v-col
+              v-if="$vuetify.breakpoint.lgAndUp"
+              cols="1"
+              class="text-center d-none d-md-block"
               ><v-divider vertical></v-divider
             ></v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6" lg="4">
               <div class="text-center">
                 <div class="overline pr-6">
                   {{ $t("finances.currentTargetTotal") }}
@@ -331,14 +335,15 @@ export default {
     },
 
     intervalStr() {
-      let curDate = new Date();
       let startDate = new Date(this.getMinTimestamp() * 1000);
+      let max = this.getMaxTime();
+      max.setDate(max.getDate() - 1);
       return (
         startDate.toLocaleDateString(
           this.$store.state.userSettings.locale || undefined
         ) +
         " - " +
-        curDate.toLocaleDateString(
+        max.toLocaleDateString(
           this.$store.state.userSettings.locale || undefined
         )
       );
@@ -540,6 +545,22 @@ export default {
           currency: this.$store.state.userSettings.currency
         }
       ).format(val);
+    },
+    getMaxTime() {
+      let minTimestamp = this.getMinTimestamp() * 1000;
+      let diff;
+      switch (this.chosenTimeSpan) {
+        case 0:
+          diff = 2628000000;
+          break;
+        case 1:
+          diff = 7884000000;
+          break;
+        case 2:
+          diff = 31540000000;
+          break;
+      }
+      return new Date(minTimestamp + diff);
     }
   }
 };

@@ -5,7 +5,11 @@
         icon
         x-large
         :color="
-          hover ? (hasProfilePicture ? 'primary' : 'white') : 'transparent'
+          hover || $vuetify.breakpoint.mdAndDown
+            ? hasProfilePicture
+              ? 'primary'
+              : 'accent'
+            : 'transparent'
         "
         v-on="on"
         ><v-icon v-if="hasProfilePicture" x-large>edit</v-icon
@@ -27,9 +31,13 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn text @click="dialog = false">{{ $t("commands.cancel") }}</v-btn>
-        <v-btn text color="primary" @click="triggerUpload()">{{
-          $t("commands.upload")
-        }}</v-btn>
+        <v-btn
+          :disabled="!imageFile"
+          text
+          color="primary"
+          @click="triggerUpload()"
+          >{{ $t("commands.upload") }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

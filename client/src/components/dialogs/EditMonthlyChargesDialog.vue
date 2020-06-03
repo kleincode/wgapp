@@ -58,12 +58,14 @@
                 ></v-text-field>
                 <v-text-field
                   ref="amount"
-                  v-model="value.amount"
+                  v-model="amount"
+                  v-currency="{
+                    currency: currency,
+                    locale: locale
+                  }"
                   :label="$t('finances.amount')"
                   outlined
-                  type="number"
                   step=".01"
-                  prefix="€"
                   :rules="amountRules"
                   @input="updateValue()"
                 ></v-text-field>
@@ -124,12 +126,16 @@
 </template>
 
 <script>
+import { CurrencyDirective, parseCurrency, setValue } from "vue-currency-input";
 import IconChooser from "@/components/IconChooser.vue";
 import icons from "@/assets/icons.js";
 import { mapGetters } from "vuex";
 
 export default {
   name: "EditmonchargeDialog",
+  directives: {
+    currency: CurrencyDirective
+  },
   components: {
     IconChooser
   },
@@ -143,6 +149,7 @@ export default {
     }
   },
   data: () => ({
+    amount: 0,
     dialogShown: false,
     formValid: null,
     loading: false,
@@ -151,6 +158,18 @@ export default {
     selectedIcon: 0
   }),
   computed: {
+    amountNumber() {
+      return parseCurrency(this.amount, {
+        locale: this.locale,
+        currency: this.currency
+      });
+    },
+    locale() {
+      return this.$store.state.userSettings.locale || navigator.language;
+    },
+    currency() {
+      return this.$store.state.userSettings.currency;
+    },
     nameRules() {
       return [
         v => !!v || this.$t("finances.editMonthlyCharges.rules.provideName"),
@@ -162,19 +181,31 @@ export default {
     amountRules() {
       return [
         v => !!v || this.$t("finances.editMonthlyCharges.rules.provideAmount"),
-        v => {
-          let num = parseFloat(v);
-          if (isNaN(num))
+        () => {
+          if (isNaN(this.amountNumber))
             return this.$t("finances.editMonthlyCharges.rules.amountInvalid");
-          else if (num < 0)
+          else if (this.amountNumber < 0)
             return this.$t("finances.editMonthlyCharges.rules.negativeAmount");
-          else if (Math.abs(num) < 0.01)
+          else if (Math.abs(this.amountNumber) < 0.01)
             return this.$t("finances.editMonthlyCharges.rules.amountIsZero");
           else return true;
         }
       ];
     },
     ...mapGetters(["getHouseholdUsersAsItemList"])
+  },
+  watch: {
+    dialogShown(val) {
+      if (val) {
+        let amount;
+        if (this.editMode) {
+          amount = this.value.amount;
+        } else {
+          amount = 5;
+        }
+        this.$nextTick(() => setValue(this.$refs.amount.$refs.input, amount));
+      }
+    }
   },
   methods: {
     updateValue(val) {
@@ -189,7 +220,7 @@ export default {
       }
       const { data } = await this.$http.post("/_/addmonthlycharge", {
         name: monchargeData.name,
-        amount: Math.round(monchargeData.amount * 100),
+        amount: Math.round(this.amountNumber * 100),
         uid: uid,
         icon: monchargeData.icon
       });
@@ -199,7 +230,7 @@ export default {
       const { data } = await this.$http.post("/_/editmonthlycharge", {
         id: monchargeData.id,
         name: monchargeData.name,
-        amount: Math.round(parseFloat(monchargeData.amount) * 100),
+        amount: Math.round(this.amountNumber * 100),
         uid: monchargeData.uid,
         icon: monchargeData.icon
       });

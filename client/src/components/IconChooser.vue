@@ -7,9 +7,13 @@
       @click:outside="cancel"
     >
       <template v-slot:activator="{ on }">
-        <v-btn color="primary" text :disabled="disabled" v-on="on">{{
-          $t("iconChooser.changeIcon")
-        }}</v-btn>
+        <v-btn
+          :color="$vuetify.theme.dark ? 'primary lighten-2' : 'primary'"
+          text
+          :disabled="disabled"
+          v-on="on"
+          >{{ $t("iconChooser.changeIcon") }}</v-btn
+        >
       </template>
       <v-card>
         <v-card-title>
@@ -83,7 +87,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text @click="cancel">{{ $t("commands.cancel") }}</v-btn>
-          <v-btn color="primary" @click="save">{{ $t("commands.ok") }}</v-btn>
+          <v-btn text color="success" @click="save">{{
+            $t("commands.ok")
+          }}</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

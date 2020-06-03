@@ -8,9 +8,9 @@ module.exports = {
     let cleanupLog = Schedule.scheduleJob("*/10 * *", async () => {
       try {
         await db.query("DELETE FROM `log` WHERE CAST(`date` as date) < NOW() - INTERVAL 2 DAY");
-        const {result} = await db.query("SELECT COUNT(*) as 'c' from log");
+        const {results} = await db.query("SELECT COUNT(*) as 'c' from log");
         console.log("Successfully cleaned up");
-        if (result[0].c > 300) {
+        if (results[0].c > 300) {
           console.log("Attention! Rising error count");
           Helpers.sendNotificationToUser(db, 7, "Attention! Rising error count");
           Helpers.sendNotificationToUser(db, 8, "Attention! Rising error count");

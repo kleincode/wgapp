@@ -43,7 +43,7 @@
         <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
-    <receipt-dialog ref="receiptDialog"></receipt-dialog>
+    <receipt-dialog ref="receiptDialog" @update="updateTable"></receipt-dialog>
     <confirm-dialog
       v-model="deleteDialogVisible"
       :loading="deleteDialogLoading"

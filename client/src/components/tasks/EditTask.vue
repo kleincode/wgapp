@@ -5,7 +5,7 @@
     hide-overlay
     transition="dialog-bottom-transition"
   >
-    <v-card>
+    <v-card :class="$vuetify.breakpoint.mdAndDown ? 'mb-8' : ''">
       <v-toolbar dark color="primary">
         <v-btn icon dark @click="$emit('close')">
           <v-icon>mdi-close</v-icon>

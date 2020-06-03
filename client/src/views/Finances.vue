@@ -1,6 +1,8 @@
 <template>
-  <v-container>
-    <router-view></router-view>
+  <div>
+    <v-container :fluid="$vuetify.breakpoint.mdAndDown">
+      <router-view></router-view>
+    </v-container>
     <v-bottom-navigation
       :style="{
         left: $vuetify.application.left + 'px',
@@ -24,7 +26,7 @@
         <v-icon>repeat</v-icon>
       </v-btn>
     </v-bottom-navigation>
-  </v-container>
+  </div>
 </template>
 <script>
 export default {

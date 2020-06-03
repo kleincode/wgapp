@@ -26,6 +26,14 @@ import "@/assets/logger.js";
 
 Vue.use(UUID);
 
+//Vue currency input
+import VueCurrencyInput from "vue-currency-input";
+const pluginOptions = {
+  /* see config reference */
+  globalOptions: { currency: "USD" }
+};
+Vue.use(VueCurrencyInput, pluginOptions);
+
 //Authorization: load token and refresh user data on startup
 const token = localStorage.getItem("auth_token");
 if (token) {
