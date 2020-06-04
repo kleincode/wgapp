@@ -25,8 +25,8 @@ describe("tasksHelper.js", () => {
     expect(mapWeekdayToInt("sunday")).toBe(0);
     expect(mapWeekdayToInt("monday")).toBe(1);
     expect(mapWeekdayToInt("tuesday")).toBe(2);
-    expect(mapWeekdayToInt("thursday")).toBe(3);
-    expect(mapWeekdayToInt("wednesday")).toBe(4);
+    expect(mapWeekdayToInt("wednesday")).toBe(3);
+    expect(mapWeekdayToInt("thursday")).toBe(4);
     expect(mapWeekdayToInt("friday")).toBe(5);
     expect(mapWeekdayToInt("saturday")).toBe(6);
   });
@@ -177,7 +177,7 @@ describe("tasksHelper.js", () => {
       repetitionUnit,
       repetitionEvery
     );
-    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getDate()).toBe(9);
     expect(resDate.getMonth()).toBe(3);
 
     //in the future 2 - 1 week
@@ -197,7 +197,7 @@ describe("tasksHelper.js", () => {
 
     //in the future 1 - 2 weeks
     startDateInput = new Date("April 6, 2020 10:00:00");
-    repetitionDays = ["thursday", "friday"];
+    repetitionDays = ["wednesday", "friday"];
     repetitionUnit = 0;
     repetitionEvery = 2;
     resDate = computeNextDueDay(
@@ -327,7 +327,7 @@ describe("tasksHelper.js", () => {
       repetitionUnit,
       repetitionEvery
     );
-    expect(resDate.getDate()).toBe(8);
+    expect(resDate.getDate()).toBe(9);
     expect(resDate.getMonth()).toBe(3);
 
     //in the future 2 - 1 month
@@ -347,7 +347,7 @@ describe("tasksHelper.js", () => {
 
     //in the future 1 - 2 month
     startDateInput = new Date("April 6, 2020 10:00:00");
-    repetitionDays = ["thursday", "friday"];
+    repetitionDays = ["wednesday", "friday"];
     repetitionUnit = 1;
     repetitionEvery = 2;
     resDate = computeNextDueDay(
@@ -434,6 +434,22 @@ describe("tasksHelper.js", () => {
     );
     expect(resDate.getDate()).toBe(18);
     expect(resDate.getMonth()).toBe(3);
+
+    //custom - 5
+    curDate = new Date("Thu Jun 04 2020 11:54:00 GMT+0200");
+    startDateInput = new Date("Apr 24, 2020 12:00:00");
+    repetitionDays = ["monday", "thursday"];
+    repetitionUnit = 0;
+    repetitionEvery = 1;
+    resDate = computeNextDueDay(
+      curDate,
+      startDateInput,
+      repetitionDays,
+      repetitionUnit,
+      repetitionEvery
+    );
+    expect(resDate.getDate()).toBe(4);
+    expect(resDate.getMonth()).toBe(5);
   });
 
   it("computes getOnDemandStatus correctly", () => {
@@ -495,11 +511,12 @@ describe("tasksHelper.js", () => {
         curDateEnd
       )[0]
     ).toBe(1);
+
     //missed
     repDays = ["wednesday", "sunday"];
     expect(
       checkStatus(
-        new Date("April 1, 2020 10:00:00"),
+        new Date("March 31, 2020 10:00:00"),
         new Date("April 9, 2020 10:00:00"),
         repDays,
         1,
@@ -511,7 +528,7 @@ describe("tasksHelper.js", () => {
     ).toBe(0);
 
     //missed bc over
-    repDays = ["wednesday"];
+    repDays = ["thursday"];
     expect(
       checkStatus(
         new Date("April 1, 2020 10:00:00"),

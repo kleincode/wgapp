@@ -227,9 +227,9 @@ function mapWeekdayToInt(repetitionDay) {
       return 1;
     case "tuesday":
       return 2;
-    case "thursday":
-      return 3;
     case "wednesday":
+      return 3;
+    case "thursday":
       return 4;
     case "friday":
       return 5;

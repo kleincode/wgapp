@@ -13,8 +13,9 @@ module.exports = ({ db }) => ({
         const { results:monthlyResult } = await db.query("SELECT uid, amount FROM monthlycharges WHERE hid = ?", [hid]);
         if (results.length == 0) {
           //no bill made yet => select all
+          const { results:householdRegistered } = await db.query("SELECT registered FROM households WHERE id = ?", [hid]);
           const { results:mainResult } = await db.query(mainQuery, [hid, 0]);
-          success({message: "Member totals all time.", mainResult, lastBill: 0, monthlyResult});
+          success({message: "Member totals since registration.", mainResult, lastBill: householdRegistered[0].registered, monthlyResult});
         } else {
           const { results:mainResult } = await db.query(mainQuery, [hid, results[0].lastBill]);
           success({message: "Member totals since last bill received.", mainResult, lastBill: results[0].lastBill, monthlyResult});
