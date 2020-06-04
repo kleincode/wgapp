@@ -261,7 +261,8 @@
       "calendar": {
         "title": "Calendar Widget",
         "description": "You will never forget an event anymore. This widget will display you upcoming events.",
-        "enableWidget": "Enable calendar widget"
+        "enableWidget": "Enable calendar widget",
+        "activationHint": "The calendar integration has to be activated to use this widget. Otherwise the widget will not be shown."
       },
       "finances": {
         "title": "Finances Widget",
@@ -699,7 +700,8 @@
       "noEvents": "No events",
       "configError": "This widget is not configured correctly.",
       "today": "Today",
-      "tomorrow": "Tomorrow"
+      "tomorrow": "Tomorrow",
+      "calendarPage": "Calendar Page"
     },
     "doNotDisturb": {
       "title": "Do Not Disturb",

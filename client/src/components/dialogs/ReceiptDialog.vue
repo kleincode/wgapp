@@ -74,13 +74,7 @@
         <v-card-actions
           :class="$vuetify.breakpoint.smAndDown ? 'secondary' : ''"
         >
-          <v-btn
-            v-if="receiptExists"
-            text
-            class="ml-3 mt-3"
-            color="red"
-            @click="deleteReceipt"
-          >
+          <v-btn v-if="receiptExists" text color="red" @click="deleteReceipt">
             {{ $t("finances.receipt.deleteReceipt") }}
           </v-btn>
           <v-spacer></v-spacer>

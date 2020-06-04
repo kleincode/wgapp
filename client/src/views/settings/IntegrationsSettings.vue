@@ -82,6 +82,7 @@
         v-if="
           !(calendarId === undefined) && calendarId != '' && signInState == 1
         "
+        :block="$vuetify.breakpoint.smAndDown"
         :disabled="loadingCalendar"
         @click="deleteDialogVisible = true"
         >{{ $t("settings.integrations.calendar.deleteHomeCalendar") }}</v-btn
@@ -92,6 +93,8 @@
         "
         :disabled="loadingCalendar"
         text
+        :block="$vuetify.breakpoint.smAndDown"
+        :class="$vuetify.breakpoint.smAndDown ? 'mt-3' : ''"
         :loading="loadingResyncCalendar"
         @click="resyncCalendar"
         >{{ $t("settings.integrations.calendar.resyncInvitations") }}</v-btn

@@ -48,7 +48,7 @@
         <WeatherWidget />
       </v-col>
       <v-col
-        v-if="calendarWidgetEnabled"
+        v-if="calendarWidgetEnabled && calendarEnabled"
         cols="12"
         sm="6"
         lg="4"
@@ -135,7 +135,8 @@ export default {
       "financesWidgetEnabled",
       "statusWidgetEnabled",
       "homeWidgetEnabled",
-      "calendarWidgetEnabled"
+      "calendarWidgetEnabled",
+      "calendarEnabled"
     ]),
     ...mapGetters(["getName"]),
     message() {

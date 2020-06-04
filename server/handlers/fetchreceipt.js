@@ -30,7 +30,10 @@ module.exports = ({ db }) => ({
           } else if (!results[0].receipt) {
             success("No receipt.");
           } else {
-            res.sendFile(path.join(receiptFolder, `${query.fid}.jpg`));
+            res.sendFile(path.join(receiptFolder, `${query.fid}.jpg`), err =>{
+              Helpers.pushLog({db}, 4, 0, "Server", "Error sending receipt. Image missing.");
+              error("Error while fetching receipt.", 4, err);
+            });
           }
         } catch (err) {
           error("Error while fetching receipt.", 4, err);

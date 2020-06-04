@@ -227,7 +227,7 @@
       "title": "Übersicht",
       "clock": {
         "title": "Uhr",
-        "description": "Ein revolutionärer Zeitindikator. Folgt den Gesetzen der speziellen und algemeinen Relativitätstheorie.",
+        "description": "Ein revolutionärer Zeitindikator. Folgt den Gesetzen der speziellen und allgemeinen Relativitätstheorie.",
         "enableWidget": "Aktiviere Uhr-Widget",
         "note": "Hinweis:",
         "localeNoteText": "{note} Die Zeitdarstellung wird von den {localeSettings} bestimmt.",
@@ -266,7 +266,8 @@
       "calendar": {
         "title": "Kalender",
         "description": "Du wirst nie wieder einen Termin vergessen. Dieses Widget wird dir alle Termine der nächsten 24h anzeigen.",
-        "enableWidget": "Aktiviere Kalender-Widget"
+        "enableWidget": "Aktiviere Kalender-Widget",
+        "activationHint": "Um dieses Widget nutzen zu können muss die Kalender Integration aktiviert sein. Andernfalls wird das Widget nicht angezeigt werden."
       },
       "disturb": {
         "title": "Nicht stören",
@@ -707,7 +708,8 @@
       "noEvents": "Keine Termine",
       "configError": "Dieses Widget ist nicht richtig konfiguriert.",
       "today": "Heute",
-      "tomorrow": "Morgen"
+      "tomorrow": "Morgen",
+      "calendarPage": "Zum Kalender"
     },
     "finances": {
       "title": "Finanzen",

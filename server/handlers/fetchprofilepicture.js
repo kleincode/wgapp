@@ -33,7 +33,9 @@ module.exports = ({ db }) => ({
       } else if (!results[0].image) {
         success("No profile picture.");
       } else {
-        res.sendFile(path.join(picturesFolder, `${id}.jpg`));
+        res.sendFile(path.join(picturesFolder, `${id}.jpg`), err =>{
+          Helpers.pushLog({db}, 1, 0, "Server", "Error sending profile picture. Image missing.");
+        });
       }
     } catch (err) {
       error("Error fetching profile picture", 1, err);

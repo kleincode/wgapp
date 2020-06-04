@@ -80,11 +80,12 @@
             ></v-text-field>
           </v-col>
         </v-row>
-        <div style="display: flex;">
+        <div :style="$vuetify.breakpoint.smAndDown ? '' : 'display: flex;'">
           <v-btn
             :color="['primary', 'success', 'red'][weatherAPISuccess]"
+            :block="$vuetify.breakpoint.smAndDown"
             type="submit"
-            class="mt-0 ml-2"
+            class="mt-0"
             :disabled="!weatherAPIValid"
             :loading="weatherAPILoading"
             >{{ $t("commands.check") }}</v-btn
@@ -125,6 +126,9 @@
         v-model="calendarWidgetEnabled"
         :label="$t('settings.dashboard.calendar.enableWidget')"
       ></v-switch>
+      <v-alert type="warning">
+        {{ $t("settings.dashboard.calendar.activationHint") }}
+      </v-alert>
       <!-- TASKS WIDGET -->
       <div id="tasks" class="title pt-2">
         {{ $t("settings.dashboard.tasks.title") }}

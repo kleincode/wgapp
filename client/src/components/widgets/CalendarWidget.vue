@@ -84,6 +84,11 @@ export default {
     contextItems() {
       return [
         {
+          action: "calendar",
+          text: this.$t("widgets.calendar.calendarPage"),
+          icon: "event"
+        },
+        {
           action: "settings",
           text: this.$t("widgets.settings"),
           icon: "settings"
@@ -185,6 +190,9 @@ export default {
       switch (item.action) {
         case "settings":
           this.$router.push({ name: "DashboardSettings", hash: "#calendar" });
+          break;
+        case "calendar":
+          this.$router.push({ name: "Calendar" });
       }
     },
     formattedTime(event) {

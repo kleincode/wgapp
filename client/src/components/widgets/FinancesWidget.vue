@@ -11,7 +11,7 @@
         cycle
         hide-delimiter-background
         :show-arrows="false"
-        height="120"
+        height="160"
         delimiter-icon="fiber_manual_record"
         class="bottom-carousel"
         :interval="9000"
@@ -55,7 +55,7 @@
           </v-list-item>
         </v-carousel-item>
       </v-carousel>
-      <div style="height: 120px;"></div>
+      <div style="height: 160px;"></div>
     </template>
     <div v-else style="text-align: center" class="text--disabled pb-4">
       <v-icon style="font-size: 4em" class="text--disabled">money</v-icon>
@@ -146,7 +146,7 @@ export default {
           this.update();
           break;
         case "finances":
-          this.$router.push({ name: "Finances" });
+          this.$router.push({ name: "FinancesOverview" });
           break;
         case "settings":
           this.$router.push({ name: "DashboardSettings", hash: "#finances" });

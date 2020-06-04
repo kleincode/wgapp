@@ -163,7 +163,7 @@ export default {
           this.update();
           break;
         case "tasks":
-          this.$router.push({ name: "Tasks" });
+          this.$router.push({ name: "TasksOverview" });
           break;
         case "settings":
           this.$router.push({ name: "DashboardSettings", hash: "#tasks" });
