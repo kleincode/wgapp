@@ -23,7 +23,10 @@
           >
         </template>
         <div class="py-4" :class="i % 2 ? 'text-right' : ''">
-          <h2 class="display-1 font-weight-light mb-1 primary--text">
+          <h2
+            class="display-1 font-weight-light mb-1"
+            :class="!!task.missed ? 'error--text' : 'primary--text'"
+          >
             {{ task.name }}
           </h2>
           <div v-if="task.assigned == task.working">

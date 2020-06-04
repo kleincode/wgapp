@@ -20,6 +20,10 @@ module.exports = ({ db }) => ({
       required: true,
       message: "Please specify a task name"
     },
+    missed: {
+      type: "boolean",
+      default: false
+    },
     assignedMember: {
       type: "int",
       required: true,
@@ -39,11 +43,11 @@ module.exports = ({ db }) => ({
       if (body.done) {
         const { results } = await db.query("SELECT id FROM tasklog WHERE hid = ? ORDER BY time DESC LIMIT 9, 1", [hid]);
         if (results.length > 0) {
-          await db.query("UPDATE tasklog SET taskid = ?, time = ?, assignedMember = ?, workingMember = ?, name = ?, icon = ?, hid = ? WHERE id = ?", 
-          [body.id, new Date(body.time), body.assignedMember, uid, body.name, body.icon, hid, results[0].id]);
+          await db.query("UPDATE tasklog SET taskid = ?, time = ?, assignedMember = ?, workingMember = ?, name = ?, missed = ?, icon = ?, hid = ? WHERE id = ?", 
+          [body.id, new Date(body.time), body.assignedMember, uid, body.name, body.missed, body.icon, hid, results[0].id]);
         } else {
-          await db.query("INSERT INTO tasklog (taskid, time, assignedMember, workingMember, name, icon, hid) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-          [body.id, new Date(body.time), body.assignedMember, uid, body.name, body.icon, hid]);
+          await db.query("INSERT INTO tasklog (taskid, time, assignedMember, workingMember, name, missed, icon, hid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
+          [body.id, new Date(body.time), body.assignedMember, uid, body.name, body.missed, body.icon, hid]);
         }
         success({ message: "Task log added"});
       } else {

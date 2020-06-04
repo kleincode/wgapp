@@ -132,6 +132,7 @@ const vuexModule = {
         let loggedTasks = data.loggedTasks
           ? data.loggedTasks.map(task => ({
               name: task.name,
+              missed: task.missed,
               time: task.time,
               icon: task.icon,
               working: task.workingMember,
@@ -231,6 +232,7 @@ const vuexModule = {
         id: task.id,
         time: new Date().toISOString(),
         name: task.name,
+        missed: task.missed,
         assignedMember: task.assigned,
         icon: task.icon,
         done: checked

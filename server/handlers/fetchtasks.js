@@ -22,7 +22,7 @@ module.exports = ({ db }) => ({
         baseQuery += " AND (mode != 0 OR (mode = 0 AND lastExecution < '2001-00-1 00:00:00'))";
       }
       try {
-        const { results: loggedTasks } = await db.query("SELECT assignedMember, workingMember, time, name, icon FROM tasklog WHERE hid = ?", [hid]);
+        const { results: loggedTasks } = await db.query("SELECT assignedMember, workingMember, time, name, missed, icon FROM tasklog WHERE hid = ?", [hid]);
         const { results } = await db.query(baseQuery, baseParams);
         results.forEach((elem) => {
           elem.repetitionDays = JSON.parse(elem.repetitionDays);
