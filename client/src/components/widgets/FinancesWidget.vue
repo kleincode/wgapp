@@ -101,11 +101,16 @@ export default {
   components: {
     Widget
   },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
     loading: false,
     lastUpdate: null,
-    expenses: [],
-    large: true
+    expenses: []
   }),
   computed: {
     contextItems() {

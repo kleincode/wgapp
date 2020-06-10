@@ -3,6 +3,7 @@
     :title="$t('widgets.clock.title')"
     with-footer
     :context-items="contextItems"
+    :large="large"
     @context-action="contextAction"
   >
     <v-row style="height: 80%" align="center" justify="center">
@@ -25,6 +26,12 @@ export default {
   name: "ClockWidget",
   components: {
     Widget
+  },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     now: new Date(),

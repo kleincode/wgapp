@@ -2,7 +2,7 @@
   <Widget
     :title="$t('widgets.tasks.title')"
     :content-pad="false"
-    large
+    :large="large"
     :context-items="contextItems"
     :loading="loading"
     @context-action="contextAction"
@@ -87,6 +87,12 @@ export default {
   name: "TasksWidget",
   components: {
     Widget
+  },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     loading: false,

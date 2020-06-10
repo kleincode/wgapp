@@ -36,6 +36,7 @@
       <CalendarWidget
         v-if="calendarWidgetEnabled && calendarEnabled"
         class="mb-4"
+        large
       />
       <TasksWidget v-if="tasksWidgetEnabled" class="mb-4" />
       <FinancesWidget v-if="financesWidgetEnabled" class="mb-4" />

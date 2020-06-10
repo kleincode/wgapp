@@ -3,6 +3,7 @@
     :title="$t('widgets.calendar.title')"
     :loading="loading"
     :error="error"
+    :large="large"
     :context-items="contextItems"
     @context-action="contextAction"
   >
@@ -12,7 +13,7 @@
         cycle
         hide-delimiter-background
         :show-arrows="false"
-        height="105"
+        height="95%"
         delimiter-icon="fiber_manual_record"
         class="bottom-carousel"
         :interval="9000"
@@ -20,7 +21,23 @@
         :light="!$vuetify.theme.dark"
       >
         <v-carousel-item v-for="(event, i) in upcomingEvents" :key="i">
-          <v-row align="center" justify="center">
+          <v-row v-if="large" align="center" justify="center">
+            <v-col cols="12" class="text-center">
+              <v-icon style="font-size: 6em" :color="event.color">event</v-icon>
+            </v-col>
+            <v-col cols="12">
+              <div class="display-2">{{ event.summary }}</div>
+            </v-col>
+            <v-col cols="12">
+              <div class="overline">
+                {{ formattedTime(event) }}
+              </div>
+              <p>
+                {{ "" || event.description }}
+              </p>
+            </v-col>
+          </v-row>
+          <v-row v-else align="center" justify="center">
             <v-col cols="2">
               <v-icon x-large :color="event.color">event</v-icon>
             </v-col>
@@ -40,8 +57,14 @@
           justify="center"
           align="center"
         >
-          <v-icon class="mr-1">event</v-icon>
-          {{ $t("widgets.calendar.noEvents") }}
+          <div v-if="large" class="text-center mt-12">
+            <v-icon style="font-size: 3em" class="mr-1">event</v-icon>
+            <p>{{ $t("widgets.calendar.noEvents") }}</p>
+          </div>
+          <div v-else>
+            <v-icon class="mr-1">event</v-icon>
+            {{ $t("widgets.calendar.noEvents") }}
+          </div>
         </v-row>
       </div>
     </template>
@@ -72,6 +95,12 @@ export default {
   name: "CalendarWidget",
   components: {
     Widget
+  },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     loading: false,
