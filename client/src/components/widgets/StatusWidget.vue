@@ -3,6 +3,7 @@
     :title="$t('widgets.doNotDisturb.title')"
     :loading="loading"
     with-footer
+    large
     :context-items="contextItems"
     @context-action="contextAction"
   >

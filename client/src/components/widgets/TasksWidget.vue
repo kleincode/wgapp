@@ -13,7 +13,6 @@
         :show-arrows="false"
         height="120"
         delimiter-icon="fiber_manual_record"
-        class="bottom-carousel"
         :interval="10000"
         :dark="$vuetify.theme.dark"
         :light="!$vuetify.theme.dark"
@@ -23,7 +22,7 @@
           :key="i"
           class="pl-5 pr-5"
         >
-          <v-list-item class="mb-4">
+          <v-list-item>
             <v-list-item-avatar>
               <v-icon large :color="task.missed ? 'red' : 'primary'">{{
                 getIcon(task.icon) || "event_note"
@@ -68,9 +67,8 @@
           </v-list-item>
         </v-carousel-item>
       </v-carousel>
-      <div style="height: 120px;"></div>
     </template>
-    <div v-else style="text-align: center" class="text--disabled pb-4">
+    <div v-else style="text-align: center" class="text--disabled">
       <v-icon style="font-size: 4em" class="text--disabled"
         >access_alarm</v-icon
       >
@@ -174,10 +172,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.bottom-carousel {
-  position: absolute;
-  bottom: 0;
-}
 .task-entry {
   display: flex;
 }

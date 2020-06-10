@@ -4,6 +4,7 @@
     :loading="loading"
     :error="!display"
     with-footer
+    large
     :context-items="contextItems"
     @context-action="contextAction"
   >

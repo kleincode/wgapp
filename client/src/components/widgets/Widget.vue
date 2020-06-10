@@ -1,9 +1,9 @@
 <template>
   <v-card
-    class="widget-card"
     :loading="loading"
     :color="error ? 'red' : null"
     :elevation="6"
+    :style="large ? 'height: 417px' : 'height: 200px'"
   >
     <v-card-title>
       {{ title }}
@@ -34,9 +34,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-card-text :class="{ 'pa-0': !contentPad, 'mb-6': withFooter }">
+    <v-card-text :class="{ 'pa-0': !contentPad }">
       <slot></slot>
-      <div v-if="withFooter && !error" class="overline widget-footer">
+      <div v-if="withFooter && !error" class="overline">
         <slot name="footer"></slot>
       </div>
     </v-card-text>
@@ -70,19 +70,13 @@ export default {
     contextItems: {
       type: Array,
       default: () => []
+    },
+    large: {
+      type: Boolean,
+      default: false
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
-.widget-card {
-  width: 100%;
-  height: 100%;
-}
-.widget-footer {
-  position: absolute;
-  bottom: 16px;
-  width: 90%;
-}
-</style>
+<style lang="scss" scoped></style>

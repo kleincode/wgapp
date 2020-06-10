@@ -4,6 +4,7 @@
     :content-pad="false"
     :context-items="contextItems"
     :loading="loading"
+    large
     @context-action="contextAction"
   >
     <template v-if="expenses.length">
