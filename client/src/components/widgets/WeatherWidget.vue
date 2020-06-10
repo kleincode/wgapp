@@ -4,19 +4,70 @@
     :loading="loading"
     :error="!display"
     with-footer
-    large
+    :large="large"
     :context-items="contextItems"
     @context-action="contextAction"
   >
     <template v-if="display">
-      <span class="display-3">{{ convertedTemperature }}</span>
-      <span class="display-1" style="vertical-align: top;">
-        {{ displayTemperatureUnit }}</span
-      >
+      <v-row>
+        <v-col :cols="large ? '6' : '3'" class="ma-0 pa-0">
+          <v-img
+            :src="
+              'http://openweathermap.org/img/wn/' + conditionICON + '@4x.png'
+            "
+          ></v-img>
+        </v-col>
+        <v-col
+          :cols="large ? '6' : '9'"
+          style="align-self: center"
+          class="pt-0"
+        >
+          <span class="display-3">
+            <v-icon x-large>fa-thermometer-half</v-icon>
+            {{ convertTemperature(temperature) }}</span
+          >
+          <span class="display-1" style="vertical-align: top;">
+            {{ displayTemperatureUnit }}
+          </span>
+          <br />
+          <span class="title"
+            ><v-icon>keyboard_arrow_down</v-icon
+            >{{ convertTemperature(tempMin) + displayTemperatureUnit }}</span
+          >
+          <span class="title"
+            ><v-icon>keyboard_arrow_up</v-icon
+            >{{ convertTemperature(tempMax) + displayTemperatureUnit }}</span
+          >
+          <br />
+          <span v-if="large" class="headline">
+            <v-icon>fa-tint</v-icon>
+            {{ humidity }}%
+          </span>
+        </v-col>
+        <v-col v-if="large" cols="6" class="py-0">
+          <p class="title">
+            <v-icon>fa-wind</v-icon>
+            {{ displayWind }}
+          </p>
+        </v-col>
+        <v-col v-if="large" cols="6" class="py-0">
+          <p class="title"><v-icon>fa-eye</v-icon> {{ displayVisibility }}</p>
+        </v-col>
+        <v-col v-if="large" cols="6" class="py-0">
+          <p class="title"><v-icon>fa-cloud</v-icon> {{ cloudiness }}%</p>
+        </v-col>
+        <v-col v-if="large" cols="6" class="py-0">
+          <p class="title">
+            <v-icon>fa-globe-europe</v-icon> {{ displayPressure }}
+          </p>
+        </v-col>
+      </v-row>
     </template>
     <template v-else>
-      <p>{{ $t("widgets.weather.configError") }}</p>
-      <v-btn text to="/settings/dashboard">{{
+      <p class="mb-12 mt-4" style="height: 60%">
+        {{ $t("widgets.weather.configError") }}
+      </p>
+      <v-btn block text to="/settings/dashboard">{{
         $t("navigation.settings")
       }}</v-btn>
     </template>
@@ -37,11 +88,27 @@ export default {
   components: {
     Widget
   },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
+  },
   data: () => ({
+    imperial: true,
+
     temperature: 0,
+    tempMin: 0,
+    tempMax: 0,
     lastUpdate: null,
     condition: "...",
+    humidity: "0%",
+    conditionICON: "",
     cityName: "",
+    wind: 0,
+    cloudiness: 0,
+    visibility: 0,
+    pressure: 0,
     display: true,
     loading: false
   }),
@@ -65,14 +132,42 @@ export default {
           return "K";
       }
     },
-    convertedTemperature() {
-      switch (this.temperatureUnit) {
-        case "c":
-          return Math.round(this.temperature - 273.15);
-        case "f":
-          return Math.round((this.temperature * 9) / 5 - 459.67);
-        default:
-          return Math.round(this.temperature);
+    displayWind() {
+      if (this.imperial) {
+        return (
+          Math.round(
+            this.$units(this.wind)
+              .from("m/s")
+              .to("m/h") * 100
+          ) /
+            100 +
+          " mi/h"
+        );
+      } else {
+        return this.wind + " m/s";
+      }
+    },
+    displayVisibility() {
+      if (this.imperial) {
+        let vis = this.$units(this.visibility)
+          .from("m")
+          .to("mi");
+        return Math.round(100 * vis) / 100 + " mi";
+      } else {
+        let vis = this.$units(this.visibility)
+          .from("m")
+          .toBest();
+        return vis.val + " " + vis.unit;
+      }
+    },
+    displayPressure() {
+      if (this.imperial) {
+        let pres = this.$units(this.visibility)
+          .from("hPa")
+          .to("torr");
+        return Math.round(pres) / 10 + " mmHg";
+      } else {
+        return this.pressure + " hPa";
       }
     },
     contextItems() {
@@ -124,6 +219,14 @@ export default {
         if (data.cod == 200) {
           this.temperature = data.main.temp;
           this.condition = data.weather[0].main;
+          this.conditionICON = data.weather[0].icon;
+          this.humidity = data.main.humidity;
+          this.tempMax = data.main.temp_max;
+          this.tempMin = data.main.temp_min;
+          this.wind = data.wind.speed;
+          this.visibility = data.visibility;
+          this.cloudiness = data.clouds.all;
+          this.pressure = data.main.pressure;
           this.cityName = data.name;
           this.lastUpdate = new Date();
           this.display = true;
@@ -142,6 +245,16 @@ export default {
           break;
         case "settings":
           this.$router.push({ name: "DashboardSettings", hash: "#weather" });
+      }
+    },
+    convertTemperature(temperature) {
+      switch (this.temperatureUnit) {
+        case "c":
+          return Math.round(temperature - 273.15);
+        case "f":
+          return Math.round((temperature * 9) / 5 - 459.67);
+        default:
+          return Math.round(temperature);
       }
     }
   }

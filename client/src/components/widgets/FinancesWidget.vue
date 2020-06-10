@@ -4,7 +4,7 @@
     :content-pad="false"
     :context-items="contextItems"
     :loading="loading"
-    large
+    :large="large"
     @context-action="contextAction"
   >
     <template v-if="expenses.length">
@@ -12,7 +12,7 @@
         cycle
         hide-delimiter-background
         :show-arrows="false"
-        height="160"
+        height="95%"
         delimiter-icon="fiber_manual_record"
         class="bottom-carousel"
         :interval="9000"
@@ -24,20 +24,43 @@
           :key="i"
           class="pl-5 pr-5"
         >
-          <v-list-item class="mb-4">
+          <div v-if="large">
+            <v-chip class="mt-6">
+              <v-avatar
+                style="max-height: 80%; max-width: 90%"
+                left
+                color="green"
+              >
+                <span class="white--text">{{
+                  getUserInitials(expense.uid)
+                }}</span>
+              </v-avatar>
+              {{ getUserName(expense.uid) }}
+            </v-chip>
+            <p class="display-2 mt-2 mb-2">{{ getDescription(expense) }}</p>
+            <p class="mt-4 ml-1">{{ getDate(expense) }}</p>
+            <div class="text-right">
+              <v-chip
+                class="mt-6 "
+                large
+                :color="expense.receipt ? 'primary' : ''"
+              >
+                {{ getAmount(expense) }}
+              </v-chip>
+            </div>
+          </div>
+          <v-list-item v-else class="mb-4">
             <v-list-item-content>
               <v-list-item-title class="task-entry">
-                {{
-                  expense.description || $t("widgets.finances.unnamedExpense")
-                }}
+                {{ getDescription(expense) }}
                 <div class="overline pl-2 pt-1">
                   -
-                  {{ formatDateRelative(expense.date) || $t("general.today") }}
+                  {{ getDate(expense) }}
                 </div>
               </v-list-item-title>
               <v-list-item-subtitle>
                 <v-chip class="mt-1" :color="expense.receipt ? 'primary' : ''">
-                  {{ formatCurrency(expense.amount / 100) }}
+                  {{ getAmount(expense) }}
                 </v-chip>
                 <v-chip class="mt-1 ml-3">
                   <v-avatar
@@ -56,10 +79,13 @@
           </v-list-item>
         </v-carousel-item>
       </v-carousel>
-      <div style="height: 160px;"></div>
     </template>
-    <div v-else style="text-align: center" class="text--disabled pb-4">
-      <v-icon style="font-size: 4em" class="text--disabled">money</v-icon>
+    <div
+      v-else
+      style="text-align: center; height: 100%"
+      class="text--disabled pb-4"
+    >
+      <v-icon style="font-size: 7em" class="text--disabled">money</v-icon>
       <br />{{ $t("widgets.finances.empty") }}
     </div>
   </Widget>
@@ -78,7 +104,8 @@ export default {
   data: () => ({
     loading: false,
     lastUpdate: null,
-    expenses: []
+    expenses: [],
+    large: true
   }),
   computed: {
     contextItems() {
@@ -153,15 +180,20 @@ export default {
           this.$router.push({ name: "DashboardSettings", hash: "#finances" });
       }
     },
-    getIcon: index => icons[index]
+    getIcon: index => icons[index],
+    getDescription(expense) {
+      return expense.description || this.$t("widgets.finances.unnamedExpense");
+    },
+    getDate(expense) {
+      return this.formatDateRelative(expense.date) || this.$t("general.today");
+    },
+    getAmount(expense) {
+      return this.formatCurrency(expense.amount / 100);
+    }
   }
 };
 </script>
 <style lang="scss" scoped>
-.bottom-carousel {
-  position: absolute;
-  bottom: 0;
-}
 .task-entry {
   display: flex;
 }

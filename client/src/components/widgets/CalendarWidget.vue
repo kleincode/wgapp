@@ -46,8 +46,10 @@
       </div>
     </template>
     <template v-else>
-      <p>{{ $t("widgets.calendar.configError") }}</p>
-      <v-btn text to="/settings/dashboard">{{
+      <p class="mb-12 mt-4" style="height: 60%">
+        {{ $t("widgets.calendar.configError") }}
+      </p>
+      <v-btn text block to="/settings/dashboard">{{
         $t("navigation.settings")
       }}</v-btn>
     </template>

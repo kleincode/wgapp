@@ -3,6 +3,7 @@ import Vuetify from "vuetify/lib";
 import en from "vuetify/es5/locale/en";
 import { preset } from "vue-cli-plugin-vuetify-preset-reply/preset";
 import colors from "vuetify/lib/util/colors";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 Vue.use(Vuetify);
 
@@ -11,6 +12,9 @@ export default new Vuetify({
   lang: {
     locales: { en },
     current: "en"
+  },
+  icons: {
+    iconfont: "fa"
   },
   theme: {
     themes: {

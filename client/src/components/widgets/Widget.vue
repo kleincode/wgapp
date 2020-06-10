@@ -4,6 +4,7 @@
     :color="error ? 'red' : null"
     :elevation="6"
     :style="large ? 'height: 417px' : 'height: 200px'"
+    style="display: flex; flex-flow: column; height: 100%;"
   >
     <v-card-title>
       {{ title }}
@@ -34,9 +35,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-card-text :class="{ 'pa-0': !contentPad }">
-      <slot></slot>
-      <div v-if="withFooter && !error" class="overline">
+    <v-card-text :class="{ 'pa-0': !contentPad }" style="flex-grow : 1;">
+      <slot style="flex-grow : 1;"></slot>
+      <div v-if="withFooter && !error" class="overline bottom-footer">
         <slot name="footer"></slot>
       </div>
     </v-card-text>
@@ -79,4 +80,10 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.bottom-footer {
+  position: absolute;
+  bottom: 15px;
+  width: 90%;
+}
+</style>

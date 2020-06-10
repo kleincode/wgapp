@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-overlay
       v-if="!userInHousehold"
       style="min-height: 100vh"
@@ -23,12 +23,16 @@
         </v-col>
       </v-row>
     </v-overlay>
-    <h1 v-if="userInHousehold" class="display-2 mb-6" style="max-width: 80%">
+    <h1
+      v-if="userInHousehold"
+      class="display-2 mb-6 mt-3"
+      style="max-width: 80%"
+    >
       {{ message }}
     </h1>
     <masonry v-if="userInHousehold" :cols="gridColumns" :gutter="10">
       <ClockWidget v-if="clockWidgetEnabled" class="mb-4" />
-      <WeatherWidget v-if="weatherWidgetEnabled" class="mb-4" />
+      <WeatherWidget v-if="weatherWidgetEnabled" class="mb-4" large />
       <CalendarWidget
         v-if="calendarWidgetEnabled && calendarEnabled"
         class="mb-4"

@@ -5,10 +5,12 @@
     :context-items="contextItems"
     @context-action="contextAction"
   >
-    <span class="display-3">{{ time }}</span>
-    <span class="display-1" style="vertical-align: baseline;">{{
-      timeSuffix
-    }}</span>
+    <v-row style="height: 80%" align="center" justify="center">
+      <span :class="timeSize">{{ time }}</span>
+      <span class="display-1" style="vertical-align: baseline;">{{
+        timeSuffix
+      }}</span>
+    </v-row>
     <template #footer
       >{{ formatWeekday(now) }} | {{ formatDateYMD(now) }}</template
     >
@@ -29,6 +31,20 @@ export default {
     clockIntervalID: -1
   }),
   computed: {
+    timeSize() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "display-3";
+        case "sm":
+          return "display-4";
+        case "md":
+          return "display-4";
+        case "lg":
+          return "display-3";
+        default:
+          return "display-3";
+      }
+    },
     contextItems() {
       return [
         {

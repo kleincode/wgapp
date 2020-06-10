@@ -2,6 +2,7 @@
   <Widget
     :title="$t('widgets.tasks.title')"
     :content-pad="false"
+    large
     :context-items="contextItems"
     :loading="loading"
     @context-action="contextAction"
