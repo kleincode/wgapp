@@ -31,17 +31,17 @@
       {{ message }}
     </h1>
     <masonry v-if="userInHousehold" :cols="gridColumns" :gutter="10">
-      <ClockWidget v-if="clockWidgetEnabled" class="mb-4" />
+      <ClockWidget v-if="clockWidgetEnabled" class="mb-4" large />
       <WeatherWidget v-if="weatherWidgetEnabled" class="mb-4" large />
       <CalendarWidget
         v-if="calendarWidgetEnabled && calendarEnabled"
         class="mb-4"
         large
       />
-      <TasksWidget v-if="tasksWidgetEnabled" class="mb-4" />
-      <FinancesWidget v-if="financesWidgetEnabled" class="mb-4" />
-      <StatusWidget v-if="statusWidgetEnabled" class="mb-4" />
-      <ImHomeWidget v-if="homeWidgetEnabled" class="mb-4" />
+      <TasksWidget v-if="tasksWidgetEnabled" class="mb-4" large />
+      <FinancesWidget v-if="financesWidgetEnabled" class="mb-4" large />
+      <StatusWidget v-if="statusWidgetEnabled" class="mb-4" large />
+      <ImHomeWidget v-if="homeWidgetEnabled" class="mb-4" large />
     </masonry>
   </v-container>
 </template>

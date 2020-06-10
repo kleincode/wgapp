@@ -12,6 +12,7 @@
       <v-row>
         <v-col :cols="large ? '6' : '3'" class="ma-0 pa-0">
           <v-img
+            v-if="conditionICON != ''"
             :src="
               'http://openweathermap.org/img/wn/' + conditionICON + '@4x.png'
             "
@@ -95,7 +96,7 @@ export default {
     }
   },
   data: () => ({
-    imperial: true,
+    imperial: false,
 
     temperature: 0,
     tempMin: 0,

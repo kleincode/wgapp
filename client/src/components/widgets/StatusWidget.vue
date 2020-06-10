@@ -3,14 +3,14 @@
     :title="$t('widgets.doNotDisturb.title')"
     :loading="loading"
     with-footer
-    large
+    :large="large"
     :context-items="contextItems"
     @context-action="contextAction"
   >
-    <v-row class="mb-4">
+    <v-row v-if="large" class="mb-4">
       <v-col v-for="(member, i) in members" :key="i" cols="4" md="3">
         <v-avatar
-          size="48"
+          size="70"
           :color="!userImages[member.id] ? 'primary' : ''"
           left
           :style="
@@ -29,6 +29,28 @@
         </v-avatar>
       </v-col>
     </v-row>
+    <div v-else class="scrolldiv">
+      <div v-for="(member, i) in members" :key="i" cols="4" md="3" class="ma-1">
+        <v-avatar
+          size="60"
+          :color="!userImages[member.id] ? 'primary' : ''"
+          left
+          :style="
+            !!member.status
+              ? 'border-color: red !important; border-width: 3px; border-style: solid;'
+              : ''
+          "
+        >
+          <v-img
+            v-show="userImages[member.id]"
+            :src="userImages[member.id]"
+          ></v-img>
+          <span v-show="!userImages[member.id]" class="white--text headline"
+            >{{ getUserInitials(member.id) }}
+          </span>
+        </v-avatar>
+      </div>
+    </div>
     <template #footer
       ><v-btn v-if="!userStatus" text block @click="toggle">{{
         $t("commands.activate")
@@ -49,6 +71,12 @@ export default {
   name: "StatusWidget",
   components: {
     Widget
+  },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
   },
   data: () => ({
     loading: false,
@@ -149,4 +177,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.scrolldiv {
+  display: flex;
+  max-width: 100%;
+  overflow: scroll;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+</style>
