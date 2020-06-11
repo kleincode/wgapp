@@ -69,12 +69,16 @@ const vuexModule = {
       commit("set_initialized", true);
     },
     pushList({ commit }, list) {
-      return db.transaction("rw", shoppingLists, async () => {
+      return db.transaction("rw", shoppingLists, shoppingItems, async () => {
+        //need to add shoppingItems to transaction bc of reactive item-fetching
         const lastElement = (await shoppingLists.orderBy("order").last()) || {};
-        const highestOrder = lastElement.order || 0;
+        const lastOrder = lastElement.order || 0,
+          // order of new element should be around 1/128 behind last element, but no more than 2^32-1 (32-bit int bounds)
+          newOrder = Math.min(lastOrder + 33554431, 0xffffffff);
+        if (newOrder <= lastOrder) console.warn("Need reordering!"); // TODO
         const listObject = {
           ...list,
-          order: highestOrder + 1,
+          order: newOrder,
           updated: timestamp()
         };
         await shoppingLists.add(listObject);
@@ -91,23 +95,13 @@ const vuexModule = {
         return !!updatedRows;
       });
     },
-    saveListOrder({ state }) {
-      return db.transaction("rw", shoppingLists, async () => {
-        for (let i = 0; i < state.lists.length; i++) {
-          const list = state.lists[i];
-          await shoppingLists.update(list.id, { order: i + 1 });
-          list.order = i + 1;
-        }
-      });
-    },
-    deleteList({ commit, dispatch }, id) {
+    deleteList({ commit }, id) {
       return db.transaction("rw", shoppingLists, async () => {
         const updatedRows = await shoppingLists.update(id, { deleted: true });
         if (updatedRows) {
           await shoppingLists.update(id, { updated: timestamp() });
         }
         commit("delete_list", id);
-        await dispatch("saveListOrder");
         return !!updatedRows;
       });
     },
@@ -123,14 +117,22 @@ const vuexModule = {
     },
     pushItem({ commit }, item) {
       return db.transaction("rw", shoppingItems, async () => {
-        const lastElement = (await shoppingItems.orderBy("order").last()) || {};
-        const highestOrder = lastElement.order || 0;
+        const lastElement =
+          (await shoppingItems
+            .orderBy("order")
+            .filter(el => el.list == item.list)
+            .last()) || {};
+        console.log(lastElement);
+        const lastOrder = lastElement.order || 0,
+          // order of new element should be around 1/128 behind last element, but no more than 2^32-1 (32-bit int bounds)
+          newOrder = Math.min(lastOrder + 33554431, 0xffffffff);
+        if (newOrder <= lastOrder) console.warn("Need reordering!"); // TODO
         const itemObject = {
           text: item.text,
           checked: item.checked,
           list: item.list,
           id: item.id,
-          order: highestOrder + 1,
+          order: newOrder,
           updated: timestamp()
         };
         await shoppingItems.add(itemObject);
@@ -148,23 +150,13 @@ const vuexModule = {
         return !!updatedRows;
       });
     },
-    saveItemOrder({ state }) {
-      return db.transaction("rw", shoppingItems, async () => {
-        for (let i = 0; i < state.items.length; i++) {
-          const item = state.items[i];
-          await shoppingItems.update(item.id, { order: i + 1 });
-          item.order = i + 1;
-        }
-      });
-    },
-    deleteItem({ commit, dispatch }, id) {
+    deleteItem({ commit }, id) {
       return db.transaction("rw", shoppingItems, async () => {
         const updatedRows = await shoppingItems.update(id, { deleted: true });
         if (updatedRows) {
           await shoppingItems.update(id, { updated: timestamp() });
         }
         commit("delete_item", id);
-        await dispatch("saveItemOrder");
         return !!updatedRows;
       });
     },
@@ -206,7 +198,8 @@ const vuexModule = {
             updated: el.updated,
             text: el.text,
             checked: !!el.checked,
-            deleted: !!el.deleted
+            deleted: !!el.deleted,
+            order: el.order
           }));
           return { lastUpdate, lists, items };
         }
@@ -245,8 +238,8 @@ const vuexModule = {
               await shoppingItems.where({ list }).delete();
             }
 
-            // Finally, add/update all items (add order prop)
-            await shoppingItems.bulkPut(items.map(el => ({ ...el, order: 0 })));
+            // Finally, add/update all items
+            await shoppingItems.bulkPut(items.map(el => ({ ...el })));
 
             // Save update time
             await appSettings.put({ key: "shoppingSync", value: now });

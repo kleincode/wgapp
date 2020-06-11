@@ -77,13 +77,14 @@ module.exports = ({ db }) => ({
         const listIds = fetchedLists.map(el => el.id);
 
         // 3. Merge all item updates
-        for(let { id, updated, text, list, checked, deleted } of items) {
+        for(let { id, updated, text, list, checked, deleted, order } of items) {
           // Check if list id is valid
           if(!listIds.includes(list)) continue;
           // Parse fields
           updated = parseInt(updated);
           checked = !!checked;
           deleted = !!deleted;
+          order = parseInt(order);
           // Update may not be in the future!
           if(updated > now) updated = now;
           if(deleted) {
@@ -108,14 +109,14 @@ module.exports = ({ db }) => ({
               if(!listIds.includes(itemFetchRes[0].list)) continue;
               // Update if newer
               await ta.query(
-                "UPDATE shoppingitems SET ?, ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND `localupdate` <= FROM_UNIXTIME(?)",
-                [{ text }, { checked }, { list }, updated, now, { id }, updated ]
+                "UPDATE shoppingitems SET ?, ?, ?, ?, `localupdate` = FROM_UNIXTIME(?), `remoteupdate` = FROM_UNIXTIME(?) WHERE ? AND `localupdate` <= FROM_UNIXTIME(?)",
+                [{ text }, { checked }, { list }, { itemOrder: order }, updated, now, { id }, updated ]
               );
             } else {
               // Insert new list
               await ta.query(
-                "INSERT INTO shoppingitems (`id`, `text`, `checked`, `list`, `localupdate`, `remoteupdate`) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?))",
-                [id, text || "", checked, list, updated, now]
+                "INSERT INTO shoppingitems (`id`, `text`, `checked`, `itemOrder`, `list`, `localupdate`, `remoteupdate`) VALUES (?, ?, ?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?))",
+                [id, text || "", checked, order, list, updated, now]
               );
             }
           }
@@ -126,12 +127,12 @@ module.exports = ({ db }) => ({
         let itemResults;
         if(fullSyncLists.length) {
           itemResults = (await ta.query(
-            "SELECT shoppingitems.`id`, shoppingitems.`text`, shoppingitems.`checked`, shoppingitems.`list`, UNIX_TIMESTAMP(shoppingitems.`localupdate`) AS 'updated' FROM shoppingitems JOIN shoppinglists ON shoppingitems.list = shoppinglists.id WHERE shoppinglists.id IN (?) OR shoppingitems.remoteupdate > FROM_UNIXTIME(?)",
+            "SELECT shoppingitems.`id`, shoppingitems.`text`, shoppingitems.`checked`, shoppingitems.`itemOrder` AS 'order', shoppingitems.`list`, UNIX_TIMESTAMP(shoppingitems.`localupdate`) AS 'updated' FROM shoppingitems JOIN shoppinglists ON shoppingitems.list = shoppinglists.id WHERE shoppinglists.id IN (?) OR shoppingitems.remoteupdate > FROM_UNIXTIME(?)",
             [fullSyncLists, lastUpdate]
           )).results;
         } else {
           itemResults = (await ta.query(
-            "SELECT `id`, `text`, `checked`, `list`, UNIX_TIMESTAMP(`localupdate`) AS 'updated' FROM shoppingitems WHERE remoteupdate > FROM_UNIXTIME(?)",
+            "SELECT `id`, `text`, `checked`, `itemOrder` AS 'order', `list`, UNIX_TIMESTAMP(`localupdate`) AS 'updated' FROM shoppingitems WHERE remoteupdate > FROM_UNIXTIME(?)",
             [lastUpdate]
           )).results;
         }
