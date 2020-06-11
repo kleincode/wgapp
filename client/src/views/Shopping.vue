@@ -123,7 +123,7 @@
                 ></v-progress-circular>
               </v-expand-transition>
             </v-row>
-            <v-list v-if="items.length > 0" dense>
+            <v-list v-if="displayedItems.length > 0" dense>
               <transition-group name="shopping-items" tag="ul" class="pl-0">
                 <v-list-item
                   v-for="(item, i) in displayedItems"
@@ -240,7 +240,7 @@
           <template v-slot:activator="{ on }">
             <v-app-bar-nav-icon color="primary" v-on="on"></v-app-bar-nav-icon>
           </template>
-          <v-list v-if="lists.length > 0" style="position: relative;">
+          <v-list style="position: relative;">
             <edit-shopping-list-dialog
               ref="editDialog"
               v-model="editList"
@@ -363,7 +363,8 @@ export default {
     displayedItems() {
       let displayedItems = this.items
         .filter(el => !el.deleted)
-        .sort((a, b) => a.checked - b.checked);
+        // unchecked items first, secondary sort by item order (ascending)
+        .sort((a, b) => a.checked - b.checked || a.order - b.order);
       //Insert "add element" entry to list behind last unchecked entry
       let insertNewIndex = displayedItems.findIndex(el => el.checked);
       displayedItems.splice(
@@ -411,7 +412,7 @@ export default {
 
     updateItem(item, index) {
       if (item.deleted) return;
-      this.$refs.combo[index].blur();
+      if (this.$refs.combo[index]) this.$refs.combo[index].blur();
       this.activeItemIndex = -1;
       // wait some time because combobox doesn't update its text value right away (vuetify bug)
       this.$nextTick(() => {
@@ -460,8 +461,14 @@ export default {
     },
 
     async fetchShoppingItems() {
-      if (!this.$vuetify.breakpoint.mdAndUp && !this.selectedListId)
-        this.selectedListId = this.lists[0].id;
+      if (!this.$vuetify.breakpoint.mdAndUp && !this.selectedListId) {
+        if (this.lists && this.lists.length && this.lists[0])
+          this.selectedListId = this.lists[0].id;
+        else {
+          this.mobileSheetOpen = true;
+          return;
+        }
+      }
       await this.$store.dispatch(
         "shopping/loadList",
         this.selectedListId || false
