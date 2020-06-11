@@ -1,16 +1,24 @@
 <template>
   <Widget
     :title="$t('widgets.clock.title')"
-    with-footer
+    :with-footer="!large"
     :context-items="contextItems"
     :large="large"
     @context-action="contextAction"
   >
     <v-row style="height: 80%" align="center" justify="center">
-      <span :class="timeSize">{{ time }}</span>
-      <span class="display-1" style="vertical-align: baseline;">{{
-        timeSuffix
-      }}</span>
+      <v-col cols="12" class="text-center">
+        <div v-if="large" class="pb-4">
+          <span class="title">{{ formatWeekday(now) }}</span>
+        </div>
+        <span :class="timeSize">{{ time }}</span>
+        <span class="display-1" style="vertical-align: baseline;">{{
+          timeSuffix
+        }}</span>
+        <div v-if="large" class="pt-2">
+          <span class="display-1">{{ formatDateYMD(now) }}</span>
+        </div>
+      </v-col>
     </v-row>
     <template #footer
       >{{ formatWeekday(now) }} | {{ formatDateYMD(now) }}</template
@@ -43,7 +51,7 @@ export default {
         case "xs":
           return "display-3";
         case "sm":
-          return "display-4";
+          return "display-2";
         case "md":
           return "display-4";
         case "lg":

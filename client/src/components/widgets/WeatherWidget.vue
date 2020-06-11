@@ -10,16 +10,20 @@
   >
     <template v-if="display">
       <v-row>
-        <v-col :cols="large ? '6' : '3'" class="ma-0 pa-0">
+        <v-col
+          :cols="large ? ($vuetify.breakpoint.mdAndDown ? '4' : '6') : '3'"
+          class="ma-0 pa-0"
+        >
           <v-img
             v-if="conditionICON != ''"
+            width="95%"
             :src="
               'http://openweathermap.org/img/wn/' + conditionICON + '@4x.png'
             "
           ></v-img>
         </v-col>
         <v-col
-          :cols="large ? '6' : '9'"
+          :cols="large ? ($vuetify.breakpoint.mdAndDown ? '8' : '6') : '9'"
           style="align-self: center"
           class="pt-0"
         >
@@ -27,7 +31,7 @@
             <v-icon x-large>fa-thermometer-half</v-icon>
             {{ convertTemperature(temperature) }}</span
           >
-          <span class="display-1" style="vertical-align: top;">
+          <span class="headline" style="vertical-align: top;">
             {{ displayTemperatureUnit }}
           </span>
           <br />
@@ -136,13 +140,11 @@ export default {
     displayWind() {
       if (this.imperial) {
         return (
-          Math.round(
+          (Math.round(
             this.$units(this.wind)
               .from("m/s")
               .to("m/h") * 100
-          ) /
-            100 +
-          " mi/h"
+          ) / 100 || "----") + " mi/h"
         );
       } else {
         return this.wind + " m/s";
@@ -153,22 +155,31 @@ export default {
         let vis = this.$units(this.visibility)
           .from("m")
           .to("mi");
-        return Math.round(100 * vis) / 100 + " mi";
+        if (!isNaN(vis)) {
+          return Math.round(100 * vis) / 100 + " mi";
+        } else {
+          return "---- mi";
+        }
       } else {
         let vis = this.$units(this.visibility)
           .from("m")
           .toBest();
-        return vis.val + " " + vis.unit;
+        return (vis.val || "----") + " " + vis.unit;
       }
     },
     displayPressure() {
       if (this.imperial) {
-        let pres = this.$units(this.visibility)
+        let pres = this.$units(this.pressure)
           .from("hPa")
           .to("torr");
-        return Math.round(pres) / 10 + " mmHg";
+        console.log(pres);
+        if (!isNaN(pres)) {
+          return Math.round(pres) / 10 + " mmHg";
+        } else {
+          return "---- mmHg";
+        }
       } else {
-        return this.pressure + " hPa";
+        return (this.pressure || "----") + " hPa";
       }
     },
     contextItems() {

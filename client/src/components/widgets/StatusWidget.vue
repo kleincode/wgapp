@@ -51,13 +51,21 @@
         </v-avatar>
       </div>
     </div>
-    <template #footer
-      ><v-btn v-if="!userStatus" text block @click="toggle">{{
-        $t("commands.activate")
-      }}</v-btn>
-      <v-btn v-else color="red" block @click="toggle">{{
-        $t("commands.deactivate")
-      }}</v-btn>
+    <template #footer>
+      <div style="display: flex">
+        <v-btn v-if="$vuetify.breakpoint.mdAndUp" icon
+          ><v-icon>chevron_left</v-icon></v-btn
+        >
+        <v-btn v-if="!userStatus" style="flex-grow: 2" text @click="toggle">{{
+          $t("commands.activate")
+        }}</v-btn>
+        <v-btn v-else style="flex-grow: 2" color="red" @click="toggle">{{
+          $t("commands.deactivate")
+        }}</v-btn>
+        <v-btn v-if="$vuetify.breakpoint.mdAndUp" icon
+          ><v-icon>chevron_right</v-icon></v-btn
+        >
+      </div>
     </template>
   </Widget>
 </template>
@@ -183,6 +191,6 @@ export default {
   max-width: 100%;
   overflow: scroll;
   overflow-y: hidden;
-  overflow-x: auto;
+  overflow-x: scroll;
 }
 </style>

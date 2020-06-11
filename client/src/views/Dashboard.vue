@@ -30,8 +30,13 @@
     >
       {{ message }}
     </h1>
-    <masonry v-if="userInHousehold" :cols="gridColumns" :gutter="10">
-      <ClockWidget v-if="clockWidgetEnabled" class="mb-4" large />
+    <masonry
+      v-if="userInHousehold"
+      :key="$vuetify.breakpoint.name"
+      :cols="gridColumns"
+      :gutter="10"
+    >
+      <ClockWidget v-if="clockWidgetEnabled" class="mb-4" />
       <WeatherWidget v-if="weatherWidgetEnabled" class="mb-4" large />
       <CalendarWidget
         v-if="calendarWidgetEnabled && calendarEnabled"
@@ -40,8 +45,8 @@
       />
       <TasksWidget v-if="tasksWidgetEnabled" class="mb-4" large />
       <FinancesWidget v-if="financesWidgetEnabled" class="mb-4" large />
-      <StatusWidget v-if="statusWidgetEnabled" class="mb-4" large />
-      <ImHomeWidget v-if="homeWidgetEnabled" class="mb-4" large />
+      <StatusWidget v-if="statusWidgetEnabled" class="mb-4" />
+      <ImHomeWidget v-if="homeWidgetEnabled" class="mb-4" />
     </masonry>
   </v-container>
 </template>
@@ -100,14 +105,22 @@ export default {
       });
     },
     gridColumns() {
-      if (this.$vuetify.breakpoint.smAndDown) {
-        return 1;
-      } else if (this.$vuetify.breakpoint.mdAndDown) {
-        return 2;
-      } else if (this.$vuetify.breakpoint.lgAndDown) {
-        return 3;
-      } else {
-        return 4;
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs": {
+          return 1;
+        }
+        case "sm": {
+          return 2;
+        }
+        case "md": {
+          return 2;
+        }
+        case "lg": {
+          return 3;
+        }
+        default: {
+          return 4;
+        }
       }
     }
   },

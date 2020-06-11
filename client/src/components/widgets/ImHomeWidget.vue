@@ -3,13 +3,18 @@
     :title="$t('widgets.home.title')"
     :context-items="contextItems"
     class="text-center"
+    :large="large"
     @context-action="contextAction"
   >
-    <v-btn icon x-large @click="bell"
-      ><v-icon x-large>notifications_active</v-icon></v-btn
-    >
-    <br />
-    <p class="display-1">{{ $t("widgets.home.msg") }}</p>
+    <v-row style="height: 80%" align="center" justify="center">
+      <v-col cols="12" class="text-center">
+        <v-btn icon x-large @click="bell"
+          ><v-icon x-large>notifications_active</v-icon></v-btn
+        >
+        <br />
+        <p class="display-1">{{ $t("widgets.home.msg") }}</p>
+      </v-col>
+    </v-row>
   </Widget>
 </template>
 <script>
@@ -19,6 +24,12 @@ export default {
   name: "ImHomeWidget",
   components: {
     Widget
+  },
+  props: {
+    large: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     contextItems() {

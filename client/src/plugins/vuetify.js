@@ -13,9 +13,6 @@ export default new Vuetify({
     locales: { en },
     current: "en"
   },
-  icons: {
-    iconfont: "fa"
-  },
   theme: {
     themes: {
       light: {
