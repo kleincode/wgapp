@@ -53,18 +53,12 @@
     </div>
     <template #footer>
       <div style="display: flex">
-        <v-btn v-if="$vuetify.breakpoint.mdAndUp" icon
-          ><v-icon>chevron_left</v-icon></v-btn
-        >
         <v-btn v-if="!userStatus" style="flex-grow: 2" text @click="toggle">{{
           $t("commands.activate")
         }}</v-btn>
         <v-btn v-else style="flex-grow: 2" color="red" @click="toggle">{{
           $t("commands.deactivate")
         }}</v-btn>
-        <v-btn v-if="$vuetify.breakpoint.mdAndUp" icon
-          ><v-icon>chevron_right</v-icon></v-btn
-        >
       </div>
     </template>
   </Widget>
@@ -186,11 +180,29 @@ export default {
 </script>
 
 <style>
+html {
+  --scrollbarBG: transparent;
+}
 .scrolldiv {
   display: flex;
   max-width: 100%;
   overflow: scroll;
   overflow-y: hidden;
   overflow-x: scroll;
+}
+div::-webkit-scrollbar {
+  height: 11px;
+}
+div {
+  scrollbar-width: thin;
+  scrollbar-color: var(--v-secondary-lighten1) var(--scrollbarBG);
+}
+div::-webkit-scrollbar-track {
+  background: var(--scrollbarBG);
+}
+div::-webkit-scrollbar-thumb {
+  background-color: var(--v-secondary-lighten1);
+  border-radius: 6px;
+  border: 3px solid var(--scrollbarBG);
 }
 </style>

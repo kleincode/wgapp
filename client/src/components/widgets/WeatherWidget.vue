@@ -158,13 +158,17 @@ export default {
         if (!isNaN(vis)) {
           return Math.round(100 * vis) / 100 + " mi";
         } else {
-          return "---- mi";
+          return "----";
         }
       } else {
         let vis = this.$units(this.visibility)
           .from("m")
           .toBest();
-        return (vis.val || "----") + " " + vis.unit;
+        if (!isNaN(vis.val)) {
+          return vis.val + " " + vis.unit;
+        } else {
+          return "----";
+        }
       }
     },
     displayPressure() {
@@ -176,10 +180,14 @@ export default {
         if (!isNaN(pres)) {
           return Math.round(pres) / 10 + " mmHg";
         } else {
-          return "---- mmHg";
+          return "----";
         }
       } else {
-        return (this.pressure || "----") + " hPa";
+        if (!isNaN(this.pressure)) {
+          return this.pressure + " hPa";
+        } else {
+          return "----";
+        }
       }
     },
     contextItems() {

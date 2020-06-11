@@ -33,6 +33,9 @@ export default new Vuetify({
         info: colors.teal.base,
         success: colors.green.base
       }
+    },
+    options: {
+      customProperties: true
     }
   }
 });
