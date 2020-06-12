@@ -20,7 +20,7 @@
           <v-list-item
             v-for="(item, index) in contextItems"
             :key="index"
-            @click="$emit('context-action', item)"
+            @click="handleContextClick(item)"
           >
             <v-list-item-icon class="mr-4">
               <v-icon>{{ item.icon }}</v-icon>
@@ -75,6 +75,31 @@ export default {
     large: {
       type: Boolean,
       default: false
+    }
+  },
+  computed: {
+    handleContextClick(item) {
+      if (item.action == "toggleSize") {
+        this.$emit('togglesize');
+      } else {
+        this.$emit('context-action', item);
+      }
+    },
+    displayedContextItems() {
+      var items = contextItems;
+      if (this.large) {
+        items.push({
+          action: "toggleSize",
+          text: this.$t("widgets.setSmall"),
+          icon: "close_fullscreen"
+        });
+      } else {
+        items.push({
+          action: "toggleSize",
+          text: this.$t("widgets.setLarge"),
+          icon: "open_in_full"
+        });
+      }
     }
   }
 };

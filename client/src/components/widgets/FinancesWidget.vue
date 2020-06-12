@@ -6,6 +6,7 @@
     :loading="loading"
     :large="large"
     @context-action="contextAction"
+    @togglesize="financesWidgetLarge = !financesWidgetLarge"
   >
     <template v-if="expenses.length">
       <v-carousel
@@ -136,6 +137,17 @@ export default {
           icon: "settings"
         }
       ];
+    },
+    financesWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "financesWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.financesWidgetLarge;
+      }
     },
     ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapGetters("userSettings", [

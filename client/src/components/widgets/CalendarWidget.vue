@@ -6,6 +6,7 @@
     :large="large"
     :context-items="contextItems"
     @context-action="contextAction"
+    @togglesize="calendarWidgetLarge = !calendarWidgetLarge"
   >
     <template v-if="!error">
       <v-carousel
@@ -135,6 +136,17 @@ export default {
       },
       get() {
         return this.$store.state.userSettings.calendarsSelected;
+      }
+    },
+    calendarWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "calendarWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.calendarWidgetLarge;
       }
     },
     ...mapState("userSettings", ["locale"]),

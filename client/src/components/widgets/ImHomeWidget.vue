@@ -5,6 +5,7 @@
     class="text-center"
     :large="large"
     @context-action="contextAction"
+    @togglesize="homeWidgetLarge = !homeWidgetLarge"
   >
     <v-row style="height: 80%" align="center" justify="center">
       <v-col cols="12" class="text-center">
@@ -40,7 +41,18 @@ export default {
           icon: "settings"
         }
       ];
-    }
+    },
+    homeWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "homeWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.homeWidgetLarge;
+      }
+    },
   },
   methods: {
     async bell() {

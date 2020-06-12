@@ -5,6 +5,7 @@
     :context-items="contextItems"
     :large="large"
     @context-action="contextAction"
+    @togglesize="clockWidgetLarge = !clockWidgetLarge"
   >
     <v-row style="height: 80%" align="center" justify="center">
       <v-col cols="12" class="text-center">
@@ -58,6 +59,17 @@ export default {
           return "display-3";
         default:
           return "display-3";
+      }
+    },
+    clockWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "clockWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.clockWidgetLarge;
       }
     },
     contextItems() {

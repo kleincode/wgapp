@@ -6,6 +6,7 @@
     :large="large"
     :context-items="contextItems"
     @context-action="contextAction"
+    @togglesize="statusWidgetLarge = !statusWidgetLarge"
   >
     <v-row v-if="large" class="mb-4">
       <v-col v-for="(member, i) in members" :key="i" cols="4" md="3">
@@ -96,6 +97,17 @@ export default {
           icon: "settings"
         }
       ];
+    },
+    statusWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "statusWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.statusWidgetLarge;
+      }
     },
     ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapState(["uid"])

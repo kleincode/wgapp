@@ -682,6 +682,8 @@
   },
   "widgets": {
     "settings": "Widget-Einstellungen",
+    "setLarge": "Vergrößern",
+    "setSmall": "Verkleinern",
     "lastUpdated": "Letztes Update: {time}",
     "never": "Nie",
     "weather": {

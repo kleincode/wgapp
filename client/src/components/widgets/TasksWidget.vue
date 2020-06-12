@@ -6,6 +6,7 @@
     :context-items="contextItems"
     :loading="loading"
     @context-action="contextAction"
+    @togglesize="tasksWidgetLarge = !tasksWidgetLarge"
   >
     <template v-if="getTodaysTasks.length">
       <v-carousel
@@ -173,6 +174,17 @@ export default {
           icon: "settings"
         }
       ];
+    },
+    tasksWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "tasksWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.tasksWidgetLarge;
+      }
     },
     ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapGetters("tasks", ["getTodaysTasks"]),

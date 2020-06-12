@@ -7,6 +7,7 @@
     :large="large"
     :context-items="contextItems"
     @context-action="contextAction"
+    @togglesize="weatherWidgetLarge = !weatherWidgetLarge"
   >
     <template v-if="display">
       <v-row>
@@ -208,7 +209,18 @@ export default {
           icon: "settings"
         }
       ];
-    }
+    },
+    weatherWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "weatherWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.weatherWidgetLarge;
+      }
+    },
   },
   watch: {
     _initialized(val) {
