@@ -361,6 +361,7 @@ export default {
       }
     },
     displayedItems() {
+      if (!this.selectedListId) return [];
       let displayedItems = this.items
         .filter(el => !el.deleted)
         // unchecked items first, secondary sort by item order (ascending)
@@ -375,6 +376,15 @@ export default {
         }
       );
       return displayedItems;
+    },
+    isMobile() {
+      return this.$vuetify.breakpoint.mdAndUp;
+    }
+  },
+
+  watch: {
+    isMobile() {
+      this.widthChange();
     }
   },
 
@@ -385,6 +395,7 @@ export default {
       this.updateRemoteFunction = this.updateRemote();
       if (navigator.onLine) this.updateRemoteFunction();
       window.addEventListener("online", this.updateRemoteFunction);
+      this.widthChange();
     } catch (err) {
       this.$store.dispatch(
         "showSnackbar",
@@ -398,6 +409,17 @@ export default {
   },
 
   methods: {
+    widthChange() {
+      if (!this.$vuetify.breakpoint.mdAndUp && !this.selectedListId) {
+        if (this.lists && this.lists.length && this.lists[0]) {
+          this.selectedListId = this.lists[0].id;
+          this.fetchShoppingItems();
+        } else {
+          this.mobileSheetOpen = true;
+        }
+      }
+    },
+
     async pushItem() {
       const newItem = {
         text: "",
@@ -461,14 +483,6 @@ export default {
     },
 
     async fetchShoppingItems() {
-      if (!this.$vuetify.breakpoint.mdAndUp && !this.selectedListId) {
-        if (this.lists && this.lists.length && this.lists[0])
-          this.selectedListId = this.lists[0].id;
-        else {
-          this.mobileSheetOpen = true;
-          return;
-        }
-      }
       await this.$store.dispatch(
         "shopping/loadList",
         this.selectedListId || false
