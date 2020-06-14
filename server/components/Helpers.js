@@ -67,12 +67,16 @@ Helpers.pushLog = async ({ db }, level, category, handlerName, message, stacktra
       req = {};
     }
     const {body, query, uid} = req;
-    const { results: { affectedRows } } = await db.query(
-      "INSERT INTO log (level, category, handlername, message, stacktrace, req) VALUES (?, ?, ?, ?, ?, ?)",
-      [level, category, handlerName, message.toString(), stacktrace.toString(), JSON.stringify({body, query, uid})]
-    );
-    if (affectedRows != 1) {
-      console.warn("WARN in pushLog: Couldn't push log for " + message + " by " + handlerName + ": " + stacktrace);
+    if(process.env.NODE_ENV === "production") {
+      const { results: { affectedRows } } = await db.query(
+        "INSERT INTO log (level, category, handlername, message, stacktrace, req) VALUES (?, ?, ?, ?, ?, ?)",
+        [level, category, handlerName, message.toString(), stacktrace.toString(), JSON.stringify({body, query, uid})]
+      );
+      if (affectedRows != 1) {
+        console.warn("WARN in pushLog: Couldn't push log for " + message + " by " + handlerName + ": " + stacktrace);
+      }
+    } else {
+      console.warn(`[${level}/${category}] @${handlerName}: ${message}`, stacktrace, JSON.stringify({body, query, uid}));
     }
   } catch (err) {
     console.error("FATAL ERROR in pushLog: " + err);
