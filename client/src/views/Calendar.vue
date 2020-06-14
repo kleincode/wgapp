@@ -1,30 +1,28 @@
 <template>
-  <v-container>
+  <v-container
+    :class="$vuetify.breakpoint.smAndDown ? 'pt-0 px-4' : ''"
+    :style="{ paddingBottom: $vuetify.application.top + 'px' }"
+  >
     <v-row justify="center">
       <v-col xl="9" lg="10" md="12">
-        <div class="pb-6">
-          <span class="display-2">{{ $t("calendar.title") }}</span>
+        <!-- Add event fab button -->
+        <v-fab-transition>
           <v-btn
-            icon
-            :disabled="!gapiSignedIn"
-            style="float: right;"
-            class="mt-3"
-            @click="updateG"
-            ><v-icon>refresh</v-icon></v-btn
-          >
-          <v-btn
-            icon
-            color="primary"
-            :disabled="!gapiSignedIn"
-            style="float: right;"
-            class="mt-3"
+            v-if="!$vuetify.breakpoint.smAndDown && gapiSignedIn"
+            fixed
+            fab
+            bottom
+            right
+            color="accent"
+            :elevation="6"
             @click="editEventDialog = true"
             ><v-icon>add</v-icon></v-btn
           >
-        </div>
+        </v-fab-transition>
 
         <!-- Select calendars -->
         <v-select
+          v-if="!$vuetify.breakpoint.smAndDown"
           v-show="!gapiNotSignedIn"
           v-model="calendarsSelected"
           :items="allCalendars"
@@ -37,9 +35,11 @@
               : $t('calendar.notSignedIn')
           "
           multiple
-          outlined
+          solo
           :disabled="!gapiSignedIn"
           :loading="loading"
+          prepend-icon="refresh"
+          @click:prepend="updateG"
           @change="updateG"
         >
           <template v-slot:selection="{ item, index }">
@@ -85,9 +85,9 @@
         </v-alert>
 
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" class="pa-0">
             <!-- Calendar toolbar sheet -->
-            <v-sheet :elevation="6">
+            <v-sheet :elevation="$vuetify.breakpoint.smAndDown ? 0 : 6">
               <v-toolbar flat>
                 <!-- Today button -->
                 <v-btn
@@ -152,7 +152,7 @@
               </v-toolbar>
             </v-sheet>
             <!-- Calendar sheet -->
-            <v-sheet :elevation="6">
+            <v-sheet :elevation="$vuetify.breakpoint.smAndDown ? 0 : 6">
               <v-calendar
                 v-show="gapiSignedIn"
                 ref="calendar"
@@ -213,6 +213,61 @@
       @closeSuccessfull="successfullyCloseEventDialog"
       @closeSuccessfullEdit="successfullyCloseEventDialogEdit"
     ></EditEventDialog>
+    <v-footer v-if="$vuetify.breakpoint.smAndDown" fixed padless>
+      <v-fab-transition>
+        <v-btn
+          v-if="gapiSignedIn"
+          absolute
+          fab
+          top
+          right
+          color="accent"
+          :elevation="2"
+          @click="editEventDialog = true"
+          ><v-icon>add</v-icon></v-btn
+        >
+      </v-fab-transition>
+      <!-- Select calendars, height equals toolbar height -->
+      <v-select
+        v-show="!gapiNotSignedIn"
+        v-model="calendarsSelected"
+        :height="$vuetify.application.top"
+        :items="allCalendars"
+        return-object
+        item-text="summary"
+        small-chips
+        :label="
+          gapiSignedIn
+            ? $t('calendar.selectCalendars')
+            : $t('calendar.notSignedIn')
+        "
+        multiple
+        solo
+        hide-details
+        :disabled="!gapiSignedIn"
+        :loading="loading"
+        :elevation="6"
+        @change="updateG"
+      >
+        <template v-slot:selection="{ item, index }">
+          <v-chip
+            v-if="index < ($vuetify.breakpoint.smAndDown ? 1 : 3)"
+            :color="item.backgroundColor"
+            small
+          >
+            <span>{{ item.summary }}</span>
+          </v-chip>
+          <span
+            v-if="index === ($vuetify.breakpoint.smAndDown ? 1 : 3)"
+            class="grey--text caption"
+            >(+{{
+              calendarsSelected.length - ($vuetify.breakpoint.smAndDown ? 1 : 3)
+            }}
+            {{ $t("calendar.others") }})</span
+          >
+        </template>
+      </v-select>
+    </v-footer>
   </v-container>
 </template>
 <script>
