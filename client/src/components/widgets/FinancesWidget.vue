@@ -4,7 +4,7 @@
     :content-pad="false"
     :context-items="contextItems"
     :loading="loading"
-    :large="large"
+    :large="financesWidgetLarge"
     @context-action="contextAction"
     @togglesize="financesWidgetLarge = !financesWidgetLarge"
   >
@@ -25,7 +25,7 @@
           :key="i"
           class="pl-5 pr-5"
         >
-          <div v-if="large">
+          <div v-if="financesWidgetLarge">
             <v-chip class="mt-6">
               <v-avatar
                 style="max-height: 80%; max-width: 90%"
@@ -101,12 +101,6 @@ export default {
   name: "FinancesWidget",
   components: {
     Widget
-  },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
   },
   data: () => ({
     loading: false,

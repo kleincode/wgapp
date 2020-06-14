@@ -3,12 +3,12 @@
     :title="$t('widgets.doNotDisturb.title')"
     :loading="loading"
     with-footer
-    :large="large"
+    :large="statusWidgetLarge"
     :context-items="contextItems"
     @context-action="contextAction"
     @togglesize="statusWidgetLarge = !statusWidgetLarge"
   >
-    <v-row v-if="large" class="mb-4">
+    <v-row v-if="statusWidgetLarge" class="mb-4">
       <v-col v-for="(member, i) in members" :key="i" cols="4" md="3">
         <v-avatar
           size="70"
@@ -74,12 +74,6 @@ export default {
   name: "StatusWidget",
   components: {
     Widget
-  },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
   },
   data: () => ({
     loading: false,

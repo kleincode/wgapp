@@ -10,7 +10,7 @@
       {{ title }}
       <v-spacer></v-spacer>
       <v-icon v-if="error">error</v-icon>
-      <v-menu v-if="!error && contextItems.length">
+      <v-menu v-if="!error && displayedContextItems.length">
         <template #activator="{ on }">
           <v-btn icon small v-on="on">
             <v-icon>more_vert</v-icon>
@@ -18,7 +18,7 @@
         </template>
         <v-list dense>
           <v-list-item
-            v-for="(item, index) in contextItems"
+            v-for="(item, index) in displayedContextItems"
             :key="index"
             @click="handleContextClick(item)"
           >
@@ -78,15 +78,8 @@ export default {
     }
   },
   computed: {
-    handleContextClick(item) {
-      if (item.action == "toggleSize") {
-        this.$emit('togglesize');
-      } else {
-        this.$emit('context-action', item);
-      }
-    },
     displayedContextItems() {
-      var items = contextItems;
+      var items = JSON.parse(JSON.stringify(this.contextItems));
       if (this.large) {
         items.push({
           action: "toggleSize",
@@ -99,6 +92,16 @@ export default {
           text: this.$t("widgets.setLarge"),
           icon: "open_in_full"
         });
+      }
+      return items;
+    }
+  },
+  methods: {
+    handleContextClick(item) {
+      if (item.action == "toggleSize") {
+        this.$emit("togglesize");
+      } else {
+        this.$emit("context-action", item);
       }
     }
   }

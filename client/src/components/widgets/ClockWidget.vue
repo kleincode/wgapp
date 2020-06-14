@@ -1,22 +1,22 @@
 <template>
   <Widget
     :title="$t('widgets.clock.title')"
-    :with-footer="!large"
+    :with-footer="!clockWidgetLarge"
     :context-items="contextItems"
-    :large="large"
+    :large="clockWidgetLarge"
     @context-action="contextAction"
     @togglesize="clockWidgetLarge = !clockWidgetLarge"
   >
     <v-row style="height: 80%" align="center" justify="center">
       <v-col cols="12" class="text-center">
-        <div v-if="large" class="pb-4">
+        <div v-if="clockWidgetLarge" class="pb-4">
           <span class="title">{{ formatWeekday(now) }}</span>
         </div>
         <span :class="timeSize">{{ time }}</span>
         <span class="display-1" style="vertical-align: baseline;">{{
           timeSuffix
         }}</span>
-        <div v-if="large" class="pt-2">
+        <div v-if="clockWidgetLarge" class="pt-2">
           <span class="display-1">{{ formatDateYMD(now) }}</span>
         </div>
       </v-col>
@@ -35,12 +35,6 @@ export default {
   name: "ClockWidget",
   components: {
     Widget
-  },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
   },
   data: () => ({
     now: new Date(),

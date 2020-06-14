@@ -4,7 +4,7 @@
     :loading="loading"
     :error="!display"
     with-footer
-    :large="large"
+    :large="weatherWidgetLarge"
     :context-items="contextItems"
     @context-action="contextAction"
     @togglesize="weatherWidgetLarge = !weatherWidgetLarge"
@@ -12,7 +12,13 @@
     <template v-if="display">
       <v-row>
         <v-col
-          :cols="large ? ($vuetify.breakpoint.mdAndDown ? '4' : '6') : '3'"
+          :cols="
+            weatherWidgetLarge
+              ? $vuetify.breakpoint.mdAndDown
+                ? '4'
+                : '6'
+              : '3'
+          "
           class="ma-0 pa-0"
         >
           <v-img
@@ -24,7 +30,13 @@
           ></v-img>
         </v-col>
         <v-col
-          :cols="large ? ($vuetify.breakpoint.mdAndDown ? '8' : '6') : '9'"
+          :cols="
+            weatherWidgetLarge
+              ? $vuetify.breakpoint.mdAndDown
+                ? '8'
+                : '6'
+              : '9'
+          "
           style="align-self: center"
           class="pt-0"
         >
@@ -45,24 +57,24 @@
             >{{ convertTemperature(tempMax) + displayTemperatureUnit }}</span
           >
           <br />
-          <span v-if="large" class="headline">
+          <span v-if="weatherWidgetLarge" class="headline">
             <v-icon>fa-tint</v-icon>
             {{ humidity }}%
           </span>
         </v-col>
-        <v-col v-if="large" cols="6" class="py-0">
+        <v-col v-if="weatherWidgetLarge" cols="6" class="py-0">
           <p class="title">
             <v-icon>fa-wind</v-icon>
             {{ displayWind }}
           </p>
         </v-col>
-        <v-col v-if="large" cols="6" class="py-0">
+        <v-col v-if="weatherWidgetLarge" cols="6" class="py-0">
           <p class="title"><v-icon>fa-eye</v-icon> {{ displayVisibility }}</p>
         </v-col>
-        <v-col v-if="large" cols="6" class="py-0">
+        <v-col v-if="weatherWidgetLarge" cols="6" class="py-0">
           <p class="title"><v-icon>fa-cloud</v-icon> {{ cloudiness }}%</p>
         </v-col>
-        <v-col v-if="large" cols="6" class="py-0">
+        <v-col v-if="weatherWidgetLarge" cols="6" class="py-0">
           <p class="title">
             <v-icon>fa-globe-europe</v-icon> {{ displayPressure }}
           </p>
@@ -93,12 +105,6 @@ export default {
   name: "WeatherWidget",
   components: {
     Widget
-  },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
   },
   data: () => ({
     imperial: false,
@@ -220,7 +226,7 @@ export default {
       get() {
         return this.$store.state.userSettings.weatherWidgetLarge;
       }
-    },
+    }
   },
   watch: {
     _initialized(val) {

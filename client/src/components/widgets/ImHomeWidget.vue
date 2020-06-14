@@ -3,7 +3,7 @@
     :title="$t('widgets.home.title')"
     :context-items="contextItems"
     class="text-center"
-    :large="large"
+    :large="homeWidgetLarge"
     @context-action="contextAction"
     @togglesize="homeWidgetLarge = !homeWidgetLarge"
   >
@@ -26,12 +26,6 @@ export default {
   components: {
     Widget
   },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
-  },
   computed: {
     contextItems() {
       return [
@@ -52,7 +46,7 @@ export default {
       get() {
         return this.$store.state.userSettings.homeWidgetLarge;
       }
-    },
+    }
   },
   methods: {
     async bell() {

@@ -3,7 +3,7 @@
     :title="$t('widgets.calendar.title')"
     :loading="loading"
     :error="error"
-    :large="large"
+    :large="calendarWidgetLarge"
     :context-items="contextItems"
     @context-action="contextAction"
     @togglesize="calendarWidgetLarge = !calendarWidgetLarge"
@@ -22,7 +22,7 @@
         :light="!$vuetify.theme.dark"
       >
         <v-carousel-item v-for="(event, i) in upcomingEvents" :key="i">
-          <v-row v-if="large" align="center" justify="center">
+          <v-row v-if="calendarWidgetLarge" align="center" justify="center">
             <v-col cols="12" class="text-center">
               <v-icon style="font-size: 6em" :color="event.color">event</v-icon>
             </v-col>
@@ -58,7 +58,7 @@
           justify="center"
           align="center"
         >
-          <div v-if="large" class="text-center mt-12">
+          <div v-if="calendarWidgetLarge" class="text-center mt-12">
             <v-icon style="font-size: 3em" class="mr-1">event</v-icon>
             <p>{{ $t("widgets.calendar.noEvents") }}</p>
           </div>
@@ -96,12 +96,6 @@ export default {
   name: "CalendarWidget",
   components: {
     Widget
-  },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
   },
   data: () => ({
     loading: false,

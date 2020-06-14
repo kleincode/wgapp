@@ -2,7 +2,7 @@
   <Widget
     :title="$t('widgets.tasks.title')"
     :content-pad="false"
-    :large="large"
+    :large="tasksWidgetLarge"
     :context-items="contextItems"
     :loading="loading"
     @context-action="contextAction"
@@ -24,7 +24,7 @@
           :key="i"
           class="pl-5 pr-5"
         >
-          <v-row v-if="large" style="height: 100%">
+          <v-row v-if="tasksWidgetLarge" style="height: 100%">
             <v-col cols="12" class="text-center">
               <v-icon
                 style="font-size: 5em"
@@ -137,12 +137,6 @@ export default {
   name: "TasksWidget",
   components: {
     Widget
-  },
-  props: {
-    large: {
-      type: Boolean,
-      default: false
-    }
   },
   data: () => ({
     loading: false,
