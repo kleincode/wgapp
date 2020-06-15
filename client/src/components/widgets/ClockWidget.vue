@@ -1,14 +1,26 @@
 <template>
   <Widget
     :title="$t('widgets.clock.title')"
-    with-footer
+    :with-footer="!clockWidgetLarge"
     :context-items="contextItems"
+    :large="clockWidgetLarge"
     @context-action="contextAction"
+    @togglesize="clockWidgetLarge = !clockWidgetLarge"
   >
-    <span class="display-3">{{ time }}</span>
-    <span class="display-1" style="vertical-align: baseline;">{{
-      timeSuffix
-    }}</span>
+    <v-row style="height: 80%" align="center" justify="center">
+      <v-col cols="12" class="text-center">
+        <div v-if="clockWidgetLarge" class="pb-4">
+          <span class="title">{{ formatWeekday(now) }}</span>
+        </div>
+        <span :class="timeSize">{{ time }}</span>
+        <span class="display-1" style="vertical-align: baseline;">{{
+          timeSuffix
+        }}</span>
+        <div v-if="clockWidgetLarge" class="pt-2">
+          <span class="display-1">{{ formatDateYMD(now) }}</span>
+        </div>
+      </v-col>
+    </v-row>
     <template #footer
       >{{ formatWeekday(now) }} | {{ formatDateYMD(now) }}</template
     >
@@ -29,6 +41,31 @@ export default {
     clockIntervalID: -1
   }),
   computed: {
+    timeSize() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "display-3";
+        case "sm":
+          return "display-2";
+        case "md":
+          return "display-4";
+        case "lg":
+          return "display-3";
+        default:
+          return "display-3";
+      }
+    },
+    clockWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "clockWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.clockWidgetLarge;
+      }
+    },
     contextItems() {
       return [
         {

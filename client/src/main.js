@@ -34,6 +34,14 @@ const pluginOptions = {
 };
 Vue.use(VueCurrencyInput, pluginOptions);
 
+//Masonry CSS
+import VueMasonry from "vue-masonry-css";
+Vue.use(VueMasonry);
+
+//VueUnits
+import VueUnits from "vue-units";
+Vue.use(VueUnits);
+
 //Authorization: load token and refresh user data on startup
 const token = localStorage.getItem("auth_token");
 if (token) {

@@ -3,13 +3,15 @@
     :title="$t('widgets.doNotDisturb.title')"
     :loading="loading"
     with-footer
+    :large="statusWidgetLarge"
     :context-items="contextItems"
     @context-action="contextAction"
+    @togglesize="statusWidgetLarge = !statusWidgetLarge"
   >
-    <v-row class="mb-4">
+    <v-row v-if="statusWidgetLarge" class="mb-4">
       <v-col v-for="(member, i) in members" :key="i" cols="4" md="3">
         <v-avatar
-          size="48"
+          size="70"
           :color="!userImages[member.id] ? 'primary' : ''"
           left
           :style="
@@ -28,13 +30,37 @@
         </v-avatar>
       </v-col>
     </v-row>
-    <template #footer
-      ><v-btn v-if="!userStatus" text block @click="toggle">{{
-        $t("commands.activate")
-      }}</v-btn>
-      <v-btn v-else color="red" block @click="toggle">{{
-        $t("commands.deactivate")
-      }}</v-btn>
+    <div v-else class="scrolldiv">
+      <div v-for="(member, i) in members" :key="i" cols="4" md="3" class="ma-1">
+        <v-avatar
+          size="60"
+          :color="!userImages[member.id] ? 'primary' : ''"
+          left
+          :style="
+            !!member.status
+              ? 'border-color: red !important; border-width: 3px; border-style: solid;'
+              : ''
+          "
+        >
+          <v-img
+            v-show="userImages[member.id]"
+            :src="userImages[member.id]"
+          ></v-img>
+          <span v-show="!userImages[member.id]" class="white--text headline"
+            >{{ getUserInitials(member.id) }}
+          </span>
+        </v-avatar>
+      </div>
+    </div>
+    <template #footer>
+      <div style="display: flex">
+        <v-btn v-if="!userStatus" style="flex-grow: 2" text @click="toggle">{{
+          $t("commands.activate")
+        }}</v-btn>
+        <v-btn v-else style="flex-grow: 2" color="red" @click="toggle">{{
+          $t("commands.deactivate")
+        }}</v-btn>
+      </div>
     </template>
   </Widget>
 </template>
@@ -65,6 +91,17 @@ export default {
           icon: "settings"
         }
       ];
+    },
+    statusWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "statusWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.statusWidgetLarge;
+      }
     },
     ...mapGetters(["getUserName", "getUserInitials"]),
     ...mapState(["uid"])
@@ -148,4 +185,30 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+html {
+  --scrollbarBG: transparent;
+}
+.scrolldiv {
+  display: flex;
+  max-width: 100%;
+  overflow: scroll;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+div::-webkit-scrollbar {
+  height: 11px;
+}
+div {
+  scrollbar-width: thin;
+  scrollbar-color: var(--v-secondary-lighten1) var(--scrollbarBG);
+}
+div::-webkit-scrollbar-track {
+  background: var(--scrollbarBG);
+}
+div::-webkit-scrollbar-thumb {
+  background-color: var(--v-secondary-lighten1);
+  border-radius: 6px;
+  border: 3px solid var(--scrollbarBG);
+}
+</style>

@@ -3,13 +3,19 @@
     :title="$t('widgets.home.title')"
     :context-items="contextItems"
     class="text-center"
+    :large="homeWidgetLarge"
     @context-action="contextAction"
+    @togglesize="homeWidgetLarge = !homeWidgetLarge"
   >
-    <v-btn icon x-large @click="bell"
-      ><v-icon x-large>notifications_active</v-icon></v-btn
-    >
-    <br />
-    <p class="display-1">{{ $t("widgets.home.msg") }}</p>
+    <v-row style="height: 80%" align="center" justify="center">
+      <v-col cols="12" class="text-center">
+        <v-btn icon x-large @click="bell"
+          ><v-icon x-large>notifications_active</v-icon></v-btn
+        >
+        <br />
+        <p class="display-1">{{ $t("widgets.home.msg") }}</p>
+      </v-col>
+    </v-row>
   </Widget>
 </template>
 <script>
@@ -29,6 +35,17 @@ export default {
           icon: "settings"
         }
       ];
+    },
+    homeWidgetLarge: {
+      set(val) {
+        this.$store.commit("userSettings/set_key", {
+          key: "homeWidgetLarge",
+          value: val
+        });
+      },
+      get() {
+        return this.$store.state.userSettings.homeWidgetLarge;
+      }
     }
   },
   methods: {

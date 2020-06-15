@@ -3,6 +3,7 @@ import Vuetify from "vuetify/lib";
 import en from "vuetify/es5/locale/en";
 import { preset } from "vue-cli-plugin-vuetify-preset-reply/preset";
 import colors from "vuetify/lib/util/colors";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 Vue.use(Vuetify);
 
@@ -32,6 +33,9 @@ export default new Vuetify({
         info: colors.teal.base,
         success: colors.green.base
       }
+    },
+    options: {
+      customProperties: true
     }
   }
 });

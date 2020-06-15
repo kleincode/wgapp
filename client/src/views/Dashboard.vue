@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid>
     <v-overlay
       v-if="!userInHousehold"
       style="min-height: 100vh"
@@ -23,81 +23,31 @@
         </v-col>
       </v-row>
     </v-overlay>
-    <h1 v-if="userInHousehold" class="display-2 mb-6" style="max-width: 80%">
+    <h1
+      v-if="userInHousehold"
+      class="display-2 mb-6 mt-3"
+      style="max-width: 80%"
+    >
       {{ message }}
     </h1>
-    <v-row v-if="userInHousehold" align="stretch">
-      <v-col
-        v-if="clockWidgetEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <ClockWidget />
-      </v-col>
-      <v-col
-        v-if="weatherWidgetEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <WeatherWidget />
-      </v-col>
-      <v-col
+    <masonry
+      v-if="userInHousehold"
+      :key="$vuetify.breakpoint.name"
+      :cols="gridColumns"
+      :gutter="10"
+    >
+      <ClockWidget v-if="clockWidgetEnabled" class="mb-4" />
+      <WeatherWidget v-if="weatherWidgetEnabled" class="mb-4" large />
+      <CalendarWidget
         v-if="calendarWidgetEnabled && calendarEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <CalendarWidget />
-      </v-col>
-      <v-col
-        v-if="tasksWidgetEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <TasksWidget />
-      </v-col>
-      <v-col
-        v-if="financesWidgetEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <FinancesWidget />
-      </v-col>
-      <v-col
-        v-if="statusWidgetEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <StatusWidget />
-      </v-col>
-      <v-col
-        v-if="homeWidgetEnabled"
-        cols="12"
-        sm="6"
-        lg="4"
-        xl="3"
-        class="widget-col"
-      >
-        <ImHomeWidget />
-      </v-col>
-    </v-row>
+        class="mb-4"
+        large
+      />
+      <TasksWidget v-if="tasksWidgetEnabled" class="mb-4" large />
+      <FinancesWidget v-if="financesWidgetEnabled" class="mb-4" large />
+      <StatusWidget v-if="statusWidgetEnabled" class="mb-4" />
+      <ImHomeWidget v-if="homeWidgetEnabled" class="mb-4" />
+    </masonry>
   </v-container>
 </template>
 
@@ -153,6 +103,25 @@ export default {
       return this.$t(`dashboard.greetings.${timeOfDay}[${index}]`, {
         name: this.getName
       });
+    },
+    gridColumns() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs": {
+          return 1;
+        }
+        case "sm": {
+          return 2;
+        }
+        case "md": {
+          return 2;
+        }
+        case "lg": {
+          return 3;
+        }
+        default: {
+          return 4;
+        }
+      }
     }
   },
   methods: {

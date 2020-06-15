@@ -1,15 +1,16 @@
 <template>
   <v-card
-    class="widget-card"
     :loading="loading"
     :color="error ? 'red' : null"
     :elevation="6"
+    :style="large ? 'height: 417px' : 'height: 200px'"
+    style="display: flex; flex-flow: column; height: 100%;"
   >
     <v-card-title>
       {{ title }}
       <v-spacer></v-spacer>
       <v-icon v-if="error">error</v-icon>
-      <v-menu v-if="!error && contextItems.length">
+      <v-menu v-if="!error && displayedContextItems.length">
         <template #activator="{ on }">
           <v-btn icon small v-on="on">
             <v-icon>more_vert</v-icon>
@@ -17,9 +18,9 @@
         </template>
         <v-list dense>
           <v-list-item
-            v-for="(item, index) in contextItems"
+            v-for="(item, index) in displayedContextItems"
             :key="index"
-            @click="$emit('context-action', item)"
+            @click="handleContextClick(item)"
           >
             <v-list-item-icon class="mr-4">
               <v-icon>{{ item.icon }}</v-icon>
@@ -34,9 +35,9 @@
         </v-list>
       </v-menu>
     </v-card-title>
-    <v-card-text :class="{ 'pa-0': !contentPad, 'mb-6': withFooter }">
-      <slot></slot>
-      <div v-if="withFooter && !error" class="overline widget-footer">
+    <v-card-text :class="{ 'pa-0': !contentPad }" style="flex-grow : 1;">
+      <slot style="flex-grow : 1;"></slot>
+      <div v-if="withFooter && !error" class="overline bottom-footer">
         <slot name="footer"></slot>
       </div>
     </v-card-text>
@@ -70,19 +71,47 @@ export default {
     contextItems: {
       type: Array,
       default: () => []
+    },
+    large: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    displayedContextItems() {
+      var items = JSON.parse(JSON.stringify(this.contextItems));
+      if (this.large) {
+        items.push({
+          action: "toggleSize",
+          text: this.$t("widgets.setSmall"),
+          icon: "close_fullscreen"
+        });
+      } else {
+        items.push({
+          action: "toggleSize",
+          text: this.$t("widgets.setLarge"),
+          icon: "open_in_full"
+        });
+      }
+      return items;
+    }
+  },
+  methods: {
+    handleContextClick(item) {
+      if (item.action == "toggleSize") {
+        this.$emit("togglesize");
+      } else {
+        this.$emit("context-action", item);
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.widget-card {
-  width: 100%;
-  height: 100%;
-}
-.widget-footer {
+.bottom-footer {
   position: absolute;
-  bottom: 16px;
+  bottom: 15px;
   width: 90%;
 }
 </style>
