@@ -37,11 +37,11 @@
           <v-card-text>
             <v-row align="center" justify="space-around">
               <v-col cols="6" md="5" lg="3" class="text-center">
-                <v-img src="@/assets/jeff-without.svg"></v-img>
+                <v-img src="@/assets/roomie.svg"></v-img>
                 <h2 class="mt-3">Felix Kleinsteuber</h2>
               </v-col>
               <v-col cols="6" md="5" lg="3" class="text-center">
-                <v-img src="@/assets/jeff-without.svg"></v-img>
+                <v-img src="@/assets/roomie.svg"></v-img>
                 <h2 class="mt-3">Matti J. Frind</h2>
               </v-col>
             </v-row>
@@ -57,7 +57,7 @@
             <v-list>
               <v-list-item v-for="(person, i) in help" :key="i" two-line>
                 <v-list-item-avatar>
-                  <v-img src="@/assets/jeff-without.svg"></v-img>
+                  <v-img src="@/assets/roomie.svg"></v-img>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title>{{ person.name }}</v-list-item-title>

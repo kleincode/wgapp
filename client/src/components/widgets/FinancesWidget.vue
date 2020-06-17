@@ -81,14 +81,18 @@
         </v-carousel-item>
       </v-carousel>
     </template>
-    <div
+    <v-row
       v-else
-      style="text-align: center; height: 100%"
+      style="height: 100%"
       class="text--disabled pb-4"
+      align="center"
+      justify="center"
     >
-      <v-icon style="font-size: 7em" class="text--disabled">money</v-icon>
-      <br />{{ $t("widgets.finances.empty") }}
-    </div>
+      <v-col cols="12" class="text-center">
+        <v-icon style="font-size: 7em" class="text--disabled">money</v-icon>
+        <br />{{ $t("widgets.finances.empty") }}
+      </v-col>
+    </v-row>
   </Widget>
 </template>
 

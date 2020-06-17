@@ -11,7 +11,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
   let debts = jsonData.debts;
   var myWindow = window.open(
     "",
-    "Jeff Organizer - " + i18n.t("finances.compensationPayments"),
+    "Roomie Organizer - " + i18n.t("finances.compensationPayments"),
     "toolbar=yes,scrollbars=yes,resizable=yes,width=700,height=900"
   );
   myWindow.document.write(
@@ -105,7 +105,7 @@ function exportToHTML(lastBill, maxDate, currency, locale, jsonData) {
     );
   });
   myWindow.document.write(
-    "</table><h6>Jeff - Organizer, 2020</h6></body>" + css + "</html>"
+    "</table><h6>Roomie - Organizer, 2020</h6></body>" + css + "</html>"
   );
   myWindow.document.close();
 }

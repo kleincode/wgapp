@@ -4,7 +4,7 @@
       <v-col cols="12" md="3" class="pl-2 pr-2">
         <div>
           <v-img
-            :src="require('../assets/avatar.webp')"
+            :src="require('../assets/roomie.svg')"
             class="my-3"
             contain
             height="300"
@@ -22,7 +22,7 @@
           {{ $t("landing.hey") }}
         </p>
         <h1 class="display-4 font-weight-bold mb-3">
-          Jeff.
+          Roomie.
         </h1>
 
         <p class="title font-weight-regular">
@@ -369,7 +369,7 @@
             >
             <v-col cols="12" class="mt-8">
               {{ $t("contact.alternative") }}
-              <a>contact@jeff-organization.de</a>.
+              <a>contact@Roomie-organization.de</a>.
             </v-col>
           </v-row>
         </v-form>

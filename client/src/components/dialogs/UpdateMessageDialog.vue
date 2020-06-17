@@ -13,7 +13,7 @@
         justify="center"
       >
         <v-col cols="8" sm="6" md="4" lg="3" class="mb-8">
-          <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+          <v-img src="@/assets/roomie.svg" class=""></v-img>
         </v-col>
         <v-col cols="12" md="7" lg="7">
           <h1 class="fancytitle" :class="getTitleSize">

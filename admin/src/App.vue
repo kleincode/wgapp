@@ -6,12 +6,12 @@
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
-          src="@/assets/jeff-without.svg"
+          src="@/assets/roomie.svg"
           transition="scale-transition"
           width="40"
         />
 
-        <div class="headline">Jeff - Admin Panel</div>
+        <div class="headline">Roomie - Admin Panel</div>
       </div>
     </v-app-bar>
     <v-content>

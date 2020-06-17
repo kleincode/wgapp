@@ -17,7 +17,7 @@
             justify="center"
           >
             <v-col cols="9" xs="9" sm="4" md="4" lg="3" class="mb-8">
-              <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+              <v-img src="@/assets/roomie.svg" class=""></v-img>
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">
@@ -36,7 +36,7 @@
             justify="center"
           >
             <v-col cols="9" xs="9" sm="4" md="4" lg="3">
-              <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+              <v-img src="@/assets/roomie.svg" class=""></v-img>
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">
@@ -75,7 +75,7 @@
             justify="center"
           >
             <v-col cols="4" md="4" lg="3">
-              <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+              <v-img src="@/assets/roomie.svg" class=""></v-img>
             </v-col>
             <v-col cols="12" md="7" lg="7">
               <h1 class="fancytitle" :class="getTitleSize">

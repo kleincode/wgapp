@@ -4,8 +4,8 @@
     "organizer": "Your Personal Home Organizer"
   },
   "why": {
-    "question": "Why do you need Jeff?",
-    "answer": "Are you tired of fights about who did or didn't do what task? Who paid last time? Stop worrying about all of that and let Jeff do the work! He can manage your daily {tasks}, {finances} and {shopping}. On top of that he has an integrated {calendar} for your events and an {dashboard} where you can keep everything in check. The only thing Jeff can't do is clean the bathroom for you. He is very sorry for that.",
+    "question": "Why do you need Roomie?",
+    "answer": "Are you tired of fights about who did or didn't do what task? Who paid last time? Stop worrying about all of that and let Roomie do the work! He can manage your daily {tasks}, {finances} and {shopping}. On top of that he has an integrated {calendar} for your events and an {dashboard} where you can keep everything in check. The only thing Roomie can't do is clean the bathroom for you. He is very sorry for that.",
     "tasks": "tasks",
     "finances": "finances",
     "shopping": "shopping lists",
@@ -14,12 +14,12 @@
     "learn": "Learn More"
   },
   "devices": {
-    "headline": "Jeff runs on {every} device, no matter what.",
+    "headline": "Roomie runs on {every} device, no matter what.",
     "every": "every",
     "explanation": "It is build as a Progressive Web App (PWA) so it runs as a website but looks like an app. That way we will never ever have any compatibality issues. Fancy isn't it?"
   },
   "features": {
-    "headline": "Jeff's Features",
+    "headline": "Roomie's Features",
     "explanations": [
       "Always in a hurry? With our dashboard you've got everything covered in a second. Besides weather and time information we display the most important informations of our features. And of course: It's fully customizable.",
       "With our finance feature you will never ever have to worry about money again. If you pay something, you enter the amount and upload the receipt. It's easy as that. We also support monthly charges and display various statistics about your expenses. And the best is yet come: With just one click our system will calculate all debts to get you guys even.",
@@ -32,9 +32,9 @@
     "roadmap": "To Roadmap"
   },
   "interested": {
-    "headline": "Interested? Move in with Jeff just by {bold}!",
+    "headline": "Interested? Move in with Roomie just by {bold}!",
     "bold": "signing up",
-    "explanation": "Jeff is currently {free} for everyone. Create your account and household and start inviting people. It's that simple! (We have even a dark mode...)",
+    "explanation": "Roomie is currently {free} for everyone. Create your account and household and start inviting people. It's that simple! (We have even a dark mode...)",
     "expBold": "free"
   },
   "roadmap": {
@@ -52,7 +52,7 @@
       },
       {
         "title": "WG-Chat, Google Maps Integration",
-        "desc": "Of course thats not it. We've got plenty of new features in the making. You want to have everything in one app? With the Chat Feature you can discuss everything important within the app and even reference expenses, shopping lists, etc. You want to be reminded when you need to go to work/school/university? With our Google Maps Integration Jeff can help you while using realtime traffic information.",
+        "desc": "Of course thats not it. We've got plenty of new features in the making. You want to have everything in one app? With the Chat Feature you can discuss everything important within the app and even reference expenses, shopping lists, etc. You want to be reminded when you need to go to work/school/university? With our Google Maps Integration Roomie can help you while using realtime traffic information.",
         "time": "Summer 2020"
       },
       {
@@ -87,8 +87,8 @@
         "answer": "To use push notifications you first need to activate this feature and grant permissions. We won't spam you don't worry. Just go to settings, scroll down and click 'Enable push notification'."
       },
       {
-        "question": "Is Jeff also available for my device?",
-        "answer": "Yes, Jeff is also available for your device. You just need a browser of your choice. Please check out our help for a complee installation guide."
+        "question": "Is Roomie also available for my device?",
+        "answer": "Yes, Roomie is also available for your device. You just need a browser of your choice. Please check out our help for a complee installation guide."
       },
       {
         "question": "Who many people can I add in my household?",
@@ -114,7 +114,7 @@
   },
   "question": {
     "headline": "You have a question or would like to see a new feature in our app?",
-    "desc": "If you can't find your answer in our FAQs just fill out our contact form. We're always eager to find out how we can improve Jeff. If you unfortunately found a bug please send us the details and we will try to talk to Jeff. We won't be too hard on him. We promise."
+    "desc": "If you can't find your answer in our FAQs just fill out our contact form. We're always eager to find out how we can improve Roomie. If you unfortunately found a bug please send us the details and we will try to talk to Roomie. We won't be too hard on him. We promise."
   },
   "contact": {
     "headline": "Contact",

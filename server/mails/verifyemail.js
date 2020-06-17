@@ -4,8 +4,8 @@ module.exports = ({ firstname, lastname, email, token }) => `
 
 Hi ${firstname},
 <p>
-    welcome on board! Jeff is the greatest choice you can make for your personal home management needs
-    - and I'm not just saying that because I am Jeff but also because it's true. At least that's what
+    welcome on board! Roomie is the greatest choice you can make for your personal home management needs
+    - and I'm not just saying that because I am Roomie but also because it's true. At least that's what
     my mother says. Anyways, please clicky clicky on that linky linky so I know you're for real:
 </p>
 <p>
@@ -19,7 +19,7 @@ Hi ${firstname},
 <br />
 <p>
     See you on the other tab,<br />
-    Jeff.
+    Roomie.
 </p>
 
 `;

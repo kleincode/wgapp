@@ -26,7 +26,7 @@ export default [
     links: []
   },
   {
-    //Is Jeff also available for my device?
+    //Is Roomie also available for my device?
     links: [
       {
         text: "Installation Guide",

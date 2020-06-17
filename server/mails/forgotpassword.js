@@ -16,7 +16,7 @@ Hi ${firstname},
 <br />
 <p>
     With calming greetings,<br />
-    Jeff.
+    Roomie.
 </p>
 <p>
     PS: That link will destroy itself in one hour. Act fast.

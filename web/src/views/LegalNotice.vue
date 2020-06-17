@@ -6,11 +6,11 @@
       </v-col>
       <v-col cols="12" md="10" lg="8">
         <h2>Angaben gemäß § 5 TMG:</h2>
-        <p><br />Jeff - Your Personal Home Organizer</p>
+        <p><br />Roomie - Your Personal Home Organizer</p>
         <h3>Postanschrift:</h3>
         <p>Hermann-Pistor-Straße 27<br />07745 Jena<br /></p>
         <h3>Kontakt:</h3>
-        <p>Telefon: <br />E-Mail: contact@jeff-organizer.de</p>
+        <p>Telefon: <br />E-Mail: contact@Roomie-organizer.de</p>
         <p></p>
         <h3>Vertreten durch:</h3>
         <p>Felix Kleinsteuber, Matti Frind<br /></p>
@@ -364,7 +364,7 @@
           E-Mail oder wenden Sie sich direkt an die für den Datenschutz
           verantwortliche Person in unserer Organisation:
         </p>
-        <p>contact@jeff-organizer.de</p>
+        <p>contact@Roomie-organizer.de</p>
         <p>
           <em
             >Die Datenschutzerklärung wurde mithilfe der activeMind AG erstellt,

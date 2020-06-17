@@ -21,9 +21,9 @@
         </div>
       </v-col>
     </v-row>
-    <template #footer
-      >{{ formatWeekday(now) }} | {{ formatDateYMD(now) }}</template
-    >
+    <template #footer>
+      {{ formatWeekday(now) }} | {{ formatDateYMD(now) }}
+    </template>
   </Widget>
 </template>
 

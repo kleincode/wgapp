@@ -198,7 +198,7 @@
       },
       "language": {
         "title": "Language",
-        "description": "We currently support English and German. If you want to help us translate Jeff into your language you're very welcome to do so. Just contact us!",
+        "description": "We currently support English and German. If you want to help us translate Roomie into your language you're very welcome to do so. Just contact us!",
         "selectLanguage": "Select language"
       },
       "locale": {
@@ -335,7 +335,7 @@
         "buttonSizeUnknown": "Delete local data",
         "confirmTitle": "Delete local data ({kilobytes} KB?)",
         "confirmTitleSizeUnknown": "Delete local data?",
-        "confirmMessage": "Deleting stored local data forces Jeff to refetch all your household data remotely. Pages will load slower and actions will take longer to perform until the cache is repopulated. Note that this will not clear cached application assets. Continue?",
+        "confirmMessage": "Deleting stored local data forces Roomie to refetch all your household data remotely. Pages will load slower and actions will take longer to perform until the cache is repopulated. Note that this will not clear cached application assets. Continue?",
         "positiveOption": "Do it!",
         "negativeOption": "Cancel",
         "deleted": "All local data deleted."
@@ -737,7 +737,7 @@
     "alreadyInHousehold": "Since you're already in a household...",
     "startTour": "Start Tour",
     "firstDialog": [
-      "Hello I'm Jeff. Nice to meet you!",
+      "Hello I'm Roomie. Nice to meet you!",
       "I will be your new personal home assistant.",
       "I'm gonna show you my most important features."
     ],

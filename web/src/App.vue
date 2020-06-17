@@ -7,7 +7,7 @@
             alt="Vuetify Logo"
             class="shrink mr-2"
             contain
-            :src="require('./assets/avatar.webp')"
+            :src="require('./assets/roomie.svg')"
             transition="scale-transition"
             width="40"
           />
@@ -15,7 +15,7 @@
 
         <v-list-item-content>
           <v-list-item-title style="display: contents"
-            >Jeff
+            >Roomie
             <v-spacer></v-spacer>
             <v-btn
               v-if="$i18n.locale == 'en'"
@@ -68,15 +68,15 @@
           ><v-icon>dehaze</v-icon></v-btn
         >
         <v-img
-          alt="Jeff"
+          alt="Roomie"
           class="shrink mr-2"
           contain
-          :src="require('./assets/avatar.webp')"
+          :src="require('./assets/roomie.svg')"
           transition="scale-transition"
           width="40"
         />
 
-        <v-toolbar-title style="display: flex">Jeff</v-toolbar-title>
+        <v-toolbar-title style="display: flex">Roomie</v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
@@ -111,7 +111,7 @@
             class="primary lighten-2 py-4 text-center white--text"
             cols="12"
           >
-            {{ new Date().getFullYear() }} — <strong>Jeff</strong>
+            {{ new Date().getFullYear() }} — <strong>Roomie</strong>
           </v-col>
         </v-row>
       </v-footer>

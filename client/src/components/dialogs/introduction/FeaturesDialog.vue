@@ -8,7 +8,7 @@
         justify="center"
       >
         <v-col cols="7" sm="4" md="4" lg="4">
-          <v-img src="@/assets/jeff-without.svg" class=""></v-img>
+          <v-img src="@/assets/roomie.svg" class=""></v-img>
         </v-col>
         <v-col cols="12" md="7" lg="7">
           <h1 class="fancytitle" :class="getTitleSize">
@@ -18,9 +18,9 @@
             {{ subtext
             }}<a
               v-if="finish"
-              href="mailto:contact@jeff-organizer.de"
+              href="mailto:contact@Roomie-organizer.de"
               class="accent--text"
-              >contact@jeff-organizer.de</a
+              >contact@Roomie-organizer.de</a
             ><span v-if="finish">.</span>
           </div>
           <v-btn v-if="!finish" raised class="mt-4" @click="triggerNextState">{{

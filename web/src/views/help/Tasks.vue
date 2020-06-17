@@ -24,7 +24,7 @@ export default {
   data: () => ({
     path: [
       {
-        text: "Jeff",
+        text: "Roomie",
         to: { name: "Help" },
         exact: true,
         disabled: false

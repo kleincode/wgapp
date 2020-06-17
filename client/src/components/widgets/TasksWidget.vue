@@ -118,12 +118,20 @@
         </v-btn>
       </v-snackbar>
     </template>
-    <div v-else style="text-align: center" class="text--disabled">
-      <v-icon style="font-size: 4em" class="text--disabled"
-        >access_alarm</v-icon
-      >
-      <br />{{ $t("widgets.tasks.done") }}
-    </div>
+    <v-row
+      v-else
+      style="height: 100%"
+      class="text--disabled pb-4"
+      align="center"
+      justify="center"
+    >
+      <v-col cols="12" class="text-center">
+        <v-icon style="font-size: 5em" class="text--disabled"
+          >access_alarm</v-icon
+        >
+        <br />{{ $t("widgets.tasks.done") }}
+      </v-col>
+    </v-row>
   </Widget>
 </template>
 

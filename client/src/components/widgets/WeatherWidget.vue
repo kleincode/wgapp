@@ -62,6 +62,8 @@
             {{ humidity }}%
           </span>
         </v-col>
+      </v-row>
+      <v-row>
         <v-col v-if="weatherWidgetLarge" cols="6" class="py-0">
           <p class="title">
             <v-icon>fa-wind</v-icon>

@@ -169,7 +169,7 @@ function exportXLSX(lastBill, max, cur, loc, jsonData) {
   config.sheet.data.push([]);
   config.sheet.data.push([
     {
-      value: "Jeff - Organizer",
+      value: "Roomie - Organizer",
       type: "string"
     }
   ]);

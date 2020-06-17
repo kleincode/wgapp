@@ -3,7 +3,7 @@
     <v-overlay :value="loading" opacity="0.9" color="white">
       <v-row justify="center">
         <v-col cols="5">
-          <v-img src="@/assets/jeff-without.svg" class="mb-3"></v-img>
+          <v-img src="@/assets/roomie.svg" class="mb-3"></v-img>
         </v-col>
         <v-col cols="12" class="text-center">
           <h1 class="display-1 black--text mb-6">Roomie</h1>

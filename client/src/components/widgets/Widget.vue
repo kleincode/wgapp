@@ -1,7 +1,7 @@
 <template>
   <v-card
     :loading="loading"
-    :color="error ? 'red' : null"
+    :color="error ? 'red' : color"
     :elevation="6"
     :style="large ? 'height: 417px' : 'height: 200px'"
     style="display: flex; flex-flow: column; height: 100%;"
@@ -75,6 +75,10 @@ export default {
     large: {
       type: Boolean,
       default: false
+    },
+    color: {
+      type: String,
+      default: null
     }
   },
   computed: {
