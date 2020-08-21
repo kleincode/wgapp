@@ -2,8 +2,8 @@ import axios from "../store/axios";
 /* global gapi */
 // Client ID and API key from the Developer Console
 var CLIENT_ID =
-  "175332090206-9olusr4jpp5q5uk0mlibbbgkm359frte.apps.googleusercontent.com";
-var API_KEY = "AIzaSyDyw_4pPRYlJ0QjbqMAgPYDZ55agoAK33k";
+  "....apps.googleusercontent.com";
+var API_KEY = "<insert key>";
 
 // Array of API discovery doc URLs for APIs used by the quickstart
 var DISCOVERY_DOCS = [
